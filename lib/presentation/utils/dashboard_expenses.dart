@@ -6,6 +6,7 @@ import 'package:trakli/domain/models/chart_data_model.dart';
 import 'package:trakli/domain/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/globals.dart';
 
 class DashboardExpenses extends StatefulWidget {
   const DashboardExpenses({super.key});

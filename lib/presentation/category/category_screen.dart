@@ -145,18 +145,24 @@ class _CategoryScreenState extends State<CategoryScreen>
             ],
           ),
           Expanded(
-            child: TabBarView(
-              controller: tabController,
-              // physics: const NeverScrollableScrollPhysics(),
-              children: [
-                categoriesList(
-                  accentColor: Theme.of(context).primaryColor,
-                ),
-                categoriesList(
-                  type: TransactionType.expense,
-                  accentColor: const Color(0xFFEB5757),
-                ),
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+              child: TabBarView(
+                controller: tabController,
+                // physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  categoriesList(
+                    accentColor: Theme.of(context).primaryColor,
+                  ),
+                  categoriesList(
+                    type: TransactionType.expense,
+                    accentColor: const Color(0xFFEB5757),
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(height: 16.h),
