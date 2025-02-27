@@ -8,6 +8,8 @@ import 'package:trakli/domain/models/chart_data_model.dart';
 import 'package:trakli/domain/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/category/add_category_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/add_wallet_screen.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -425,8 +427,8 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       compareFn: (i1, i2) => i1 == i2,
                       filterFn: (el, filter) {
                         return el.property.toLowerCase().contains(
-                          filter.toLowerCase(),
-                        );
+                              filter.toLowerCase(),
+                            );
                       },
                     ),
                   ),
