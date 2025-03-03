@@ -425,8 +425,8 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       compareFn: (i1, i2) => i1 == i2,
                       filterFn: (el, filter) {
                         return el.property.toLowerCase().contains(
-                              filter.toLowerCase(),
-                            );
+                          filter.toLowerCase(),
+                        );
                       },
                     ),
                   ),
