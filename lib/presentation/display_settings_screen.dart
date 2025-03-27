@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:trakli/domain/providers/local_storage.dart';
+import 'package:trakli/providers/local_storage.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';

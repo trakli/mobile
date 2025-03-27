@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:trakli/domain/models/category_model.dart';
+import 'package:trakli/models/category_model.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
