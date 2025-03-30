@@ -44,7 +44,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
 
   @override
   void initState() {
-    // TODO: implement initState
     dateController.text = dateFormat.format(date);
     timeController.text = timeFormat.format(date);
     super.initState();

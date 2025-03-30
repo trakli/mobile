@@ -49,7 +49,6 @@ class DatabaseHelper {
     ''');
   }
 
-
   Future<void> insertTransaction(TransactionModel tx) async {
     final dbClient = await db;
     await dbClient.insert('transactions', tx.toMap(),
@@ -96,7 +95,8 @@ class DatabaseHelper {
     return maps.map((map) => TransactionModel.fromMap(map)).toList();
   }
 
-  Future<void> enqueueSync(String model, String operation, Map<String, dynamic> data) async {
+  Future<void> enqueueSync(
+      String model, String operation, Map<String, dynamic> data) async {
     final dbClient = await db;
     await dbClient.insert('sync_queue', {
       'modelName': model,
@@ -105,5 +105,4 @@ class DatabaseHelper {
       'createdAt': DateTime.now().toIso8601String(),
     });
   }
-
 }
