@@ -6,8 +6,12 @@ class DecimalConverter extends TypeConverter<Decimal, String> {
 
   @override
   Decimal fromSql(String fromDb) {
-    final d = Decimal.parse(fromDb);
-    return d;
+    try {
+      final d = Decimal.parse(fromDb);
+      return d;
+    } catch (e) {
+      throw FormatException('Could not parse "$fromDb" as Decimal', e);
+    }
   }
 
   @override

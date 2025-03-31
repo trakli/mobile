@@ -1,4 +1,4 @@
-class NotFoundException {
+class NotFoundException implements Exception {
   final String? message;
   final Object? innerException;
 

@@ -1,4 +1,4 @@
-class CancelException {
+class CancelException implements Exception {
   final String? message;
   final Object? innerException;
 

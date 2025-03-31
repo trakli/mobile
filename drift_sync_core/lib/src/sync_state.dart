@@ -44,4 +44,8 @@ class SyncState {
 
   @override
   int get hashCode => isSynchronizing.hashCode ^ cancelRequested.hashCode;
+
+  @override
+  String toString() =>
+      'SyncState(isSynchronizing: $isSynchronizing, cancelRequested: $cancelRequested)';
 }

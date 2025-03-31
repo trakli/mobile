@@ -1,4 +1,4 @@
-class InvalidStateException {
+class InvalidStateException implements Exception {
   final String? message;
   final Object? innerException;
 
