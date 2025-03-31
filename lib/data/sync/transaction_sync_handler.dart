@@ -16,7 +16,6 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
   final AppDatabase db;
   final TransactionRemoteDataSource remoteDataSource;
 
-  @override
   TableInfo<Transactions, Transaction> get table => db.transactions;
 
   @override
@@ -65,7 +64,11 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
 
   @override
   Future<Transaction> restPutRemote(Transaction entity) async {
-    return await remoteDataSource.updateTransaction(entity);
+    if (entity.serverId == null) {
+      return remoteDataSource.insertTransaction(entity);
+    } else {
+      return await remoteDataSource.updateTransaction(entity);
+    }
   }
 
   @override
@@ -94,20 +97,20 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
     await table.deleteAll();
   }
 
-  // Example of using the sync methods
-  Future<void> syncTransaction(Transaction transaction) async {
-    await upsertLocal(transaction);
-  }
+  // // Example of using the sync methods
+  // Future<void> syncTransaction(Transaction transaction) async {
+  //   await upsertLocal(transaction);
+  // }
 
-  Future<void> deleteTransaction(Transaction transaction) async {
-    await deleteLocal(transaction);
-  }
+  // Future<void> deleteTransaction(Transaction transaction) async {
+  //   await deleteLocal(transaction);
+  // }
 
-  Future<void> syncAllTransactions(List<Transaction> transactions) async {
-    await upsertAllLocal(transactions);
-  }
+  // Future<void> syncAllTransactions(List<Transaction> transactions) async {
+  //   await upsertAllLocal(transactions);
+  // }
 
-  Future<void> clearAllTransactions() async {
-    await deleteAllLocal();
-  }
+  // Future<void> clearAllTransactions() async {
+  //   await deleteAllLocal();
+  // }
 }
