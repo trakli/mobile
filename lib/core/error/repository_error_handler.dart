@@ -4,9 +4,8 @@ import 'package:trakli/core/error/failures/failures.dart';
 
 class RepositoryErrorHandler {
   static Future<Either<Failure, T>> handleApiCall<T>(
-    Future<T> Function() apiCall, {
-    bool forceSync = false,
-  }) async {
+    Future<T> Function() apiCall,
+  ) async {
     try {
       // if (!await _networkInfo.isConnected) {
       //   return const Left(NetworkFailure());
@@ -23,15 +22,6 @@ class RepositoryErrorHandler {
     } on ServerException catch (e) {
       return left(ServerFailure(e.message));
     } on NetworkException {
-      if (forceSync) {
-        // If forceSync is true, try to execute the operation anyway
-        try {
-          final result = await apiCall();
-          return right(result);
-        } catch (e) {
-          return left(UnknownFailure(e.toString()));
-        }
-      }
       return left(const NetworkFailure());
     } catch (e) {
       return left(UnknownFailure(e.toString()));
