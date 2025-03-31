@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
-import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:trakli/core/database/tables/local_changes.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 import 'dart:io';
 import 'tables/transaction_table.dart';
 import 'tables/sync_statuc.dart';
@@ -14,7 +13,13 @@ part 'app_database.g.dart';
 
 @DriftDatabase(tables: [Transactions, LocalChanges, SyncMetadata])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  final Set<SyncTypeHandler> typeHandlers;
+
+  AppDatabase([
+    QueryExecutor? executor,
+    Set<SyncTypeHandler>? typeHandlers,
+  ])  : typeHandlers = typeHandlers ?? {},
+        super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -29,7 +34,8 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
   @override
   Future<List<PendingLocalChange>> getPendingLocalChanges() async {
-    final rows = await (select(localChanges)).get();
+    final rows =
+        await (select(localChanges)..where((lc) => lc.error.isNull())).get();
 
     return rows
         .map((row) => PendingLocalChange(
@@ -54,27 +60,18 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
   @override
   Future<void> concludeEntityLocalChanges(
-      String entityType, String entityId) async {
-    await (delete(localChanges)
-          ..where((lc) =>
-              lc.entityType.equals(entityType) & lc.entityId.equals(entityId)))
-        .go();
+    String entityType,
+    String entityId,
+    Operation operation,
+  ) async {
+    logger.i(
+      "${operation.name.toUpperCase()} operations on enity type $entityType for object $entityId completed",
+    );
   }
-
-  // @override
-  // Future<void> concludeEntityLocalChanges(String entityType, String entityId) async {
-  //   await (update(localChanges)
-  //     ..where((t) => t.entityType.equals(entityType))
-  //     ..where((t) => t.entityId.equals(entityId)))
-  //     .write(LocalChangesCompanion(
-  //       concluded: Value(true),
-  //       concludedMoment: Value(DateTime.now()),
-  //     ));
-  // }
 
   @override
   Future<void> concludeLocalChange(PendingLocalChange localChange,
-      {Object? error}) async {
+      {Object? error, bool persistedToRemote = false}) async {
     if (error != null) {
       await (update(localChanges)
             ..where((lc) => lc.entityId.equals(localChange.entityId)))
@@ -87,13 +84,17 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       );
     }
 
-    // else {
-    //   await (update(localChanges)
-    //         ..where((lc) => lc.entityId.equals(localChange.entityId)))
-    //       .write(LocalChangesCompanion(
-    //     status: Value(sync.LocalChangeStatus.synced.toString()),
-    //   ));
-    // }
+    if (persistedToRemote) {
+      // Remove the local change after successful sync
+      await (delete(localChanges)
+            ..where((lc) =>
+                lc.entityType.equals(localChange.entityType) &
+                lc.entityId.equals(localChange.entityId)))
+          .go();
+    } else {
+      logger.info(
+          "Cannot conclude sync for ${localChange.entityType} with id ${localChange.entityId}");
+    }
   }
 
   @override
@@ -131,7 +132,6 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     );
   }
 }
-
 
 // @DriftDatabase(tables: [Transactions])
 // class AppDatabase extends _$AppDatabase with SynchronizerDb {

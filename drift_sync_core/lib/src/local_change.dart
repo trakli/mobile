@@ -1,6 +1,5 @@
 class PendingLocalChange {
   final String entityType;
-
   final String entityId;
   final String entityRev;
   final bool deleted;

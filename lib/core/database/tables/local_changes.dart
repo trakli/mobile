@@ -4,7 +4,7 @@ import 'package:drift/drift.dart';
 
 @DataClassName('LocalChange')
 class LocalChanges extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  // IntColumn get id => integer().autoIncrement()();
 
   TextColumn get entityType => text()();
   TextColumn get entityId => text()();
@@ -17,7 +17,8 @@ class LocalChanges extends Table {
   TextColumn get error => text().nullable()();
   BoolColumn get dismissed => boolean()();
 
-  
+  @override
+  Set<Column> get primaryKey => {entityId, entityType};
 }
 
 class JsonMapConverter extends TypeConverter<Map<String, dynamic>, String> {

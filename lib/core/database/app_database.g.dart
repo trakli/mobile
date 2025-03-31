@@ -637,15 +637,6 @@ class $LocalChangesTable extends LocalChanges
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $LocalChangesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _entityTypeMeta =
       const VerificationMeta('entityType');
   @override
@@ -716,7 +707,6 @@ class $LocalChangesTable extends LocalChanges
           GeneratedColumn.constraintIsAlways('CHECK ("dismissed" IN (0, 1))'));
   @override
   List<GeneratedColumn> get $columns => [
-        id,
         entityType,
         entityId,
         entityRev,
@@ -738,9 +728,6 @@ class $LocalChangesTable extends LocalChanges
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('entity_type')) {
       context.handle(
           _entityTypeMeta,
@@ -799,13 +786,11 @@ class $LocalChangesTable extends LocalChanges
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {entityId, entityType};
   @override
   LocalChange map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LocalChange(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       entityType: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}entity_type'])!,
       entityId: attachedDatabase.typeMapping
@@ -840,7 +825,6 @@ class $LocalChangesTable extends LocalChanges
 }
 
 class LocalChange extends DataClass implements Insertable<LocalChange> {
-  final int id;
   final String entityType;
   final String entityId;
   final String entityRev;
@@ -852,8 +836,7 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   final String? error;
   final bool dismissed;
   const LocalChange(
-      {required this.id,
-      required this.entityType,
+      {required this.entityType,
       required this.entityId,
       required this.entityRev,
       required this.deleted,
@@ -866,7 +849,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     map['entity_type'] = Variable<String>(entityType);
     map['entity_id'] = Variable<String>(entityId);
     map['entity_rev'] = Variable<String>(entityRev);
@@ -889,7 +871,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
 
   LocalChangesCompanion toCompanion(bool nullToAbsent) {
     return LocalChangesCompanion(
-      id: Value(id),
       entityType: Value(entityType),
       entityId: Value(entityId),
       entityRev: Value(entityRev),
@@ -910,7 +891,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LocalChange(
-      id: serializer.fromJson<int>(json['id']),
       entityType: serializer.fromJson<String>(json['entityType']),
       entityId: serializer.fromJson<String>(json['entityId']),
       entityRev: serializer.fromJson<String>(json['entityRev']),
@@ -927,7 +907,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'entityType': serializer.toJson<String>(entityType),
       'entityId': serializer.toJson<String>(entityId),
       'entityRev': serializer.toJson<String>(entityRev),
@@ -942,8 +921,7 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   }
 
   LocalChange copyWith(
-          {int? id,
-          String? entityType,
+          {String? entityType,
           String? entityId,
           String? entityRev,
           bool? deleted,
@@ -954,7 +932,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
           Value<String?> error = const Value.absent(),
           bool? dismissed}) =>
       LocalChange(
-        id: id ?? this.id,
         entityType: entityType ?? this.entityType,
         entityId: entityId ?? this.entityId,
         entityRev: entityRev ?? this.entityRev,
@@ -970,7 +947,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
       );
   LocalChange copyWithCompanion(LocalChangesCompanion data) {
     return LocalChange(
-      id: data.id.present ? data.id.value : this.id,
       entityType:
           data.entityType.present ? data.entityType.value : this.entityType,
       entityId: data.entityId.present ? data.entityId.value : this.entityId,
@@ -990,7 +966,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   @override
   String toString() {
     return (StringBuffer('LocalChange(')
-          ..write('id: $id, ')
           ..write('entityType: $entityType, ')
           ..write('entityId: $entityId, ')
           ..write('entityRev: $entityRev, ')
@@ -1006,13 +981,12 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
   }
 
   @override
-  int get hashCode => Object.hash(id, entityType, entityId, entityRev, deleted,
+  int get hashCode => Object.hash(entityType, entityId, entityRev, deleted,
       data, createAt, concluded, concludedMoment, error, dismissed);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LocalChange &&
-          other.id == this.id &&
           other.entityType == this.entityType &&
           other.entityId == this.entityId &&
           other.entityRev == this.entityRev &&
@@ -1026,7 +1000,6 @@ class LocalChange extends DataClass implements Insertable<LocalChange> {
 }
 
 class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
-  final Value<int> id;
   final Value<String> entityType;
   final Value<String> entityId;
   final Value<String> entityRev;
@@ -1037,8 +1010,8 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
   final Value<DateTime?> concludedMoment;
   final Value<String?> error;
   final Value<bool> dismissed;
+  final Value<int> rowid;
   const LocalChangesCompanion({
-    this.id = const Value.absent(),
     this.entityType = const Value.absent(),
     this.entityId = const Value.absent(),
     this.entityRev = const Value.absent(),
@@ -1049,9 +1022,9 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
     this.concludedMoment = const Value.absent(),
     this.error = const Value.absent(),
     this.dismissed = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   LocalChangesCompanion.insert({
-    this.id = const Value.absent(),
     required String entityType,
     required String entityId,
     required String entityRev,
@@ -1062,6 +1035,7 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
     this.concludedMoment = const Value.absent(),
     this.error = const Value.absent(),
     required bool dismissed,
+    this.rowid = const Value.absent(),
   })  : entityType = Value(entityType),
         entityId = Value(entityId),
         entityRev = Value(entityRev),
@@ -1071,7 +1045,6 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
         concluded = Value(concluded),
         dismissed = Value(dismissed);
   static Insertable<LocalChange> custom({
-    Expression<int>? id,
     Expression<String>? entityType,
     Expression<String>? entityId,
     Expression<String>? entityRev,
@@ -1082,9 +1055,9 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
     Expression<DateTime>? concludedMoment,
     Expression<String>? error,
     Expression<bool>? dismissed,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (entityType != null) 'entity_type': entityType,
       if (entityId != null) 'entity_id': entityId,
       if (entityRev != null) 'entity_rev': entityRev,
@@ -1095,12 +1068,12 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
       if (concludedMoment != null) 'concluded_moment': concludedMoment,
       if (error != null) 'error': error,
       if (dismissed != null) 'dismissed': dismissed,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   LocalChangesCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? entityType,
+      {Value<String>? entityType,
       Value<String>? entityId,
       Value<String>? entityRev,
       Value<bool>? deleted,
@@ -1109,9 +1082,9 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
       Value<bool>? concluded,
       Value<DateTime?>? concludedMoment,
       Value<String?>? error,
-      Value<bool>? dismissed}) {
+      Value<bool>? dismissed,
+      Value<int>? rowid}) {
     return LocalChangesCompanion(
-      id: id ?? this.id,
       entityType: entityType ?? this.entityType,
       entityId: entityId ?? this.entityId,
       entityRev: entityRev ?? this.entityRev,
@@ -1122,15 +1095,13 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
       concludedMoment: concludedMoment ?? this.concludedMoment,
       error: error ?? this.error,
       dismissed: dismissed ?? this.dismissed,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (entityType.present) {
       map['entity_type'] = Variable<String>(entityType.value);
     }
@@ -1162,13 +1133,15 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
     if (dismissed.present) {
       map['dismissed'] = Variable<bool>(dismissed.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('LocalChangesCompanion(')
-          ..write('id: $id, ')
           ..write('entityType: $entityType, ')
           ..write('entityId: $entityId, ')
           ..write('entityRev: $entityRev, ')
@@ -1178,7 +1151,8 @@ class LocalChangesCompanion extends UpdateCompanion<LocalChange> {
           ..write('concluded: $concluded, ')
           ..write('concludedMoment: $concludedMoment, ')
           ..write('error: $error, ')
-          ..write('dismissed: $dismissed')
+          ..write('dismissed: $dismissed, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1681,7 +1655,6 @@ typedef $$TransactionsTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$LocalChangesTableCreateCompanionBuilder = LocalChangesCompanion
     Function({
-  Value<int> id,
   required String entityType,
   required String entityId,
   required String entityRev,
@@ -1692,10 +1665,10 @@ typedef $$LocalChangesTableCreateCompanionBuilder = LocalChangesCompanion
   Value<DateTime?> concludedMoment,
   Value<String?> error,
   required bool dismissed,
+  Value<int> rowid,
 });
 typedef $$LocalChangesTableUpdateCompanionBuilder = LocalChangesCompanion
     Function({
-  Value<int> id,
   Value<String> entityType,
   Value<String> entityId,
   Value<String> entityRev,
@@ -1706,6 +1679,7 @@ typedef $$LocalChangesTableUpdateCompanionBuilder = LocalChangesCompanion
   Value<DateTime?> concludedMoment,
   Value<String?> error,
   Value<bool> dismissed,
+  Value<int> rowid,
 });
 
 class $$LocalChangesTableFilterComposer
@@ -1717,9 +1691,6 @@ class $$LocalChangesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
   ColumnFilters<String> get entityType => $composableBuilder(
       column: $table.entityType, builder: (column) => ColumnFilters(column));
 
@@ -1764,9 +1735,6 @@ class $$LocalChangesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<String> get entityType => $composableBuilder(
       column: $table.entityType, builder: (column) => ColumnOrderings(column));
 
@@ -1808,9 +1776,6 @@ class $$LocalChangesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
   GeneratedColumn<String> get entityType => $composableBuilder(
       column: $table.entityType, builder: (column) => column);
 
@@ -1868,7 +1833,6 @@ class $$LocalChangesTableTableManager extends RootTableManager<
           createComputedFieldComposer: () =>
               $$LocalChangesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
             Value<String> entityType = const Value.absent(),
             Value<String> entityId = const Value.absent(),
             Value<String> entityRev = const Value.absent(),
@@ -1879,9 +1843,9 @@ class $$LocalChangesTableTableManager extends RootTableManager<
             Value<DateTime?> concludedMoment = const Value.absent(),
             Value<String?> error = const Value.absent(),
             Value<bool> dismissed = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               LocalChangesCompanion(
-            id: id,
             entityType: entityType,
             entityId: entityId,
             entityRev: entityRev,
@@ -1892,9 +1856,9 @@ class $$LocalChangesTableTableManager extends RootTableManager<
             concludedMoment: concludedMoment,
             error: error,
             dismissed: dismissed,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
             required String entityType,
             required String entityId,
             required String entityRev,
@@ -1905,9 +1869,9 @@ class $$LocalChangesTableTableManager extends RootTableManager<
             Value<DateTime?> concludedMoment = const Value.absent(),
             Value<String?> error = const Value.absent(),
             required bool dismissed,
+            Value<int> rowid = const Value.absent(),
           }) =>
               LocalChangesCompanion.insert(
-            id: id,
             entityType: entityType,
             entityId: entityId,
             entityRev: entityRev,
@@ -1918,6 +1882,7 @@ class $$LocalChangesTableTableManager extends RootTableManager<
             concludedMoment: concludedMoment,
             error: error,
             dismissed: dismissed,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

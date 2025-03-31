@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 abstract class SyncTypeHandler<TEntity, TKey> {
   String get entityType;

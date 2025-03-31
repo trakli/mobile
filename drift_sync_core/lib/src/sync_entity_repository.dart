@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 
 enum DataSource { remote, local }
 
+enum Operation { put, delete }
+
 enum DataDestination { local, both }
 
 /// Provides methods to get, create, update and delete
@@ -52,7 +54,7 @@ abstract class SyncEntityRepository<
 
     await this.db.transaction(() async {
       await syncHandler.upsertLocal(created);
-      
+
       if (remoteCreated == null) {
         final localChange = PendingLocalChange.put(
           protoBytes: syncHandler.marshal(entity),
@@ -65,6 +67,7 @@ abstract class SyncEntityRepository<
         await db.concludeEntityLocalChanges(
           syncHandler.entityType,
           syncHandler.getId(entity),
+          Operation.put,
         );
       }
     });
@@ -105,6 +108,7 @@ abstract class SyncEntityRepository<
         await db.concludeEntityLocalChanges(
           syncHandler.entityType,
           syncHandler.getId(entity),
+          Operation.delete,
         );
       }
     });

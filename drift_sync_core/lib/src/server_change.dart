@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 // Defines the structure for representing a change received from the server.
 

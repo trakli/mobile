@@ -1,11 +1,5 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:drift/native.dart';
 import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:trakli/core/database/app_database.dart';
 
 @module
 abstract class InjectHttpClientModule {
@@ -35,44 +29,4 @@ abstract class InjectHttpClientModule {
 
     return dio;
   }
-
-  // @Singleton(as: AppDatabase)
-  // @lazySingleton
-  // Future<AppDatabase> provideAppDatabase() async {
-  //   final dbFolder = await getApplicationDocumentsDirectory();
-  //   final file = File(p.join(dbFolder.path, 'trakli.db'));
-  //   return AppDatabase(NativeDatabase.createInBackground(file));
-  // }
-
-  // @Singleton(as: DriftSynchronizer<AppDatabase>)
-  // SynchAppDatabase provideSynchronizer(
-  //   AppDatabase appDatabase,
-  //   Dio dio,
-  //   Set<SyncTypeHandler> typeHandlers,
-  // ) {
-  //   return SynchAppDatabase(
-  //     appDatabase: appDatabase,
-  //     typeHandlers: typeHandlers,
-  //     dio: dio,
-  //   );
-  // }
-
-  // @singleton
-  // TransactionTypeHandler provideTransactionTypeHandler(
-  //   AppDatabase db,
-  //   TransactionRemoteDataSource remoteDataSource,
-  // ) {
-  //   return TransactionTypeHandler(db, remoteDataSource);
-  // }
 }
-
-// @module
-// abstract class TypeHandlersModule {
-//   @singleton
-//   TransactionTypeHandler provideTransactionTypeHandler(
-//     AppDatabase db,
-//     TransactionRemoteDataSource remoteDataSource,
-//   ) {
-//     return TransactionTypeHandler(db, remoteDataSource);
-//   }
-// }

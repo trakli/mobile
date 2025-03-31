@@ -168,6 +168,8 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       final updated = await handler.putRemote(entity);
       await handler.upsertLocal(updated);
     }
+
+    await appDatabase.concludeLocalChange(localChange, persistedToRemote: true);
   }
 
   SyncTypeHandler _getTypeHandlerByTypeName(String typeName) {

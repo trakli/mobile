@@ -1,14 +1,4 @@
-import 'dart:io';
 
-import 'package:dio/dio.dart';
-import 'package:drift/native.dart';
-import 'package:drift_sync_core/drift_sync_core.dart';
-import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:trakli/core/database/app_database.dart';
-import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
-import 'package:trakli/data/sync/transaction_type_handler.dart';
 
 // @module
 // abstract class AppModule {
