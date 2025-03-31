@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
+import 'package:uuid/uuid.dart';
 
 @Injectable(as: TransactionRemoteDataSource)
 class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
@@ -27,25 +29,46 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
       final requestOptions = RequestOptions(path: 'transactions');
       const reason = 'Connection error';
 
-      throw DioException.connectionError(
-        requestOptions: requestOptions,
-        reason: reason,
+      // throw DioException.connectionError(
+      //   requestOptions: requestOptions,
+      //   reason: reason,
+      // );
+
+      final updated = transaction.copyWith(
+        serverId: Value(
+          const Uuid().v8(),
+        ),
+        lastSyncedAt: Value(
+          DateTime.now(),
+        ),
       );
 
-      _transactions.add(transaction);
+      _transactions.add(updated);
+
       _notifyListeners();
-      return transaction;
+      return updated;
     });
   }
 
   @override
   Future<Transaction> updateTransaction(Transaction transaction) async {
     return _simulateDelay(() async {
+      final requestOptions = RequestOptions(path: 'transactions');
+      const reason = 'Connection error';
+
+      // throw DioException.connectionError(
+      //     requestOptions: requestOptions, reason: reason);
+
       final index = _transactions.indexWhere((t) => t.id == transaction.id);
       if (index == -1) {
         throw Exception('Transaction not found');
       }
-      _transactions[index] = transaction;
+      _transactions[index] = transaction
+        ..copyWith(
+          lastSyncedAt: Value(
+            DateTime.now(),
+          ),
+        );
       _notifyListeners();
       return transaction;
     });

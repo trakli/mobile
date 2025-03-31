@@ -1,12 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
-import 'package:trakli/data/exceptions/server_exceptions.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthResponseDto> loginWithEmailPassword({
     required String email,
     required String password,
+  });
+
+  Future<AuthResponseDto> createUser({
+    required String email,
+    required String password,
+    required String name,
   });
 }
 
@@ -21,19 +27,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    try {
+    return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
         '/auth/login',
         data: {'email': email, 'password': password},
       );
 
       return AuthResponseDto.fromJson(response.data);
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        throw UnauthorizedException();
-      }
+    });
+  }
 
-      throw ServerException(e.response?.data['message'] ?? 'Login failed');
-    }
+  @override
+  Future<AuthResponseDto> createUser({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        '/auth/register',
+        data: {
+          'email': email,
+          'password': password,
+          'name': name,
+        },
+      );
+
+      return AuthResponseDto.fromJson(response.data);
+    });
   }
 }
