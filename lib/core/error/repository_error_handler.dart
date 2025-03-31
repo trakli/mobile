@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 
 class RepositoryErrorHandler {
   static Future<Either<Failure, T>> handleApiCall<T>(
@@ -23,8 +24,9 @@ class RepositoryErrorHandler {
       return left(ServerFailure(e.message));
     } on NetworkException {
       return left(const NetworkFailure());
-    } catch (e) {
-      return left(UnknownFailure(e.toString()));
+    } catch (e, stackTrace) {
+      logger.e('UnknownFailure', error: e, stackTrace: stackTrace);
+      return left(const UnknownFailure());
     }
   }
 }

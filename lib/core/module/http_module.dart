@@ -9,11 +9,11 @@ abstract class InjectHttpClientModule {
 
   @Named('HttpUrl')
   @dev
-  String get devHttpUrl => 'https://api.dev.mymocredit.com/api/v1/';
+  String get devHttpUrl => 'https://api.trakli.com/api/v1/';
 
   @Named('HttpUrl')
   @prod
-  String get prodHttpUrl => 'https://api.mymocredit.com/api/v1/';
+  String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
 
   @lazySingleton
   Dio dio(@Named('HttpUrl') String url) {
