@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
-import 'package:trakli/core/database/app_database.dart';
+import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/core/network/network_info.dart';
 import 'package:trakli/core/sync/network_sync_mixin.dart';
 import 'package:trakli/core/utils/services/logger.dart';

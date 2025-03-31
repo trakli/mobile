@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
-import 'package:trakli/core/database/app_database.dart';
+import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:uuid/uuid.dart';
 

@@ -1,4 +1,4 @@
-import 'package:trakli/core/database/app_database.dart';
+import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 
 class TransactionMapper {

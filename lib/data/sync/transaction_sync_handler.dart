@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
-import 'package:trakli/core/database/app_database.dart';
-import 'package:trakli/core/database/tables/transaction_table.dart';
+import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/transaction_table.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:injectable/injectable.dart';
 

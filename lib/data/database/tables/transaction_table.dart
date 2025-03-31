@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:trakli/core/database/tables/shema.dart';
+import 'package:trakli/data/database/tables/shema.dart';
 
 @DataClassName('Transaction')
 class Transactions extends Table with SyncTable {

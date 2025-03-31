@@ -14,7 +14,7 @@ import 'package:drift_sync_core/drift_sync_core.dart' as _i877;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../core/database/app_database.dart' as _i935;
+import '../data/database/app_database.dart' as _i935;
 import '../core/module/http_module.dart' as _i488;
 import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;

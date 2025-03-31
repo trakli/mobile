@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
-import 'package:trakli/core/database/app_database.dart';
+import 'package:trakli/data/database/app_database.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class TransactionLocalDataSource {

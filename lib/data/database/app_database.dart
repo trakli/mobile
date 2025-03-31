@@ -3,7 +3,7 @@ import 'package:drift/native.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'package:trakli/core/database/tables/local_changes.dart';
+import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'dart:io';
 import 'tables/transaction_table.dart';

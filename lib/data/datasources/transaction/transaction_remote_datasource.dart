@@ -1,6 +1,6 @@
 // Abstract Data Source
 import 'package:dio/dio.dart';
-import 'package:trakli/core/database/app_database.dart';
+import 'package:trakli/data/database/app_database.dart';
 
 abstract class TransactionRemoteDataSource {
   Future<List<Transaction>> getAllTransactions();
