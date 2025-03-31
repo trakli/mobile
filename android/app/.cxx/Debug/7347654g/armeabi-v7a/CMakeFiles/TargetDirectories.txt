@@ -1,2 +1,0 @@
-/Users/fuhaustinambe/code/projects/trakli-mobile/android/app/.cxx/Debug/7347654g/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/fuhaustinambe/code/projects/trakli-mobile/android/app/.cxx/Debug/7347654g/armeabi-v7a/CMakeFiles/rebuild_cache.dir
