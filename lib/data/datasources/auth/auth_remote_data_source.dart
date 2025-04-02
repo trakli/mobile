@@ -9,8 +9,14 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
+  Future<AuthResponseDto> loginWithPhonePassword({
+    required String phone,
+    required String password,
+  });
+
   Future<AuthResponseDto> createUser({
-    required String email,
+    String? email,
+    String? phone,
     required String password,
     required String name,
   });
@@ -39,9 +45,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthResponseDto> createUser({
-    required String email,
-    required String password,
     required String name,
+    required String password,
+    String? email,
+    String? phone,
   }) async {
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
@@ -50,7 +57,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'email': email,
           'password': password,
           'name': name,
+          'phone': phone
         },
+      );
+
+      return AuthResponseDto.fromJson(response.data);
+    });
+  }
+
+  @override
+  Future<AuthResponseDto> loginWithPhonePassword(
+      {required String phone, required String password}) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        '/auth/login',
+        data: {'phone': phone, 'password': password},
       );
 
       return AuthResponseDto.fromJson(response.data);

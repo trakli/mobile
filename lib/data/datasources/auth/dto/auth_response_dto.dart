@@ -14,12 +14,4 @@ class AuthResponseDto with _$AuthResponseDto {
 
   factory AuthResponseDto.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseDtoFromJson(json);
-
-  // Converts to domain entity
-  // AuthResponse toDomain() => AuthResponse(
-  //       accessToken: access_token,
-  //       refreshToken: refresh_token,
-  //       expiresIn: DateTime.now().add(Duration(seconds: expires_in)),
-  //       tokenType: token_type,
-  //     );
 }

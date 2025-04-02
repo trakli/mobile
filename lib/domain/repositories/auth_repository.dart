@@ -13,8 +13,14 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<Either<Failure, void>> loginWithPhonePassword({
+    required String phone,
+    required String password,
+  });
+
   Future<Either<Failure, void>> createUser({
-    required String email,
+    String? email,
+    String? phone,
     required String password,
     required String name,
   });
@@ -55,7 +61,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, Unit>> createUser({
-    required String email,
+    String? email,
+    String? phone,
     required String password,
     required String name,
   }) async {
@@ -64,6 +71,23 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
         name: name,
+        phone: phone,
+      );
+
+      await _tokenManager.persistToken(authResponse.accessToken);
+      await _tokenManager.persistRefreshToken(authResponse.refreshToken);
+
+      return unit;
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> loginWithPhonePassword(
+      {required String phone, required String password}) {
+    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
+      final authResponse = await _remoteDataSource.loginWithPhonePassword(
+        phone: phone,
+        password: password,
       );
 
       await _tokenManager.persistToken(authResponse.accessToken);
