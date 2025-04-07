@@ -5,6 +5,6 @@
 
 version:
   revision: "8c843aa9d37561b098bc2f219f641467354b4293"
-  channel: "master"
+  channel: "stable"
 
 project_type: package

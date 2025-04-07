@@ -8,7 +8,7 @@ class Transactions extends Table with SyncTable {
   TextColumn get serverId => text().nullable()();
 
   @JsonKey('amount')
-  RealColumn get amount => real()();
+  RealColumn get amount => real()(); //TextColumn get amount => text().map(const DecimalConverter())();
 
   @JsonKey('created_at_local')
   DateTimeColumn get createdAtLocal =>
