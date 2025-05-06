@@ -10,7 +10,10 @@ final getIt = GetIt.instance;
   initializerName: r'$initGetIt', // default
   preferRelativeImports: true, // default
   asExtension: false, // default
-  ignoreUnregisteredTypes: [AppDatabase, SyncTypeHandler<Transaction, String>],
+  ignoreUnregisteredTypes: [
+    AppDatabase,
+    SyncTypeHandler<Transaction, String, int>
+  ],
 )
 void configureDependencies(String env) {
   getIt.registerSingleton<AppDatabase>(AppDatabase());

@@ -35,13 +35,13 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
       // );
 
       final updated = transaction.copyWith(
-        serverId: Value(
-          const Uuid().v8(),
-        ),
-        lastSyncedAt: Value(
-          DateTime.now(),
-        ),
-      );
+          // serverId: Value(
+          //   const Uuid().v8(),
+          // ),
+          // lastSyncedAt: Value(
+          //   DateTime.now(),
+          // ),
+          );
 
       _transactions.add(updated);
 
@@ -65,17 +65,17 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
       }
       _transactions[index] = transaction
         ..copyWith(
-          lastSyncedAt: Value(
-            DateTime.now(),
-          ),
-        );
+            // lastSyncedAt: Value(
+            //   DateTime.now(),
+            // ),
+            );
       _notifyListeners();
       return transaction;
     });
   }
 
   @override
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(int id) async {
     await _simulateDelay(() async {
       _transactions.removeWhere((t) => t.id == id);
       _notifyListeners();
@@ -83,7 +83,7 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<Transaction> getTransaction(String id) async {
+  Future<Transaction> getTransaction(int id) async {
     return _simulateDelay(() async {
       final transaction = _transactions.firstWhere(
         (t) => t.id == id,

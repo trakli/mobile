@@ -60,7 +60,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
               color: Colors.grey,
             ),
           ),
-          popUpAnimationStyle: const AnimationStyle(
+          popUpAnimationStyle: AnimationStyle(
             curve: Curves.decelerate,
           ),
         ),

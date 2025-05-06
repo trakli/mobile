@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/domain/repositories/transaction_repository.dart';
 
 @injectable
@@ -17,6 +18,8 @@ class CreateTransactionUseCase
       params.amount,
       params.description,
       params.category,
+      params.type,
+      params.datetime,
     );
   }
 }
@@ -25,10 +28,14 @@ class CreateTransactionParams {
   final double amount;
   final String description;
   final String category;
+  final TransactionType type;
+  final DateTime datetime;
 
   CreateTransactionParams({
     required this.amount,
     required this.description,
     required this.category,
+    required this.type,
+    required this.datetime,
   });
 }

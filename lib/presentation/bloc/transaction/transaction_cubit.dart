@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
 
@@ -53,6 +54,8 @@ class TransactionCubit extends Cubit<TransactionState> {
     required double amount,
     required String description,
     required String category,
+    required TransactionType type,
+    required DateTime datetime,
   }) async {
     emit(const TransactionState.loading());
     final result = await createTransactionUseCase(
@@ -60,6 +63,8 @@ class TransactionCubit extends Cubit<TransactionState> {
         amount: amount,
         description: description,
         category: category,
+        type: type,
+        datetime: datetime,
       ),
     );
     result.fold(

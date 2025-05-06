@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/repositories/transaction_repository.dart';
 
@@ -18,12 +19,13 @@ class GetAllTransactionsUseCase implements UseCase<void, NoParams> {
     return right(
       [
         TransactionEntity(
-          id: '1',
+          clientId: '1',
           amount: 100,
           description: 'Test',
-          category: 'Test',
-          createdAtLocal: DateTime.now(),
-          updatedAtLocal: DateTime.now(),
+          type: TransactionType.expense,
+          datetime: DateTime.now(),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         ),
       ],
     );

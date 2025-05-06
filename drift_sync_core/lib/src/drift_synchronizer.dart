@@ -8,9 +8,9 @@ final _logger = Logger('dbsync:Synchronizer');
 
 abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   DriftSynchronizer({required this.appDatabase, required this.typeHandlers})
-    : _typeHandlers = <String, SyncTypeHandler>{
-        for (final th in typeHandlers) th.entityType: th,
-      };
+      : _typeHandlers = <String, SyncTypeHandler>{
+          for (final th in typeHandlers) th.entityType: th,
+        };
 
   SyncState _state = const SyncState.initial();
   SyncState get state => _state;
@@ -43,7 +43,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
   @protected
   Future<void> Function(SyncState previous, SyncState current)?
-  get onStateChanged => null;
+      get onStateChanged => null;
 
   /// Called when the synchronizer is being disposed.
   /// Override this method to clean up any resources.
@@ -159,14 +159,26 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
   Future<void> _doOperation(
     PendingLocalChange localChange,
-    SyncTypeHandler<dynamic, dynamic> handler,
+    SyncTypeHandler<dynamic, dynamic, dynamic> handler,
   ) async {
     final entity = handler.unmarshal(localChange.data);
     if (localChange.deleted) {
-      await handler.deleteRemote(entity);
+      // For delete operations, try to use server ID if available
+      final serverId = handler.getServerId(entity);
+      if (serverId != null) {
+        await handler.deleteRemote(entity);
+      }
     } else {
-      final updated = await handler.putRemote(entity);
-      await handler.upsertLocal(updated);
+      // For put operations, try to use server ID if available
+      final serverId = handler.getServerId(entity);
+      if (serverId != null) {
+        final updated = await handler.putRemote(entity);
+        await handler.upsertLocal(updated);
+      } else {
+        // If no server ID, this is a new entity
+        final updated = await handler.putRemote(entity);
+        await handler.upsertLocal(updated);
+      }
     }
 
     await appDatabase.concludeLocalChange(localChange, persistedToRemote: true);
@@ -229,8 +241,10 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
           if (change.deleted) {
             final entity = await handler.unmarshal(change.entity);
-            await handler.deleteLocal(entity);
-            break;
+            final serverId = handler.getServerId(entity);
+            if (serverId != null) {
+              await handler.deleteLocal(entity);
+            }
           } else {
             final entity = await handler.unmarshal(change.entity);
             await handler.upsertLocal(entity);

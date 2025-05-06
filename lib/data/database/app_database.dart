@@ -3,15 +3,28 @@ import 'package:drift/native.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:trakli/data/database/tables/categories.dart';
+import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
+import 'package:trakli/data/database/tables/parties.dart';
+import 'package:trakli/data/database/tables/transactions.dart';
+import 'package:trakli/data/database/tables/wallets.dart';
 import 'dart:io';
-import 'tables/transaction_table.dart';
 import 'tables/sync_statuc.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Transactions, LocalChanges, SyncMetadata])
+@DriftDatabase(tables: [
+  Transactions,
+  Parties,
+  Categories,
+  Groups,
+  Wallets,
+  LocalChanges,
+  SyncMetadata,
+])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
 
@@ -61,7 +74,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   @override
   Future<void> concludeEntityLocalChanges(
     String entityType,
-    String entityId,
+    int entityId,
     Operation operation,
   ) async {
     logger.i(

@@ -5,7 +5,7 @@ import 'package:trakli/data/sync/transaction_sync_handler.dart';
 @module
 abstract class SyncModule {
   @lazySingleton
-  Set<SyncTypeHandler<dynamic, dynamic>> provideSyncTypeHandlers(
+  Set<SyncTypeHandler<dynamic, dynamic, dynamic>> provideSyncTypeHandlers(
     TransactionSyncHandler transactionTypeHandler,
   ) {
     return {transactionTypeHandler};

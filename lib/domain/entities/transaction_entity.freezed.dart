@@ -20,14 +20,19 @@ TransactionEntity _$TransactionEntityFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TransactionEntity {
-  String get id => throw _privateConstructorUsedError;
+  String get clientId => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
-  DateTime get createdAtLocal => throw _privateConstructorUsedError;
-  DateTime get updatedAtLocal => throw _privateConstructorUsedError;
-  DateTime? get updatedAtServer => throw _privateConstructorUsedError;
-  DateTime? get deletedAtServer => throw _privateConstructorUsedError;
+  String get description =>
+      throw _privateConstructorUsedError; // required String category,
+// required DateTime createdAtLocal,
+// required DateTime updatedAtLocal,
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime get updatedAt =>
+      throw _privateConstructorUsedError; // required DateTime updatedAt,
+  DateTime get datetime => throw _privateConstructorUsedError;
+  TransactionType get type =>
+      throw _privateConstructorUsedError; // DateTime? updatedAtServer,
+// DateTime? deletedAtServer,
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
   String get rev => throw _privateConstructorUsedError;
 
@@ -48,14 +53,13 @@ abstract class $TransactionEntityCopyWith<$Res> {
       _$TransactionEntityCopyWithImpl<$Res, TransactionEntity>;
   @useResult
   $Res call(
-      {String id,
+      {String clientId,
       double amount,
       String description,
-      String category,
-      DateTime createdAtLocal,
-      DateTime updatedAtLocal,
-      DateTime? updatedAtServer,
-      DateTime? deletedAtServer,
+      DateTime createdAt,
+      DateTime updatedAt,
+      DateTime datetime,
+      TransactionType type,
       DateTime? lastSyncedAt,
       String rev});
 }
@@ -75,21 +79,20 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? clientId = null,
     Object? amount = null,
     Object? description = null,
-    Object? category = null,
-    Object? createdAtLocal = null,
-    Object? updatedAtLocal = null,
-    Object? updatedAtServer = freezed,
-    Object? deletedAtServer = freezed,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? datetime = null,
+    Object? type = null,
     Object? lastSyncedAt = freezed,
     Object? rev = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      clientId: null == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
               as String,
       amount: null == amount
           ? _value.amount
@@ -99,26 +102,22 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAtLocal: null == createdAtLocal
-          ? _value.createdAtLocal
-          : createdAtLocal // ignore: cast_nullable_to_non_nullable
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      updatedAtLocal: null == updatedAtLocal
-          ? _value.updatedAtLocal
-          : updatedAtLocal // ignore: cast_nullable_to_non_nullable
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      updatedAtServer: freezed == updatedAtServer
-          ? _value.updatedAtServer
-          : updatedAtServer // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deletedAtServer: freezed == deletedAtServer
-          ? _value.deletedAtServer
-          : deletedAtServer // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      datetime: null == datetime
+          ? _value.datetime
+          : datetime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TransactionType,
       lastSyncedAt: freezed == lastSyncedAt
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
@@ -140,14 +139,13 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {String clientId,
       double amount,
       String description,
-      String category,
-      DateTime createdAtLocal,
-      DateTime updatedAtLocal,
-      DateTime? updatedAtServer,
-      DateTime? deletedAtServer,
+      DateTime createdAt,
+      DateTime updatedAt,
+      DateTime datetime,
+      TransactionType type,
       DateTime? lastSyncedAt,
       String rev});
 }
@@ -165,21 +163,20 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? clientId = null,
     Object? amount = null,
     Object? description = null,
-    Object? category = null,
-    Object? createdAtLocal = null,
-    Object? updatedAtLocal = null,
-    Object? updatedAtServer = freezed,
-    Object? deletedAtServer = freezed,
+    Object? createdAt = null,
+    Object? updatedAt = null,
+    Object? datetime = null,
+    Object? type = null,
     Object? lastSyncedAt = freezed,
     Object? rev = null,
   }) {
     return _then(_$TransactionEntityImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
+      clientId: null == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
               as String,
       amount: null == amount
           ? _value.amount
@@ -189,26 +186,22 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      category: null == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAtLocal: null == createdAtLocal
-          ? _value.createdAtLocal
-          : createdAtLocal // ignore: cast_nullable_to_non_nullable
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      updatedAtLocal: null == updatedAtLocal
-          ? _value.updatedAtLocal
-          : updatedAtLocal // ignore: cast_nullable_to_non_nullable
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
-      updatedAtServer: freezed == updatedAtServer
-          ? _value.updatedAtServer
-          : updatedAtServer // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deletedAtServer: freezed == deletedAtServer
-          ? _value.deletedAtServer
-          : deletedAtServer // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      datetime: null == datetime
+          ? _value.datetime
+          : datetime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as TransactionType,
       lastSyncedAt: freezed == lastSyncedAt
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
@@ -225,14 +218,13 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TransactionEntityImpl implements _TransactionEntity {
   const _$TransactionEntityImpl(
-      {required this.id,
+      {required this.clientId,
       required this.amount,
       required this.description,
-      required this.category,
-      required this.createdAtLocal,
-      required this.updatedAtLocal,
-      this.updatedAtServer,
-      this.deletedAtServer,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.datetime,
+      required this.type,
       this.lastSyncedAt,
       this.rev = '1'});
 
@@ -240,21 +232,25 @@ class _$TransactionEntityImpl implements _TransactionEntity {
       _$$TransactionEntityImplFromJson(json);
 
   @override
-  final String id;
+  final String clientId;
   @override
   final double amount;
   @override
   final String description;
+// required String category,
+// required DateTime createdAtLocal,
+// required DateTime updatedAtLocal,
   @override
-  final String category;
+  final DateTime createdAt;
   @override
-  final DateTime createdAtLocal;
+  final DateTime updatedAt;
+// required DateTime updatedAt,
   @override
-  final DateTime updatedAtLocal;
+  final DateTime datetime;
   @override
-  final DateTime? updatedAtServer;
-  @override
-  final DateTime? deletedAtServer;
+  final TransactionType type;
+// DateTime? updatedAtServer,
+// DateTime? deletedAtServer,
   @override
   final DateTime? lastSyncedAt;
   @override
@@ -263,7 +259,7 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
   @override
   String toString() {
-    return 'TransactionEntity(id: $id, amount: $amount, description: $description, category: $category, createdAtLocal: $createdAtLocal, updatedAtLocal: $updatedAtLocal, updatedAtServer: $updatedAtServer, deletedAtServer: $deletedAtServer, lastSyncedAt: $lastSyncedAt, rev: $rev)';
+    return 'TransactionEntity(clientId: $clientId, amount: $amount, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, datetime: $datetime, type: $type, lastSyncedAt: $lastSyncedAt, rev: $rev)';
   }
 
   @override
@@ -271,20 +267,18 @@ class _$TransactionEntityImpl implements _TransactionEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TransactionEntityImpl &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.category, category) ||
-                other.category == category) &&
-            (identical(other.createdAtLocal, createdAtLocal) ||
-                other.createdAtLocal == createdAtLocal) &&
-            (identical(other.updatedAtLocal, updatedAtLocal) ||
-                other.updatedAtLocal == updatedAtLocal) &&
-            (identical(other.updatedAtServer, updatedAtServer) ||
-                other.updatedAtServer == updatedAtServer) &&
-            (identical(other.deletedAtServer, deletedAtServer) ||
-                other.deletedAtServer == deletedAtServer) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.datetime, datetime) ||
+                other.datetime == datetime) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
             (identical(other.rev, rev) || other.rev == rev));
@@ -292,18 +286,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      amount,
-      description,
-      category,
-      createdAtLocal,
-      updatedAtLocal,
-      updatedAtServer,
-      deletedAtServer,
-      lastSyncedAt,
-      rev);
+  int get hashCode => Object.hash(runtimeType, clientId, amount, description,
+      createdAt, updatedAt, datetime, type, lastSyncedAt, rev);
 
   /// Create a copy of TransactionEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -324,14 +308,13 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
 abstract class _TransactionEntity implements TransactionEntity {
   const factory _TransactionEntity(
-      {required final String id,
+      {required final String clientId,
       required final double amount,
       required final String description,
-      required final String category,
-      required final DateTime createdAtLocal,
-      required final DateTime updatedAtLocal,
-      final DateTime? updatedAtServer,
-      final DateTime? deletedAtServer,
+      required final DateTime createdAt,
+      required final DateTime updatedAt,
+      required final DateTime datetime,
+      required final TransactionType type,
       final DateTime? lastSyncedAt,
       final String rev}) = _$TransactionEntityImpl;
 
@@ -339,21 +322,22 @@ abstract class _TransactionEntity implements TransactionEntity {
       _$TransactionEntityImpl.fromJson;
 
   @override
-  String get id;
+  String get clientId;
   @override
   double get amount;
   @override
-  String get description;
+  String get description; // required String category,
+// required DateTime createdAtLocal,
+// required DateTime updatedAtLocal,
   @override
-  String get category;
+  DateTime get createdAt;
   @override
-  DateTime get createdAtLocal;
+  DateTime get updatedAt; // required DateTime updatedAt,
   @override
-  DateTime get updatedAtLocal;
+  DateTime get datetime;
   @override
-  DateTime? get updatedAtServer;
-  @override
-  DateTime? get deletedAtServer;
+  TransactionType get type; // DateTime? updatedAtServer,
+// DateTime? deletedAtServer,
   @override
   DateTime? get lastSyncedAt;
   @override

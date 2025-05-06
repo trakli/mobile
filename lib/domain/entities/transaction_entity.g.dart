@@ -9,18 +9,13 @@ part of 'transaction_entity.dart';
 _$TransactionEntityImpl _$$TransactionEntityImplFromJson(
         Map<String, dynamic> json) =>
     _$TransactionEntityImpl(
-      id: json['id'] as String,
+      clientId: json['clientId'] as String,
       amount: (json['amount'] as num).toDouble(),
       description: json['description'] as String,
-      category: json['category'] as String,
-      createdAtLocal: DateTime.parse(json['createdAtLocal'] as String),
-      updatedAtLocal: DateTime.parse(json['updatedAtLocal'] as String),
-      updatedAtServer: json['updatedAtServer'] == null
-          ? null
-          : DateTime.parse(json['updatedAtServer'] as String),
-      deletedAtServer: json['deletedAtServer'] == null
-          ? null
-          : DateTime.parse(json['deletedAtServer'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      datetime: DateTime.parse(json['datetime'] as String),
+      type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
       lastSyncedAt: json['lastSyncedAt'] == null
           ? null
           : DateTime.parse(json['lastSyncedAt'] as String),
@@ -30,14 +25,19 @@ _$TransactionEntityImpl _$$TransactionEntityImplFromJson(
 Map<String, dynamic> _$$TransactionEntityImplToJson(
         _$TransactionEntityImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'clientId': instance.clientId,
       'amount': instance.amount,
       'description': instance.description,
-      'category': instance.category,
-      'createdAtLocal': instance.createdAtLocal.toIso8601String(),
-      'updatedAtLocal': instance.updatedAtLocal.toIso8601String(),
-      'updatedAtServer': instance.updatedAtServer?.toIso8601String(),
-      'deletedAtServer': instance.deletedAtServer?.toIso8601String(),
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
+      'datetime': instance.datetime.toIso8601String(),
+      'type': _$TransactionTypeEnumMap[instance.type]!,
       'lastSyncedAt': instance.lastSyncedAt?.toIso8601String(),
       'rev': instance.rev,
     };
+
+const _$TransactionTypeEnumMap = {
+  TransactionType.income: 'income',
+  TransactionType.expense: 'expense',
+  TransactionType.transfer: 'transfer',
+};

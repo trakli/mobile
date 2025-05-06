@@ -15,7 +15,7 @@ mixin SynchronizerDb on GeneratedDatabase {
 
   Future<void> concludeEntityLocalChanges(
     String entityType,
-    String entityId,
+    int entityId,
     Operation operation,
   );
 }

@@ -13,30 +13,27 @@ enum DataDestination { local, both }
 /// Each of these
 /// methods works by attempting to first use
 /// online data with the fallback of the offline data.
-abstract class SyncEntityRepository<
-  TAppDatabase extends SynchronizerDb,
-  TEntity,
-  TKey
-> {
+abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
+    TEntity, TKey, TServerKey> {
   const SyncEntityRepository({required this.syncHandler, required this.db});
 
-  final SyncTypeHandler<TEntity, TKey> syncHandler;
+  final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;
   final TAppDatabase db;
 
-  Future<(TEntity, DataSource)> get(TKey id) async {
-    final remote = await getRemote(id);
+  // Future<(TEntity, DataSource)> get(TKey id) async {
+  //   final remote = await getRemote(id);
 
-    if (remote != null) {
-      await syncHandler.upsertLocal(remote);
-      return (remote, DataSource.remote);
-    }
+  //   if (remote != null) {
+  //     await syncHandler.upsertLocal(remote);
+  //     return (remote, DataSource.remote);
+  //   }
 
-    final local = await syncHandler.getLocal(id);
-    return (local, DataSource.local);
-  }
+  //   final local = await syncHandler.getLocalByClientId(id);
+  //   return (local, DataSource.local);
+  // }
 
   @protected
-  Future<TEntity?> getRemote(TKey id) async {
+  Future<TEntity?> getRemote(TServerKey id) async {
     try {
       final e = await syncHandler.getRemote(id);
       return e;
@@ -59,14 +56,14 @@ abstract class SyncEntityRepository<
         final localChange = PendingLocalChange.put(
           protoBytes: syncHandler.marshal(entity),
           entityType: syncHandler.entityType,
-          entityId: syncHandler.getId(entity),
+          entityId: syncHandler.getClientId(entity),
           entityRev: syncHandler.getRev(entity),
         );
         await db.insertLocalChange(localChange);
       } else {
         await db.concludeEntityLocalChanges(
           syncHandler.entityType,
-          syncHandler.getId(entity),
+          syncHandler.getServerId(entity),
           Operation.put,
         );
       }
@@ -100,14 +97,14 @@ abstract class SyncEntityRepository<
         final localChange = PendingLocalChange.delete(
           entityType: syncHandler.entityType,
           data: syncHandler.marshal(entity),
-          entityId: syncHandler.getId(entity),
+          entityId: syncHandler.getClientId(entity),
           entityRev: syncHandler.getRev(entity),
         );
         await db.insertLocalChange(localChange);
       } else {
         await db.concludeEntityLocalChanges(
           syncHandler.entityType,
-          syncHandler.getId(entity),
+          syncHandler.getServerId(entity),
           Operation.delete,
         );
       }

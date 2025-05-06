@@ -1,39 +1,39 @@
-import 'package:drift/drift.dart';
-import 'package:trakli/data/database/tables/shema.dart';
+// import 'package:drift/drift.dart';
+// import 'package:trakli/data/database/tables/shema.dart';
 
-@DataClassName('Transaction')
-class Transactions extends Table with SyncTable {
-  TextColumn get id => text()();
+// @DataClassName('Transaction')
+// class Transactions extends Table with SyncTable {
+//   TextColumn get id => text()();
 
-  TextColumn get serverId => text().nullable()();
+//   TextColumn get serverId => text().nullable()();
 
-  @JsonKey('amount')
-  RealColumn get amount => real()(); //TextColumn get amount => text().map(const DecimalConverter())();
+//   @JsonKey('amount')
+//   RealColumn get amount => real()(); //TextColumn get amount => text().map(const DecimalConverter())();
 
-  @JsonKey('created_at_local')
-  DateTimeColumn get createdAtLocal =>
-      dateTime().withDefault(currentDateAndTime)();
+//   @JsonKey('created_at_local')
+//   DateTimeColumn get createdAtLocal =>
+//       dateTime().withDefault(currentDateAndTime)();
 
-  @JsonKey('updated_at_local')
-  DateTimeColumn get updatedAtLocal =>
-      dateTime().withDefault(currentDateAndTime)();
+//   @JsonKey('updated_at_local')
+//   DateTimeColumn get updatedAtLocal =>
+//       dateTime().withDefault(currentDateAndTime)();
 
-  @JsonKey('created_at_server')
-  DateTimeColumn get createdAtServer => dateTime().nullable()();
+//   @JsonKey('created_at_server')
+//   DateTimeColumn get createdAtServer => dateTime().nullable()();
 
-  @JsonKey('updated_at_server')
-  DateTimeColumn get updatedAtServer => dateTime().nullable()();
+//   @JsonKey('updated_at_server')
+//   DateTimeColumn get updatedAtServer => dateTime().nullable()();
 
-  TextColumn get category => text()();
+//   TextColumn get category => text()();
 
-  TextColumn get description => text().nullable()();
+//   TextColumn get description => text().nullable()();
 
-  @JsonKey('deleted_at_local')
-  DateTimeColumn get deletedAtLocal => dateTime().nullable()();
+//   @JsonKey('deleted_at_local')
+//   DateTimeColumn get deletedAtLocal => dateTime().nullable()();
 
-  @JsonKey('last_synced_at')
-  DateTimeColumn get lastSyncedAt => dateTime().nullable()();
+  // @JsonKey('last_synced_at')
+  // DateTimeColumn get lastSyncedAt => dateTime().nullable()();
 
-  @override
-  Set<Column> get primaryKey => {id};
-}
+//   @override
+//   Set<Column> get primaryKey => {id};
+// }

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class TransactionLocalDataSource {
@@ -9,6 +10,8 @@ abstract class TransactionLocalDataSource {
     double amount,
     String description,
     String category,
+    TransactionType type,
+    DateTime datetime,
   );
   Future<Transaction> updateTransaction(
     String id,
@@ -39,13 +42,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     double amount,
     String? description,
     String category,
+    TransactionType type,
+    DateTime datetime,
   ) async {
     final model = await database.into(database.transactions).insertReturning(
           TransactionsCompanion.insert(
-            id: const Uuid().v4(),
+            clientId: const Uuid().v4(),
             amount: amount,
             description: Value(description),
-            category: category,
+            type: type,
+            datetime: datetime,
           ),
         );
 
@@ -60,13 +66,13 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     String? category,
   ) async {
     final model = await (database.update(database.transactions)
-          ..where((t) => t.id.equals(id)))
+          ..where((t) => t.clientId.equals(id)))
         .writeReturning(
       TransactionsCompanion(
         amount: amount != null ? Value(amount) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),
-        category: category != null ? Value(category) : const Value.absent(),
+        // category: category != null ? Value(category) : const Value.absent(),
       ),
     );
 
@@ -76,7 +82,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
   @override
   Future<Transaction> deleteTransaction(String id) async {
     final model = await (database.select(database.transactions)
-          ..where((t) => t.id.equals(id)))
+          ..where((t) => t.clientId.equals(id)))
         .getSingle();
 
     await database.delete(database.transactions).delete(model);

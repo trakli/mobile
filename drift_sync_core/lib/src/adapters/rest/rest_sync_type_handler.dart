@@ -2,14 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:meta/meta.dart';
 
-mixin RestSyncTypeHandler<TEntity, TKey> on SyncTypeHandler<TEntity, TKey> {
+mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
+    on SyncTypeHandler<TEntity, TKey, TServerKey> {
   Future<List<TEntity>> restGetAllRemote();
-  Future<TEntity?> restGetRemote(TKey id);
+  Future<TEntity?> restGetRemote(TServerKey id);
   Future<TEntity> restPutRemote(TEntity entity);
   Future<void> restDeleteRemote(TEntity entity);
 
   @override
-  Future<TEntity?> getRemote(TKey id) async {
+  Future<TEntity?> getRemote(TServerKey id) async {
     try {
       final e = await restGetRemote(id);
       return e;

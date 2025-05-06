@@ -4,10 +4,10 @@ import 'package:trakli/data/database/app_database.dart';
 
 abstract class TransactionRemoteDataSource {
   Future<List<Transaction>> getAllTransactions();
-  Future<Transaction> getTransaction(String id);
+  Future<Transaction> getTransaction(int id);
   Future<Transaction> insertTransaction(Transaction transaction);
   Future<Transaction> updateTransaction(Transaction transaction);
-  Future<void> deleteTransaction(String id);
+  Future<void> deleteTransaction(int id);
   // Future<List<TransactionEntity>> syncTransactions(
   //     List<TransactionEntity> localTransactions);
 }
@@ -53,12 +53,12 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(int id) async {
     await dio.delete('transactions/$id');
   }
 
   @override
-  Future<Transaction> getTransaction(String id) async {
+  Future<Transaction> getTransaction(int id) async {
     final response = await dio.get('transactions/$id');
     return Transaction.fromJson(response.data);
   }

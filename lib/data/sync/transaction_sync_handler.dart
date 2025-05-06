@@ -1,13 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:trakli/data/database/app_database.dart';
-import 'package:trakli/data/database/tables/transaction_table.dart';
+import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
-class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
-    with RestSyncTypeHandler<Transaction, String> {
+class TransactionSyncHandler extends SyncTypeHandler<Transaction, String, int>
+    with RestSyncTypeHandler<Transaction, String, int> {
   TransactionSyncHandler(
     this.db,
     this.remoteDataSource,
@@ -21,26 +21,26 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
   @override
   String get entityType => 'transaction';
 
-  @override
-  String getId(Transaction entity) => entity.id;
+  // @override
+  // String getId(Transaction entity) => entity.clientId;
 
   @override
-  String getRev(Transaction entity) => entity.rev;
+  String getRev(Transaction entity) => entity.rev ?? '1';
 
-  @override
-  Future<Transaction> getLocal(String id) async {
-    final row =
-        await (db.select(table)..where((t) => t.id.equals(id))).getSingle();
-    return Transaction(
-      id: row.id,
-      amount: row.amount,
-      category: row.category,
-      description: row.description,
-      rev: row.rev,
-      createdAtLocal: DateTime.now(),
-      updatedAtLocal: DateTime.now(),
-    );
-  }
+  // @override
+  // Future<Transaction> getLocal(String id) async {
+  //   final row = await (db.select(table)..where((t) => t.clientId.equals(id)))
+  //       .getSingle();
+  //   return Transaction(
+  //       id: row.id,
+  //       amount: row.amount,
+  //       description: row.description,
+  //       rev: row.rev,
+  //       clientId: row.clientId,
+  //       type: row.type,
+  //       datetime: row.datetime,
+  //       createdAt: row.createdAt);
+  // }
 
   @override
   Transaction unmarshal(Map<String, dynamic> entityJson) {
@@ -58,13 +58,8 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
   }
 
   @override
-  Future<Transaction?> restGetRemote(String id) async {
-    return await remoteDataSource.getTransaction(id);
-  }
-
-  @override
   Future<Transaction> restPutRemote(Transaction entity) async {
-    if (entity.serverId == null) {
+    if (entity.id == null) {
       return remoteDataSource.insertTransaction(entity);
     } else {
       return await remoteDataSource.updateTransaction(entity);
@@ -72,8 +67,15 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
   }
 
   @override
+  Future<Transaction?> restGetRemote(int id) async {
+    return await remoteDataSource.getTransaction(id);
+  }
+
+  @override
   Future<void> restDeleteRemote(Transaction entity) async {
-    await remoteDataSource.deleteTransaction(entity.id);
+    if (entity.id != null) {
+      await remoteDataSource.deleteTransaction(entity.id!);
+    }
   }
 
   // Implementing the required methods from SyncTypeHandler
@@ -95,6 +97,31 @@ class TransactionSyncHandler extends SyncTypeHandler<Transaction, String>
   @override
   Future<void> deleteAllLocal() async {
     await table.deleteAll();
+  }
+
+  @override
+  String getClientId(Transaction entity) {
+    return entity.clientId;
+  }
+
+  @override
+  Future<Transaction> getLocalByClientId(String clientId) async {
+    final result = await (db.select(table)
+          ..where((t) => t.clientId.equals(clientId)))
+        .get();
+    return result.first;
+  }
+
+  @override
+  Future<Transaction?> getLocalByServerId(int serverId) async {
+    final result =
+        await (db.select(table)..where((t) => t.id.equals(serverId))).get();
+    return result.first;
+  }
+
+  @override
+  int getServerId(Transaction entity) {
+    return entity.id!;
   }
 
   // // Example of using the sync methods

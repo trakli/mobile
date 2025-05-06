@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/transaction_entity.dart';
 
@@ -27,12 +28,13 @@ class MockTransactionService {
   ) async {
     return _simulateDelay(() async {
       final transaction = TransactionEntity(
-        id: const Uuid().v4(),
+        clientId: const Uuid().v4(),
         amount: amount,
         description: description,
-        category: category,
-        createdAtLocal: DateTime.now(),
-        updatedAtLocal: DateTime.now(),
+        datetime: DateTime.now(),
+        type: TransactionType.expense,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
       _transactions.add(transaction);
       _notifyListeners();
@@ -42,13 +44,13 @@ class MockTransactionService {
 
   // Update a transaction
   Future<TransactionEntity> updateTransaction(
-    String id,
+    String clientId,
     double? amount,
     String? description,
     String? category,
   ) async {
     return _simulateDelay(() async {
-      final index = _transactions.indexWhere((t) => t.id == id);
+      final index = _transactions.indexWhere((t) => t.clientId == clientId);
       if (index == -1) {
         throw Exception('Transaction not found');
       }
@@ -57,8 +59,11 @@ class MockTransactionService {
       final updatedTransaction = oldTransaction.copyWith(
         amount: amount ?? oldTransaction.amount,
         description: description ?? oldTransaction.description,
-        category: category ?? oldTransaction.category,
-        updatedAtLocal: DateTime.now(),
+        datetime: DateTime.now(),
+        type: TransactionType.expense,
+        createdAt: DateTime.now(),
+        // category: category ?? oldTransaction.category,
+        // updatedAtLocal: DateTime.now(),
       );
 
       _transactions[index] = updatedTransaction;
@@ -68,18 +73,18 @@ class MockTransactionService {
   }
 
   // Delete a transaction
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(String clientId) async {
     await _simulateDelay(() async {
-      _transactions.removeWhere((t) => t.id == id);
+      _transactions.removeWhere((t) => t.clientId == clientId);
       _notifyListeners();
     });
   }
 
   // Get a single transaction
-  Future<TransactionEntity> getTransaction(String id) async {
+  Future<TransactionEntity> getTransaction(String clientId) async {
     return _simulateDelay(() async {
       final transaction = _transactions.firstWhere(
-        (t) => t.id == id,
+        (t) => t.clientId == clientId,
         orElse: () => throw Exception('Transaction not found'),
       );
       return transaction;

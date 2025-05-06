@@ -4,16 +4,14 @@ import 'package:trakli/domain/entities/transaction_entity.dart';
 class TransactionMapper {
   static TransactionEntity toDomain(Transaction row) {
     return TransactionEntity(
-      id: row.id,
+      clientId: row.clientId,
       amount: row.amount,
       description: row.description ?? '',
-      createdAtLocal: row.createdAtLocal,
-      updatedAtLocal: row.updatedAtLocal,
-      updatedAtServer: row.updatedAtServer,
-      deletedAtServer: row.deletedAtLocal,
       lastSyncedAt: row.lastSyncedAt,
-      rev: row.rev,
-      category: row.category,
+      createdAt: row.createdAt,
+      datetime: row.datetime,
+      type: row.type, 
+      updatedAt: row.updatedAt,
     );
   }
 
@@ -23,16 +21,14 @@ class TransactionMapper {
 
   static Transaction toData(TransactionEntity entity) {
     return Transaction(
-      id: entity.id,
+      clientId: entity.clientId,
       amount: entity.amount,
       description: entity.description,
-      category: entity.category,
-      createdAtLocal: entity.createdAtLocal,
-      updatedAtLocal: entity.updatedAtLocal,
-      updatedAtServer: entity.updatedAtServer,
-      deletedAtLocal: entity.deletedAtServer,
-      lastSyncedAt: entity.lastSyncedAt,
-      rev: entity.rev,
+      // rev: entity.rev,
+      type: entity.type,
+      datetime: entity.datetime,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     );
   }
 }

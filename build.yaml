@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          skip_verification_code: true  
+          # Relative path to the database file
+          databases:
+            default: lib/data/database/app_database.dart
+      json_serializable:
+        options:
+          explicit_to_json: true

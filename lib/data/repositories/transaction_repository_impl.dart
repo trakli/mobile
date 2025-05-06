@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/data/datasources/transaction/transaction_local_datasource.dart';
 import 'package:trakli/data/mapper/transaction_mapper.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
@@ -13,7 +14,7 @@ import '../../domain/repositories/transaction_repository.dart';
 
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl
-    extends SyncEntityRepository<AppDatabase, Transaction, String>
+    extends SyncEntityRepository<AppDatabase, Transaction, String, int>
     implements TransactionRepository {
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
@@ -63,10 +64,12 @@ class TransactionRepositoryImpl
     double amount,
     String description,
     String category,
+    TransactionType type,
+    DateTime datetime,
   ) async {
     try {
       final transaction = await localDataSource.insertTransaction(
-          amount, description, category);
+          amount, description, category, type, datetime);
 
       unawaited(put(transaction));
       return const Right(unit);

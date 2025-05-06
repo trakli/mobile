@@ -24,18 +24,24 @@ import '../data/database/app_database.dart' as _i704;
 import '../data/datasources/auth/auth_local_data_source.dart' as _i276;
 import '../data/datasources/auth/auth_remote_data_source.dart' as _i496;
 import '../data/datasources/auth/token_manager.dart' as _i483;
+import '../data/datasources/category/category_local_datasource.dart' as _i148;
+import '../data/datasources/category/category_remote_datasource.dart' as _i558;
 import '../data/datasources/transaction/mock_transaction_remote_datasource.dart'
     as _i150;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
     as _i662;
 import '../data/datasources/transaction/transaction_remote_datasource.dart'
     as _i79;
+import '../data/repositories/category_repository_impl.dart' as _i324;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
+import '../data/sync/category_sync_handler.dart' as _i463;
 import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../domain/repositories/auth_repository.dart' as _i800;
+import '../domain/repositories/category_repository.dart' as _i410;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/usecases/auth/create_user_usecase.dart' as _i170;
-import '../domain/usecases/auth/login_by_email_usecase.dart' as _i363;
+import '../domain/usecases/auth/login_by_email_usecase.dart' as _i42;
+import '../domain/usecases/auth/login_by_phone_usecase.dart' as _i498;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
     as _i669;
 import '../domain/usecases/transaction/delete_transaction_usecase.dart'
@@ -82,6 +88,8 @@ _i174.GetIt $initGetIt(
   );
   gh.factory<_i662.TransactionLocalDataSource>(
       () => _i662.TransactionLocalDataSourceImpl(gh<_i704.AppDatabase>()));
+  gh.factory<_i148.CategoryLocalDataSource>(
+      () => _i148.CategoryLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.lazySingleton<_i361.Dio>(
       () => injectHttpClientModule.dio(gh<String>(instanceName: 'HttpUrl')));
   gh.factory<String>(
@@ -89,6 +97,12 @@ _i174.GetIt $initGetIt(
     instanceName: 'HttpUrl',
     registerFor: {_prod},
   );
+  gh.factory<_i558.CategoryRemoteDataSource>(
+      () => _i558.CategoryRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.lazySingleton<_i463.CategorySyncHandler>(() => _i463.CategorySyncHandler(
+        gh<_i704.AppDatabase>(),
+        gh<_i558.CategoryRemoteDataSource>(),
+      ));
   gh.lazySingleton<_i893.TransactionSyncHandler>(
       () => _i893.TransactionSyncHandler(
             gh<_i704.AppDatabase>(),
@@ -96,13 +110,19 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic>>>(() =>
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(() =>
       syncModule.provideSyncTypeHandlers(gh<_i893.TransactionSyncHandler>()));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
         appDatabase: gh<_i704.AppDatabase>(),
-        typeHandlers: gh<Set<_i877.SyncTypeHandler<dynamic, dynamic>>>(),
+        typeHandlers:
+            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
         dio: gh<_i361.Dio>(),
         networkInfo: gh<_i6.NetworkInfo>(),
+      ));
+  gh.lazySingleton<_i410.CategoryRepository>(() => _i324.CategoryRepositoryImpl(
+        syncHandler: gh<_i463.CategorySyncHandler>(),
+        localDataSource: gh<_i148.CategoryLocalDataSource>(),
+        db: gh<_i704.AppDatabase>(),
       ));
   gh.factory<_i800.AuthRepository>(() => _i800.AuthRepositoryImpl(
         remoteDataSource: gh<_i496.AuthRemoteDataSource>(),
@@ -133,10 +153,12 @@ _i174.GetIt $initGetIt(
         deleteTransactionUseCase: gh<_i1022.DeleteTransactionUseCase>(),
         listenToTransactionsUseCase: gh<_i1022.ListenToTransactionsUseCase>(),
       ));
+  gh.factory<_i42.LoginByEmailUsecase>(
+      () => _i42.LoginByEmailUsecase(gh<_i800.AuthRepository>()));
+  gh.factory<_i498.LoginByPhoneUsecase>(
+      () => _i498.LoginByPhoneUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i170.CreateUserUsecase>(
       () => _i170.CreateUserUsecase(gh<_i800.AuthRepository>()));
-  gh.factory<_i363.LoginByEmailUsecase>(
-      () => _i363.LoginByEmailUsecase(gh<_i800.AuthRepository>()));
   return getIt;
 }
 
