@@ -79,7 +79,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     String? description,
     String? category,
   }) async {
-    emit(const TransactionState.loading());
     final result = await updateTransactionUseCase(
       UpdateTransactionParams(
         id: id,
@@ -95,7 +94,6 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   Future<void> deleteTransaction(String id) async {
-    emit(const TransactionState.loading());
     final result = await deleteTransactionUseCase(id);
     result.fold(
       (failure) => emit(TransactionState.error(failure)),

@@ -68,7 +68,6 @@ dependencies:
   injectable: ^2.5.0
   logger: ^2.5.0
   flutter_secure_storage: ^9.2.4
-  dartz: ^0.10.1
   get_it: ^8.0.3
   flutter_riverpod: ^2.6.1
   decimal: ^3.0.2

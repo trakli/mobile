@@ -42,6 +42,11 @@ import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/usecases/auth/create_user_usecase.dart' as _i170;
 import '../domain/usecases/auth/login_by_email_usecase.dart' as _i42;
 import '../domain/usecases/auth/login_by_phone_usecase.dart' as _i498;
+import '../domain/usecases/category/add_category_usecase.dart' as _i445;
+import '../domain/usecases/category/delete_category_usecase.dart' as _i292;
+import '../domain/usecases/category/get_categories_usecase.dart' as _i961;
+import '../domain/usecases/category/listen_to_categories_usecase.dart' as _i500;
+import '../domain/usecases/category/update_category_usecase.dart' as _i986;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
     as _i669;
 import '../domain/usecases/transaction/delete_transaction_usecase.dart'
@@ -54,6 +59,7 @@ import '../domain/usecases/transaction/update_transaction_usecase.dart'
     as _i241;
 import '../domain/usecases/transaction/usecase.dart' as _i1022;
 import '../presentation/bloc/transaction/transaction_cubit.dart' as _i218;
+import '../presentation/category/cubit/category_cubit.dart' as _i455;
 
 const String _dev = 'dev';
 const String _prod = 'prod';
@@ -130,6 +136,14 @@ _i174.GetIt $initGetIt(
         networkInfo: gh<_i6.NetworkInfo>(),
         tokenManager: gh<_i483.TokenManager>(),
       ));
+  gh.factory<_i986.UpdateCategoryUseCase>(
+      () => _i986.UpdateCategoryUseCase(gh<_i410.CategoryRepository>()));
+  gh.factory<_i292.DeleteCategoryUseCase>(
+      () => _i292.DeleteCategoryUseCase(gh<_i410.CategoryRepository>()));
+  gh.factory<_i445.AddCategoryUseCase>(
+      () => _i445.AddCategoryUseCase(gh<_i410.CategoryRepository>()));
+  gh.factory<_i961.GetCategoriesUseCase>(
+      () => _i961.GetCategoriesUseCase(gh<_i410.CategoryRepository>()));
   gh.lazySingleton<_i118.TransactionRepository>(
       () => _i114.TransactionRepositoryImpl(
             syncHandler: gh<_i893.TransactionSyncHandler>(),
@@ -146,6 +160,8 @@ _i174.GetIt $initGetIt(
       () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i500.ListenToCategoriesUseCase>(
+      () => _i500.ListenToCategoriesUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i218.TransactionCubit>(() => _i218.TransactionCubit(
         getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
         createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
@@ -159,6 +175,12 @@ _i174.GetIt $initGetIt(
       () => _i498.LoginByPhoneUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i170.CreateUserUsecase>(
       () => _i170.CreateUserUsecase(gh<_i800.AuthRepository>()));
+  gh.factory<_i455.CategoryCubit>(() => _i455.CategoryCubit(
+        gh<_i445.AddCategoryUseCase>(),
+        gh<_i986.UpdateCategoryUseCase>(),
+        gh<_i292.DeleteCategoryUseCase>(),
+        gh<_i961.GetCategoriesUseCase>(),
+      ));
   return getIt;
 }
 

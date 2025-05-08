@@ -9,7 +9,7 @@ abstract class InjectHttpClientModule {
 
   @Named('HttpUrl')
   @dev
-  String get devHttpUrl => 'https://api.trakli.com/api/v1/';
+  String get devHttpUrl => 'https://api.dev.trakli.app/api/v1/';
 
   @Named('HttpUrl')
   @prod

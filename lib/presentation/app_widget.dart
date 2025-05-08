@@ -8,7 +8,10 @@ import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/bloc/transaction/transaction_cubit.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding_screen.dart';
+import 'package:trakli/presentation/root/main_navigation_screen.dart';
+// import 'package:trakli/presentation/onboarding_screen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
@@ -20,7 +23,10 @@ class AppWidget extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider(
         create: (_) => getIt<TransactionCubit>(),
-      )
+      ),
+      BlocProvider(
+        create: (_) => getIt<CategoryCubit>(),
+      ),
     ], child: const AppView());
   }
 }
@@ -201,6 +207,11 @@ class AppView extends StatelessWidget {
         ),
       ),
       home: const OnboardingScreen(),
+
+      // home: MainNavigationScreen(),
+      // home: const HomePage(),
+
+      // const OnboardingScreen(),
     );
   }
 }

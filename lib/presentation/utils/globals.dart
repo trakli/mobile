@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:trakli/models/category_model.dart';
-import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -19,74 +19,74 @@ final List<String> supportedFormDisplays = [
   'compact',
 ];
 
-
-List<CategoryModel> incomeTransactions = const [
-  CategoryModel(
+List<CategoryEntity> incomeTransactions = const [
+  CategoryEntity(
     name: "Salary",
-    type: TransactionType.income,
-    icon: Icons.payments, // Represents salary or paycheck
+    type: CategoryType.income,
+    clientGeneratedId: "1",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Freelance",
-    type: TransactionType.income,
-    icon: Icons.work, // Represents freelance or contract work
+    type: CategoryType.income,
+    clientGeneratedId: "2",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Gifts",
-    type: TransactionType.income,
-    icon: Icons.card_giftcard, // Represents money received as gifts
+    type: CategoryType.income,
+    clientGeneratedId: "3",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Donations",
-    type: TransactionType.income,
-    icon: Icons.volunteer_activism, // Represents charity or donations received
+    type: CategoryType.income,
+    clientGeneratedId: "4",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Other Income",
-    type: TransactionType.income,
-    icon: Icons.attach_money, // General icon for other income sources
+    type: CategoryType.income,
+    clientGeneratedId: "5",
   ),
 ];
-List<CategoryModel> expenseTransactions = const [
-  CategoryModel(
+
+List<CategoryEntity> expenseTransactions = const [
+  CategoryEntity(
     name: "Rent",
-    type: TransactionType.expense,
-    icon: Icons.home, // Represents housing or rent
+    type: CategoryType.expense,
+    clientGeneratedId: "6",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Groceries",
-    type: TransactionType.expense,
-    icon: Icons.shopping_cart, // Represents grocery shopping
+    type: CategoryType.expense,
+    clientGeneratedId: "7",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Utilities",
-    type: TransactionType.expense,
-    icon: Icons.electrical_services, // Represents electricity, water, etc.
+    type: CategoryType.expense,
+    clientGeneratedId: "8",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Transportation",
-    type: TransactionType.expense,
-    icon: Icons.directions_bus, // Represents public transport
+    type: CategoryType.expense,
+    clientGeneratedId: "9",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Health",
-    type: TransactionType.expense,
-    icon: Icons.local_hospital, // Represents medical expenses
+    type: CategoryType.expense,
+    clientGeneratedId: "10",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Fitness",
-    type: TransactionType.expense,
-    icon: Icons.fitness_center, // Represents gym and fitness-related expenses
+    type: CategoryType.expense,
+    clientGeneratedId: "11",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Shopping",
-    type: TransactionType.expense,
-    icon: Icons.shopping_bag, // Represents general shopping
+    type: CategoryType.expense,
+    clientGeneratedId: "12",
   ),
-  CategoryModel(
+  CategoryEntity(
     name: "Travel",
-    type: TransactionType.expense,
-    icon: Icons.flight, // Represents travel expenses
+    type: CategoryType.expense,
+    clientGeneratedId: "13",
   ),
 ];
 
