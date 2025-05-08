@@ -50,7 +50,7 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
         remoteCreated == null ? DataDestination.local : DataDestination.both;
 
     await this.db.transaction(() async {
-      await syncHandler.upsertLocal(created);
+      // await syncHandler.upsertLocal(created);
 
       if (remoteCreated == null) {
         final localChange = PendingLocalChange.put(

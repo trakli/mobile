@@ -23,7 +23,11 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   @override
   Future<List<Category>> getAllCategories() async {
     final response = await dio.get('categories');
-    return (response.data as List)
+
+    final apiResponse = ApiResponse.fromJson(response.data);
+
+    return (apiResponse.data as List)
+        .where((json) => json['client_generated_id'] != null)
         .map((json) => Category.fromJson(json))
         .toList();
   }
@@ -41,7 +45,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'categories',
       data: {
         'client_id': category.clientId,
-        'type': category.type,
+        'type': category.type.name,
         'name': category.name,
         'description': category.description,
         'created_at': category.createdAt.toIso8601String(),
@@ -52,8 +56,6 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
     Category categoryData = Category.fromJson(apiResponse.data);
 
     return categoryData;
-    // final categoryDto = CategoryDto.fromJson(response.data);
-    // return categoryDto.toDomain();
   }
 
   @override

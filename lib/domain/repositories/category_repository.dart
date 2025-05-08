@@ -16,6 +16,7 @@ abstract class CategoryRepository {
       CategoryType? type,
       int? userId,
       String? description});
+
   Future<Either<Failure, Unit>> deleteCategory(String clientId);
 
   Stream<Either<Failure, List<CategoryEntity>>> listenToCategories();

@@ -93,10 +93,11 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
     final category = CategoriesCompanion(
       id: Value(entity.id),
       name: Value(entity.name),
-      type: Value(CategoryType.values.firstWhere(
-        (e) => e.toString().split('.').last == entity.type,
-        orElse: () => CategoryType.expense,
-      )),
+      type: Value(entity.type),
+      // Value(CategoryType.values.firstWhere(
+      //   (e) => e.toString().split('.').last == entity.type,
+      //   orElse: () => CategoryType.expense,
+      // )),
       description: Value(entity.description),
       clientId: Value(entity.clientId),
       slug: Value(entity.slug),

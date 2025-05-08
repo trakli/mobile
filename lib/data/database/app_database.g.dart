@@ -209,11 +209,11 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Wallet(
       id: serializer.fromJson<int?>(json['id']),
-      clientId: serializer.fromJson<String>(json['clientId']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       type: $WalletsTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
@@ -228,11 +228,11 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
-      'clientId': serializer.toJson<String>(clientId),
+      'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
+      'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'type':
           serializer.toJson<String>($WalletsTable.$convertertype.toJson(type)),
@@ -660,11 +660,11 @@ class Party extends DataClass implements Insertable<Party> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Party(
       id: serializer.fromJson<int?>(json['id']),
-      clientId: serializer.fromJson<String>(json['clientId']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
     );
@@ -674,11 +674,11 @@ class Party extends DataClass implements Insertable<Party> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
-      'clientId': serializer.toJson<String>(clientId),
+      'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
+      'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
     };
@@ -1034,11 +1034,11 @@ class Group extends DataClass implements Insertable<Group> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Group(
       id: serializer.fromJson<int?>(json['id']),
-      clientId: serializer.fromJson<String>(json['clientId']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
     );
@@ -1048,11 +1048,11 @@ class Group extends DataClass implements Insertable<Group> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
-      'clientId': serializer.toJson<String>(clientId),
+      'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
+      'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
     };
@@ -1538,10 +1538,10 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Transaction(
       id: serializer.fromJson<int?>(json['id']),
-      clientId: serializer.fromJson<String>(json['clientId']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       amount: serializer.fromJson<double>(json['amount']),
       type: $TransactionsTable.$convertertype
@@ -1561,10 +1561,10 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
-      'clientId': serializer.toJson<String>(clientId),
+      'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'amount': serializer.toJson<double>(amount),
       'type': serializer
@@ -2126,17 +2126,17 @@ class Category extends DataClass implements Insertable<Category> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Category(
       id: serializer.fromJson<int?>(json['id']),
-      clientId: serializer.fromJson<String>(json['clientId']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      lastSyncedAt: serializer.fromJson<DateTime?>(json['lastSyncedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       slug: serializer.fromJson<String>(json['slug']),
       description: serializer.fromJson<String?>(json['description']),
       type: $CategoriesTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
-      userId: serializer.fromJson<int>(json['userId']),
+      userId: serializer.fromJson<int>(json['user_id']),
     );
   }
   @override
@@ -2144,17 +2144,17 @@ class Category extends DataClass implements Insertable<Category> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
-      'clientId': serializer.toJson<String>(clientId),
+      'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'lastSyncedAt': serializer.toJson<DateTime?>(lastSyncedAt),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
+      'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'slug': serializer.toJson<String>(slug),
       'description': serializer.toJson<String?>(description),
       'type': serializer
           .toJson<String>($CategoriesTable.$convertertype.toJson(type)),
-      'userId': serializer.toJson<int>(userId),
+      'user_id': serializer.toJson<int>(userId),
     };
   }
 

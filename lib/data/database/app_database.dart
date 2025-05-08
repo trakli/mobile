@@ -37,6 +37,18 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   @override
   int get schemaVersion => 1;
 
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        // Add upgrade logic here when needed
+      },
+    );
+  }
+
   static LazyDatabase _openConnection() {
     return LazyDatabase(() async {
       final dbFolder = await getApplicationDocumentsDirectory();
@@ -80,6 +92,15 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     logger.i(
       "${operation.name.toUpperCase()} operations on enity type $entityType for object $entityId completed",
     );
+
+    // await (update(localChanges)
+    //       ..where((lc) =>
+    //           lc.entityType.equals(entityType) & lc.entityId.equals(entityId)))
+    //     .write(
+    //   LocalChangesCompanion(
+    //     concludedMoment: Value(DateTime.now()),
+    //   ),
+    // );
   }
 
   @override

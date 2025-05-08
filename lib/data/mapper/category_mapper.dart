@@ -7,7 +7,7 @@ class CategoryMapper {
       id: c.id,
       name: c.name,
       slug: c.slug,
-      type: c.type.toString().split('.').last,
+      type: c.type,
       userId: c.userId,
       description: c.description,
       clientGeneratedId: c.clientId,

@@ -1,5 +1,4 @@
-import 'package:drift/drift.dart' hide JsonKey;
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:drift/drift.dart';
 import 'package:trakli/data/datasources/core/util.dart';
 
 mixin SyncTable on Table {
@@ -8,21 +7,22 @@ mixin SyncTable on Table {
 
   // Client ID (required, generated locally)
   @JsonKey(
-    name: 'client_generated_id',
+    'client_generated_id',
   )
   TextColumn get clientId => text()();
 
   // Add any common columns needed for sync
   TextColumn get rev => text().withDefault(const Constant('1')).nullable()();
 
-  @JsonKey(name: 'created_at', fromJson: dateTimeFromString)
+  // @JsonKey(name: 'created_at', fromJson: dateTimeFromString)
+  @JsonKey('created_at')
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
-  @JsonKey(name: 'updated_at')
+  @JsonKey('updated_at')
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   @JsonKey(
-    name: 'last_synced_at',
+    'last_synced_at',
   )
   DateTimeColumn get lastSyncedAt => dateTime().nullable()();
 
