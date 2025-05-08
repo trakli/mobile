@@ -2,18 +2,18 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/domain/models/category_model.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'dart:math' as math;
 
-import 'package:trakli/presentation/utils/enums.dart';
-
 class CategoryTile extends StatefulWidget {
   final Color accentColor;
-  final CategoryModel category;
+  final CategoryEntity category;
   final bool showStat;
   final bool showValue;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const CategoryTile({
     super.key,
@@ -21,6 +21,8 @@ class CategoryTile extends StatefulWidget {
     this.accentColor = const Color(0xFFEB5757),
     this.showStat = false,
     this.showValue = false,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -60,7 +62,7 @@ class _CategoryTileState extends State<CategoryTile> {
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
-              widget.category.icon,
+              Icons.category, // TODO: Use actual icon from category
               size: 20.sp,
               color: widget.accentColor,
             ),
@@ -82,38 +84,60 @@ class _CategoryTileState extends State<CategoryTile> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    (widget.showValue)
-                        ? RichText(
-                            text: TextSpan(
-                              style: TextStyle(
+                    if (widget.onEdit != null || widget.onDelete != null)
+                      Row(
+                        children: [
+                          if (widget.onEdit != null)
+                            IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                size: 20.sp,
                                 color: widget.accentColor,
-                                fontSize: 16.sp,
                               ),
-                              text: widget.category.type ==
-                                      TransactionType.expense
-                                  ? "-"
-                                  : "",
-                              children: [
-                                TextSpan(
-                                  text: currency?.symbol ?? "",
-                                ),
-                                TextSpan(
-                                  text: randomValue.toString(),
-                                ),
-                              ],
+                              onPressed: widget.onEdit,
                             ),
-                          )
-                        : SvgPicture.asset(
-                            Assets.images.arrowRight,
-                            width: 24.w,
-                            height: 24.h,
+                          if (widget.onDelete != null)
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                size: 20.sp,
+                                color: Colors.red,
+                              ),
+                              onPressed: widget.onDelete,
+                            ),
+                        ],
+                      )
+                    else if (widget.showValue)
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: widget.accentColor,
+                            fontSize: 16.sp,
                           ),
+                          text:
+                              widget.category.type.name == 'expense' ? "-" : "",
+                          children: [
+                            TextSpan(
+                              text: currency?.symbol ?? "",
+                            ),
+                            TextSpan(
+                              text: randomValue.toString(),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      SvgPicture.asset(
+                        Assets.images.arrowRight,
+                        width: 24.w,
+                        height: 24.h,
+                      ),
                   ],
                 ),
                 Text(
                   widget.showStat
                       ? "0 transactions in 2 wallets"
-                      : "Here you store your office Elements",
+                      : widget.category.description ?? "No description",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: const Color(0xFF576760),

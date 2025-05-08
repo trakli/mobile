@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trakli/domain/models/chart_data_model.dart';
-import 'package:trakli/domain/providers/chart_data_provider.dart';
+import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_wallet_screen.dart';
@@ -44,7 +44,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
 
   @override
   void initState() {
-    // TODO: implement initState
     dateController.text = dateFormat.format(date);
     timeController.text = timeFormat.format(date);
     super.initState();

@@ -1,15 +1,39 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/bloc/transaction/transaction_cubit.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding_screen.dart';
+// import 'package:trakli/presentation/onboarding_screen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (_) => getIt<TransactionCubit>(),
+      ),
+      BlocProvider(
+        create: (_) => getIt<CategoryCubit>(),
+      ),
+    ], child: const AppView());
+  }
+}
+
+class AppView extends StatelessWidget {
+  const AppView({
+    super.key,
+  });
 
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
@@ -23,6 +47,7 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     rebuildAllChildren(context);
+
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Trakli',
@@ -181,12 +206,28 @@ class AppWidget extends StatelessWidget {
         ),
       ),
       home: const OnboardingScreen(),
+
+      // home: MainNavigationScreen(),
+      // home: const HomePage(),
+
+      // const OnboardingScreen(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    getIt<SynchAppDatabase>().sync();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:trakli/domain/models/chart_data_model.dart';
-import 'package:trakli/domain/providers/chart_data_provider.dart';
+import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 

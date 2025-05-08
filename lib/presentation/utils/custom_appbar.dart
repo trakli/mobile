@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       leading: Row(
         children: [
-          SizedBox(width: 16.w),
+          SizedBox(width: 4.w),
           leading ??
               InkWell(
                 onTap: () {

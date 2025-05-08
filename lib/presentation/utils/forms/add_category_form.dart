@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
@@ -11,10 +13,16 @@ import 'dart:ui' as ui;
 
 class AddCategoryForm extends StatefulWidget {
   final Color accentColor;
+  final CategoryEntity? category;
+  final Function(
+          String name, String description, CategoryType type, IconData? icon)
+      onSubmit;
 
   const AddCategoryForm({
     super.key,
     this.accentColor = const Color(0xFFEB5757),
+    this.category,
+    required this.onSubmit,
   });
 
   @override
@@ -22,16 +30,38 @@ class AddCategoryForm extends StatefulWidget {
 }
 
 class _AddCategoryFormState extends State<AddCategoryForm> {
-  IconData? selectedIcon;
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  late final TextEditingController _descriptionController;
+  late IconData? selectedIcon;
+  late CategoryType selectedType;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.category?.name);
+    _descriptionController =
+        TextEditingController(text: widget.category?.description);
+    selectedType = widget.category?.type ?? CategoryType.expense;
+    selectedIcon = Icons.category;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 20.h,
-            ),
+        horizontal: 16.w,
+        vertical: 20.h,
+      ),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,7 +70,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
               spacing: 8.w,
               children: [
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     showCustomBottomSheet(
                       context,
                       widget: const SelectIconBottomSheet(),
@@ -68,7 +98,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                           right: 8.w,
                           bottom: 8.h,
                           child: Icon(
-                            selectedIcon ?? Icons.add,
+                            selectedIcon ?? Icons.category,
                             color: widget.accentColor,
                             size: 20.r,
                           ),
@@ -79,7 +109,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                 ),
                 Expanded(
                   child: TextFormField(
-                    keyboardType: TextInputType.number,
+                    controller: _nameController,
                     decoration: const InputDecoration(
                       hintText: "Category name",
                     ),
@@ -104,10 +134,49 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: _descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: LocaleKeys.typeHere.tr(),
               ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              "Type",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).primaryColorDark,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<CategoryType>(
+                    title: const Text('Expense'),
+                    value: CategoryType.expense,
+                    groupValue: selectedType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedType = value!;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<CategoryType>(
+                    title: const Text('Income'),
+                    value: CategoryType.income,
+                    groupValue: selectedType,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedType = value!;
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 40.h),
             SizedBox(
@@ -117,13 +186,22 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                 return PrimaryButton(
                   onPress: () {
                     hideKeyBoard();
-                    if(Form.of(context).validate()){
-                      // Do something
+                    if (_formKey.currentState!.validate()) {
+                      widget.onSubmit(
+                        _nameController.text,
+                        _descriptionController.text,
+                        selectedType,
+                        selectedIcon,
+                      );
                     }
                   },
-                  buttonText: "Create category",
+                  buttonText: widget.category != null
+                      ? "Update category"
+                      : "Create category",
                   backgroundColor: widget.accentColor,
-                  iconPath: Assets.images.add,
+                  iconPath: widget.category != null
+                      ? Assets.images.edit2
+                      : Assets.images.add,
                   iconColor: Colors.white,
                   textDirection: ui.TextDirection.rtl,
                 );

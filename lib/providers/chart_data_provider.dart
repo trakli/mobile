@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:trakli/domain/models/chart_data_model.dart';
+import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/graph_widget.dart';
 import 'dart:math' as math;
