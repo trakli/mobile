@@ -3,7 +3,6 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/categories.dart';
-import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/data/datasources/category/category_remote_datasource.dart';
 
 @lazySingleton
@@ -112,10 +111,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
     final categories = list.map((entity) => CategoriesCompanion(
           id: Value(entity.id),
           name: Value(entity.name),
-          type: Value(CategoryType.values.firstWhere(
-            (e) => e.toString().split('.').last == entity.type,
-            orElse: () => CategoryType.expense,
-          )),
+          type: Value(entity.type),
           description: Value(entity.description),
           clientId: Value(entity.clientId),
           slug: Value(entity.slug),

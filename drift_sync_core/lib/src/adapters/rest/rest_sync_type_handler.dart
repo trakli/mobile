@@ -10,9 +10,9 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
   Future<void> restDeleteRemote(TEntity entity);
 
   @override
-  Future<TEntity?> getRemote(TServerKey id) async {
+  Future<TEntity?> getRemote(TServerKey serverId) async {
     try {
-      final e = await restGetRemote(id);
+      final e = await restGetRemote(serverId);
       return e;
     } on DioException catch (ex) {
       if (isUnavailable(ex)) {

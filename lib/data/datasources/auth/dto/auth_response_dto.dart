@@ -9,7 +9,7 @@ class AuthResponseDto with _$AuthResponseDto {
     @JsonKey(name: 'access_token') required String accessToken,
     @JsonKey(name: 'refresh_token') required String refreshToken,
     @JsonKey(name: 'expires_in') required int expireTn,
-    @JsonKey(name: 'token_type') String? tokenType, // Optional field
+    @JsonKey(name: 'token_type') String? tokenType,
   }) = _AuthResponseDto;
 
   factory AuthResponseDto.fromJson(Map<String, dynamic> json) =>

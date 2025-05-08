@@ -10,7 +10,6 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/bloc/transaction/transaction_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding_screen.dart';
-import 'package:trakli/presentation/root/main_navigation_screen.dart';
 // import 'package:trakli/presentation/onboarding_screen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';

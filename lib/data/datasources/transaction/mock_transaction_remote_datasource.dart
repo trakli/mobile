@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
-import 'package:uuid/uuid.dart';
 
 @Injectable(as: TransactionRemoteDataSource)
 class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
@@ -26,35 +23,35 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   @override
   Future<Transaction> insertTransaction(Transaction transaction) async {
     return _simulateDelay(() async {
-      final requestOptions = RequestOptions(path: 'transactions');
-      const reason = 'Connection error';
+      // final requestOptions = RequestOptions(path: 'transactions');
+      // const reason = 'Connection error';
 
-      // throw DioException.connectionError(
-      //   requestOptions: requestOptions,
-      //   reason: reason,
-      // );
+      // // throw DioException.connectionError(
+      // //   requestOptions: requestOptions,
+      // //   reason: reason,
+      // // );
 
-      final updated = transaction.copyWith(
-          // serverId: Value(
-          //   const Uuid().v8(),
-          // ),
-          // lastSyncedAt: Value(
-          //   DateTime.now(),
-          // ),
-          );
+      // final updated = transaction.copyWith(
+      //     // serverId: Value(
+      //     //   const Uuid().v8(),
+      //     // ),
+      //     // lastSyncedAt: Value(
+      //     //   DateTime.now(),
+      //     // ),
+      //     );
 
-      _transactions.add(updated);
+      // _transactions.add(updated);
 
       _notifyListeners();
-      return updated;
+      return transaction;
     });
   }
 
   @override
   Future<Transaction> updateTransaction(Transaction transaction) async {
     return _simulateDelay(() async {
-      final requestOptions = RequestOptions(path: 'transactions');
-      const reason = 'Connection error';
+      // final requestOptions = RequestOptions(path: 'transactions');
+      // const reason = 'Connection error';
 
       // throw DioException.connectionError(
       //     requestOptions: requestOptions, reason: reason);

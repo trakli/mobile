@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:trakli/data/datasources/core/util.dart';
 
 mixin SyncTable on Table {
   // Server ID (nullable since it's assigned by the server)

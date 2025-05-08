@@ -86,7 +86,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   @override
   Future<void> concludeEntityLocalChanges(
     String entityType,
-    int entityId,
+    int? entityId,
     Operation operation,
   ) async {
     logger.i(

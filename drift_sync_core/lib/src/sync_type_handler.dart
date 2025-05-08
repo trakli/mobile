@@ -7,7 +7,7 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   String getClientId(TEntity entity);
 
   // Get the server ID (int) from an entity
-  int getServerId(TEntity entity);
+  int? getServerId(TEntity entity);
 
   // Get the revision from an entity
   String getRev(TEntity entity);

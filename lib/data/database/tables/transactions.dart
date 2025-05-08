@@ -32,9 +32,6 @@ class Transactions extends Table with SyncTable {
   @JsonKey('group_id')
   IntColumn get groupId => integer().nullable()();
 
-  @JsonKey('last_synced_at')
-  DateTimeColumn get lastSyncedAt => dateTime().nullable()();
-
   // Local references
   TextColumn get walletClientId =>
       text().references(Wallets, #clientId).nullable()();

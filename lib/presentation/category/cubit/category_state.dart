@@ -1,4 +1,3 @@
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
@@ -20,6 +19,6 @@ class CategoryState with _$CategoryState {
         isLoading: false,
         isSaving: false,
         isDeleting: false,
-        failure: const Failure.none(),
+        failure: Failure.none(),
       );
 }

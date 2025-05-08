@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_state.dart';

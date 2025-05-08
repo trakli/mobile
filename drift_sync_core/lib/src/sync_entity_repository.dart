@@ -8,13 +8,17 @@ enum Operation { put, delete }
 enum DataDestination { local, both }
 
 /// Provides methods to get, create, update and delete
-/// entities of type <TEntity>.
+/// entities of type TEntity.
 ///
 /// Each of these
 /// methods works by attempting to first use
 /// online data with the fallback of the offline data.
-abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
-    TEntity, TKey, TServerKey> {
+abstract class SyncEntityRepository<
+  TAppDatabase extends SynchronizerDb,
+  TEntity,
+  TKey,
+  TServerKey
+> {
   const SyncEntityRepository({required this.syncHandler, required this.db});
 
   final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;

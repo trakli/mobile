@@ -7,7 +7,6 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'dart:math' as math;
 
-
 class CategoryTile extends StatefulWidget {
   final Color accentColor;
   final CategoryEntity category;
@@ -115,7 +114,8 @@ class _CategoryTileState extends State<CategoryTile> {
                             color: widget.accentColor,
                             fontSize: 16.sp,
                           ),
-                          text: widget.category.type == 'expense' ? "-" : "",
+                          text:
+                              widget.category.type.name == 'expense' ? "-" : "",
                           children: [
                             TextSpan(
                               text: currency?.symbol ?? "",
