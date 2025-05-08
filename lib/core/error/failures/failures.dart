@@ -15,4 +15,18 @@ class Failure with _$Failure {
     List<String>? errors,
     String? error,
   }) = _BadRequest;
+  const factory Failure.none() = NoneFailure;
+
+  const Failure._();
+
+  bool get hasError => this != const Failure.none();
+
+  // Getter for message
+  String get message =>
+      whenOrNull(
+        serverError: (message) => message,
+        cacheError: (message) => message,
+        syncError: (message) => message,
+      ) ??
+      '';
 }

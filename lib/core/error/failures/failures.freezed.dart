@@ -26,6 +26,7 @@ mixin _$Failure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -38,6 +39,7 @@ mixin _$Failure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -50,6 +52,7 @@ mixin _$Failure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -63,6 +66,7 @@ mixin _$Failure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -75,6 +79,7 @@ mixin _$Failure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -87,6 +92,7 @@ mixin _$Failure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -147,8 +153,8 @@ class __$$ServerFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ServerFailureImpl implements ServerFailure {
-  const _$ServerFailureImpl(this.message);
+class _$ServerFailureImpl extends ServerFailure {
+  const _$ServerFailureImpl(this.message) : super._();
 
   @override
   final String message;
@@ -188,6 +194,7 @@ class _$ServerFailureImpl implements ServerFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return serverError(message);
   }
@@ -203,6 +210,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return serverError?.call(message);
   }
@@ -218,6 +226,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (serverError != null) {
@@ -237,6 +246,7 @@ class _$ServerFailureImpl implements ServerFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return serverError(this);
   }
@@ -252,6 +262,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return serverError?.call(this);
   }
@@ -267,6 +278,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (serverError != null) {
@@ -276,8 +288,9 @@ class _$ServerFailureImpl implements ServerFailure {
   }
 }
 
-abstract class ServerFailure implements Failure {
+abstract class ServerFailure extends Failure {
   const factory ServerFailure(final String message) = _$ServerFailureImpl;
+  const ServerFailure._() : super._();
 
   String get message;
 
@@ -309,8 +322,8 @@ class __$$NetworkFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$NetworkFailureImpl implements NetworkFailure {
-  const _$NetworkFailureImpl();
+class _$NetworkFailureImpl extends NetworkFailure {
+  const _$NetworkFailureImpl() : super._();
 
   @override
   String toString() {
@@ -337,6 +350,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return networkError();
   }
@@ -352,6 +366,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return networkError?.call();
   }
@@ -367,6 +382,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (networkError != null) {
@@ -386,6 +402,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return networkError(this);
   }
@@ -401,6 +418,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return networkError?.call(this);
   }
@@ -416,6 +434,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (networkError != null) {
@@ -425,8 +444,9 @@ class _$NetworkFailureImpl implements NetworkFailure {
   }
 }
 
-abstract class NetworkFailure implements Failure {
+abstract class NetworkFailure extends Failure {
   const factory NetworkFailure() = _$NetworkFailureImpl;
+  const NetworkFailure._() : super._();
 }
 
 /// @nodoc
@@ -464,8 +484,8 @@ class __$$CacheFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CacheFailureImpl implements CacheFailure {
-  const _$CacheFailureImpl(this.message);
+class _$CacheFailureImpl extends CacheFailure {
+  const _$CacheFailureImpl(this.message) : super._();
 
   @override
   final String message;
@@ -505,6 +525,7 @@ class _$CacheFailureImpl implements CacheFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return cacheError(message);
   }
@@ -520,6 +541,7 @@ class _$CacheFailureImpl implements CacheFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return cacheError?.call(message);
   }
@@ -535,6 +557,7 @@ class _$CacheFailureImpl implements CacheFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (cacheError != null) {
@@ -554,6 +577,7 @@ class _$CacheFailureImpl implements CacheFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return cacheError(this);
   }
@@ -569,6 +593,7 @@ class _$CacheFailureImpl implements CacheFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return cacheError?.call(this);
   }
@@ -584,6 +609,7 @@ class _$CacheFailureImpl implements CacheFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (cacheError != null) {
@@ -593,8 +619,9 @@ class _$CacheFailureImpl implements CacheFailure {
   }
 }
 
-abstract class CacheFailure implements Failure {
+abstract class CacheFailure extends Failure {
   const factory CacheFailure(final String message) = _$CacheFailureImpl;
+  const CacheFailure._() : super._();
 
   String get message;
 
@@ -640,8 +667,8 @@ class __$$SyncFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$SyncFailureImpl implements SyncFailure {
-  const _$SyncFailureImpl(this.message);
+class _$SyncFailureImpl extends SyncFailure {
+  const _$SyncFailureImpl(this.message) : super._();
 
   @override
   final String message;
@@ -681,6 +708,7 @@ class _$SyncFailureImpl implements SyncFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return syncError(message);
   }
@@ -696,6 +724,7 @@ class _$SyncFailureImpl implements SyncFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return syncError?.call(message);
   }
@@ -711,6 +740,7 @@ class _$SyncFailureImpl implements SyncFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (syncError != null) {
@@ -730,6 +760,7 @@ class _$SyncFailureImpl implements SyncFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return syncError(this);
   }
@@ -745,6 +776,7 @@ class _$SyncFailureImpl implements SyncFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return syncError?.call(this);
   }
@@ -760,6 +792,7 @@ class _$SyncFailureImpl implements SyncFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (syncError != null) {
@@ -769,8 +802,9 @@ class _$SyncFailureImpl implements SyncFailure {
   }
 }
 
-abstract class SyncFailure implements Failure {
+abstract class SyncFailure extends Failure {
   const factory SyncFailure(final String message) = _$SyncFailureImpl;
+  const SyncFailure._() : super._();
 
   String get message;
 
@@ -816,8 +850,8 @@ class __$$ValidationFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ValidationFailureImpl implements ValidationFailure {
-  const _$ValidationFailureImpl(this.message);
+class _$ValidationFailureImpl extends ValidationFailure {
+  const _$ValidationFailureImpl(this.message) : super._();
 
   @override
   final String message;
@@ -858,6 +892,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return validationError(message);
   }
@@ -873,6 +908,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return validationError?.call(message);
   }
@@ -888,6 +924,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (validationError != null) {
@@ -907,6 +944,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return validationError(this);
   }
@@ -922,6 +960,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return validationError?.call(this);
   }
@@ -937,6 +976,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (validationError != null) {
@@ -946,9 +986,10 @@ class _$ValidationFailureImpl implements ValidationFailure {
   }
 }
 
-abstract class ValidationFailure implements Failure {
+abstract class ValidationFailure extends Failure {
   const factory ValidationFailure(final String message) =
       _$ValidationFailureImpl;
+  const ValidationFailure._() : super._();
 
   String get message;
 
@@ -980,8 +1021,8 @@ class __$$UnauthorizedFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
-  const _$UnauthorizedFailureImpl();
+class _$UnauthorizedFailureImpl extends UnauthorizedFailure {
+  const _$UnauthorizedFailureImpl() : super._();
 
   @override
   String toString() {
@@ -1009,6 +1050,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return unauthorizedError();
   }
@@ -1024,6 +1066,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return unauthorizedError?.call();
   }
@@ -1039,6 +1082,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (unauthorizedError != null) {
@@ -1058,6 +1102,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return unauthorizedError(this);
   }
@@ -1073,6 +1118,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return unauthorizedError?.call(this);
   }
@@ -1088,6 +1134,7 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (unauthorizedError != null) {
@@ -1097,8 +1144,9 @@ class _$UnauthorizedFailureImpl implements UnauthorizedFailure {
   }
 }
 
-abstract class UnauthorizedFailure implements Failure {
+abstract class UnauthorizedFailure extends Failure {
   const factory UnauthorizedFailure() = _$UnauthorizedFailureImpl;
+  const UnauthorizedFailure._() : super._();
 }
 
 /// @nodoc
@@ -1122,8 +1170,8 @@ class __$$UnknownFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UnknownFailureImpl implements UnknownFailure {
-  const _$UnknownFailureImpl();
+class _$UnknownFailureImpl extends UnknownFailure {
+  const _$UnknownFailureImpl() : super._();
 
   @override
   String toString() {
@@ -1150,6 +1198,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return unknownError();
   }
@@ -1165,6 +1214,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return unknownError?.call();
   }
@@ -1180,6 +1230,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (unknownError != null) {
@@ -1199,6 +1250,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return unknownError(this);
   }
@@ -1214,6 +1266,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return unknownError?.call(this);
   }
@@ -1229,6 +1282,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (unknownError != null) {
@@ -1238,8 +1292,9 @@ class _$UnknownFailureImpl implements UnknownFailure {
   }
 }
 
-abstract class UnknownFailure implements Failure {
+abstract class UnknownFailure extends Failure {
   const factory UnknownFailure() = _$UnknownFailureImpl;
+  const UnknownFailure._() : super._();
 }
 
 /// @nodoc
@@ -1282,9 +1337,10 @@ class __$$BadRequestImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BadRequestImpl implements _BadRequest {
+class _$BadRequestImpl extends _BadRequest {
   const _$BadRequestImpl({final List<String>? errors, this.error})
-      : _errors = errors;
+      : _errors = errors,
+        super._();
 
   final List<String>? _errors;
   @override
@@ -1336,6 +1392,7 @@ class _$BadRequestImpl implements _BadRequest {
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
     required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
   }) {
     return badRequest(errors, error);
   }
@@ -1351,6 +1408,7 @@ class _$BadRequestImpl implements _BadRequest {
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
     TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
   }) {
     return badRequest?.call(errors, error);
   }
@@ -1366,6 +1424,7 @@ class _$BadRequestImpl implements _BadRequest {
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
     TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
     required TResult orElse(),
   }) {
     if (badRequest != null) {
@@ -1385,6 +1444,7 @@ class _$BadRequestImpl implements _BadRequest {
     required TResult Function(UnauthorizedFailure value) unauthorizedError,
     required TResult Function(UnknownFailure value) unknownError,
     required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
   }) {
     return badRequest(this);
   }
@@ -1400,6 +1460,7 @@ class _$BadRequestImpl implements _BadRequest {
     TResult? Function(UnauthorizedFailure value)? unauthorizedError,
     TResult? Function(UnknownFailure value)? unknownError,
     TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
   }) {
     return badRequest?.call(this);
   }
@@ -1415,6 +1476,7 @@ class _$BadRequestImpl implements _BadRequest {
     TResult Function(UnauthorizedFailure value)? unauthorizedError,
     TResult Function(UnknownFailure value)? unknownError,
     TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
     required TResult orElse(),
   }) {
     if (badRequest != null) {
@@ -1424,9 +1486,10 @@ class _$BadRequestImpl implements _BadRequest {
   }
 }
 
-abstract class _BadRequest implements Failure {
+abstract class _BadRequest extends Failure {
   const factory _BadRequest({final List<String>? errors, final String? error}) =
       _$BadRequestImpl;
+  const _BadRequest._() : super._();
 
   List<String>? get errors;
   String? get error;
@@ -1436,4 +1499,152 @@ abstract class _BadRequest implements Failure {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BadRequestImplCopyWith<_$BadRequestImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$NoneFailureImplCopyWith<$Res> {
+  factory _$$NoneFailureImplCopyWith(
+          _$NoneFailureImpl value, $Res Function(_$NoneFailureImpl) then) =
+      __$$NoneFailureImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$NoneFailureImplCopyWithImpl<$Res>
+    extends _$FailureCopyWithImpl<$Res, _$NoneFailureImpl>
+    implements _$$NoneFailureImplCopyWith<$Res> {
+  __$$NoneFailureImplCopyWithImpl(
+      _$NoneFailureImpl _value, $Res Function(_$NoneFailureImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$NoneFailureImpl extends NoneFailure {
+  const _$NoneFailureImpl() : super._();
+
+  @override
+  String toString() {
+    return 'Failure.none()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$NoneFailureImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) serverError,
+    required TResult Function() networkError,
+    required TResult Function(String message) cacheError,
+    required TResult Function(String message) syncError,
+    required TResult Function(String message) validationError,
+    required TResult Function() unauthorizedError,
+    required TResult Function() unknownError,
+    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function() none,
+  }) {
+    return none();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? serverError,
+    TResult? Function()? networkError,
+    TResult? Function(String message)? cacheError,
+    TResult? Function(String message)? syncError,
+    TResult? Function(String message)? validationError,
+    TResult? Function()? unauthorizedError,
+    TResult? Function()? unknownError,
+    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function()? none,
+  }) {
+    return none?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? serverError,
+    TResult Function()? networkError,
+    TResult Function(String message)? cacheError,
+    TResult Function(String message)? syncError,
+    TResult Function(String message)? validationError,
+    TResult Function()? unauthorizedError,
+    TResult Function()? unknownError,
+    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function()? none,
+    required TResult orElse(),
+  }) {
+    if (none != null) {
+      return none();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ServerFailure value) serverError,
+    required TResult Function(NetworkFailure value) networkError,
+    required TResult Function(CacheFailure value) cacheError,
+    required TResult Function(SyncFailure value) syncError,
+    required TResult Function(ValidationFailure value) validationError,
+    required TResult Function(UnauthorizedFailure value) unauthorizedError,
+    required TResult Function(UnknownFailure value) unknownError,
+    required TResult Function(_BadRequest value) badRequest,
+    required TResult Function(NoneFailure value) none,
+  }) {
+    return none(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(ServerFailure value)? serverError,
+    TResult? Function(NetworkFailure value)? networkError,
+    TResult? Function(CacheFailure value)? cacheError,
+    TResult? Function(SyncFailure value)? syncError,
+    TResult? Function(ValidationFailure value)? validationError,
+    TResult? Function(UnauthorizedFailure value)? unauthorizedError,
+    TResult? Function(UnknownFailure value)? unknownError,
+    TResult? Function(_BadRequest value)? badRequest,
+    TResult? Function(NoneFailure value)? none,
+  }) {
+    return none?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ServerFailure value)? serverError,
+    TResult Function(NetworkFailure value)? networkError,
+    TResult Function(CacheFailure value)? cacheError,
+    TResult Function(SyncFailure value)? syncError,
+    TResult Function(ValidationFailure value)? validationError,
+    TResult Function(UnauthorizedFailure value)? unauthorizedError,
+    TResult Function(UnknownFailure value)? unknownError,
+    TResult Function(_BadRequest value)? badRequest,
+    TResult Function(NoneFailure value)? none,
+    required TResult orElse(),
+  }) {
+    if (none != null) {
+      return none(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class NoneFailure extends Failure {
+  const factory NoneFailure() = _$NoneFailureImpl;
+  const NoneFailure._() : super._();
 }
