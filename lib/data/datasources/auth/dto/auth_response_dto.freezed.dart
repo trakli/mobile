@@ -20,14 +20,16 @@ AuthResponseDto _$AuthResponseDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthResponseDto {
-  @JsonKey(name: 'access_token')
+  @JsonKey(name: 'token')
   String get accessToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'refresh_token')
-  String get refreshToken => throw _privateConstructorUsedError;
+  String? get refreshToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'expires_in')
-  int get expireTn => throw _privateConstructorUsedError;
+  int? get expireTn => throw _privateConstructorUsedError;
   @JsonKey(name: 'token_type')
   String? get tokenType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user')
+  Map<String, dynamic> get user => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,10 +48,11 @@ abstract class $AuthResponseDtoCopyWith<$Res> {
       _$AuthResponseDtoCopyWithImpl<$Res, AuthResponseDto>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'access_token') String accessToken,
-      @JsonKey(name: 'refresh_token') String refreshToken,
-      @JsonKey(name: 'expires_in') int expireTn,
-      @JsonKey(name: 'token_type') String? tokenType});
+      {@JsonKey(name: 'token') String accessToken,
+      @JsonKey(name: 'refresh_token') String? refreshToken,
+      @JsonKey(name: 'expires_in') int? expireTn,
+      @JsonKey(name: 'token_type') String? tokenType,
+      @JsonKey(name: 'user') Map<String, dynamic> user});
 }
 
 /// @nodoc
@@ -68,27 +71,32 @@ class _$AuthResponseDtoCopyWithImpl<$Res, $Val extends AuthResponseDto>
   @override
   $Res call({
     Object? accessToken = null,
-    Object? refreshToken = null,
-    Object? expireTn = null,
+    Object? refreshToken = freezed,
+    Object? expireTn = freezed,
     Object? tokenType = freezed,
+    Object? user = null,
   }) {
     return _then(_value.copyWith(
       accessToken: null == accessToken
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
               as String,
-      refreshToken: null == refreshToken
+      refreshToken: freezed == refreshToken
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expireTn: null == expireTn
+              as String?,
+      expireTn: freezed == expireTn
           ? _value.expireTn
           : expireTn // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       tokenType: freezed == tokenType
           ? _value.tokenType
           : tokenType // ignore: cast_nullable_to_non_nullable
               as String?,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
     ) as $Val);
   }
 }
@@ -102,10 +110,11 @@ abstract class _$$AuthResponseDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'access_token') String accessToken,
-      @JsonKey(name: 'refresh_token') String refreshToken,
-      @JsonKey(name: 'expires_in') int expireTn,
-      @JsonKey(name: 'token_type') String? tokenType});
+      {@JsonKey(name: 'token') String accessToken,
+      @JsonKey(name: 'refresh_token') String? refreshToken,
+      @JsonKey(name: 'expires_in') int? expireTn,
+      @JsonKey(name: 'token_type') String? tokenType,
+      @JsonKey(name: 'user') Map<String, dynamic> user});
 }
 
 /// @nodoc
@@ -122,27 +131,32 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? accessToken = null,
-    Object? refreshToken = null,
-    Object? expireTn = null,
+    Object? refreshToken = freezed,
+    Object? expireTn = freezed,
     Object? tokenType = freezed,
+    Object? user = null,
   }) {
     return _then(_$AuthResponseDtoImpl(
       accessToken: null == accessToken
           ? _value.accessToken
           : accessToken // ignore: cast_nullable_to_non_nullable
               as String,
-      refreshToken: null == refreshToken
+      refreshToken: freezed == refreshToken
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expireTn: null == expireTn
+              as String?,
+      expireTn: freezed == expireTn
           ? _value.expireTn
           : expireTn // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       tokenType: freezed == tokenType
           ? _value.tokenType
           : tokenType // ignore: cast_nullable_to_non_nullable
               as String?,
+      user: null == user
+          ? _value._user
+          : user // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
     ));
   }
 }
@@ -151,30 +165,40 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthResponseDtoImpl implements _AuthResponseDto {
   const _$AuthResponseDtoImpl(
-      {@JsonKey(name: 'access_token') required this.accessToken,
-      @JsonKey(name: 'refresh_token') required this.refreshToken,
-      @JsonKey(name: 'expires_in') required this.expireTn,
-      @JsonKey(name: 'token_type') this.tokenType});
+      {@JsonKey(name: 'token') required this.accessToken,
+      @JsonKey(name: 'refresh_token') this.refreshToken,
+      @JsonKey(name: 'expires_in') this.expireTn,
+      @JsonKey(name: 'token_type') this.tokenType,
+      @JsonKey(name: 'user') required final Map<String, dynamic> user})
+      : _user = user;
 
   factory _$AuthResponseDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthResponseDtoImplFromJson(json);
 
   @override
-  @JsonKey(name: 'access_token')
+  @JsonKey(name: 'token')
   final String accessToken;
   @override
   @JsonKey(name: 'refresh_token')
-  final String refreshToken;
+  final String? refreshToken;
   @override
   @JsonKey(name: 'expires_in')
-  final int expireTn;
+  final int? expireTn;
   @override
   @JsonKey(name: 'token_type')
   final String? tokenType;
+  final Map<String, dynamic> _user;
+  @override
+  @JsonKey(name: 'user')
+  Map<String, dynamic> get user {
+    if (_user is EqualUnmodifiableMapView) return _user;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_user);
+  }
 
   @override
   String toString() {
-    return 'AuthResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, expireTn: $expireTn, tokenType: $tokenType)';
+    return 'AuthResponseDto(accessToken: $accessToken, refreshToken: $refreshToken, expireTn: $expireTn, tokenType: $tokenType, user: $user)';
   }
 
   @override
@@ -189,13 +213,14 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
             (identical(other.expireTn, expireTn) ||
                 other.expireTn == expireTn) &&
             (identical(other.tokenType, tokenType) ||
-                other.tokenType == tokenType));
+                other.tokenType == tokenType) &&
+            const DeepCollectionEquality().equals(other._user, _user));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, accessToken, refreshToken, expireTn, tokenType);
+  int get hashCode => Object.hash(runtimeType, accessToken, refreshToken,
+      expireTn, tokenType, const DeepCollectionEquality().hash(_user));
 
   /// Create a copy of AuthResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -216,27 +241,31 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
 
 abstract class _AuthResponseDto implements AuthResponseDto {
   const factory _AuthResponseDto(
-          {@JsonKey(name: 'access_token') required final String accessToken,
-          @JsonKey(name: 'refresh_token') required final String refreshToken,
-          @JsonKey(name: 'expires_in') required final int expireTn,
-          @JsonKey(name: 'token_type') final String? tokenType}) =
+          {@JsonKey(name: 'token') required final String accessToken,
+          @JsonKey(name: 'refresh_token') final String? refreshToken,
+          @JsonKey(name: 'expires_in') final int? expireTn,
+          @JsonKey(name: 'token_type') final String? tokenType,
+          @JsonKey(name: 'user') required final Map<String, dynamic> user}) =
       _$AuthResponseDtoImpl;
 
   factory _AuthResponseDto.fromJson(Map<String, dynamic> json) =
       _$AuthResponseDtoImpl.fromJson;
 
   @override
-  @JsonKey(name: 'access_token')
+  @JsonKey(name: 'token')
   String get accessToken;
   @override
   @JsonKey(name: 'refresh_token')
-  String get refreshToken;
+  String? get refreshToken;
   @override
   @JsonKey(name: 'expires_in')
-  int get expireTn;
+  int? get expireTn;
   @override
   @JsonKey(name: 'token_type')
   String? get tokenType;
+  @override
+  @JsonKey(name: 'user')
+  Map<String, dynamic> get user;
 
   /// Create a copy of AuthResponseDto
   /// with the given fields replaced by the non-null parameter values.

@@ -61,6 +61,20 @@ String? validateEmail(String? value) {
   return null;
 }
 
+String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return LocaleKeys.passEmptyDesc.tr();
+  }
+  return null;
+}
+
+String? validateFirstName(String? value) {
+  if (value == null || value.isEmpty) {
+    return LocaleKeys.firstName.tr();
+  }
+  return null;
+}
+
 void updateLanguage(BuildContext context, Locale locale) {
   context.setLocale(locale);
 }
@@ -171,7 +185,6 @@ Future<File?> pickImageApp({
           ],
         ),
       ],
-
     );
     if (croppedFile != null) {
       return File(croppedFile.path);

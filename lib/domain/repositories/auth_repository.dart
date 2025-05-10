@@ -1,99 +1,32 @@
+import 'dart:async';
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
-import 'package:trakli/core/error/repository_error_handler.dart';
-import 'package:trakli/core/network/network_info.dart';
-import 'package:trakli/data/datasources/auth/token_manager.dart';
-import 'package:trakli/data/datasources/auth/auth_local_data_source.dart';
-import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
+import 'package:trakli/domain/entities/auth_status.dart';
+import 'package:trakli/domain/entities/user_entity.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, void>> loginWithEmailPassword({
+  Future<Either<Failure, UserEntity>> loginWithEmailPassword({
     required String email,
     required String password,
   });
 
-  Future<Either<Failure, void>> loginWithPhonePassword({
+  Future<Either<Failure, UserEntity>> loginWithPhonePassword({
     required String phone,
     required String password,
   });
 
-  Future<Either<Failure, void>> createUser({
-    String? email,
-    String? phone,
-    required String password,
-    required String name,
-  });
-}
-
-@Injectable(as: AuthRepository)
-class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource _remoteDataSource;
-  final TokenManager _tokenManager;
-
-  AuthRepositoryImpl({
-    required AuthRemoteDataSource remoteDataSource,
-    required AuthLocalDataSource localDataSource,
-    required NetworkInfo networkInfo,
-    required TokenManager tokenManager,
-  })  : _remoteDataSource = remoteDataSource,
-        _tokenManager = tokenManager;
-
-  @override
-  Future<Either<Failure, Unit>> loginWithEmailPassword({
+  Future<Either<Failure, UserEntity>> createUser({
+    required String firstName,
     required String email,
     required String password,
-  }) async {
-    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
-      // Check network connection
-      final authResponse = await _remoteDataSource.loginWithEmailPassword(
-        email: email,
-        password: password,
-      );
-
-      // Save tokens locally
-      await _tokenManager.persistToken(authResponse.accessToken);
-      await _tokenManager.persistRefreshToken(authResponse.refreshToken);
-
-      return unit;
-    });
-  }
-
-  @override
-  Future<Either<Failure, Unit>> createUser({
-    String? email,
+    String? lastName,
+    String? username,
     String? phone,
-    required String password,
-    required String name,
-  }) async {
-    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
-      final authResponse = await _remoteDataSource.createUser(
-        email: email,
-        password: password,
-        name: name,
-        phone: phone,
-      );
+  });
 
-      await _tokenManager.persistToken(authResponse.accessToken);
-      await _tokenManager.persistRefreshToken(authResponse.refreshToken);
+  Stream<AuthStatus> get authStatus;
 
-      return unit;
-    });
-  }
+  Future<void> logout();
 
-  @override
-  Future<Either<Failure, void>> loginWithPhonePassword(
-      {required String phone, required String password}) {
-    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
-      final authResponse = await _remoteDataSource.loginWithPhonePassword(
-        phone: phone,
-        password: password,
-      );
-
-      await _tokenManager.persistToken(authResponse.accessToken);
-      await _tokenManager.persistRefreshToken(authResponse.refreshToken);
-
-      return unit;
-    });
-  }
+  Future<Either<Failure, UserEntity>> getLoggedInUser();
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
 
 @module
 abstract class InjectHttpClientModule {
@@ -24,7 +25,7 @@ abstract class InjectHttpClientModule {
     dio.interceptors.addAll([
       // RemoveNullValuesInterceptor(),
       // // TokenInterceptor(tokenManager),
-      // LoggerInterceptor()
+      LoggerInterceptor()
     ]);
 
     return dio;

@@ -24,6 +24,8 @@ class RepositoryErrorHandler {
       return left(ServerFailure(e.message));
     } on NetworkException {
       return left(const NetworkFailure());
+    } on NotFoundException {
+      return left(const NotFoundFailure());
     } catch (e, stackTrace) {
       logger.e('UnknownFailure', error: e, stackTrace: stackTrace);
       return left(const UnknownFailure());

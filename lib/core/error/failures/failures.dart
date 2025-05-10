@@ -16,6 +16,7 @@ class Failure with _$Failure {
     String? error,
   }) = _BadRequest;
   const factory Failure.none() = NoneFailure;
+  const factory Failure.notFound() = NotFoundFailure;
 
   const Failure._();
 

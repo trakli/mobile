@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
+import 'package:trakli/data/datasources/auth/dto/create_user_response_dto.dart';
+import 'package:trakli/data/datasources/core/api_response.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthResponseDto> loginWithEmailPassword({
@@ -14,11 +16,13 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<AuthResponseDto> createUser({
-    String? email,
+  Future<CreateUserResponseDto> createUser({
+    required String firstName,
+    String? lastName,
+    required String email,
+    String? username,
     String? phone,
     required String password,
-    required String name,
   });
 }
 
@@ -44,24 +48,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthResponseDto> createUser({
-    required String name,
-    required String password,
-    String? email,
+  Future<CreateUserResponseDto> createUser({
+    required String firstName,
+    String? lastName,
+    required String email,
+    String? username,
     String? phone,
+    required String password,
   }) async {
     return ErrorHandler.handleApiCall(() async {
-      final response = await _dio.post(
-        '/auth/register',
-        data: {
-          'email': email,
-          'password': password,
-          'name': name,
-          'phone': phone
-        },
-      );
+      final data = {
+        'email': email,
+        'password': password,
+        'first_name': firstName,
+        if (lastName != null && lastName.isNotEmpty) 'last_name': lastName,
+        if (username != null && username.isNotEmpty) 'username': username,
+        if (phone != null && phone.isNotEmpty) 'phone': phone,
+      };
 
-      return AuthResponseDto.fromJson(response.data);
+      final response = await _dio.post('/register', data: data);
+      final apiResponse = ApiResponse.fromJson(response.data);
+
+      final userDto = CreateUserResponseDto.fromJson(apiResponse.data);
+
+      return userDto;
     });
   }
 

@@ -99,5 +99,11 @@
   "langFrench": "Français",
   "langGerman": "Deutsch",
   "langSpanish": "Español",
-  "langItalian": "Italiano"
+  "langItalian": "Italiano",
+  "firstName": "Nombre",
+  "lastName": "Apellido",
+  "username": "Nombre de usuario",
+  "confirmPassword": "Confirmar contraseña",
+  "register": "Registrar",
+  "firstNameEmptyDesc": "El nombre no puede estar vacío"
 }

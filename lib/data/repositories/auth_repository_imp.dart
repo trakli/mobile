@@ -1,0 +1,181 @@
+import 'dart:async';
+import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/exceptions.dart';
+import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/error/repository_error_handler.dart';
+import 'package:trakli/core/network/network_info.dart';
+import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/auth/auth_local_data_source.dart';
+import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
+import 'package:trakli/data/datasources/auth/preference_manager.dart';
+import 'package:trakli/data/datasources/auth/token_manager.dart';
+import 'package:trakli/data/mapper/user_mapper.dart';
+import 'package:trakli/domain/entities/auth_status.dart';
+import 'package:trakli/domain/entities/user_entity.dart';
+import 'package:trakli/domain/repositories/auth_repository.dart';
+
+@Injectable(as: AuthRepository)
+class AuthRepositoryImpl implements AuthRepository {
+  final AuthRemoteDataSource _remoteDataSource;
+  final AuthLocalDataSource _localDataSource;
+  final TokenManager _tokenManager;
+  final PreferenceManager _preferenceManager;
+  final _authStatusController = StreamController<AuthStatus>.broadcast();
+
+  AuthRepositoryImpl({
+    required AuthRemoteDataSource remoteDataSource,
+    required AuthLocalDataSource localDataSource,
+    required NetworkInfo networkInfo,
+    required TokenManager tokenManager,
+    required PreferenceManager preferenceManager,
+  })  : _remoteDataSource = remoteDataSource,
+        _localDataSource = localDataSource,
+        _tokenManager = tokenManager,
+        _preferenceManager = preferenceManager {
+    // _initAuthStatus();
+  }
+
+  // @postConstruct
+  // void initAuthStatus() async {
+  //   final userId = await _preferenceManager.getUserId();
+
+  //   if (userId != null) {
+  //     final user = await _localDataSource.getUser(userId);
+  //     if (user != null) {
+  //       _authStatusController.add(AuthStatus.authenticated);
+  //     } else {
+  //       _authStatusController.add(AuthStatus.unauthenticated);
+  //     }
+  //   } else {
+  //     _authStatusController.add(AuthStatus.unauthenticated);
+  //   }
+  // }
+
+  @override
+  Stream<AuthStatus> get authStatus async* {
+    // await Future<void>.delayed(const Duration(seconds: 1));
+
+    final userId = await _preferenceManager.getUserId();
+
+    if (userId != null) {
+      final user = await _localDataSource.getUser(userId);
+      if (user != null) {
+        yield AuthStatus.authenticated;
+      } else {
+        yield AuthStatus.unauthenticated;
+      }
+    } else {
+      yield AuthStatus.unauthenticated;
+    }
+
+    yield* _authStatusController.stream;
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> loginWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final authResponse = await _remoteDataSource.loginWithEmailPassword(
+        email: email,
+        password: password,
+      );
+
+      await _tokenManager.persistToken(authResponse.accessToken);
+      final user = User.fromJson(authResponse.user);
+      await _localDataSource.saveUser(user);
+      await _preferenceManager.saveUserId(user.id);
+      _authStatusController.add(AuthStatus.authenticated);
+
+      return UserMapper.toDomain(user);
+    });
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> createUser({
+    required String firstName,
+    String? lastName,
+    required String email,
+    String? username,
+    String? phone,
+    required String password,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final authResponse = await _remoteDataSource.createUser(
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        phone: phone,
+        password: password,
+        email: email,
+      );
+
+      await _tokenManager.persistToken(authResponse.accessToken);
+
+      final user = User.fromJson(authResponse.user);
+      await _localDataSource.saveUser(user);
+
+      await _preferenceManager.saveUserId(user.id);
+      _authStatusController.add(AuthStatus.authenticated);
+
+      return UserMapper.toDomain(user);
+    });
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> loginWithPhonePassword({
+    required String phone,
+    required String password,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final authResponse = await _remoteDataSource.loginWithPhonePassword(
+        phone: phone,
+        password: password,
+      );
+
+      await _tokenManager.persistToken(authResponse.accessToken);
+      final user = User.fromJson(authResponse.user);
+
+      await _localDataSource.saveUser(user);
+      await _preferenceManager.saveUserId(user.id);
+
+      _authStatusController.add(AuthStatus.authenticated);
+
+      return UserMapper.toDomain(user);
+    });
+  }
+
+  @override
+  Future<void> logout() async {
+    await _tokenManager.clearToken();
+    await _preferenceManager.clearUserId();
+    await _localDataSource.deleteUser();
+    _authStatusController.add(AuthStatus.unauthenticated);
+  }
+
+  @override
+  void dispose() {
+    _authStatusController.close();
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getLoggedInUser() async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final userId = await _preferenceManager.getUserId();
+
+      if (userId == null) {
+        throw NotFoundException('User not found');
+      }
+
+      final user = await _localDataSource.getUser(userId);
+
+      if (user == null) {
+        throw NotFoundException('User not found');
+      }
+
+      return UserMapper.toDomain(user);
+    });
+  }
+}

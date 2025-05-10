@@ -5,6 +5,8 @@ import 'package:trakli/domain/entities/category_entity.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 const String maxUploadSizeInMB = "5Mo";
 final List<Locale> supportedLanguages = [
   const Locale('en'),

@@ -7,10 +7,16 @@ import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
+import 'package:trakli/presentation/auth/pages/login_screen.dart';
 import 'package:trakli/presentation/bloc/transaction/transaction_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding_screen.dart';
-// import 'package:trakli/presentation/onboarding_screen.dart';
+import 'package:trakli/presentation/root/main_navigation_screen.dart';
+import 'package:trakli/presentation/splash/splash_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
@@ -19,21 +25,35 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider(
-        create: (_) => getIt<TransactionCubit>(),
-      ),
-      BlocProvider(
-        create: (_) => getIt<CategoryCubit>(),
-      ),
-    ], child: const AppView());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<TransactionCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<CategoryCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<AuthCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<LoginCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<RegisterCubit>(),
+        ),
+      ],
+      child: const AppView(),
+    );
   }
 }
 
 class AppView extends StatelessWidget {
-  const AppView({
-    super.key,
-  });
+  const AppView({super.key});
+
+  // final _navigatorKey = GlobalKey<NavigatorState>();
+
+  // NavigatorState get _navigator => _navigatorKey.currentState!;
 
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
@@ -50,6 +70,7 @@ class AppView extends StatelessWidget {
 
     return MaterialApp(
       navigatorKey: navigatorKey,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       title: 'Trakli',
       locale: context.locale,
       supportedLocales: context.supportedLocales,
@@ -127,10 +148,11 @@ class AppView extends StatelessWidget {
             ),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  )),
+                borderRadius: BorderRadius.circular(8.r),
+                side: const BorderSide(
+                  color: Colors.transparent,
+                ),
+              ),
             ),
             padding: WidgetStatePropertyAll(
               EdgeInsets.symmetric(
@@ -205,12 +227,38 @@ class AppView extends StatelessWidget {
           ),
         ),
       ),
-      home: const OnboardingScreen(),
-
-      // home: MainNavigationScreen(),
-      // home: const HomePage(),
-
-      // const OnboardingScreen(),
+      builder: (context, child) {
+        return BlocListener<AuthCubit, AuthState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              authenticated: (user) {
+                navigatorKey.currentState?.pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => MainNavigationScreen(),
+                  ),
+                  (route) => false,
+                );
+                // AppNavigator.removeAllPreviousAndPush(
+                //   context,
+                //   MainNavigationScreen(),
+                // );
+              },
+              unauthenticated: () {
+                navigatorKey.currentState?.pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+              orElse: () {},
+            );
+          },
+          child: child,
+        );
+      },
+      onGenerateRoute: (_) => SplashScreen.route(),
+      // onGenerateRoute: (_) => SplashScreen.route(),
     );
   }
 }
