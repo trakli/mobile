@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 
 @DataClassName('Wallet')

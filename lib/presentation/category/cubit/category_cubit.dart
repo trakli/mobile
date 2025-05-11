@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/category/add_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/delete_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/get_categories_usecase.dart';
@@ -45,7 +45,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   Future<void> addCategory({
     required String name,
     required String slug,
-    required CategoryType type,
+    required TransactionType type,
     required int userId,
     String? description,
   }) async {
@@ -79,7 +79,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     required String clientId,
     String? name,
     String? slug,
-    CategoryType? type,
     int? userId,
     String? description,
   }) async {
@@ -89,7 +88,6 @@ class CategoryCubit extends Cubit<CategoryState> {
         clientId: clientId,
         name: name,
         slug: slug,
-        type: type,
         userId: userId,
         description: description,
       ),

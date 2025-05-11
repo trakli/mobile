@@ -9,7 +9,7 @@ part of 'category_entity.dart';
 _$CategoryEntityImpl _$$CategoryEntityImplFromJson(Map<String, dynamic> json) =>
     _$CategoryEntityImpl(
       clientGeneratedId: json['client_generated_id'] as String?,
-      type: $enumDecode(_$CategoryTypeEnumMap, json['type']),
+      type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
       name: json['name'] as String,
       description: json['description'] as String?,
       createdAt: json['created_at'] == null
@@ -31,7 +31,7 @@ Map<String, dynamic> _$$CategoryEntityImplToJson(
         _$CategoryEntityImpl instance) =>
     <String, dynamic>{
       'client_generated_id': instance.clientGeneratedId,
-      'type': _$CategoryTypeEnumMap[instance.type]!,
+      'type': _$TransactionTypeEnumMap[instance.type]!,
       'name': instance.name,
       'description': instance.description,
       'created_at': instance.createdAt?.toIso8601String(),
@@ -43,8 +43,7 @@ Map<String, dynamic> _$$CategoryEntityImplToJson(
       'sync_state': instance.syncState?.toJson(),
     };
 
-const _$CategoryTypeEnumMap = {
-  CategoryType.income: 'income',
-  CategoryType.expense: 'expense',
-  CategoryType.invoice: 'invoice',
+const _$TransactionTypeEnumMap = {
+  TransactionType.income: 'income',
+  TransactionType.expense: 'expense',
 };

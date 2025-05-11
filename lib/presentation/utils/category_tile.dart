@@ -39,6 +39,50 @@ class _CategoryTileState extends State<CategoryTile> {
     super.initState();
   }
 
+  void _showDeleteConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Delete Category',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete "${widget.category.name}"? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              widget.onDelete?.call();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text(
+              'Delete',
+              style: TextStyle(
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -100,27 +144,84 @@ class _CategoryTileState extends State<CategoryTile> {
                       ],
                     ),
                     if (widget.onEdit != null || widget.onDelete != null)
-                      Row(
-                        children: [
-                          if (widget.onEdit != null)
-                            IconButton(
-                              icon: Icon(
-                                Icons.edit,
-                                size: 20.sp,
-                                color: widget.accentColor,
-                              ),
-                              onPressed: widget.onEdit,
+                      Container(
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.r),
+                          color: widget.accentColor.withValues(alpha: 0.2),
+                        ),
+                        child: PopupMenuButton(
+                          icon: SvgPicture.asset(
+                            height: 20.h,
+                            width: 20.w,
+                            Assets.images.more,
+                            colorFilter: ColorFilter.mode(
+                              widget.accentColor,
+                              BlendMode.srcIn,
                             ),
-                          if (widget.onDelete != null)
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                size: 20.sp,
-                                color: Colors.red,
-                              ),
-                              onPressed: widget.onDelete,
-                            ),
-                        ],
+                          ),
+                          itemBuilder: (context) {
+                            return [
+                              if (widget.onEdit != null)
+                                PopupMenuItem(
+                                  onTap: widget.onEdit,
+                                  height: 40.h,
+                                  child: Row(
+                                    spacing: 8.w,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .primaryColor
+                                              .withAlpha(50),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          height: 16.h,
+                                          width: 16.w,
+                                          Assets.images.edit2,
+                                          colorFilter: ColorFilter.mode(
+                                            Theme.of(context).primaryColor,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
+                                      const Text('Edit'),
+                                    ],
+                                  ),
+                                ),
+                              if (widget.onDelete != null)
+                                PopupMenuItem(
+                                  onTap: _showDeleteConfirmation,
+                                  height: 40.h,
+                                  child: Row(
+                                    spacing: 8.w,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.redAccent.withAlpha(50),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          height: 16.h,
+                                          width: 16.w,
+                                          Assets.images.trash,
+                                          colorFilter: const ColorFilter.mode(
+                                            Colors.redAccent,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
+                                      const Text('Delete'),
+                                    ],
+                                  ),
+                                ),
+                            ];
+                          },
+                        ),
                       )
                     else if (widget.showValue)
                       RichText(

@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class CategoryLocalDataSource {
@@ -10,7 +10,7 @@ abstract class CategoryLocalDataSource {
   Future<Category> insertCategory(
     String name,
     String slug,
-    CategoryType type,
+    TransactionType type,
     int userId, {
     String? description,
   });
@@ -18,7 +18,7 @@ abstract class CategoryLocalDataSource {
     String clientId, {
     String? name,
     String? slug,
-    CategoryType? type,
+    TransactionType? type,
     int? userId,
     String? description,
   });
@@ -38,7 +38,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
   @override
   Future<Category> insertCategory(
-      String name, String slug, CategoryType type, int userId,
+      String name, String slug, TransactionType type, int userId,
       {String? description}) async {
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
@@ -62,7 +62,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
   Future<Category> updateCategory(String clientId,
       {String? name,
       String? slug,
-      CategoryType? type,
+      TransactionType? type,
       int? userId,
       String? description}) async {
     final model = await (database.update(database.categories)

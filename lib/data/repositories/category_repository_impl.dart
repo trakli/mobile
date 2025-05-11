@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart' as db;
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/datasources/category/category_local_datasource.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/core/error/failures/failures.dart';
@@ -35,7 +35,7 @@ class CategoryRepositoryImpl
 
   @override
   Future<Either<Failure, Unit>> insertCategory(
-      String name, String slug, CategoryType type, int userId,
+      String name, String slug, TransactionType type, int userId,
       {String? description}) async {
     try {
       final category = await localDataSource
@@ -50,18 +50,15 @@ class CategoryRepositoryImpl
 
   @override
   Future<Either<Failure, Unit>> updateCategory(String clientId,
-      {String? name,
-      String? slug,
-      CategoryType? type,
-      int? userId,
-      String? description}) async {
+      {String? name, String? slug, int? userId, String? description}) async {
     try {
-      final category = await localDataSource.updateCategory(clientId,
-          name: name,
-          slug: slug,
-          type: type,
-          userId: userId,
-          description: description);
+      final category = await localDataSource.updateCategory(
+        clientId,
+        name: name,
+        slug: slug,
+        userId: userId,
+        description: description,
+      );
       unawaited(put(category));
       return const Right(unit);
     } catch (e) {

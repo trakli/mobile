@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
 part 'category_dto.freezed.dart';
 part 'category_dto.g.dart';
@@ -9,7 +10,7 @@ part 'category_dto.g.dart';
 class CategoryDto with _$CategoryDto {
   const factory CategoryDto({
     @JsonKey(name: 'client_generated_id') required String clientId,
-    required CategoryType type,
+    required TransactionType type,
     required String name,
     String? description,
     @JsonKey(name: 'created_at', fromJson: DateTime.parse)

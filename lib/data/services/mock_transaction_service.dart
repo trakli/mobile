@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/transaction_entity.dart';
 

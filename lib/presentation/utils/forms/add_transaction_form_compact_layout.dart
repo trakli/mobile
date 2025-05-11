@@ -439,6 +439,7 @@ class _AddTransactionFormCompactLayoutState
                               context,
                               AddCategoryScreen(
                                 accentColor: widget.accentColor,
+                                type: widget.transactionType,
                               ),
                             );
                           },
@@ -594,7 +595,7 @@ class _AddTransactionFormCompactLayoutState
                           WidgetStatePropertyAll(widget.accentColor),
                     ),
                     onPressed: () {
-                      if(Form.of(context).validate()){
+                      if (Form.of(context).validate()) {
                         // Do something
                       }
                     },

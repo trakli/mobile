@@ -13,7 +13,7 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -58,6 +58,9 @@ class _CategoryScreenState extends State<CategoryScreen>
                   accentColor: (tabController.index == 0)
                       ? Theme.of(context).primaryColor
                       : const Color(0xFFEB5757),
+                  type: (tabController.index == 0)
+                      ? TransactionType.income
+                      : TransactionType.expense,
                 ),
               );
             },
@@ -85,15 +88,6 @@ class _CategoryScreenState extends State<CategoryScreen>
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state.failure.hasError) {
-            return Center(
-              child: Text(
-                state.failure.customMessage,
-                style: TextStyle(color: Colors.red, fontSize: 16.sp),
-              ),
-            );
           }
 
           return Column(
@@ -168,15 +162,15 @@ class _CategoryScreenState extends State<CategoryScreen>
                   children: [
                     categoriesList(
                       categories: state.categories
-                          .where((c) => c.type == CategoryType.income)
+                          .where((c) => c.type == TransactionType.income)
                           .toList(),
                       accentColor: Theme.of(context).primaryColor,
                     ),
                     categoriesList(
                       categories: state.categories
-                          .where((c) => c.type == CategoryType.expense)
+                          .where((c) => c.type == TransactionType.expense)
                           .toList(),
-                      type: CategoryType.expense,
+                      type: TransactionType.expense,
                       accentColor: const Color(0xFFEB5757),
                     ),
                   ],
@@ -192,7 +186,7 @@ class _CategoryScreenState extends State<CategoryScreen>
 
   Widget categoriesList({
     required List<CategoryEntity> categories,
-    CategoryType type = CategoryType.income,
+    TransactionType type = TransactionType.income,
     required Color accentColor,
   }) {
     if (categories.isEmpty) {
@@ -223,6 +217,7 @@ class _CategoryScreenState extends State<CategoryScreen>
               AddCategoryScreen(
                 category: category,
                 accentColor: accentColor,
+                type: type,
               ),
             );
           },

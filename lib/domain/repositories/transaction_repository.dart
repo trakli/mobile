@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:trakli/core/error/failures/failures.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import '../entities/transaction_entity.dart';
 import 'dart:async';
 

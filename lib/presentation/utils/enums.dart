@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/presentation/home_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
 import 'package:trakli/presentation/wallet_screen.dart';
 
+enum WalletType { bank, cash, creditCard, mobile }
+
 enum TransactionType {
+  @JsonValue('income')
   income,
+  @JsonValue('expense')
   expense,
 }
 

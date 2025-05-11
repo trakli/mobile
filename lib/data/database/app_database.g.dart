@@ -1972,7 +1972,9 @@ class $CategoriesTable extends Categories
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<String> slug = GeneratedColumn<String>(
       'slug', aliasedName, false,
@@ -1982,10 +1984,10 @@ class $CategoriesTable extends Categories
       'description', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumnWithTypeConverter<CategoryType, String> type =
+  late final GeneratedColumnWithTypeConverter<TransactionType, String> type =
       GeneratedColumn<String>('type', aliasedName, false,
               type: DriftSqlType.string, requiredDuringInsert: true)
-          .withConverter<CategoryType>($CategoriesTable.$convertertype);
+          .withConverter<TransactionType>($CategoriesTable.$convertertype);
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, false,
@@ -2045,8 +2047,8 @@ class $CategoriesTable extends Categories
     return $CategoriesTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<CategoryType, String, String> $convertertype =
-      const EnumNameConverter<CategoryType>(CategoryType.values);
+  static JsonTypeConverter2<TransactionType, String, String> $convertertype =
+      const EnumNameConverter<TransactionType>(TransactionType.values);
 }
 
 class Category extends DataClass implements Insertable<Category> {
@@ -2059,7 +2061,7 @@ class Category extends DataClass implements Insertable<Category> {
   final String name;
   final String slug;
   final String? description;
-  final CategoryType type;
+  final TransactionType type;
   final int userId;
   const Category(
       {this.id,
@@ -2168,7 +2170,7 @@ class Category extends DataClass implements Insertable<Category> {
           String? name,
           String? slug,
           Value<String?> description = const Value.absent(),
-          CategoryType? type,
+          TransactionType? type,
           int? userId}) =>
       Category(
         id: id.present ? id.value : this.id,
@@ -2251,7 +2253,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String> name;
   final Value<String> slug;
   final Value<String?> description;
-  final Value<CategoryType> type;
+  final Value<TransactionType> type;
   final Value<int> userId;
   final Value<int> rowid;
   const CategoriesCompanion({
@@ -2278,7 +2280,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     required String name,
     required String slug,
     this.description = const Value.absent(),
-    required CategoryType type,
+    required TransactionType type,
     required int userId,
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
@@ -2326,7 +2328,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       Value<String>? name,
       Value<String>? slug,
       Value<String?>? description,
-      Value<CategoryType>? type,
+      Value<TransactionType>? type,
       Value<int>? userId,
       Value<int>? rowid}) {
     return CategoriesCompanion(
@@ -5018,7 +5020,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String name,
   required String slug,
   Value<String?> description,
-  required CategoryType type,
+  required TransactionType type,
   required int userId,
   Value<int> rowid,
 });
@@ -5032,7 +5034,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> name,
   Value<String> slug,
   Value<String?> description,
-  Value<CategoryType> type,
+  Value<TransactionType> type,
   Value<int> userId,
   Value<int> rowid,
 });
@@ -5073,8 +5075,8 @@ class $$CategoriesTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnWithTypeConverterFilters<CategoryType, CategoryType, String> get type =>
-      $composableBuilder(
+  ColumnWithTypeConverterFilters<TransactionType, TransactionType, String>
+      get type => $composableBuilder(
           column: $table.type,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
@@ -5162,7 +5164,7 @@ class $$CategoriesTableAnnotationComposer
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<CategoryType, String> get type =>
+  GeneratedColumnWithTypeConverter<TransactionType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<int> get userId =>
@@ -5201,7 +5203,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String> slug = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            Value<CategoryType> type = const Value.absent(),
+            Value<TransactionType> type = const Value.absent(),
             Value<int> userId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -5229,7 +5231,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             required String name,
             required String slug,
             Value<String?> description = const Value.absent(),
-            required CategoryType type,
+            required TransactionType type,
             required int userId,
             Value<int> rowid = const Value.absent(),
           }) =>

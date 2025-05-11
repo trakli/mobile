@@ -21,30 +21,10 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   @override
   String get entityType => 'category';
 
-  // @override
-  // String getId(Category entity) => entity.clientId;
 
   @override
   String getRev(Category entity) => entity.rev ?? '1';
 
-  // @override
-  // Future<Category> getLocal(String id) async {
-  //   final row = await (db.select(table)..where((t) => t.clientId.equals(id)))
-  //       .getSingle();
-
-  //   return Category(
-  //     id: row.id,
-  //     name: row.name,
-  //     type: row.type.toString().split('.').last,
-  //     description: row.description,
-  //     clientGeneratedId: row.clientId,
-  //     slug: row.slug,
-  //     userId: row.userId,
-  //     createdAt: row.createdAt,
-  //     updatedAt: row.createdAt,
-  //     lastSyncedAt: row.createdAt?.toIso8601String(),
-  //   );
-  // }
 
   @override
   Category unmarshal(Map<String, dynamic> entityJson) {
@@ -93,10 +73,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       id: Value(entity.id),
       name: Value(entity.name),
       type: Value(entity.type),
-      // Value(CategoryType.values.firstWhere(
-      //   (e) => e.toString().split('.').last == entity.type,
-      //   orElse: () => CategoryType.expense,
-      // )),
+   
       description: Value(entity.description),
       clientId: Value(entity.clientId),
       slug: Value(entity.slug),

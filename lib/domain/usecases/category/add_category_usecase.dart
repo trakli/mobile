@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/repositories/category_repository.dart';
 
 @injectable
@@ -26,7 +26,7 @@ class AddCategoryUseCase implements UseCase<Unit, AddCategoryUseCaseParams> {
 class AddCategoryUseCaseParams {
   final String name;
   final String slug;
-  final CategoryType type;
+  final TransactionType type;
   final int userId;
   final String? description;
 
