@@ -62,7 +62,7 @@ class _CategoryTileState extends State<CategoryTile> {
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
-              Icons.category, // TODO: Use actual icon from category
+              Icons.category,
               size: 20.sp,
               color: widget.accentColor,
             ),
@@ -76,13 +76,28 @@ class _CategoryTileState extends State<CategoryTile> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.category.name,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: const Color(0xFF061D23),
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.category.name,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: const Color(0xFF061D23),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          widget.showStat
+                              ? "0 transactions in 2 wallets"
+                              : widget.category.description ?? "No description",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF576760),
+                          ),
+                        ),
+                      ],
                     ),
                     if (widget.onEdit != null || widget.onDelete != null)
                       Row(
@@ -133,15 +148,6 @@ class _CategoryTileState extends State<CategoryTile> {
                         height: 24.h,
                       ),
                   ],
-                ),
-                Text(
-                  widget.showStat
-                      ? "0 transactions in 2 wallets"
-                      : widget.category.description ?? "No description",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF576760),
-                  ),
                 ),
               ],
             ),

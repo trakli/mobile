@@ -43,7 +43,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
     _descriptionController =
         TextEditingController(text: widget.category?.description);
     selectedType = widget.category?.type ?? CategoryType.expense;
-    selectedIcon = Icons.category;
+    selectedIcon = Icons.add;
   }
 
   @override
@@ -95,8 +95,8 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                           ),
                         ),
                         Positioned(
-                          right: 8.w,
-                          bottom: 8.h,
+                          right: 10.w,
+                          bottom: 10.h,
                           child: Icon(
                             selectedIcon ?? Icons.category,
                             color: widget.accentColor,
