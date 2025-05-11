@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
-
 class CustomTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
@@ -64,7 +63,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
       readOnly: widget.readOnly,
       onTap: widget.onTap,
       onChanged: widget.onChanged,
-      enableInteractiveSelection: false,
       onTapOutside: (c) => hideKeyBoard(),
       onFieldSubmitted: widget.onFieldSubmitted,
       validator: widget.validator,
@@ -77,6 +75,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       cursorColor: Colors.black,
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,
+      textAlign: TextAlign.start,
       // style: AppStyles.body2black,
       decoration: InputDecoration(
         hintStyle: const TextStyle(
@@ -90,14 +89,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: widget.prefix,
         ),
-        prefixIconConstraints: const BoxConstraints(maxHeight: 50, maxWidth: 50),
+        prefixIconConstraints:
+            const BoxConstraints(maxHeight: 50, maxWidth: 50),
         suffixIcon: widget.isPassword
             ? IconButton(
                 splashRadius: 1,
                 icon: SvgPicture.asset(
-                  obscureText
-                      ? Assets.images.eyeSlash
-                      : Assets.images.eye,
+                  obscureText ? Assets.images.eyeSlash : Assets.images.eye,
                   colorFilter: const ColorFilter.mode(
                     Colors.grey,
                     BlendMode.srcIn,
@@ -112,37 +110,37 @@ class _CustomTextFieldState extends State<CustomTextField> {
         focusedErrorBorder: widget.showNoBorders == true
             ? InputBorder.none
             : widget.showBottomBorder == true
-            ? UnderlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.redAccent,
-            width: 2,
-          ),
-        )
-            : OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color:  Colors.redAccent,
-            width: 2,
-          ),
-        ),
+                ? UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.redAccent,
+                      width: 2,
+                    ),
+                  )
+                : OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.redAccent,
+                      width: 2,
+                    ),
+                  ),
         errorBorder: widget.showNoBorders == true
             ? InputBorder.none
             : widget.showBottomBorder == true
-            ? UnderlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.redAccent,
-            width: 2,
-          ),
-        )
-            : OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color:  Colors.redAccent,
-            width: 2,
-          ),
-        ),
+                ? UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.redAccent,
+                      width: 2,
+                    ),
+                  )
+                : OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Colors.redAccent,
+                      width: 2,
+                    ),
+                  ),
         focusedBorder: widget.showNoBorders == true
             ? InputBorder.none
             : widget.showBottomBorder == true
@@ -188,4 +186,3 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 }
-
