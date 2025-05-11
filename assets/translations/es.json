@@ -105,5 +105,6 @@
   "username": "Nombre de usuario",
   "confirmPassword": "Confirmar contraseña",
   "register": "Registrar",
-  "firstNameEmptyDesc": "El nombre no puede estar vacío"
+  "firstNameEmptyDesc": "El nombre no puede estar vacío",
+  "invalidUserCredentials": "Credenciales de usuario inválidas"
 }

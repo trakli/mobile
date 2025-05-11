@@ -105,5 +105,6 @@
   "username": "Benutzername",
   "confirmPassword": "Passwort bestätigen",
   "register": "Registrieren",
-  "firstNameEmptyDesc": "Vorname darf nicht leer sein"
+  "firstNameEmptyDesc": "Vorname darf nicht leer sein",
+  "invalidUserCredentials": "Ungültige Anmeldeinformationen"
 }

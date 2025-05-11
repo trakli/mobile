@@ -23,7 +23,8 @@ class LoginCubit extends Cubit<LoginState> {
     required String email,
     required String password,
   }) async {
-    emit(const LoginState.loading());
+    if (state is _Submitting) return;
+    emit(const LoginState.submitting());
 
     final result = await _loginWithEmailPassword(
       LoginWithEmailParams(
@@ -42,7 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
     required String phone,
     required String password,
   }) async {
-    emit(const LoginState.loading());
+    emit(const LoginState.submitting());
 
     final result = await _loginWithPhonePassword(
       LoginWithPhoneParams(

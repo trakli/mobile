@@ -38,28 +38,17 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
       listener: (context, state) {
         state.when(
           initial: () {},
-          loading: () {},
+          submitting: () {
+            showLoader();
+          },
           success: (user) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MainNavigationScreen(),
-              ),
-            );
+            hideLoader();
           },
           error: (failure) {
-            scaffoldMessengerKey.currentState?.showSnackBar(
-              SnackBar(
-                backgroundColor: expenseRedText,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                content: Text(
-                  failure.customMessage,
-                  style: TextStyle(fontSize: 16.sp),
-                ),
-              ),
+            hideLoader();
+            showSnackBar(
+              message: failure.customMessage,
+              borderRadius: 8.r,
             );
           },
         );

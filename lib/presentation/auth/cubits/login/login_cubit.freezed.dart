@@ -19,7 +19,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
     required TResult Function(Failure failure) error,
   }) =>
@@ -27,7 +27,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
     TResult? Function(Failure failure)? error,
   }) =>
@@ -35,7 +35,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -44,7 +44,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
+    required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
   }) =>
@@ -52,7 +52,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
   }) =>
@@ -60,7 +60,7 @@ mixin _$LoginState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
+    TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -131,7 +131,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
     required TResult Function(Failure failure) error,
   }) {
@@ -142,7 +142,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
     TResult? Function(Failure failure)? error,
   }) {
@@ -153,7 +153,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -168,7 +168,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
+    required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
   }) {
@@ -179,7 +179,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
   }) {
@@ -190,7 +190,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
+    TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -207,18 +207,18 @@ abstract class _Initial implements LoginState {
 }
 
 /// @nodoc
-abstract class _$$LoadingImplCopyWith<$Res> {
-  factory _$$LoadingImplCopyWith(
-          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
-      __$$LoadingImplCopyWithImpl<$Res>;
+abstract class _$$SubmittingImplCopyWith<$Res> {
+  factory _$$SubmittingImplCopyWith(
+          _$SubmittingImpl value, $Res Function(_$SubmittingImpl) then) =
+      __$$SubmittingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$LoginStateCopyWithImpl<$Res, _$LoadingImpl>
-    implements _$$LoadingImplCopyWith<$Res> {
-  __$$LoadingImplCopyWithImpl(
-      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
+class __$$SubmittingImplCopyWithImpl<$Res>
+    extends _$LoginStateCopyWithImpl<$Res, _$SubmittingImpl>
+    implements _$$SubmittingImplCopyWith<$Res> {
+  __$$SubmittingImplCopyWithImpl(
+      _$SubmittingImpl _value, $Res Function(_$SubmittingImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of LoginState
@@ -227,18 +227,18 @@ class __$$LoadingImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadingImpl implements _Loading {
-  const _$LoadingImpl();
+class _$SubmittingImpl implements _Submitting {
+  const _$SubmittingImpl();
 
   @override
   String toString() {
-    return 'LoginState.loading()';
+    return 'LoginState.submitting()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingImpl);
+        (other.runtimeType == runtimeType && other is _$SubmittingImpl);
   }
 
   @override
@@ -248,35 +248,35 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
     required TResult Function(Failure failure) error,
   }) {
-    return loading();
+    return submitting();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
     TResult? Function(Failure failure)? error,
   }) {
-    return loading?.call();
+    return submitting?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
-    if (loading != null) {
-      return loading();
+    if (submitting != null) {
+      return submitting();
     }
     return orElse();
   }
@@ -285,42 +285,42 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
+    required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
   }) {
-    return loading(this);
+    return submitting(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
   }) {
-    return loading?.call(this);
+    return submitting?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
+    TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (loading != null) {
-      return loading(this);
+    if (submitting != null) {
+      return submitting(this);
     }
     return orElse();
   }
 }
 
-abstract class _Loading implements LoginState {
-  const factory _Loading() = _$LoadingImpl;
+abstract class _Submitting implements LoginState {
+  const factory _Submitting() = _$SubmittingImpl;
 }
 
 /// @nodoc
@@ -404,7 +404,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
     required TResult Function(Failure failure) error,
   }) {
@@ -415,7 +415,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
     TResult? Function(Failure failure)? error,
   }) {
@@ -426,7 +426,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -441,7 +441,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
+    required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
   }) {
@@ -452,7 +452,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
   }) {
@@ -463,7 +463,7 @@ class _$SuccessImpl implements _Success {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
+    TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -568,7 +568,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
     required TResult Function(Failure failure) error,
   }) {
@@ -579,7 +579,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
     TResult? Function(Failure failure)? error,
   }) {
@@ -590,7 +590,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
@@ -605,7 +605,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
+    required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
   }) {
@@ -616,7 +616,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
   }) {
@@ -627,7 +627,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
+    TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
     required TResult orElse(),

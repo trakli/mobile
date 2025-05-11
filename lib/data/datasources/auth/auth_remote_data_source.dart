@@ -39,11 +39,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
-        '/auth/login',
+        '/login',
         data: {'email': email, 'password': password},
       );
 
-      return AuthResponseDto.fromJson(response.data);
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return AuthResponseDto.fromJson(apiResponse.data);
     });
   }
 

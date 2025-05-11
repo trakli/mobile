@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/error/utils/field_error.dart';
+import 'package:trakli/generated/locale_keys.g.dart';
 
 part 'failures.freezed.dart';
 
@@ -33,8 +35,7 @@ class Failure with _$Failure {
         validationError: (message, errors) {
           return errors.first.messages.join(', ');
         },
-        // errors.map((e) => e.messages).join(', '),
-        unauthorizedError: () => 'Unauthorized',
+        unauthorizedError: () => LocaleKeys.invalidUserCredentials.tr(),
         unknownError: () => 'Unknown error',
         badRequest: (errors, error) => error ?? errors?.join(', '),
         none: () => '',

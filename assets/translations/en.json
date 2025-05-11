@@ -105,5 +105,6 @@
   "username": "Username",
   "confirmPassword": "Confirm password",
   "register": "Register",
-  "firstNameEmptyDesc": "First name cannot be empty"
+  "firstNameEmptyDesc": "First name cannot be empty",
+  "invalidUserCredentials": "Invalid user credentials"
 }
