@@ -3445,6 +3445,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         localChanges,
         syncMetadata
       ];
+  @override
+  DriftDatabaseOptions get options =>
+      const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
 typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({

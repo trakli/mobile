@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/enums.dart';
 import 'package:uuid/uuid.dart';
@@ -41,17 +42,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       String name, String slug, CategoryType type, int userId,
       {String? description}) async {
     final now = DateTime.now();
-
-    // String isoString = now.toIso8601String();
-
-    // final dateTime = DateTime.parse(isoString);
-
-    final formatted = DateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'").format(now);
-
-    final dateTime = DateTime.parse(formatted);
-
-    // print('isoString');
-    // print("dateTime: $dateTime");
+    DateTime dateTime = formatServerIsoDateTime(now);
 
     final model = await database.into(database.categories).insertReturning(
           CategoriesCompanion.insert(

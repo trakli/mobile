@@ -3,7 +3,8 @@ targets:
     builders:
       drift_dev:
         options:
-          skip_verification_code: true  
+          skip_verification_code: true
+          store_date_time_values_as_text: true
           # Relative path to the database file
           databases:
             default: lib/data/database/app_database.dart
