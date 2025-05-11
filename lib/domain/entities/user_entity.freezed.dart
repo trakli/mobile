@@ -164,14 +164,15 @@ class __$$UserEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UserEntityImpl implements _UserEntity {
+class _$UserEntityImpl extends _UserEntity {
   const _$UserEntityImpl(
       {required this.id,
       required this.firstName,
       required this.email,
       this.lastName,
       this.username,
-      this.phone});
+      this.phone})
+      : super._();
 
   @override
   final int id;
@@ -220,7 +221,7 @@ class _$UserEntityImpl implements _UserEntity {
       __$$UserEntityImplCopyWithImpl<_$UserEntityImpl>(this, _$identity);
 }
 
-abstract class _UserEntity implements UserEntity {
+abstract class _UserEntity extends UserEntity {
   const factory _UserEntity(
       {required final int id,
       required final String firstName,
@@ -228,6 +229,7 @@ abstract class _UserEntity implements UserEntity {
       final String? lastName,
       final String? username,
       final String? phone}) = _$UserEntityImpl;
+  const _UserEntity._() : super._();
 
   @override
   int get id;

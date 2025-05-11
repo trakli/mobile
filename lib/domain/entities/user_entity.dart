@@ -12,4 +12,9 @@ class UserEntity with _$UserEntity {
     String? username,
     String? phone,
   }) = _UserEntity;
+
+  const UserEntity._();
+
+  String get fullName =>
+      '$firstName ${(lastName == null || lastName!.isEmpty) ? '' : '$lastName'}';
 }

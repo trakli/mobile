@@ -41,21 +41,23 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
 
   @override
   Future<Category> insertCategory(Category category) async {
+    final data = {
+      'client_id': category.clientId,
+      'type': category.type.name,
+      'name': category.name,
+      'description': category.description,
+      'created_at': category.createdAt.toIso8601String(),
+    };
+
     final response = await dio.post(
       'categories',
-      data: {
-        'client_id': category.clientId,
-        'type': category.type.name,
-        'name': category.name,
-        'description': category.description,
-        'created_at': category.createdAt.toIso8601String(),
-      },
+      data: data,
     );
 
     final apiResponse = ApiResponse.fromJson(response.data);
     Category categoryData = Category.fromJson(apiResponse.data);
 
-    return categoryData;
+    return categoryData; 
   }
 
   @override

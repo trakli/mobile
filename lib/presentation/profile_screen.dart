@@ -14,6 +14,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthCubit>().state.user;
+
     return Scaffold(
       appBar: CustomAppBar(
         titleText: LocaleKeys.profile.tr(),
@@ -83,14 +85,14 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'John Doe',
+              user?.fullName ?? 'John Doe',
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'you@example.com',
+              user?.email ?? 'you@example.com',
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -159,7 +161,7 @@ class ProfileScreen extends StatelessWidget {
                       Column(
                         children: [
                           Text(LocaleKeys.phoneNumber.tr()),
-                          const Text('+201234567890'),
+                          Text(user?.phone ?? 'No phone number'),
                         ],
                       ),
                       const Spacer(),
