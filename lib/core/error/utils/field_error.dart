@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/utils/services/logger.dart';

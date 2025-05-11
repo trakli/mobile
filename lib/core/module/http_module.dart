@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:http/http.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
 import 'package:trakli/core/network/interceptors/token_interceptor.dart';

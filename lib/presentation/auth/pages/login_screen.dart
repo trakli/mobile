@@ -135,7 +135,7 @@ class LoginScreen extends StatelessWidget {
                 );
               },
               style: ButtonStyle(
-                shape: MaterialStatePropertyAll(
+                shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.r),
                     side: const BorderSide(
