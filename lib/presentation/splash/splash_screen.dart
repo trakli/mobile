@@ -22,8 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    final AuthCubit authCubit = context.read<AuthCubit>();
-    authCubit.listenToAuthStatus();
+    // final AuthCubit authCubit = context.read<AuthCubit>();
+    // authCubit.listenToAuthStatus();
   }
 
   @override

@@ -29,4 +29,8 @@ abstract class AuthRepository {
   Future<Either<Failure, Unit>> logout();
 
   Future<Either<Failure, UserEntity>> getLoggedInUser();
+
+  Future<Either<Failure, bool>> isOnboardingCompleted();
+
+  Future<Either<Failure, Unit>> onboardingCompleted();
 }

@@ -30,12 +30,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   void listenToAuthStatus() {
     _authSubscription?.cancel();
-
-    print('AuthCubit: Starting to listen to auth status');
     _authSubscription =
         _streamAuthStatus(NoParams()).listen((authStatus) async {
-      print('AuthCubit: Received auth status: $authStatus');
-
       switch (authStatus) {
         case AuthStatus.authenticated:
           final result = await _getLoggedInUser(NoParams());
@@ -44,26 +40,20 @@ class AuthCubit extends Cubit<AuthState> {
             (user) => emit(AuthState.authenticated(user)),
           );
           break;
-
         case AuthStatus.unauthenticated:
           emit(const AuthState.unauthenticated());
           break;
-
         case AuthStatus.unknown:
           emit(const AuthState.unauthenticated());
           break;
       }
     });
-
-    emit(const AuthState.unauthenticated());
   }
 
   Future<void> logout() async {
-    // emit(const AuthState.unauthenticated());
     final result = await _logoutUsecase(NoParams());
 
     result.fold((failure) => emit(AuthState.error(failure)), (unit) => null);
-    //emit(const AuthState.unauthenticated()),
   }
 
   @override

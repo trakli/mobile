@@ -42,6 +42,7 @@ import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
+import '../domain/usecases/auth/is_onboarding_completed.dart' as _i828;
 import '../domain/usecases/auth/login_by_email_usecase.dart' as _i42;
 import '../domain/usecases/auth/login_by_phone_usecase.dart' as _i498;
 import '../domain/usecases/auth/login_with_email_password.dart' as _i768;
@@ -49,6 +50,7 @@ import '../domain/usecases/auth/login_with_email_usecase.dart' as _i524;
 import '../domain/usecases/auth/login_with_phone_password.dart' as _i723;
 import '../domain/usecases/auth/login_with_phone_usecase.dart' as _i400;
 import '../domain/usecases/auth/logout_usecase.dart' as _i640;
+import '../domain/usecases/auth/onboarding_completed.dart' as _i2;
 import '../domain/usecases/auth/register_usecase.dart' as _i705;
 import '../domain/usecases/auth/stream_auth_status.dart' as _i444;
 import '../domain/usecases/category/add_category_usecase.dart' as _i445;
@@ -205,6 +207,10 @@ _i174.GetIt $initGetIt(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i880.GetLoggedInUser>(
       () => _i880.GetLoggedInUser(gh<_i800.AuthRepository>()));
+  gh.factory<_i828.IsOnboardingCompleted>(
+      () => _i828.IsOnboardingCompleted(gh<_i800.AuthRepository>()));
+  gh.factory<_i2.OnboardingCompleted>(
+      () => _i2.OnboardingCompleted(gh<_i800.AuthRepository>()));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
         gh<_i768.LoginWithEmailPassword>(),
         gh<_i723.LoginWithPhonePassword>(),

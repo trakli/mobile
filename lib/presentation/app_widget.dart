@@ -34,7 +34,7 @@ class AppWidget extends StatelessWidget {
           create: (_) => getIt<CategoryCubit>(),
         ),
         BlocProvider(
-          create: (_) => getIt<AuthCubit>(),
+          create: (_) => getIt<AuthCubit>()..listenToAuthStatus(),
         ),
         BlocProvider(
           create: (_) => getIt<LoginCubit>(),
