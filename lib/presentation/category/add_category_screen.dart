@@ -47,7 +47,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
           if (state.failure.hasError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.failure.message),
+                content: Text(state.failure.customMessage),
                 backgroundColor: Colors.red,
               ),
             );

@@ -11,6 +11,7 @@ import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -20,19 +21,10 @@ class LoginScreen extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         state.maybeWhen(
-          error: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.red,
-                // width: 300.w,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                content: Text(
-                  message,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
+          error: (failure) {
+            showSnackBar(
+              message: failure,
+              borderRadius: 8.r,
             );
           },
           success: (user) {

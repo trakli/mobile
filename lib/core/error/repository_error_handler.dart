@@ -17,7 +17,7 @@ class RepositoryErrorHandler {
     } on UnauthorizedException {
       return left(const UnauthorizedFailure());
     } on ValidationException catch (e) {
-      return left(ValidationFailure(e.message));
+      return left(ValidationFailure(e.message, errors: e.errors));
     } on BadRequestException catch (e) {
       return left(ServerFailure(e.message));
     } on ServerException catch (e) {

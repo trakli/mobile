@@ -15,7 +15,7 @@ import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
 
-@Injectable(as: AuthRepository)
+@Singleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final AuthLocalDataSource _localDataSource;
@@ -32,30 +32,13 @@ class AuthRepositoryImpl implements AuthRepository {
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
         _tokenManager = tokenManager,
-        _preferenceManager = preferenceManager {
-    // _initAuthStatus();
-  }
+        _preferenceManager = preferenceManager;
 
-  // @postConstruct
-  // void initAuthStatus() async {
-  //   final userId = await _preferenceManager.getUserId();
-
-  //   if (userId != null) {
-  //     final user = await _localDataSource.getUser(userId);
-  //     if (user != null) {
-  //       _authStatusController.add(AuthStatus.authenticated);
-  //     } else {
-  //       _authStatusController.add(AuthStatus.unauthenticated);
-  //     }
-  //   } else {
-  //     _authStatusController.add(AuthStatus.unauthenticated);
-  //   }
-  // }
+  // @override
+  // Stream<AuthStatus> get authStatus => _authStatusController.stream;
 
   @override
   Stream<AuthStatus> get authStatus async* {
-    // await Future<void>.delayed(const Duration(seconds: 1));
-
     final userId = await _preferenceManager.getUserId();
 
     if (userId != null) {
@@ -116,8 +99,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final user = User.fromJson(authResponse.user);
       await _localDataSource.saveUser(user);
-
       await _preferenceManager.saveUserId(user.id);
+
       _authStatusController.add(AuthStatus.authenticated);
 
       return UserMapper.toDomain(user);
@@ -148,14 +131,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> logout() async {
-    await _tokenManager.clearToken();
-    await _preferenceManager.clearUserId();
-    await _localDataSource.deleteUser();
-    _authStatusController.add(AuthStatus.unauthenticated);
+  Future<Either<Failure, Unit>> logout() async {
+    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
+      await _tokenManager.clearToken();
+      await _preferenceManager.clearUserId();
+      await _localDataSource.deleteUser();
+      _authStatusController.add(AuthStatus.unauthenticated);
+
+      return unit;
+    });
   }
 
-  @override
   void dispose() {
     _authStatusController.close();
   }
@@ -176,6 +162,21 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return UserMapper.toDomain(user);
+    });
+  }
+
+  @override
+  Future<Either<Failure, bool>> isOnboardingCompleted() async {
+    return RepositoryErrorHandler.handleApiCall<bool>(() async {
+      return await _preferenceManager.isOnboardingCompleted();
+    });
+  }
+
+  @override
+  Future<Either<Failure, Unit>> onboardingCompleted() async {
+    return RepositoryErrorHandler.handleApiCall<Unit>(() async {
+      await _preferenceManager.onboardingCompleted();
+      return unit;
     });
   }
 }

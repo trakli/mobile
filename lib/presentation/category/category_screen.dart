@@ -86,7 +86,7 @@ class _CategoryScreenState extends State<CategoryScreen>
           if (state.failure.hasError) {
             return Center(
               child: Text(
-                state.failure.message,
+                state.failure.customMessage,
                 style: TextStyle(color: Colors.red, fontSize: 16.sp),
               ),
             );

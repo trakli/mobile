@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/usecases/auth/register_usecase.dart';
 
@@ -24,6 +25,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     required String email,
   }) async {
     emit(const RegisterState.submitting());
+    // showLoader();
 
     final result = await _registerUseCase(
       RegisterParams(
@@ -37,8 +39,14 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
 
     result.fold(
-      (failure) => emit(RegisterState.error(failure.message)),
-      (user) => emit(RegisterState.success(user)),
+      (failure) {
+        // hideLoader();
+        emit(RegisterState.error(failure));
+      },
+      (user) {
+        // hideLoader();
+        emit(RegisterState.success(user));
+      },
     );
   }
 }

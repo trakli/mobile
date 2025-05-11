@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/usecases/auth/login_with_email_password.dart';
 import 'package:trakli/domain/usecases/auth/login_with_phone_password.dart';
@@ -32,7 +33,7 @@ class LoginCubit extends Cubit<LoginState> {
     );
 
     result.fold(
-      (failure) => emit(LoginState.error(failure.message)),
+      (failure) => emit(LoginState.error(failure)),
       (user) => emit(LoginState.success(user)),
     );
   }
@@ -51,7 +52,7 @@ class LoginCubit extends Cubit<LoginState> {
     );
 
     result.fold(
-      (failure) => emit(LoginState.error(failure.message)),
+      (failure) => emit(LoginState.error(failure)),
       (user) => emit(LoginState.success(user)),
     );
   }

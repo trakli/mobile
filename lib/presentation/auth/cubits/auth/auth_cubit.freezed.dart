@@ -21,7 +21,7 @@ mixin _$AuthState {
     required TResult Function() initial,
     required TResult Function(UserEntity user) authenticated,
     required TResult Function() unauthenticated,
-    required TResult Function(String message) error,
+    required TResult Function(Failure failure) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -29,7 +29,7 @@ mixin _$AuthState {
     TResult? Function()? initial,
     TResult? Function(UserEntity user)? authenticated,
     TResult? Function()? unauthenticated,
-    TResult? Function(String message)? error,
+    TResult? Function(Failure failure)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -37,7 +37,7 @@ mixin _$AuthState {
     TResult Function()? initial,
     TResult Function(UserEntity user)? authenticated,
     TResult Function()? unauthenticated,
-    TResult Function(String message)? error,
+    TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -132,7 +132,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function(UserEntity user) authenticated,
     required TResult Function() unauthenticated,
-    required TResult Function(String message) error,
+    required TResult Function(Failure failure) error,
   }) {
     return initial();
   }
@@ -143,7 +143,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function(UserEntity user)? authenticated,
     TResult? Function()? unauthenticated,
-    TResult? Function(String message)? error,
+    TResult? Function(Failure failure)? error,
   }) {
     return initial?.call();
   }
@@ -154,7 +154,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function(UserEntity user)? authenticated,
     TResult Function()? unauthenticated,
-    TResult Function(String message)? error,
+    TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -288,7 +288,7 @@ class _$AuthenticatedImpl implements _Authenticated {
     required TResult Function() initial,
     required TResult Function(UserEntity user) authenticated,
     required TResult Function() unauthenticated,
-    required TResult Function(String message) error,
+    required TResult Function(Failure failure) error,
   }) {
     return authenticated(user);
   }
@@ -299,7 +299,7 @@ class _$AuthenticatedImpl implements _Authenticated {
     TResult? Function()? initial,
     TResult? Function(UserEntity user)? authenticated,
     TResult? Function()? unauthenticated,
-    TResult? Function(String message)? error,
+    TResult? Function(Failure failure)? error,
   }) {
     return authenticated?.call(user);
   }
@@ -310,7 +310,7 @@ class _$AuthenticatedImpl implements _Authenticated {
     TResult Function()? initial,
     TResult Function(UserEntity user)? authenticated,
     TResult Function()? unauthenticated,
-    TResult Function(String message)? error,
+    TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
@@ -413,7 +413,7 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
     required TResult Function() initial,
     required TResult Function(UserEntity user) authenticated,
     required TResult Function() unauthenticated,
-    required TResult Function(String message) error,
+    required TResult Function(Failure failure) error,
   }) {
     return unauthenticated();
   }
@@ -424,7 +424,7 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
     TResult? Function()? initial,
     TResult? Function(UserEntity user)? authenticated,
     TResult? Function()? unauthenticated,
-    TResult? Function(String message)? error,
+    TResult? Function(Failure failure)? error,
   }) {
     return unauthenticated?.call();
   }
@@ -435,7 +435,7 @@ class _$UnauthenticatedImpl implements _Unauthenticated {
     TResult Function()? initial,
     TResult Function(UserEntity user)? authenticated,
     TResult Function()? unauthenticated,
-    TResult Function(String message)? error,
+    TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (unauthenticated != null) {
@@ -492,7 +492,9 @@ abstract class _$$ErrorImplCopyWith<$Res> {
           _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
       __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String message});
+  $Res call({Failure failure});
+
+  $FailureCopyWith<$Res> get failure;
 }
 
 /// @nodoc
@@ -508,28 +510,38 @@ class __$$ErrorImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? failure = null,
   }) {
     return _then(_$ErrorImpl(
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == failure
+          ? _value.failure
+          : failure // ignore: cast_nullable_to_non_nullable
+              as Failure,
     ));
+  }
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureCopyWith<$Res> get failure {
+    return $FailureCopyWith<$Res>(_value.failure, (value) {
+      return _then(_value.copyWith(failure: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$ErrorImpl implements _Error {
-  const _$ErrorImpl(this.message);
+  const _$ErrorImpl(this.failure);
 
   @override
-  final String message;
+  final Failure failure;
 
   @override
   String toString() {
-    return 'AuthState.error(message: $message)';
+    return 'AuthState.error(failure: $failure)';
   }
 
   @override
@@ -537,11 +549,11 @@ class _$ErrorImpl implements _Error {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ErrorImpl &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.failure, failure) || other.failure == failure));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(runtimeType, failure);
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.
@@ -557,9 +569,9 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function(UserEntity user) authenticated,
     required TResult Function() unauthenticated,
-    required TResult Function(String message) error,
+    required TResult Function(Failure failure) error,
   }) {
-    return error(message);
+    return error(failure);
   }
 
   @override
@@ -568,9 +580,9 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function(UserEntity user)? authenticated,
     TResult? Function()? unauthenticated,
-    TResult? Function(String message)? error,
+    TResult? Function(Failure failure)? error,
   }) {
-    return error?.call(message);
+    return error?.call(failure);
   }
 
   @override
@@ -579,11 +591,11 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function(UserEntity user)? authenticated,
     TResult Function()? unauthenticated,
-    TResult Function(String message)? error,
+    TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
-      return error(message);
+      return error(failure);
     }
     return orElse();
   }
@@ -627,9 +639,9 @@ class _$ErrorImpl implements _Error {
 }
 
 abstract class _Error implements AuthState {
-  const factory _Error(final String message) = _$ErrorImpl;
+  const factory _Error(final Failure failure) = _$ErrorImpl;
 
-  String get message;
+  Failure get failure;
 
   /// Create a copy of AuthState
   /// with the given fields replaced by the non-null parameter values.

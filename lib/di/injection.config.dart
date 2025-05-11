@@ -19,6 +19,7 @@ import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;
 import '../core/sync/sync_database.dart' as _i646;
 import '../core/sync/sync_service.dart' as _i957;
+import '../core/utils/services/shared_prefs.dart' as _i789;
 import '../data/database/app_database.dart' as _i704;
 import '../data/datasources/auth/auth_local_data_source.dart' as _i276;
 import '../data/datasources/auth/auth_remote_data_source.dart' as _i496;
@@ -47,6 +48,7 @@ import '../domain/usecases/auth/login_with_email_password.dart' as _i768;
 import '../domain/usecases/auth/login_with_email_usecase.dart' as _i524;
 import '../domain/usecases/auth/login_with_phone_password.dart' as _i723;
 import '../domain/usecases/auth/login_with_phone_usecase.dart' as _i400;
+import '../domain/usecases/auth/logout_usecase.dart' as _i640;
 import '../domain/usecases/auth/register_usecase.dart' as _i705;
 import '../domain/usecases/auth/stream_auth_status.dart' as _i444;
 import '../domain/usecases/category/add_category_usecase.dart' as _i445;
@@ -91,9 +93,13 @@ _i174.GetIt $initGetIt(
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i150.MockTransactionRemoteDataSource());
+  gh.singletonAsync<_i789.SharedPrefs>(() {
+    final i = _i789.SharedPrefsImpl();
+    return i.init().then((_) => i);
+  });
   gh.factory<_i483.TokenManager>(() => const _i483.TokenManagerImpl());
   gh.factory<_i683.PreferenceManager>(
-      () => _i683.PreferenceManagerImpl()..voidinit());
+      () => _i683.PreferenceManagerImpl()..init());
   gh.factory<String>(
     () => injectHttpClientModule.devHttpUrl,
     instanceName: 'HttpUrl',
@@ -163,7 +169,7 @@ _i174.GetIt $initGetIt(
       () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i800.AuthRepository>(() => _i135.AuthRepositoryImpl(
+  gh.singleton<_i800.AuthRepository>(() => _i135.AuthRepositoryImpl(
         remoteDataSource: gh<_i496.AuthRemoteDataSource>(),
         localDataSource: gh<_i276.AuthLocalDataSource>(),
         networkInfo: gh<_i6.NetworkInfo>(),
@@ -193,16 +199,12 @@ _i174.GetIt $initGetIt(
       () => _i498.LoginByPhoneUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
       () => _i723.LoginWithPhonePassword(gh<_i800.AuthRepository>()));
-  gh.factory<_i768.LoginWithEmailPassword>(
-      () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i444.StreamAuthStatus>(
       () => _i444.StreamAuthStatus(gh<_i800.AuthRepository>()));
+  gh.factory<_i768.LoginWithEmailPassword>(
+      () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i880.GetLoggedInUser>(
       () => _i880.GetLoggedInUser(gh<_i800.AuthRepository>()));
-  gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
-        gh<_i444.StreamAuthStatus>(),
-        gh<_i880.GetLoggedInUser>(),
-      ));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
         gh<_i768.LoginWithEmailPassword>(),
         gh<_i723.LoginWithPhonePassword>(),
@@ -212,6 +214,13 @@ _i174.GetIt $initGetIt(
         gh<_i986.UpdateCategoryUseCase>(),
         gh<_i292.DeleteCategoryUseCase>(),
         gh<_i961.GetCategoriesUseCase>(),
+      ));
+  gh.factory<_i640.LogoutUsecase>(
+      () => _i640.LogoutUsecase(gh<_i800.AuthRepository>()));
+  gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
+        gh<_i444.StreamAuthStatus>(),
+        gh<_i880.GetLoggedInUser>(),
+        gh<_i640.LogoutUsecase>(),
       ));
   return getIt;
 }

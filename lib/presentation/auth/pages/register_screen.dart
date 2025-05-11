@@ -6,10 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
-import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -44,28 +43,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       listener: (context, state) {
         state.when(
           initial: () {},
-          submitting: () {},
-          success: (user) {
-            // Navigator.pushReplacement(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => MainNavigationScreen(),
-            //   ),
-            // );
+          submitting: () {
+            showLoader();
           },
-          error: (message) {
-            scaffoldMessengerKey.currentState?.showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.red,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                content: Text(
-                  message,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+          success: (user) {
+            hideLoader();
+          },
+          error: (failure) {
+            hideLoader();
+            showSnackBar(
+              message: failure.customMessage,
+              backgroundColor: expenseRedText,
+              isFloating: false,
             );
           },
         );

@@ -22,10 +22,12 @@ mixin _$Failure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) =>
@@ -36,10 +38,10 @@ mixin _$Failure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) =>
@@ -50,10 +52,10 @@ mixin _$Failure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -196,10 +198,12 @@ class _$ServerFailureImpl extends ServerFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -213,10 +217,10 @@ class _$ServerFailureImpl extends ServerFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -230,10 +234,10 @@ class _$ServerFailureImpl extends ServerFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -358,10 +362,12 @@ class _$NetworkFailureImpl extends NetworkFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -375,10 +381,10 @@ class _$NetworkFailureImpl extends NetworkFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -392,10 +398,10 @@ class _$NetworkFailureImpl extends NetworkFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -539,10 +545,12 @@ class _$CacheFailureImpl extends CacheFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -556,10 +564,10 @@ class _$CacheFailureImpl extends CacheFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -573,10 +581,10 @@ class _$CacheFailureImpl extends CacheFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -728,10 +736,12 @@ class _$SyncFailureImpl extends SyncFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -745,10 +755,10 @@ class _$SyncFailureImpl extends SyncFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -762,10 +772,10 @@ class _$SyncFailureImpl extends SyncFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -851,7 +861,7 @@ abstract class _$$ValidationFailureImplCopyWith<$Res> {
           $Res Function(_$ValidationFailureImpl) then) =
       __$$ValidationFailureImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String message});
+  $Res call({String message, List<FieldError> errors});
 }
 
 /// @nodoc
@@ -868,12 +878,17 @@ class __$$ValidationFailureImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? message = null,
+    Object? errors = null,
   }) {
     return _then(_$ValidationFailureImpl(
       null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      errors: null == errors
+          ? _value._errors
+          : errors // ignore: cast_nullable_to_non_nullable
+              as List<FieldError>,
     ));
   }
 }
@@ -881,14 +896,24 @@ class __$$ValidationFailureImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ValidationFailureImpl extends ValidationFailure {
-  const _$ValidationFailureImpl(this.message) : super._();
+  const _$ValidationFailureImpl(this.message,
+      {required final List<FieldError> errors})
+      : _errors = errors,
+        super._();
 
   @override
   final String message;
+  final List<FieldError> _errors;
+  @override
+  List<FieldError> get errors {
+    if (_errors is EqualUnmodifiableListView) return _errors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_errors);
+  }
 
   @override
   String toString() {
-    return 'Failure.validationError(message: $message)';
+    return 'Failure.validationError(message: $message, errors: $errors)';
   }
 
   @override
@@ -896,11 +921,13 @@ class _$ValidationFailureImpl extends ValidationFailure {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ValidationFailureImpl &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality().equals(other._errors, _errors));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(
+      runtimeType, message, const DeepCollectionEquality().hash(_errors));
 
   /// Create a copy of Failure
   /// with the given fields replaced by the non-null parameter values.
@@ -918,14 +945,16 @@ class _$ValidationFailureImpl extends ValidationFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
-    return validationError(message);
+    return validationError(message, errors);
   }
 
   @override
@@ -935,14 +964,14 @@ class _$ValidationFailureImpl extends ValidationFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
-    return validationError?.call(message);
+    return validationError?.call(message, errors);
   }
 
   @override
@@ -952,16 +981,16 @@ class _$ValidationFailureImpl extends ValidationFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
   }) {
     if (validationError != null) {
-      return validationError(message);
+      return validationError(message, errors);
     }
     return orElse();
   }
@@ -1023,11 +1052,12 @@ class _$ValidationFailureImpl extends ValidationFailure {
 }
 
 abstract class ValidationFailure extends Failure {
-  const factory ValidationFailure(final String message) =
-      _$ValidationFailureImpl;
+  const factory ValidationFailure(final String message,
+      {required final List<FieldError> errors}) = _$ValidationFailureImpl;
   const ValidationFailure._() : super._();
 
   String get message;
+  List<FieldError> get errors;
 
   /// Create a copy of Failure
   /// with the given fields replaced by the non-null parameter values.
@@ -1082,10 +1112,12 @@ class _$UnauthorizedFailureImpl extends UnauthorizedFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -1099,10 +1131,10 @@ class _$UnauthorizedFailureImpl extends UnauthorizedFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -1116,10 +1148,10 @@ class _$UnauthorizedFailureImpl extends UnauthorizedFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -1236,10 +1268,12 @@ class _$UnknownFailureImpl extends UnknownFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -1253,10 +1287,10 @@ class _$UnknownFailureImpl extends UnknownFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -1270,10 +1304,10 @@ class _$UnknownFailureImpl extends UnknownFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -1351,7 +1385,7 @@ abstract class _$$BadRequestImplCopyWith<$Res> {
           _$BadRequestImpl value, $Res Function(_$BadRequestImpl) then) =
       __$$BadRequestImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<String>? errors, String? error});
+  $Res call({List<FieldError>? errors, String? error});
 }
 
 /// @nodoc
@@ -1374,7 +1408,7 @@ class __$$BadRequestImplCopyWithImpl<$Res>
       errors: freezed == errors
           ? _value._errors
           : errors // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
+              as List<FieldError>?,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1386,13 +1420,13 @@ class __$$BadRequestImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$BadRequestImpl extends _BadRequest {
-  const _$BadRequestImpl({final List<String>? errors, this.error})
+  const _$BadRequestImpl({final List<FieldError>? errors, this.error})
       : _errors = errors,
         super._();
 
-  final List<String>? _errors;
+  final List<FieldError>? _errors;
   @override
-  List<String>? get errors {
+  List<FieldError>? get errors {
     final value = _errors;
     if (value == null) return null;
     if (_errors is EqualUnmodifiableListView) return _errors;
@@ -1436,10 +1470,12 @@ class _$BadRequestImpl extends _BadRequest {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -1453,10 +1489,10 @@ class _$BadRequestImpl extends _BadRequest {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -1470,10 +1506,10 @@ class _$BadRequestImpl extends _BadRequest {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -1541,11 +1577,11 @@ class _$BadRequestImpl extends _BadRequest {
 }
 
 abstract class _BadRequest extends Failure {
-  const factory _BadRequest({final List<String>? errors, final String? error}) =
-      _$BadRequestImpl;
+  const factory _BadRequest(
+      {final List<FieldError>? errors, final String? error}) = _$BadRequestImpl;
   const _BadRequest._() : super._();
 
-  List<String>? get errors;
+  List<FieldError>? get errors;
   String? get error;
 
   /// Create a copy of Failure
@@ -1600,10 +1636,12 @@ class _$NoneFailureImpl extends NoneFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -1617,10 +1655,10 @@ class _$NoneFailureImpl extends NoneFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -1634,10 +1672,10 @@ class _$NoneFailureImpl extends NoneFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),
@@ -1754,10 +1792,12 @@ class _$NotFoundFailureImpl extends NotFoundFailure {
     required TResult Function() networkError,
     required TResult Function(String message) cacheError,
     required TResult Function(String message) syncError,
-    required TResult Function(String message) validationError,
+    required TResult Function(String message, List<FieldError> errors)
+        validationError,
     required TResult Function() unauthorizedError,
     required TResult Function() unknownError,
-    required TResult Function(List<String>? errors, String? error) badRequest,
+    required TResult Function(List<FieldError>? errors, String? error)
+        badRequest,
     required TResult Function() none,
     required TResult Function() notFound,
   }) {
@@ -1771,10 +1811,10 @@ class _$NotFoundFailureImpl extends NotFoundFailure {
     TResult? Function()? networkError,
     TResult? Function(String message)? cacheError,
     TResult? Function(String message)? syncError,
-    TResult? Function(String message)? validationError,
+    TResult? Function(String message, List<FieldError> errors)? validationError,
     TResult? Function()? unauthorizedError,
     TResult? Function()? unknownError,
-    TResult? Function(List<String>? errors, String? error)? badRequest,
+    TResult? Function(List<FieldError>? errors, String? error)? badRequest,
     TResult? Function()? none,
     TResult? Function()? notFound,
   }) {
@@ -1788,10 +1828,10 @@ class _$NotFoundFailureImpl extends NotFoundFailure {
     TResult Function()? networkError,
     TResult Function(String message)? cacheError,
     TResult Function(String message)? syncError,
-    TResult Function(String message)? validationError,
+    TResult Function(String message, List<FieldError> errors)? validationError,
     TResult Function()? unauthorizedError,
     TResult Function()? unknownError,
-    TResult Function(List<String>? errors, String? error)? badRequest,
+    TResult Function(List<FieldError>? errors, String? error)? badRequest,
     TResult Function()? none,
     TResult Function()? notFound,
     required TResult orElse(),

@@ -9,7 +9,11 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/globals.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 
 Future<File?> pickFile() async {
   try {
@@ -41,6 +45,14 @@ Future<void> openUrl({required String url}) async {
   )) {
     throw Exception('Could not launch URL');
   }
+}
+
+void showLoader() {
+  navigatorKey.currentContext?.loaderOverlay.show();
+}
+
+void hideLoader() {
+  navigatorKey.currentContext?.loaderOverlay.hide();
 }
 
 void hideKeyBoard() {
@@ -207,4 +219,54 @@ String formatCurrency(double amount) {
     decimalDigits: 0,
   );
   return '${format.format(amount)} XAF';
+}
+
+void showSnackBar({
+  required dynamic message,
+  Color backgroundColor = const Color(0xFFEB5757),
+  Color textColor = Colors.white,
+  double fontSize = 16,
+  bool isFloating = true,
+  double? borderRadius,
+}) {
+  final String messageText =
+      message is Failure ? message.customMessage : message.toString();
+
+  scaffoldMessengerKey.currentState?.showSnackBar(
+    SnackBar(
+      backgroundColor: backgroundColor,
+      behavior: isFloating ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
+      shape: borderRadius != null
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            )
+          : null,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      content: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Text(
+              messageText,
+              style: TextStyle(
+                color: textColor,
+                fontSize: fontSize.sp,
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          GestureDetector(
+            onTap: () {
+              scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+            },
+            child: Icon(
+              Icons.close,
+              color: textColor,
+              size: 18.sp,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

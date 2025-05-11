@@ -10,6 +10,10 @@ abstract class StreamUseCase<Type, Params> {
   Stream<Either<Failure, Type>> call(Params params);
 }
 
+abstract class NoEitherStreamUseCase<Type, Params> {
+  Stream<Type> call(Params params);
+}
+
 class NoParams extends Equatable {
   @override
   List<Object> get props => [];

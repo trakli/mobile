@@ -53,16 +53,14 @@ class ErrorHandler {
     }
   }
 
-  static List<String> _extractValidationErrors(dynamic data) {
+  static List<FieldError> _extractValidationErrors(dynamic data) {
     if (data == null) return [];
 
-    final errors = FieldError.getErrors(data);
+    return FieldError.getErrors(data);
 
-    if (errors.isNotEmpty) {
-      return errors.map((e) => e.messages).expand((x) => x).toList();
-    }
-
-    return [];
+    // if (errors.isNotEmpty) {
+    //   return errors.map((e) => e.messages).expand((x) => x).toList();
+    // }
   }
 
   static ApiException _handleUnknownException(

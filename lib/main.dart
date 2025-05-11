@@ -15,9 +15,8 @@ import 'presentation/app_widget.dart';
 /// - Initializing the Flutter app by calling [WidgetsFlutterBinding.ensureInitialized].
 /// - Running the app in a zone guarded against errors.
 /// - Running the app by calling the provided `builder` function.
-void main() {
-  configureDependencies(Environment.dev);
-  bootstrap(
+void main() async {
+  await bootstrap(
     () => const AppWidget(),
   );
 }

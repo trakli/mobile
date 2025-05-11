@@ -8,6 +8,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -46,17 +47,17 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               ),
             );
           },
-          error: (message) {
+          error: (failure) {
             scaffoldMessengerKey.currentState?.showSnackBar(
               SnackBar(
-                backgroundColor: Colors.red,
+                backgroundColor: expenseRedText,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 content: Text(
-                  message,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  failure.customMessage,
+                  style: TextStyle(fontSize: 16.sp),
                 ),
               ),
             );

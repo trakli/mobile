@@ -5,6 +5,7 @@ abstract class PreferenceManager {
   Future<void> saveUserId(int userId);
   Future<int?> getUserId();
   Future<void> clearUserId();
+  Future<void> clearAll();
 }
 
 @Injectable(as: PreferenceManager)
@@ -32,7 +33,12 @@ class PreferenceManagerImpl implements PreferenceManager {
   }
 
   @postConstruct
-  voidinit() {
+  void init() {
     initStart();
+  }
+
+  @override
+  Future<void> clearAll() async {
+    await _prefs.clear();
   }
 }
