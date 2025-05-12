@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
+import 'package:trakli/data/datasources/core/pagination_response.dart';
 // import 'package:trakli/domain/models/category.dart';
 
 abstract class CategoryRemoteDataSource {
@@ -26,10 +28,13 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
-    return (apiResponse.data as List)
-        .where((json) => json['client_generated_id'] != null)
-        .map((json) => Category.fromJson(json))
-        .toList();
+    //Filter only client_generated_id is not null
+    final paginatedResponse = PaginationResponse.fromJson(
+      apiResponse.data as Map<String, dynamic>,
+      (Object? json) => Category.fromJson(json! as Map<String, dynamic>),
+    );
+
+    return paginatedResponse.data;
   }
 
   @override
@@ -46,7 +51,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'type': category.type.name,
       'name': category.name,
       'description': category.description,
-      'created_at': category.createdAt.toIso8601String(),
+      'created_at': formatServerIsoDateTimeString(category.createdAt)
     };
 
     final response = await dio.post(
@@ -57,7 +62,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
     final apiResponse = ApiResponse.fromJson(response.data);
     Category categoryData = Category.fromJson(apiResponse.data);
 
-    return categoryData; 
+    return categoryData;
   }
 
   @override
@@ -65,7 +70,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
     final response = await dio.put(
       'categories/${category.id}',
       data: {
-        'type': category.type,
+        'type': category.type.name,
         'name': category.name,
         'description': category.description,
       },

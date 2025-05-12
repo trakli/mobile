@@ -91,6 +91,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
   @override
   Stream<List<Category>> listenToCategories() {
-    return database.select(database.categories).watch();
+    return (database.select(database.categories)
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .watch();
   }
 }

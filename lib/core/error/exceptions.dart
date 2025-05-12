@@ -40,6 +40,10 @@ class NetworkException extends ApiException {
   NetworkException(super.message);
 }
 
+class UnknownException extends ApiException {
+  UnknownException(super.message);
+}
+
 class ValidationException extends ApiException {
   final List<FieldError> errors;
 

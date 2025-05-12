@@ -133,15 +133,11 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(() =>
-      syncModule.provideSyncTypeHandlers(gh<_i893.TransactionSyncHandler>()));
-  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
-        appDatabase: gh<_i704.AppDatabase>(),
-        typeHandlers:
-            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
-        dio: gh<_i361.Dio>(),
-        networkInfo: gh<_i6.NetworkInfo>(),
-      ));
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
+      () => syncModule.provideSyncTypeHandlers(
+            gh<_i893.TransactionSyncHandler>(),
+            gh<_i463.CategorySyncHandler>(),
+          ));
   gh.lazySingleton<_i410.CategoryRepository>(() => _i324.CategoryRepositoryImpl(
         syncHandler: gh<_i463.CategorySyncHandler>(),
         localDataSource: gh<_i148.CategoryLocalDataSource>(),
@@ -193,6 +189,13 @@ _i174.GetIt $initGetIt(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i400.LoginWithPhoneUseCase>(
       () => _i400.LoginWithPhoneUseCase(gh<_i800.AuthRepository>()));
+  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
+        appDatabase: gh<_i704.AppDatabase>(),
+        typeHandlers:
+            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
+        dio: gh<_i361.Dio>(),
+        networkInfo: gh<_i6.NetworkInfo>(),
+      ));
   gh.factory<_i831.RegisterCubit>(
       () => _i831.RegisterCubit(gh<_i705.RegisterUseCase>()));
   gh.factory<_i42.LoginByEmailUsecase>(

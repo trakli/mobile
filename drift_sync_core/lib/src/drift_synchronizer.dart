@@ -139,7 +139,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
       try {
         await this.appDatabase.transaction(() async {
-          await appDatabase.concludeLocalChange(localChange);
+          // await appDatabase.concludeLocalChange(localChange);
           await _doOperation(localChange, handler);
         });
       } on UnavailableException catch (_) {
@@ -277,12 +277,23 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     sw.start();
     _logger.finest('Entered fullResync');
     try {
+      // First, fetch all remote data outside the transaction
+      final Map<SyncTypeHandler, List<dynamic>> remoteData = {};
+      for (final handler in _typeHandlers.values) {
+        if (_state.cancelRequested) {
+          _logger.finest('... cancel requested. Will leave.');
+          throw const CancelException();
+        }
+        _logger.info('started handler for ${handler.entityType}');
+
+        final list = await handler.getAllRemote();
+        remoteData[handler] = list;
+        _logger.info('got all ${sw.elapsedMilliseconds}');
+      }
+
+      // Now perform database operations in a single transaction
       await appDatabase.transaction(() async {
-        _logger.finest('... will call getLatestServerChangeId');
-        final lastSyncedChangeId = await getLatestServerChangeId();
-        _logger.finest(
-          '... got $lastSyncedChangeId. Will clear all local changes',
-        );
+        // Cancel all local changes
         await appDatabase.cancelAllLocalChanges();
         _logger.finest('... will reset last received changedId to null');
         await appDatabase.setLastReceivedChangeId(null);
@@ -296,40 +307,30 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           await handler.deleteAllLocal();
         }
 
-        //Sync each handler INDEPENDENTLY
-        _logger.finest('... will sync each handler');
+        // Insert all remote data
+        for (final entry in remoteData.entries) {
+          final handler = entry.key;
+          final list = entry.value;
 
-        for (final handler in _typeHandlers.values) {
-          _logger.finest(
-            '... syncing all items for handler ${handler.toString()}',
-          );
           if (_state.cancelRequested) {
             _logger.finest('... cancel requested. Will leave.');
             throw const CancelException();
           }
-          _logger.info('started handler for ${handler.entityType}');
-
-          final list = await handler.getAllRemote();
-          _logger.info('got all ${sw.elapsedMilliseconds}');
 
           await handler.upsertAllLocal(list);
           _logger.info('called insertAll ${sw.elapsedMilliseconds}');
-
           _logger.info(
             'synced ${handler.toString()} ${sw.elapsedMilliseconds}',
           );
-          _logger.finest('... done syncing all items for handler.');
         }
 
-        _logger.finest(
-          '... done syncing all handlers will call setLastReceivedChangeId with $lastSyncedChangeId.',
-        );
-        await appDatabase.setLastReceivedChangeId(lastSyncedChangeId ?? '');
-        sw.stop();
-        _logger.info(
-          'synchronization terminated after taking ${sw.elapsedMilliseconds} milliseconds',
-        );
+        await appDatabase.setLastReceivedChangeId(null);
       });
+
+      sw.stop();
+      _logger.info(
+        'synchronization terminated after taking ${sw.elapsedMilliseconds} milliseconds',
+      );
     } on CancelException catch (_) {
       _logger.finest('user cancelled sync');
       rethrow;

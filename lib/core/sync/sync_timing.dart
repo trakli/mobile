@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:trakli/core/utils/services/logger.dart';
 
 class SyncTiming {
-  static const _baseDelay = Duration(seconds: 5);
+  static const _baseDelay = Duration(seconds: 2);
   static const _maxDelay = Duration(minutes: 30);
   static const _maxAttempts = 10;
-  static const _exponentialFactor = 2.0;
+  static const _exponentialFactor = 1.5;
 
   Timer? _syncTimer;
   Duration _currentDelay = _baseDelay;

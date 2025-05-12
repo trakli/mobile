@@ -245,6 +245,8 @@ class AppView extends StatelessWidget {
             listener: (context, state) {
               state.maybeWhen(
                 authenticated: (user) {
+                  getIt<SynchAppDatabase>().init();
+
                   navigatorKey.currentState?.pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => MainNavigationScreen(),
@@ -283,7 +285,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    getIt<SynchAppDatabase>().sync();
+    // getIt<SynchAppDatabase>().sync();
+    // getIt<SynchAppDatabase>().init();
   }
 
   @override

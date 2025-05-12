@@ -21,10 +21,8 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   @override
   String get entityType => 'category';
 
-
   @override
   String getRev(Category entity) => entity.rev ?? '1';
-
 
   @override
   Category unmarshal(Map<String, dynamic> entityJson) {
@@ -73,7 +71,6 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       id: Value(entity.id),
       name: Value(entity.name),
       type: Value(entity.type),
-   
       description: Value(entity.description),
       clientId: Value(entity.clientId),
       slug: Value(entity.slug),
@@ -137,5 +134,5 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   }
 
   @override
-  int getServerId(Category entity) => entity.id ?? 0;
+  int? getServerId(Category entity) => entity.id;
 }

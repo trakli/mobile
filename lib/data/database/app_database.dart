@@ -1,4 +1,4 @@
- import 'package:drift/drift.dart';
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';

@@ -5,3 +5,7 @@ DateTime formatServerIsoDateTime(DateTime now) {
   final dateTime = DateTime.parse(formatted);
   return dateTime;
 }
+
+String formatServerIsoDateTimeString(DateTime now) {
+  return formatServerIsoDateTime(now).toIso8601String();
+}

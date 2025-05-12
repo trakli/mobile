@@ -41,7 +41,7 @@ class CategoryRepositoryImpl
       final category = await localDataSource
           .insertCategory(name, slug, type, userId, description: description);
 
-      unawaited(put(category));
+      unawaited(post(category));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));

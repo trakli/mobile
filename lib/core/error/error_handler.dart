@@ -17,11 +17,13 @@ class ErrorHandler {
   }
 
   static ApiException _handleDioException(DioException err) {
-    if (err.type == DioExceptionType.connectionError ||
-        err.type == DioExceptionType.unknown) {
+    if (err.type == DioExceptionType.connectionError) {
       return NetworkException('No internet connection');
     }
 
+    if (err.type == DioExceptionType.unknown) {
+      return UnknownException('Unknown error');
+    }
     final statusCode = err.response?.statusCode;
     final message = err.response?.data['message'] as String? ?? 'Unknown error';
     final data = err.response?.data;
