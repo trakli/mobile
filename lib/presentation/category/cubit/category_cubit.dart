@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/category/add_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/delete_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/get_categories_usecase.dart';
 import 'package:trakli/domain/usecases/category/update_category_usecase.dart';
-import 'package:trakli/presentation/category/cubit/category_state.dart';
+
+part 'category_state.dart';
+part 'category_cubit.freezed.dart';
 
 @injectable
 class CategoryCubit extends Cubit<CategoryState> {
@@ -29,6 +33,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   Future<void> loadCategories() async {
     emit(state.copyWith(isLoading: true, failure: const Failure.none()));
     final result = await _getCategoriesUseCase(NoParams());
+
     result.fold(
       (failure) => emit(state.copyWith(
         isLoading: false,

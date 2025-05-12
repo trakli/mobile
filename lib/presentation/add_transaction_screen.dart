@@ -9,7 +9,7 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/forms/add_transaction_form.dart';
-import 'package:trakli/presentation/utils/forms/add_transaction_form_compact_layout.dart';
+import 'package:trakli/presentation/transactions/add_transaction_form_compact_layout.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});

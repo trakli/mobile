@@ -6,7 +6,6 @@ import 'package:trakli/core/constants/text_styles.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
-import 'package:trakli/presentation/category/cubit/category_state.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/forms/add_category_form.dart';
 import 'package:trakli/presentation/utils/helpers.dart';

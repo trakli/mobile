@@ -8,8 +8,8 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
 
-part 'transaction_cubit.freezed.dart';
 part 'transaction_state.dart';
+part 'transaction_cubit.freezed.dart';
 
 @injectable
 class TransactionCubit extends Cubit<TransactionState> {
@@ -26,13 +26,8 @@ class TransactionCubit extends Cubit<TransactionState> {
     required this.updateTransactionUseCase,
     required this.deleteTransactionUseCase,
     required this.listenToTransactionsUseCase,
-  }) : super(const TransactionState.initial()) {
-    _transactionSubscription = listenToTransactionsUseCase().listen(
-      (either) => either.fold(
-        (failure) => emit(TransactionState.error(failure)),
-        (transactions) => emit(TransactionState.loaded(transactions)),
-      ),
-    );
+  }) : super(TransactionState.initial()) {
+    loadTransactions();
   }
 
   @override
@@ -42,34 +37,51 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   Future<void> loadTransactions() async {
-    emit(const TransactionState.loading());
+    emit(state.copyWith(isLoading: true, failure: const Failure.none()));
+
     final result = await getAllTransactionsUseCase(NoParams());
     result.fold(
-      (failure) => emit(TransactionState.error(failure)),
-      (transactions) => emit(TransactionState.loaded(transactions)),
+      (failure) => emit(state.copyWith(
+        isLoading: false,
+        failure: failure,
+      )),
+      (transactions) => emit(state.copyWith(
+        isLoading: false,
+        transactions: transactions,
+        failure: const Failure.none(),
+      )),
     );
   }
 
   Future<void> addTransaction({
     required double amount,
     required String description,
-    required String category,
+    required String categoryId,
     required TransactionType type,
     required DateTime datetime,
   }) async {
-    emit(const TransactionState.loading());
+    emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
       CreateTransactionParams(
         amount: amount,
         description: description,
-        category: category,
+        categoryId: categoryId,
         type: type,
         datetime: datetime,
       ),
     );
     result.fold(
-      (failure) => emit(TransactionState.error(failure)),
-      (_) => loadTransactions(),
+      (failure) => emit(state.copyWith(
+        isSaving: false,
+        failure: failure,
+      )),
+      (_) {
+        emit(state.copyWith(
+          isSaving: false,
+          failure: const Failure.none(),
+        ));
+        loadTransactions();
+      },
     );
   }
 
@@ -79,6 +91,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     String? description,
     String? category,
   }) async {
+    emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
       UpdateTransactionParams(
         id: id,
@@ -88,26 +101,63 @@ class TransactionCubit extends Cubit<TransactionState> {
       ),
     );
     result.fold(
-      (failure) => emit(TransactionState.error(failure)),
-      (_) => loadTransactions(),
+      (failure) => emit(state.copyWith(
+        isSaving: false,
+        failure: failure,
+      )),
+      (_) {
+        emit(state.copyWith(
+          isSaving: false,
+          failure: const Failure.none(),
+        ));
+        loadTransactions();
+      },
     );
   }
 
   Future<void> deleteTransaction(String id) async {
+    emit(state.copyWith(isDeleting: true, failure: const Failure.none()));
+
+    // Optimistically update the UI
+    final updatedTransactions = state.transactions
+        .where((transaction) => transaction.clientId != id)
+        .toList();
+
+    emit(state.copyWith(
+      transactions: updatedTransactions,
+      isDeleting: true,
+    ));
+
     final result = await deleteTransactionUseCase(id);
     result.fold(
-      (failure) => emit(TransactionState.error(failure)),
-      (_) => loadTransactions(),
+      (failure) => emit(state.copyWith(
+        isDeleting: false,
+        failure: failure,
+      )),
+      (_) => emit(state.copyWith(
+        isDeleting: false,
+        failure: const Failure.none(),
+      )),
     );
   }
 
   Future<void> listenForChanges() async {
-    emit(const TransactionState.loading());
+    emit(state.copyWith(isLoading: true));
 
     _transactionSubscription = listenToTransactionsUseCase().listen(
       (either) => either.fold(
-        (failure) => emit(TransactionState.error(failure)),
-        (transactions) => emit(TransactionState.loaded(transactions)),
+        (failure) => emit(
+          state.copyWith(
+            failure: failure,
+            isLoading: false,
+          ),
+        ),
+        (transactions) => emit(
+          state.copyWith(
+            transactions: transactions,
+            isLoading: false,
+          ),
+        ),
       ),
     );
   }

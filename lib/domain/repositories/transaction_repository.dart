@@ -10,7 +10,7 @@ abstract class TransactionRepository {
   Future<Either<Failure, Unit>> insertTransaction(
     double amount,
     String description,
-    String category,
+    String categoryId,
     TransactionType type,
     DateTime datetime,
   );

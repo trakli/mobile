@@ -76,9 +76,9 @@ import '../domain/usecases/transaction/usecase.dart' as _i1022;
 import '../presentation/auth/cubits/auth/auth_cubit.dart' as _i872;
 import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
-import '../presentation/bloc/transaction/transaction_cubit.dart' as _i218;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
+import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -179,7 +179,7 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i500.ListenToCategoriesUseCase>(
       () => _i500.ListenToCategoriesUseCase(gh<_i410.CategoryRepository>()));
-  gh.factory<_i218.TransactionCubit>(() => _i218.TransactionCubit(
+  gh.factory<_i117.TransactionCubit>(() => _i117.TransactionCubit(
         getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
         createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
         updateTransactionUseCase: gh<_i1022.UpdateTransactionUseCase>(),

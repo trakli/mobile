@@ -1,10 +1,14 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/data/database/tables/categories.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -40,6 +44,8 @@ class _AddTransactionFormCompactLayoutState
   TimeOfDay time = TimeOfDay.now();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  CategoryEntity? _selectedCategory;
+
   Currency? currency;
   final pieData = StatisticsProvider().getPieData;
 
@@ -409,27 +415,36 @@ class _AddTransactionFormCompactLayoutState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: CustomDropdownSearch<ChartData>(
-                            label: "",
-                            accentColor: widget.accentColor,
-                            items: (filter, infiniteScrollProps) {
-                              return pieData
-                                  .map((data) => data)
-                                  .toList()
-                                  .where((ChartData el) => el.property
-                                      .toLowerCase()
-                                      .contains(filter.toLowerCase()))
-                                  .toList();
-                            },
-                            itemAsString: (item) => item.property,
-                            onChanged: (value) => {
-                              debugPrint(value?.property),
-                            },
-                            compareFn: (i1, i2) => i1 == i2,
-                            filterFn: (el, filter) {
-                              return el.property.toLowerCase().contains(
-                                    filter.toLowerCase(),
-                                  );
+                          child: BlocBuilder<CategoryCubit, CategoryState>(
+                            builder: (context, state) {
+                              return CustomDropdownSearch<CategoryEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                items: (filter, infiniteScrollProps) {
+                                  return state.categories
+                                      .map((data) => data)
+                                      .toList()
+                                      .where((CategoryEntity el) => el.name
+                                          .toLowerCase()
+                                          .contains(filter.toLowerCase()))
+                                      .toList();
+                                },
+                                itemAsString: (item) => item.name,
+                                onChanged: (value) => {
+                                  debugPrint(value?.name),
+                                  _selectedCategory = value
+                                },
+                                compareFn: (i1, i2) => i1 == i2,
+                                filterFn: (el, filter) {
+                                  return el.name.toLowerCase().contains(
+                                        filter.toLowerCase(),
+                                      );
+                                },
+                                validator: (p0) =>
+                                    p0 == null && _selectedCategory == p0
+                                        ? "Category is required"
+                                        : null,
+                              );
                             },
                           ),
                         ),

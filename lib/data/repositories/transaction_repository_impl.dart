@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/domain/repositories/transaction_repository.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/datasources/transaction/transaction_local_datasource.dart';
 import 'package:trakli/data/mapper/transaction_mapper.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
-import '../../domain/entities/transaction_entity.dart';
-import '../../core/error/failures/failures.dart';
-import '../../domain/repositories/transaction_repository.dart';
 
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl
@@ -63,13 +63,13 @@ class TransactionRepositoryImpl
   Future<Either<Failure, Unit>> insertTransaction(
     double amount,
     String description,
-    String category,
+    String categoryId,
     TransactionType type,
     DateTime datetime,
   ) async {
     try {
       final transaction = await localDataSource.insertTransaction(
-          amount, description, category, type, datetime);
+          amount, description, categoryId, type, datetime);
 
       unawaited(put(transaction));
       return const Right(unit);

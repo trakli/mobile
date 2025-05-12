@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'category_state.dart';
+part of 'transaction_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,28 +15,29 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$CategoryState {
-  List<CategoryEntity> get categories => throw _privateConstructorUsedError;
+mixin _$TransactionState {
+  List<TransactionEntity> get transactions =>
+      throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isSaving => throw _privateConstructorUsedError;
   bool get isDeleting => throw _privateConstructorUsedError;
   Failure get failure => throw _privateConstructorUsedError;
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CategoryStateCopyWith<CategoryState> get copyWith =>
+  $TransactionStateCopyWith<TransactionState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CategoryStateCopyWith<$Res> {
-  factory $CategoryStateCopyWith(
-          CategoryState value, $Res Function(CategoryState) then) =
-      _$CategoryStateCopyWithImpl<$Res, CategoryState>;
+abstract class $TransactionStateCopyWith<$Res> {
+  factory $TransactionStateCopyWith(
+          TransactionState value, $Res Function(TransactionState) then) =
+      _$TransactionStateCopyWithImpl<$Res, TransactionState>;
   @useResult
   $Res call(
-      {List<CategoryEntity> categories,
+      {List<TransactionEntity> transactions,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -46,31 +47,31 @@ abstract class $CategoryStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CategoryStateCopyWithImpl<$Res, $Val extends CategoryState>
-    implements $CategoryStateCopyWith<$Res> {
-  _$CategoryStateCopyWithImpl(this._value, this._then);
+class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
+    implements $TransactionStateCopyWith<$Res> {
+  _$TransactionStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? categories = null,
+    Object? transactions = null,
     Object? isLoading = null,
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
   }) {
     return _then(_value.copyWith(
-      categories: null == categories
-          ? _value.categories
-          : categories // ignore: cast_nullable_to_non_nullable
-              as List<CategoryEntity>,
+      transactions: null == transactions
+          ? _value.transactions
+          : transactions // ignore: cast_nullable_to_non_nullable
+              as List<TransactionEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -90,7 +91,7 @@ class _$CategoryStateCopyWithImpl<$Res, $Val extends CategoryState>
     ) as $Val);
   }
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -102,15 +103,15 @@ class _$CategoryStateCopyWithImpl<$Res, $Val extends CategoryState>
 }
 
 /// @nodoc
-abstract class _$$CategoryStateImplCopyWith<$Res>
-    implements $CategoryStateCopyWith<$Res> {
-  factory _$$CategoryStateImplCopyWith(
-          _$CategoryStateImpl value, $Res Function(_$CategoryStateImpl) then) =
-      __$$CategoryStateImplCopyWithImpl<$Res>;
+abstract class _$$TransactionStateImplCopyWith<$Res>
+    implements $TransactionStateCopyWith<$Res> {
+  factory _$$TransactionStateImplCopyWith(_$TransactionStateImpl value,
+          $Res Function(_$TransactionStateImpl) then) =
+      __$$TransactionStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {List<CategoryEntity> categories,
+      {List<TransactionEntity> transactions,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -121,29 +122,29 @@ abstract class _$$CategoryStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CategoryStateImplCopyWithImpl<$Res>
-    extends _$CategoryStateCopyWithImpl<$Res, _$CategoryStateImpl>
-    implements _$$CategoryStateImplCopyWith<$Res> {
-  __$$CategoryStateImplCopyWithImpl(
-      _$CategoryStateImpl _value, $Res Function(_$CategoryStateImpl) _then)
+class __$$TransactionStateImplCopyWithImpl<$Res>
+    extends _$TransactionStateCopyWithImpl<$Res, _$TransactionStateImpl>
+    implements _$$TransactionStateImplCopyWith<$Res> {
+  __$$TransactionStateImplCopyWithImpl(_$TransactionStateImpl _value,
+      $Res Function(_$TransactionStateImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? categories = null,
+    Object? transactions = null,
     Object? isLoading = null,
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
   }) {
-    return _then(_$CategoryStateImpl(
-      categories: null == categories
-          ? _value._categories
-          : categories // ignore: cast_nullable_to_non_nullable
-              as List<CategoryEntity>,
+    return _then(_$TransactionStateImpl(
+      transactions: null == transactions
+          ? _value._transactions
+          : transactions // ignore: cast_nullable_to_non_nullable
+              as List<TransactionEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -166,21 +167,21 @@ class __$$CategoryStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CategoryStateImpl implements _CategoryState {
-  const _$CategoryStateImpl(
-      {required final List<CategoryEntity> categories,
+class _$TransactionStateImpl implements _TransactionState {
+  const _$TransactionStateImpl(
+      {required final List<TransactionEntity> transactions,
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
       required this.failure})
-      : _categories = categories;
+      : _transactions = transactions;
 
-  final List<CategoryEntity> _categories;
+  final List<TransactionEntity> _transactions;
   @override
-  List<CategoryEntity> get categories {
-    if (_categories is EqualUnmodifiableListView) return _categories;
+  List<TransactionEntity> get transactions {
+    if (_transactions is EqualUnmodifiableListView) return _transactions;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_categories);
+    return EqualUnmodifiableListView(_transactions);
   }
 
   @override
@@ -194,16 +195,16 @@ class _$CategoryStateImpl implements _CategoryState {
 
   @override
   String toString() {
-    return 'CategoryState(categories: $categories, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure)';
+    return 'TransactionState(transactions: $transactions, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CategoryStateImpl &&
+            other is _$TransactionStateImpl &&
             const DeepCollectionEquality()
-                .equals(other._categories, _categories) &&
+                .equals(other._transactions, _transactions) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.isSaving, isSaving) ||
@@ -216,31 +217,32 @@ class _$CategoryStateImpl implements _CategoryState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_categories),
+      const DeepCollectionEquality().hash(_transactions),
       isLoading,
       isSaving,
       isDeleting,
       failure);
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CategoryStateImplCopyWith<_$CategoryStateImpl> get copyWith =>
-      __$$CategoryStateImplCopyWithImpl<_$CategoryStateImpl>(this, _$identity);
+  _$$TransactionStateImplCopyWith<_$TransactionStateImpl> get copyWith =>
+      __$$TransactionStateImplCopyWithImpl<_$TransactionStateImpl>(
+          this, _$identity);
 }
 
-abstract class _CategoryState implements CategoryState {
-  const factory _CategoryState(
-      {required final List<CategoryEntity> categories,
+abstract class _TransactionState implements TransactionState {
+  const factory _TransactionState(
+      {required final List<TransactionEntity> transactions,
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
-      required final Failure failure}) = _$CategoryStateImpl;
+      required final Failure failure}) = _$TransactionStateImpl;
 
   @override
-  List<CategoryEntity> get categories;
+  List<TransactionEntity> get transactions;
   @override
   bool get isLoading;
   @override
@@ -250,10 +252,10 @@ abstract class _CategoryState implements CategoryState {
   @override
   Failure get failure;
 
-  /// Create a copy of CategoryState
+  /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CategoryStateImplCopyWith<_$CategoryStateImpl> get copyWith =>
+  _$$TransactionStateImplCopyWith<_$TransactionStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
