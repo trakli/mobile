@@ -27,19 +27,30 @@ class Failure with _$Failure {
   bool get hasError => this != const Failure.none();
 
   // Getter for message
-  String get customMessage =>
-      whenOrNull(
-        serverError: (message) => message,
-        cacheError: (message) => message,
-        syncError: (message) => message,
-        validationError: (message, errors) {
-          return errors.first.messages.join(', ');
+  String get customMessage => map(
+        serverError: (ServerFailure failure) => failure.message,
+        cacheError: (CacheFailure failure) => failure.message,
+        syncError: (SyncFailure failure) => failure.message,
+        validationError: (ValidationFailure failure) {
+          if (failure.errors.isEmpty) return failure.message;
+          final errorMessage = failure.errors.first.messages.join(', ');
+          return errorMessage.isNotEmpty ? errorMessage : failure.message;
         },
-        unauthorizedError: () => LocaleKeys.invalidUserCredentials.tr(),
-        unknownError: () => 'Unknown error',
-        badRequest: (errors, error) => error ?? errors?.join(', '),
-        none: () => '',
-        notFound: () => 'Not found',
-      ) ??
-      '';
+        unauthorizedError: (UnauthorizedFailure _) =>
+            LocaleKeys.invalidUserCredentials.tr(),
+        unknownError: (UnknownFailure _) =>
+            'An unexpected error occurred. Please try again.',
+        badRequest: (_BadRequest failure) {
+          if (failure.error != null) return failure.error!;
+          if (failure.errors != null && failure.errors!.isNotEmpty) {
+            return failure.errors!.map((e) => e.messages.join(', ')).join('; ');
+          }
+          return 'Invalid request. Please check your input and try again.';
+        },
+        none: (NoneFailure _) => 'No error',
+        notFound: (NotFoundFailure _) =>
+            'The requested resource was not found.',
+        networkError: (NetworkFailure _) =>
+            'Please check your internet connection and try again.',
+      );
 }
