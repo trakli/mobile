@@ -2,8 +2,11 @@ import 'package:country_flags/country_flags.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/domain/entities/onboarding_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
@@ -61,6 +64,8 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageOne {
+    final state = context.watch<OnboardingCubit>().state;
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -139,6 +144,8 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageTwo {
+    final state = context.watch<OnboardingCubit>().state;
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -172,12 +179,12 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                     bottom: 12.w,
                   ),
                   decoration: BoxDecoration(
-                    color: (selectedCurrency == currency)
+                    color: (state.entity?.selectedCurrency == currency)
                         ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                      color: (selectedCurrency == currency)
+                      color: (state.entity?.selectedCurrency == currency)
                           ? Theme.of(context).primaryColor
                           : Colors.grey,
                     ),
@@ -185,7 +192,12 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                   child: ListTile(
                     onTap: () {
                       setState(() {
-                        selectedCurrency = currency;
+                        // selectedCurrency = currency;
+                        context.read<OnboardingCubit>().saveOnboardingState(
+                              OnboardingEntity(
+                                selectedCurrency: currency,
+                              ),
+                            );
                       });
                     },
                     leading: flagWidget(currency),

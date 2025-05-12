@@ -6,6 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 
@@ -169,39 +171,76 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    context.read<AuthCubit>().logout();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(
-                        width: 0.5,
-                        color: transactionTileBorderColor,
-                      ),
-                    ),
-                    child: Row(
-                      spacing: 16.w,
-                      children: [
-                        Container(
-                          width: 40.w,
-                          height: 40.h,
+                (user != null)
+                    ? GestureDetector(
+                        onTap: () {
+                          context.read<AuthCubit>().logout();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
                           decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(8.r),
-                            color: Colors.red.withValues(alpha: 0.2),
+                            border: Border.all(
+                              width: 0.5,
+                              color: transactionTileBorderColor,
+                            ),
                           ),
-                          child: const Icon(Icons.logout),
+                          child: Row(
+                            spacing: 16.w,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  color: Colors.red.withValues(alpha: 0.2),
+                                ),
+                                child: const Icon(Icons.logout),
+                              ),
+                              const Text("Log out"),
+                              const Spacer(),
+                              const Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
                         ),
-                        const Text("Log out"),
-                        const Spacer(),
-                        const Icon(Icons.keyboard_arrow_right_outlined),
-                      ],
-                    ),
-                  ),
-                ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          AppNavigator.removeAllPreviousAndPush(
+                            context,
+                            const OnboardingScreen(),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              width: 0.5,
+                              color: transactionTileBorderColor,
+                            ),
+                          ),
+                          child: Row(
+                            spacing: 16.w,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  color: Colors.red.withValues(alpha: 0.2),
+                                ),
+                                child: const Icon(Icons.logout),
+                              ),
+                              const Text("Sign up"),
+                              const Spacer(),
+                              const Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
+                        ),
+                      ),
               ],
             ),
           ],

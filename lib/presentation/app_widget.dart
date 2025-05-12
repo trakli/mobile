@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/di/injection.dart';
+import 'package:trakli/domain/repositories/onboarding_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
@@ -14,7 +15,9 @@ import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/bloc/transaction/transaction_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
-import 'package:trakli/presentation/onboarding_screen.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
+import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -41,6 +44,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<RegisterCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<OnboardingCubit>()..getOnboardingState(),
         ),
       ],
       child: const AppView(),
@@ -244,23 +250,57 @@ class AppView extends StatelessWidget {
           return BlocListener<AuthCubit, AuthState>(
             listener: (context, state) {
               state.maybeWhen(
-                authenticated: (user) {
+                authenticated: (user) async {
                   getIt<SynchAppDatabase>().init();
 
-                  navigatorKey.currentState?.pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => MainNavigationScreen(),
-                    ),
-                    (route) => false,
+                  final entityResult =
+                      await getIt<OnboardingRepository>().getOnboardingState();
+
+                  final entity = entityResult.fold(
+                    (failure) => null,
+                    (entity) => entity,
                   );
+
+                  if (entity?.isOnboardingComplete == true) {
+                    navigatorKey.currentState?.pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => MainNavigationScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    navigatorKey.currentState?.pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const OnboardSettingsScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  }
                 },
-                unauthenticated: () {
-                  navigatorKey.currentState?.pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const OnboardingScreen(),
-                    ),
-                    (route) => false,
+                unauthenticated: () async {
+                  final entityResult =
+                      await getIt<OnboardingRepository>().getOnboardingState();
+
+                  final entity = entityResult.fold(
+                    (failure) => null,
+                    (entity) => entity,
                   );
+
+                  if (entity?.isOnboardingComplete == true) {
+                    navigatorKey.currentState?.pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => MainNavigationScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    navigatorKey.currentState?.pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const OnboardingScreen(),
+                      ),
+                      (route) => false,
+                    );
+                  }
                 },
                 orElse: () {},
               );

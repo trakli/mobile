@@ -8,14 +8,18 @@ abstract class PreferenceManager {
   Future<void> clearAll();
   Future<void> onboardingCompleted();
   Future<bool> isOnboardingCompleted();
+  SharedPreferences get prefs;
 }
 
-@Injectable(as: PreferenceManager)
+@Singleton(as: PreferenceManager)
 class PreferenceManagerImpl implements PreferenceManager {
   static const _userIdKey = 'user_id';
   static const _onboardingCompletedKey = 'onboarding_completed';
 
   late final SharedPreferences _prefs;
+
+  @override
+  SharedPreferences get prefs => _prefs;
 
   @override
   Future<void> saveUserId(int userId) async {

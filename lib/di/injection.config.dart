@@ -35,11 +35,13 @@ import '../data/datasources/transaction/transaction_remote_datasource.dart'
     as _i79;
 import '../data/repositories/auth_repository_imp.dart' as _i135;
 import '../data/repositories/category_repository_impl.dart' as _i324;
+import '../data/repositories/onboarding_repository_impl.dart' as _i386;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/sync/category_sync_handler.dart' as _i463;
 import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
+import '../domain/repositories/onboarding_repository.dart' as _i867;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
 import '../domain/usecases/auth/is_onboarding_completed.dart' as _i828;
@@ -58,6 +60,8 @@ import '../domain/usecases/category/delete_category_usecase.dart' as _i292;
 import '../domain/usecases/category/get_categories_usecase.dart' as _i961;
 import '../domain/usecases/category/listen_to_categories_usecase.dart' as _i500;
 import '../domain/usecases/category/update_category_usecase.dart' as _i986;
+import '../domain/usecases/onboarding/get_onboarding_state.dart' as _i575;
+import '../domain/usecases/onboarding/save_onboarding_state.dart' as _i243;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
     as _i669;
 import '../domain/usecases/transaction/delete_transaction_usecase.dart'
@@ -74,6 +78,7 @@ import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
 import '../presentation/bloc/transaction/transaction_cubit.dart' as _i218;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
+import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
 
 const String _dev = 'dev';
 const String _prod = 'prod';
@@ -95,12 +100,9 @@ _i174.GetIt $initGetIt(
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i150.MockTransactionRemoteDataSource());
-  gh.singletonAsync<_i789.SharedPrefs>(() {
-    final i = _i789.SharedPrefsImpl();
-    return i.init().then((_) => i);
-  });
+  gh.singleton<_i789.SharedPrefs>(() => _i789.SharedPrefsImpl());
   gh.factory<_i483.TokenManager>(() => const _i483.TokenManagerImpl());
-  gh.factory<_i683.PreferenceManager>(
+  gh.singleton<_i683.PreferenceManager>(
       () => _i683.PreferenceManagerImpl()..init());
   gh.factory<String>(
     () => injectHttpClientModule.devHttpUrl,
@@ -133,11 +135,17 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
+  gh.factory<_i867.OnboardingRepository>(
+      () => _i386.OnboardingRepositoryImpl(gh<_i683.PreferenceManager>()));
   gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
       () => syncModule.provideSyncTypeHandlers(
             gh<_i893.TransactionSyncHandler>(),
             gh<_i463.CategorySyncHandler>(),
           ));
+  gh.factory<_i243.SaveOnboardingState>(
+      () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i575.GetOnboardingState>(
+      () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.lazySingleton<_i410.CategoryRepository>(() => _i324.CategoryRepositoryImpl(
         syncHandler: gh<_i463.CategorySyncHandler>(),
         localDataSource: gh<_i148.CategoryLocalDataSource>(),
@@ -167,6 +175,10 @@ _i174.GetIt $initGetIt(
       () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
+        gh<_i575.GetOnboardingState>(),
+        gh<_i243.SaveOnboardingState>(),
+      ));
   gh.singleton<_i800.AuthRepository>(() => _i135.AuthRepositoryImpl(
         remoteDataSource: gh<_i496.AuthRemoteDataSource>(),
         localDataSource: gh<_i276.AuthLocalDataSource>(),
@@ -202,18 +214,18 @@ _i174.GetIt $initGetIt(
       () => _i42.LoginByEmailUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i498.LoginByPhoneUsecase>(
       () => _i498.LoginByPhoneUsecase(gh<_i800.AuthRepository>()));
+  gh.factory<_i828.IsOnboardingCompleted>(
+      () => _i828.IsOnboardingCompleted(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
       () => _i723.LoginWithPhonePassword(gh<_i800.AuthRepository>()));
   gh.factory<_i444.StreamAuthStatus>(
       () => _i444.StreamAuthStatus(gh<_i800.AuthRepository>()));
   gh.factory<_i768.LoginWithEmailPassword>(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
-  gh.factory<_i880.GetLoggedInUser>(
-      () => _i880.GetLoggedInUser(gh<_i800.AuthRepository>()));
-  gh.factory<_i828.IsOnboardingCompleted>(
-      () => _i828.IsOnboardingCompleted(gh<_i800.AuthRepository>()));
   gh.factory<_i2.OnboardingCompleted>(
       () => _i2.OnboardingCompleted(gh<_i800.AuthRepository>()));
+  gh.factory<_i880.GetLoggedInUser>(
+      () => _i880.GetLoggedInUser(gh<_i800.AuthRepository>()));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
         gh<_i768.LoginWithEmailPassword>(),
         gh<_i723.LoginWithPhonePassword>(),

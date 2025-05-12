@@ -6,7 +6,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
 import 'package:trakli/presentation/auth/pages/register_screen.dart';
-import 'package:trakli/presentation/onboard_settings_screen.dart';
+import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 
