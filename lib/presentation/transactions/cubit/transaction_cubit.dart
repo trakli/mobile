@@ -4,8 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
 
 part 'transaction_state.dart';
@@ -27,7 +27,8 @@ class TransactionCubit extends Cubit<TransactionState> {
     required this.deleteTransactionUseCase,
     required this.listenToTransactionsUseCase,
   }) : super(TransactionState.initial()) {
-    loadTransactions();
+    // loadTransactions();
+    listenForChanges();
   }
 
   @override
@@ -65,7 +66,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       CreateTransactionParams(
         amount: amount,
         description: description,
-        categoryId: categoryId,
+        categoryIds: [categoryId],
         type: type,
         datetime: datetime,
       ),
@@ -89,7 +90,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required String id,
     double? amount,
     String? description,
-    String? category,
+    List<String>? categoryIds,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
@@ -97,7 +98,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         id: id,
         amount: amount,
         description: description,
-        category: category,
+        categoryIds: categoryIds,
       ),
     );
     result.fold(
@@ -120,7 +121,7 @@ class TransactionCubit extends Cubit<TransactionState> {
 
     // Optimistically update the UI
     final updatedTransactions = state.transactions
-        .where((transaction) => transaction.clientId != id)
+        .where((transaction) => transaction.transaction.clientId != id)
         .toList();
 
     emit(state.copyWith(
@@ -142,9 +143,9 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   Future<void> listenForChanges() async {
-    emit(state.copyWith(isLoading: true));
+    // emit(state.copyWith(isLoading: true));
 
-    _transactionSubscription = listenToTransactionsUseCase().listen(
+    _transactionSubscription = listenToTransactionsUseCase(NoParams()).listen(
       (either) => either.fold(
         (failure) => emit(
           state.copyWith(

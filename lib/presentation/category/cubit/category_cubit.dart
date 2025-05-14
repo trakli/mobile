@@ -118,7 +118,7 @@ class CategoryCubit extends Cubit<CategoryState> {
 
     // Optimistically update the UI
     final updatedCategories = state.categories
-        .where((category) => category.clientGeneratedId != clientId)
+        .where((category) => category.clientId != clientId)
         .toList();
 
     emit(state.copyWith(

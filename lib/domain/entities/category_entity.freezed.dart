@@ -14,32 +14,19 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CategoryEntity _$CategoryEntityFromJson(Map<String, dynamic> json) {
-  return _CategoryEntity.fromJson(json);
-}
-
 /// @nodoc
 mixin _$CategoryEntity {
-  @JsonKey(name: 'client_generated_id')
-  String? get clientGeneratedId => throw _privateConstructorUsedError;
+  String get clientId => throw _privateConstructorUsedError;
   TransactionType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
-  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
   String? get slug => throw _privateConstructorUsedError;
-  @JsonKey(name: 'user_id')
   int? get userId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_synced_at')
   String? get lastSyncedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'sync_state')
   SyncStateDto? get syncState => throw _privateConstructorUsedError;
-
-  /// Serializes this CategoryEntity to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -55,17 +42,17 @@ abstract class $CategoryEntityCopyWith<$Res> {
       _$CategoryEntityCopyWithImpl<$Res, CategoryEntity>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String? clientGeneratedId,
+      {String clientId,
       TransactionType type,
       String name,
       String? description,
-      @JsonKey(name: 'created_at') DateTime? createdAt,
+      DateTime createdAt,
       int? id,
       String? slug,
-      @JsonKey(name: 'user_id') int? userId,
-      @JsonKey(name: 'updated_at') DateTime? updatedAt,
-      @JsonKey(name: 'last_synced_at') String? lastSyncedAt,
-      @JsonKey(name: 'sync_state') SyncStateDto? syncState});
+      int? userId,
+      DateTime? updatedAt,
+      String? lastSyncedAt,
+      SyncStateDto? syncState});
 
   $SyncStateDtoCopyWith<$Res>? get syncState;
 }
@@ -85,11 +72,11 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? clientGeneratedId = freezed,
+    Object? clientId = null,
     Object? type = null,
     Object? name = null,
     Object? description = freezed,
-    Object? createdAt = freezed,
+    Object? createdAt = null,
     Object? id = freezed,
     Object? slug = freezed,
     Object? userId = freezed,
@@ -98,10 +85,10 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
     Object? syncState = freezed,
   }) {
     return _then(_value.copyWith(
-      clientGeneratedId: freezed == clientGeneratedId
-          ? _value.clientGeneratedId
-          : clientGeneratedId // ignore: cast_nullable_to_non_nullable
-              as String?,
+      clientId: null == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -114,10 +101,10 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: freezed == createdAt
+      createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as DateTime,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -169,17 +156,17 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String? clientGeneratedId,
+      {String clientId,
       TransactionType type,
       String name,
       String? description,
-      @JsonKey(name: 'created_at') DateTime? createdAt,
+      DateTime createdAt,
       int? id,
       String? slug,
-      @JsonKey(name: 'user_id') int? userId,
-      @JsonKey(name: 'updated_at') DateTime? updatedAt,
-      @JsonKey(name: 'last_synced_at') String? lastSyncedAt,
-      @JsonKey(name: 'sync_state') SyncStateDto? syncState});
+      int? userId,
+      DateTime? updatedAt,
+      String? lastSyncedAt,
+      SyncStateDto? syncState});
 
   @override
   $SyncStateDtoCopyWith<$Res>? get syncState;
@@ -198,11 +185,11 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? clientGeneratedId = freezed,
+    Object? clientId = null,
     Object? type = null,
     Object? name = null,
     Object? description = freezed,
-    Object? createdAt = freezed,
+    Object? createdAt = null,
     Object? id = freezed,
     Object? slug = freezed,
     Object? userId = freezed,
@@ -211,10 +198,10 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
     Object? syncState = freezed,
   }) {
     return _then(_$CategoryEntityImpl(
-      clientGeneratedId: freezed == clientGeneratedId
-          ? _value.clientGeneratedId
-          : clientGeneratedId // ignore: cast_nullable_to_non_nullable
-              as String?,
+      clientId: null == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -227,10 +214,10 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: freezed == createdAt
+      createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as DateTime,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -260,27 +247,23 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$CategoryEntityImpl implements _CategoryEntity {
   const _$CategoryEntityImpl(
-      {@JsonKey(name: 'client_generated_id') this.clientGeneratedId,
+      {required this.clientId,
       required this.type,
       required this.name,
       this.description,
-      @JsonKey(name: 'created_at') this.createdAt,
+      required this.createdAt,
       this.id,
       this.slug,
-      @JsonKey(name: 'user_id') this.userId,
-      @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'last_synced_at') this.lastSyncedAt,
-      @JsonKey(name: 'sync_state') this.syncState});
-
-  factory _$CategoryEntityImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CategoryEntityImplFromJson(json);
+      this.userId,
+      this.updatedAt,
+      this.lastSyncedAt,
+      this.syncState});
 
   @override
-  @JsonKey(name: 'client_generated_id')
-  final String? clientGeneratedId;
+  final String clientId;
   @override
   final TransactionType type;
   @override
@@ -288,28 +271,23 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   @override
   final String? description;
   @override
-  @JsonKey(name: 'created_at')
-  final DateTime? createdAt;
+  final DateTime createdAt;
   @override
   final int? id;
   @override
   final String? slug;
   @override
-  @JsonKey(name: 'user_id')
   final int? userId;
   @override
-  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
   @override
-  @JsonKey(name: 'last_synced_at')
   final String? lastSyncedAt;
   @override
-  @JsonKey(name: 'sync_state')
   final SyncStateDto? syncState;
 
   @override
   String toString() {
-    return 'CategoryEntity(clientGeneratedId: $clientGeneratedId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState)';
+    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState)';
   }
 
   @override
@@ -317,8 +295,8 @@ class _$CategoryEntityImpl implements _CategoryEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CategoryEntityImpl &&
-            (identical(other.clientGeneratedId, clientGeneratedId) ||
-                other.clientGeneratedId == clientGeneratedId) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
@@ -336,11 +314,10 @@ class _$CategoryEntityImpl implements _CategoryEntity {
                 other.syncState == syncState));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      clientGeneratedId,
+      clientId,
       type,
       name,
       description,
@@ -360,36 +337,24 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   _$$CategoryEntityImplCopyWith<_$CategoryEntityImpl> get copyWith =>
       __$$CategoryEntityImplCopyWithImpl<_$CategoryEntityImpl>(
           this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CategoryEntityImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _CategoryEntity implements CategoryEntity {
   const factory _CategoryEntity(
-      {@JsonKey(name: 'client_generated_id') final String? clientGeneratedId,
+      {required final String clientId,
       required final TransactionType type,
       required final String name,
       final String? description,
-      @JsonKey(name: 'created_at') final DateTime? createdAt,
+      required final DateTime createdAt,
       final int? id,
       final String? slug,
-      @JsonKey(name: 'user_id') final int? userId,
-      @JsonKey(name: 'updated_at') final DateTime? updatedAt,
-      @JsonKey(name: 'last_synced_at') final String? lastSyncedAt,
-      @JsonKey(name: 'sync_state')
+      final int? userId,
+      final DateTime? updatedAt,
+      final String? lastSyncedAt,
       final SyncStateDto? syncState}) = _$CategoryEntityImpl;
 
-  factory _CategoryEntity.fromJson(Map<String, dynamic> json) =
-      _$CategoryEntityImpl.fromJson;
-
   @override
-  @JsonKey(name: 'client_generated_id')
-  String? get clientGeneratedId;
+  String get clientId;
   @override
   TransactionType get type;
   @override
@@ -397,23 +362,18 @@ abstract class _CategoryEntity implements CategoryEntity {
   @override
   String? get description;
   @override
-  @JsonKey(name: 'created_at')
-  DateTime? get createdAt;
+  DateTime get createdAt;
   @override
   int? get id;
   @override
   String? get slug;
   @override
-  @JsonKey(name: 'user_id')
   int? get userId;
   @override
-  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
   @override
-  @JsonKey(name: 'last_synced_at')
   String? get lastSyncedAt;
   @override
-  @JsonKey(name: 'sync_state')
   SyncStateDto? get syncState;
 
   /// Create a copy of CategoryEntity

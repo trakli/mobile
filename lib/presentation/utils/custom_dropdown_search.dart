@@ -37,6 +37,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
       compareFn: compareFn,
       filterFn: filterFn,
       validator: validator,
+      onChanged: onChanged,
       popupProps: PopupProps.menu(
         searchFieldProps: TextFieldProps(
           decoration: InputDecoration(

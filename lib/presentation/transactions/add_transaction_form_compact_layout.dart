@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -44,14 +44,16 @@ class _AddTransactionFormCompactLayoutState
   TimeOfDay time = TimeOfDay.now();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   CategoryEntity? _selectedCategory;
+  final _formKey = GlobalKey<FormState>();
 
   Currency? currency;
   final pieData = StatisticsProvider().getPieData;
 
   @override
   void initState() {
-    // TODO: implement initState
     dateController.text = dateFormat.format(date);
     timeController.text = timeFormat.format(date);
     super.initState();
@@ -65,6 +67,7 @@ class _AddTransactionFormCompactLayoutState
         vertical: 16.h,
       ),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -90,6 +93,7 @@ class _AddTransactionFormCompactLayoutState
                       children: [
                         Expanded(
                           child: TextFormField(
+                            controller: amountController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: "Ex: 250 000",
@@ -417,11 +421,16 @@ class _AddTransactionFormCompactLayoutState
                         Expanded(
                           child: BlocBuilder<CategoryCubit, CategoryState>(
                             builder: (context, state) {
+                              //Category by transaction type
+                              final searchCategories = state.categories.where(
+                                  (element) =>
+                                      element.type == widget.transactionType);
+
                               return CustomDropdownSearch<CategoryEntity>(
                                 label: "",
                                 accentColor: widget.accentColor,
                                 items: (filter, infiniteScrollProps) {
-                                  return state.categories
+                                  return searchCategories
                                       .map((data) => data)
                                       .toList()
                                       .where((CategoryEntity el) => el.name
@@ -429,7 +438,7 @@ class _AddTransactionFormCompactLayoutState
                                           .contains(filter.toLowerCase()))
                                       .toList();
                                 },
-                                itemAsString: (item) => item.name,
+                                itemAsString: (item) => item.name.toLowerCase(),
                                 onChanged: (value) => {
                                   debugPrint(value?.name),
                                   _selectedCategory = value
@@ -440,10 +449,10 @@ class _AddTransactionFormCompactLayoutState
                                         filter.toLowerCase(),
                                       );
                                 },
-                                validator: (p0) =>
-                                    p0 == null && _selectedCategory == p0
-                                        ? "Category is required"
-                                        : null,
+                                validator: (p0) => _selectedCategory == null ||
+                                        _selectedCategory != p0
+                                    ? "Category is required"
+                                    : null,
                               );
                             },
                           ),
@@ -491,6 +500,7 @@ class _AddTransactionFormCompactLayoutState
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: descriptionController,
               maxLines: 2,
               decoration: InputDecoration(
                 hintText: LocaleKeys.transactionTypeHere.tr(),
@@ -610,8 +620,20 @@ class _AddTransactionFormCompactLayoutState
                           WidgetStatePropertyAll(widget.accentColor),
                     ),
                     onPressed: () {
-                      if (Form.of(context).validate()) {
-                        // Do something
+                      if (_formKey.currentState!.validate() &&
+                          _selectedCategory != null) {
+                        final amount = double.parse(amountController.text);
+                        final description = descriptionController.text;
+
+                        context.read<TransactionCubit>().addTransaction(
+                              amount: amount,
+                              description: description,
+                              categoryId: _selectedCategory!.clientId,
+                              type: widget.transactionType,
+                              datetime: date,
+                            );
+
+                        Navigator.pop(context);
                       }
                     },
                     child: Row(

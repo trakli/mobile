@@ -3,7 +3,7 @@ part of 'transaction_cubit.dart';
 @freezed
 class TransactionState with _$TransactionState {
   const factory TransactionState({
-    required List<TransactionEntity> transactions,
+    required List<TransactionCompleteEntity> transactions,
     required bool isLoading,
     required bool isSaving,
     required bool isDeleting,

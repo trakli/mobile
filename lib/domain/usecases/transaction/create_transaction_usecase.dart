@@ -17,7 +17,7 @@ class CreateTransactionUseCase
     return repository.insertTransaction(
       params.amount,
       params.description,
-      params.categoryId,
+      params.categoryIds,
       params.type,
       params.datetime,
     );
@@ -27,14 +27,14 @@ class CreateTransactionUseCase
 class CreateTransactionParams {
   final double amount;
   final String description;
-  final String categoryId;
+  final List<String> categoryIds;
   final TransactionType type;
   final DateTime datetime;
 
   CreateTransactionParams({
     required this.amount,
     required this.description,
-    required this.categoryId,
+    required this.categoryIds,
     required this.type,
     required this.datetime,
   });

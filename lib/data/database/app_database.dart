@@ -8,6 +8,7 @@ import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/database/tables/parties.dart';
+import 'package:trakli/data/database/tables/transaction_categories.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
@@ -26,6 +27,7 @@ part 'app_database.g.dart';
   Wallets,
   LocalChanges,
   SyncMetadata,
+  TransactionCategories,
 ])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
@@ -83,6 +85,20 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   @override
   Future<void> cancelAllLocalChanges() async {
     await delete(localChanges).go();
+  }
+
+  Future<List<Category>> getCategoriesForTransaction(
+      String transactionId) async {
+    final query = select(categories).join([
+      innerJoin(
+        transactionCategories,
+        transactionCategories.categoryClientId.equalsExp(categories.clientId),
+      )
+    ])
+      ..where(transactionCategories.transactionClientId.equals(transactionId));
+
+    final results = await query.get();
+    return results.map((row) => row.readTable(categories)).toList();
   }
 
   @override

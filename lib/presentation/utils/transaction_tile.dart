@@ -5,14 +5,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 
 class TransactionTile extends StatefulWidget {
-  final TransactionType transactionType;
+  final TransactionCompleteEntity transaction;
   final Color accentColor;
 
   const TransactionTile({
     super.key,
-    this.transactionType = TransactionType.income,
+    required this.transaction,
     this.accentColor = const Color(0xFFEB5757),
   });
 
@@ -25,6 +26,9 @@ class _TransactionTileState extends State<TransactionTile> {
 
   @override
   Widget build(BuildContext context) {
+    final transaction = widget.transaction.transaction;
+    final categories = widget.transaction.categories;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -42,13 +46,13 @@ class _TransactionTileState extends State<TransactionTile> {
           Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
-              color: widget.transactionType == TransactionType.income
+              color: transaction.type == TransactionType.income
                   ? transactionTileIncomeColor
                   : transactionTileExpenseColor,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: SvgPicture.asset(
-              widget.transactionType == TransactionType.income
+              transaction.type == TransactionType.income
                   ? Assets.images.arrowSwapDown
                   : Assets.images.arrowSwapUp,
               width: 20.r,
@@ -68,7 +72,7 @@ class _TransactionTileState extends State<TransactionTile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Personal Elelments",
+                      transaction.description,
                       style: TextStyle(
                         color: transactionTileTextColor,
                         fontSize: 14.sp,
@@ -76,7 +80,7 @@ class _TransactionTileState extends State<TransactionTile> {
                       ),
                     ),
                     Text(
-                      "350,000 XAF",
+                      "${transaction.amount} XAF",
                       style: TextStyle(
                         color: widget.accentColor,
                         fontSize: 12.sp,
@@ -106,7 +110,7 @@ class _TransactionTileState extends State<TransactionTile> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        "Paul Erica",
+                        categories.isNotEmpty ? categories.first.name : '',
                         style: TextStyle(
                           color: transactionTileTextColor,
                           fontSize: 10.sp,
@@ -142,7 +146,7 @@ class _TransactionTileState extends State<TransactionTile> {
                             ),
                           ),
                           Text(
-                            "James Bond",
+                            categories.length > 1 ? categories[1].name : '',
                             style: TextStyle(
                               color: Colors.blueAccent,
                               fontSize: 10.sp,
@@ -153,7 +157,7 @@ class _TransactionTileState extends State<TransactionTile> {
                     ),
                     const Spacer(),
                     Text(
-                      format.format(DateTime.now()),
+                      format.format(transaction.datetime),
                       style: TextStyle(
                         color: const Color(0xFF576760),
                         fontSize: 10.sp,

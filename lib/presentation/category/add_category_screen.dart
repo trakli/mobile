@@ -70,7 +70,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 hideKeyBoard();
                 if (widget.category != null) {
                   context.read<CategoryCubit>().updateCategory(
-                        clientId: widget.category!.clientGeneratedId!,
+                        clientId: widget.category!.clientId,
                         name: name,
                         slug: _generateSlug(name),
                         userId: widget.category!.userId,

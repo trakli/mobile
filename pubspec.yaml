@@ -59,6 +59,7 @@ dependencies:
   connectivity_plus: ^5.0.2
   drift: ^2.26.0
   drift_flutter: ^0.2.4
+  drift_db_viewer: ^2.1.0
   path_provider: ^2.1.2
   drift_sync_core:
     path: drift_sync_core/

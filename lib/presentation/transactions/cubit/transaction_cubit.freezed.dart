@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$TransactionState {
-  List<TransactionEntity> get transactions =>
+  List<TransactionCompleteEntity> get transactions =>
       throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isSaving => throw _privateConstructorUsedError;
@@ -37,7 +37,7 @@ abstract class $TransactionStateCopyWith<$Res> {
       _$TransactionStateCopyWithImpl<$Res, TransactionState>;
   @useResult
   $Res call(
-      {List<TransactionEntity> transactions,
+      {List<TransactionCompleteEntity> transactions,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -71,7 +71,7 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
       transactions: null == transactions
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as List<TransactionEntity>,
+              as List<TransactionCompleteEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -111,7 +111,7 @@ abstract class _$$TransactionStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<TransactionEntity> transactions,
+      {List<TransactionCompleteEntity> transactions,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -144,7 +144,7 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
       transactions: null == transactions
           ? _value._transactions
           : transactions // ignore: cast_nullable_to_non_nullable
-              as List<TransactionEntity>,
+              as List<TransactionCompleteEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -169,16 +169,16 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
 
 class _$TransactionStateImpl implements _TransactionState {
   const _$TransactionStateImpl(
-      {required final List<TransactionEntity> transactions,
+      {required final List<TransactionCompleteEntity> transactions,
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
       required this.failure})
       : _transactions = transactions;
 
-  final List<TransactionEntity> _transactions;
+  final List<TransactionCompleteEntity> _transactions;
   @override
-  List<TransactionEntity> get transactions {
+  List<TransactionCompleteEntity> get transactions {
     if (_transactions is EqualUnmodifiableListView) return _transactions;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_transactions);
@@ -235,14 +235,14 @@ class _$TransactionStateImpl implements _TransactionState {
 
 abstract class _TransactionState implements TransactionState {
   const factory _TransactionState(
-      {required final List<TransactionEntity> transactions,
+      {required final List<TransactionCompleteEntity> transactions,
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
       required final Failure failure}) = _$TransactionStateImpl;
 
   @override
-  List<TransactionEntity> get transactions;
+  List<TransactionCompleteEntity> get transactions;
   @override
   bool get isLoading;
   @override

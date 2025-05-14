@@ -17,7 +17,7 @@ class UpdateTransactionUseCase
       params.id,
       params.amount,
       params.description,
-      params.category,
+      params.categoryIds,
     );
   }
 }
@@ -26,12 +26,12 @@ class UpdateTransactionParams {
   final String id;
   final double? amount;
   final String? description;
-  final String? category;
+  final List<String>? categoryIds;
 
   UpdateTransactionParams({
     required this.id,
     this.amount,
     this.description,
-    this.category,
+    this.categoryIds,
   });
 }

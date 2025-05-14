@@ -223,7 +223,7 @@ class _CategoryScreenState extends State<CategoryScreen>
           onDelete: () {
             context
                 .read<CategoryCubit>()
-                .deleteCategory(category.clientGeneratedId!);
+                .deleteCategory(category.clientId);
           },
         );
       },
