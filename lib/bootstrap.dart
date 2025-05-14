@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:trakli/core/sync/sync_database.dart';
 
 /// Adds a global error handler to the Flutter app.
 ///

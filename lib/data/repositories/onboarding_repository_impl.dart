@@ -42,9 +42,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       }
 
       return OnboardingEntity(
-        selectedCurrency: savedCurrencyCode != null
-            ? Currency.from(json: jsonDecode(savedCurrencyCode))
-            : null,
+        selectedCurrency: Currency.from(json: jsonDecode(savedCurrencyCode)),
       );
     });
   }

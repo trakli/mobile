@@ -64,8 +64,6 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageOne {
-    final state = context.watch<OnboardingCubit>().state;
-
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
