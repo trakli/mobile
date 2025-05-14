@@ -14,7 +14,7 @@ class Users extends Table {
   TextColumn get username => text().nullable()();
 
   TextColumn get phone => text().nullable()();
-  // TextColumn get password => text()();
+
   TextColumn get avatar => text().nullable()();
 
   @JsonKey('created_at')

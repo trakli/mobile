@@ -24,8 +24,6 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   Future<TransactionCompleteDto> insertTransaction(
       TransactionCompleteDto transaction) async {
     return _simulateDelay(() async {
-
-
       _notifyListeners();
       return transaction;
     });
@@ -35,23 +33,12 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   Future<TransactionCompleteDto> updateTransaction(
       TransactionCompleteDto transaction) async {
     return _simulateDelay(() async {
-      // final requestOptions = RequestOptions(path: 'transactions');
-      // const reason = 'Connection error';
-
-      // throw DioException.connectionError(
-      //     requestOptions: requestOptions, reason: reason);
-
       final index = _transactions
           .indexWhere((t) => t.transaction.id == transaction.transaction.id);
       if (index == -1) {
         throw Exception('Transaction not found');
       }
-      // _transactions[index] = transaction
-      //   ..copyWith(
-      //       // lastSyncedAt: Value(
-      //       //   DateTime.now(),
-      //       // ),
-      //       );
+
       _notifyListeners();
       return transaction;
     });

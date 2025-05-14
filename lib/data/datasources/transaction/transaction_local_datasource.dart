@@ -37,14 +37,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     // Create a query that joins transactions with their categories
     final query = database.select(database.transactions).join([
       leftOuterJoin(
-        database.transactionCategories,
-        database.transactionCategories.transactionClientId
-            .equalsExp(database.transactions.clientId),
+        database.sourceCategories,
+        database.sourceCategories.sourceId
+                .equalsExp(database.transactions.clientId) &
+            database.sourceCategories.sourceType
+                .equals(SourceType.transaction.name),
       ),
       leftOuterJoin(
         database.categories,
         database.categories.clientId
-            .equalsExp(database.transactionCategories.categoryClientId),
+            .equalsExp(database.sourceCategories.categoryClientId),
       ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
@@ -86,16 +88,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         );
 
     for (var categoryId in categoryIds) {
-      await database.into(database.transactionCategories).insert(
-            TransactionCategoriesCompanion.insert(
-              transactionClientId: model.clientId,
+      await database.into(database.sourceCategories).insert(
+            SourceCategoriesCompanion.insert(
+              sourceId: model.clientId,
+              sourceType: SourceType.transaction,
               categoryClientId: categoryId,
             ),
           );
     }
 
-    final categories =
-        await database.getCategoriesForTransaction(model.clientId);
+    final categories = await database.getCategoriesForTransaction(
+      model.clientId,
+      SourceType.transaction,
+    );
 
     return TransactionCompleteDto.fromTransaction(
       transaction: model,
@@ -117,12 +122,13 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         amount: amount != null ? Value(amount) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),
-        // category: category != null ? Value(category) : const Value.absent(),
       ),
     );
 
-    final categories =
-        await database.getCategoriesForTransaction(model.first.clientId);
+    final categories = await database.getCategoriesForTransaction(
+      model.first.clientId,
+      SourceType.transaction,
+    );
 
     if (categoryIds == null) {
       return TransactionCompleteDto.fromTransaction(
@@ -135,11 +141,12 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         categories.where((c) => !categoryIds.contains(c.clientId)).toList();
 
     for (var category in categoriesToRemove) {
-      await (database.delete(database.transactionCategories)
-            ..where((row) =>
-                row.transactionClientId.equals(model.first.clientId) &
-                row.categoryClientId.equals(category.clientId)))
-          .go();
+      await database.sourceCategories.deleteWhere(
+        (row) =>
+            row.sourceId.equals(model.first.clientId) &
+            row.sourceType.equals(SourceType.transaction.name) &
+            row.categoryClientId.equals(category.clientId),
+      );
     }
 
     final categoriesToAdd = categoryIds
@@ -147,16 +154,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         .toList();
 
     for (var categoryId in categoriesToAdd) {
-      await database.into(database.transactionCategories).insert(
-            TransactionCategoriesCompanion.insert(
-              transactionClientId: model.first.clientId,
+      await database.into(database.sourceCategories).insert(
+            SourceCategoriesCompanion.insert(
+              sourceId: model.first.clientId,
+              sourceType: SourceType.transaction,
               categoryClientId: categoryId,
             ),
           );
     }
 
-    final finalCategories =
-        await database.getCategoriesForTransaction(model.first.clientId);
+    final finalCategories = await database.getCategoriesForTransaction(
+      model.first.clientId,
+      SourceType.transaction,
+    );
 
     return TransactionCompleteDto.fromTransaction(
       transaction: model.first,
@@ -182,14 +192,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     // Create a query that joins transactions with their categories
     final query = database.select(database.transactions).join([
       leftOuterJoin(
-        database.transactionCategories,
-        database.transactionCategories.transactionClientId
-            .equalsExp(database.transactions.clientId),
+        database.sourceCategories,
+        database.sourceCategories.sourceId
+                .equalsExp(database.transactions.clientId) &
+            database.sourceCategories.sourceType
+                .equals(SourceType.transaction.name),
       ),
       leftOuterJoin(
         database.categories,
         database.categories.clientId
-            .equalsExp(database.transactionCategories.categoryClientId),
+            .equalsExp(database.sourceCategories.categoryClientId),
       ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
@@ -235,4 +247,56 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     // The data is already ordered from the database query, so we can just return the values
     return transactionMap.values.toList();
   }
+
+  // @override
+  // Future<List<Category>> getCategoriesForTransaction(
+  //     String transactionId) async {
+  //   return database.getCategoriesForSource(
+  //       transactionId, SourceType.transaction);
+  // }
+
+  // @override
+  // Future<void> addCategoryToTransaction(
+  //     String transactionId, String categoryId) async {
+  //   await database.into(database.sourceCategories).insert(
+  //         SourceCategoriesCompanion.insert(
+  //           sourceId: transactionId,
+  //           sourceType: SourceType.transaction.name,
+  //           categoryClientId: categoryId,
+  //         ),
+  //       );
+  // }
+
+  // @override
+  // Future<void> removeCategoryFromTransaction(
+  //     String transactionId, String categoryId) async {
+  //   await (database.delete(database.sourceCategories)
+  //         ..where((row) =>
+  //             row.sourceId.equals(transactionId) &
+  //             row.sourceType.equals(SourceType.transaction.name) &
+  //             row.categoryClientId.equals(categoryId)))
+  //       .go();
+  // }
+
+  // @override
+  // Future<void> updateTransactionCategories(
+  //     String transactionId, List<String> categoryIds) async {
+  //   // Remove existing categories
+  //   await (database.delete(database.sourceCategories)
+  //         ..where((row) =>
+  //             row.sourceId.equals(transactionId) &
+  //             row.sourceType.equals(SourceType.transaction.name)))
+  //       .go();
+
+  //   // Add new categories
+  //   for (final categoryId in categoryIds) {
+  //     await database.into(database.sourceCategories).insert(
+  //           SourceCategoriesCompanion.insert(
+  //             sourceId: transactionId,
+  //             sourceType: SourceType.transaction.name,
+  //             categoryClientId: categoryId,
+  //           ),
+  //         );
+  //   }
+  // }
 }

@@ -5,6 +5,7 @@ import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
 @lazySingleton
 class TransactionSyncHandler
@@ -34,6 +35,7 @@ class TransactionSyncHandler
 
     final categories = await db.getCategoriesForTransaction(
       transactionCompleteModel.transaction.clientId,
+      SourceType.transaction,
     );
 
     return TransactionCompleteDto.fromTransaction(
@@ -96,26 +98,30 @@ class TransactionSyncHandler
 
     await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
 
-    final categories =
-        await db.getCategoriesForTransaction(entity.transaction.clientId);
+    final categories = await db.getCategoriesForTransaction(
+      entity.transaction.clientId,
+      SourceType.transaction,
+    );
 
     final categoriesToRemove = categories
         .where((c) => !entity.categories.any((cc) => cc.clientId == c.clientId))
         .toList();
 
     //Removes stale category links
-    //Filter out transactionCategories
     for (var category in categoriesToRemove) {
-      await db.transactionCategories.deleteWhere((row) =>
-          row.transactionClientId.equals(entity.transaction.clientId) &
+      await db.sourceCategories.deleteWhere((row) =>
+          row.sourceId.equals(entity.transaction.clientId) &
+          row.sourceType.equals(SourceType.transaction.name) &
           row.categoryClientId.equals(category.clientId));
     }
 
     for (var category in entity.categories) {
-      await db.transactionCategories.insertOne(
-          TransactionCategoriesCompanion.insert(
-              transactionClientId: entity.transaction.clientId,
-              categoryClientId: category.clientId),
+      await db.sourceCategories.insertOne(
+          SourceCategoriesCompanion.insert(
+            sourceId: entity.transaction.clientId,
+            sourceType: SourceType.transaction,
+            categoryClientId: category.clientId,
+          ),
           mode: InsertMode.insertOrReplace);
     }
   }
@@ -144,8 +150,10 @@ class TransactionSyncHandler
         .get();
     return TransactionCompleteDto.fromTransaction(
         transaction: result.first,
-        categories:
-            await db.getCategoriesForTransaction(result.first.clientId));
+        categories: await db.getCategoriesForTransaction(
+          result.first.clientId,
+          SourceType.transaction,
+        ));
   }
 
   @override
@@ -154,29 +162,14 @@ class TransactionSyncHandler
         await (db.select(table)..where((t) => t.id.equals(serverId))).get();
     return TransactionCompleteDto.fromTransaction(
         transaction: result.first,
-        categories:
-            await db.getCategoriesForTransaction(result.first.clientId));
+        categories: await db.getCategoriesForTransaction(
+          result.first.clientId,
+          SourceType.transaction,
+        ));
   }
 
   @override
   int? getServerId(TransactionCompleteDto entity) {
     return entity.transaction.id;
   }
-
-  // // Example of using the sync methods
-  // Future<void> syncTransaction(Transaction transaction) async {
-  //   await upsertLocal(transaction);
-  // }
-
-  // Future<void> deleteTransaction(Transaction transaction) async {
-  //   await deleteLocal(transaction);
-  // }
-
-  // Future<void> syncAllTransactions(List<Transaction> transactions) async {
-  //   await upsertAllLocal(transactions);
-  // }
-
-  // Future<void> clearAllTransactions() async {
-  //   await deleteAllLocal();
-  // }
 }

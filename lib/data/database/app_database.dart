@@ -8,13 +8,13 @@ import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/database/tables/parties.dart';
-import 'package:trakli/data/database/tables/transaction_categories.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'dart:io';
 import 'tables/sync_statuc.dart';
+import 'package:trakli/data/database/tables/source_categories.dart';
 
 part 'app_database.g.dart';
 
@@ -27,7 +27,7 @@ part 'app_database.g.dart';
   Wallets,
   LocalChanges,
   SyncMetadata,
-  TransactionCategories,
+  SourceCategories,
 ])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
@@ -88,17 +88,30 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   }
 
   Future<List<Category>> getCategoriesForTransaction(
-      String transactionId) async {
+      String transactionId, SourceType sourceType) async {
     final query = select(categories).join([
       innerJoin(
-        transactionCategories,
-        transactionCategories.categoryClientId.equalsExp(categories.clientId),
+        sourceCategories,
+        sourceCategories.categoryClientId.equalsExp(categories.clientId),
       )
     ])
-      ..where(transactionCategories.transactionClientId.equals(transactionId));
+      ..where(sourceCategories.sourceId.equals(transactionId) &
+          sourceCategories.sourceType.equals(sourceType.name));
 
     final results = await query.get();
     return results.map((row) => row.readTable(categories)).toList();
+
+    //  Future<List<Category>> getCategoriesForSource(
+    //   String sourceId, SourceType sourceType) {
+    // return (select(categories)
+    //       ..where((category) => existsQuery(
+    //             select(sourceCategories)
+    //               ..where((row) =>
+    //                   row.sourceId.equals(sourceId) &
+    //                   row.sourceType.equals(sourceType.name) &
+    //                   row.categoryClientId.equalsExp(categories.clientId)),
+    //           )))
+    //     .get();
   }
 
   @override
@@ -110,15 +123,6 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     logger.i(
       "${operation.name.toUpperCase()} operations on enity type $entityType for object $entityId completed",
     );
-
-    // await (update(localChanges)
-    //       ..where((lc) =>
-    //           lc.entityType.equals(entityType) & lc.entityId.equals(entityId)))
-    //     .write(
-    //   LocalChangesCompanion(
-    //     concludedMoment: Value(DateTime.now()),
-    //   ),
-    // );
   }
 
   @override
@@ -184,14 +188,3 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     );
   }
 }
-
-// @DriftDatabase(tables: [Transactions])
-// class AppDatabase extends _$AppDatabase with SynchronizerDb {
-//   AppDatabase() : super(_openConnection());
-
-//   @override
-//   int get schemaVersion => 1;
-
-//   @override
-//   List<TableInfo<Table, DataClass>> get allTables => [transactions];
-// }

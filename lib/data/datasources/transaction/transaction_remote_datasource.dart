@@ -41,10 +41,9 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   @override
   Future<TransactionCompleteDto> insertTransaction(
       TransactionCompleteDto transaction) async {
-    var response = await dio.post(
-      'transactions',
-      data: transaction.toServerJson(),
-    );
+    final requestData = transaction.toServerJson();
+
+    var response = await dio.post('transactions', data: requestData);
 
     final data = response.data;
     final apiResponse = ApiResponse.fromJson(data as Map<String, dynamic>);

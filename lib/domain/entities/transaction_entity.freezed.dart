@@ -22,17 +22,11 @@ TransactionEntity _$TransactionEntityFromJson(Map<String, dynamic> json) {
 mixin _$TransactionEntity {
   String get clientId => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
-  String get description =>
-      throw _privateConstructorUsedError; // required String category,
-// required DateTime createdAtLocal,
-// required DateTime updatedAtLocal,
+  String get description => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt =>
-      throw _privateConstructorUsedError; // required DateTime updatedAt,
+  DateTime get updatedAt => throw _privateConstructorUsedError;
   DateTime get datetime => throw _privateConstructorUsedError;
-  TransactionType get type =>
-      throw _privateConstructorUsedError; // DateTime? updatedAtServer,
-// DateTime? deletedAtServer,
+  TransactionType get type => throw _privateConstructorUsedError;
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
   String get rev => throw _privateConstructorUsedError;
 
@@ -237,20 +231,14 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   final double amount;
   @override
   final String description;
-// required String category,
-// required DateTime createdAtLocal,
-// required DateTime updatedAtLocal,
   @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
-// required DateTime updatedAt,
   @override
   final DateTime datetime;
   @override
   final TransactionType type;
-// DateTime? updatedAtServer,
-// DateTime? deletedAtServer,
   @override
   final DateTime? lastSyncedAt;
   @override
@@ -326,18 +314,15 @@ abstract class _TransactionEntity implements TransactionEntity {
   @override
   double get amount;
   @override
-  String get description; // required String category,
-// required DateTime createdAtLocal,
-// required DateTime updatedAtLocal,
+  String get description;
   @override
   DateTime get createdAt;
   @override
-  DateTime get updatedAt; // required DateTime updatedAt,
+  DateTime get updatedAt;
   @override
   DateTime get datetime;
   @override
-  TransactionType get type; // DateTime? updatedAtServer,
-// DateTime? deletedAtServer,
+  TransactionType get type;
   @override
   DateTime? get lastSyncedAt;
   @override
