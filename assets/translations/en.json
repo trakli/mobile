@@ -58,7 +58,7 @@
   "showingTotalVisitors": "Showing total visitors for the last {} {}",
   "days": "Days",
   "months": "Months",
-  "fromDateToDate" : "From {} - {} {}",
+  "fromDateToDate": "From {} - {} {}",
   "transactionFilterBy": "Filter by ...",
   "transactionFrom": "From",
   "transactionTo": "To",
@@ -99,5 +99,12 @@
   "langFrench": "Français",
   "langGerman": "Deutsch",
   "langSpanish": "Español",
-  "langItalian": "Italiano"
+  "langItalian": "Italiano",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "username": "Username",
+  "confirmPassword": "Confirm password",
+  "register": "Register",
+  "firstNameEmptyDesc": "First name cannot be empty",
+  "invalidUserCredentials": "Invalid user credentials"
 }

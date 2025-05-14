@@ -1,18 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-enum CategoryType {
-  @JsonValue('income')
-  income,
-  @JsonValue('expense')
-  expense,
-  @JsonValue('invoice')
-  invoice
-}
-
-enum WalletType { bank, cash, creditCard, mobile }
-
-enum TransactionType { income, expense, transfer }
-
 enum SyncStatus {
   pending, // Record needs to be synced
   syncing, // Record is currently being synced

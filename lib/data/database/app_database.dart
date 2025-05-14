@@ -4,13 +4,14 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:trakli/data/database/tables/categories.dart';
-import 'package:trakli/data/database/tables/enums.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/database/tables/parties.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
+import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'dart:io';
 import 'tables/sync_statuc.dart';
 
@@ -20,6 +21,7 @@ part 'app_database.g.dart';
   Transactions,
   Parties,
   Categories,
+  Users,
   Groups,
   Wallets,
   LocalChanges,

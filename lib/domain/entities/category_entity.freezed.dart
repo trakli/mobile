@@ -22,7 +22,7 @@ CategoryEntity _$CategoryEntityFromJson(Map<String, dynamic> json) {
 mixin _$CategoryEntity {
   @JsonKey(name: 'client_generated_id')
   String? get clientGeneratedId => throw _privateConstructorUsedError;
-  CategoryType get type => throw _privateConstructorUsedError;
+  TransactionType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -56,7 +56,7 @@ abstract class $CategoryEntityCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'client_generated_id') String? clientGeneratedId,
-      CategoryType type,
+      TransactionType type,
       String name,
       String? description,
       @JsonKey(name: 'created_at') DateTime? createdAt,
@@ -105,7 +105,7 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
+              as TransactionType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -170,7 +170,7 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'client_generated_id') String? clientGeneratedId,
-      CategoryType type,
+      TransactionType type,
       String name,
       String? description,
       @JsonKey(name: 'created_at') DateTime? createdAt,
@@ -218,7 +218,7 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
+              as TransactionType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -282,7 +282,7 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   @JsonKey(name: 'client_generated_id')
   final String? clientGeneratedId;
   @override
-  final CategoryType type;
+  final TransactionType type;
   @override
   final String name;
   @override
@@ -372,7 +372,7 @@ class _$CategoryEntityImpl implements _CategoryEntity {
 abstract class _CategoryEntity implements CategoryEntity {
   const factory _CategoryEntity(
       {@JsonKey(name: 'client_generated_id') final String? clientGeneratedId,
-      required final CategoryType type,
+      required final TransactionType type,
       required final String name,
       final String? description,
       @JsonKey(name: 'created_at') final DateTime? createdAt,
@@ -391,7 +391,7 @@ abstract class _CategoryEntity implements CategoryEntity {
   @JsonKey(name: 'client_generated_id')
   String? get clientGeneratedId;
   @override
-  CategoryType get type;
+  TransactionType get type;
   @override
   String get name;
   @override

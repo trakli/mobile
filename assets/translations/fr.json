@@ -99,5 +99,12 @@
   "langFrench": "Français",
   "langGerman": "Deutsch",
   "langSpanish": "Español",
-  "langItalian": "Italiano"
+  "langItalian": "Italiano",
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "username": "Nom d'utilisateur",
+  "confirmPassword": "Confirmer le mot de passe",
+  "register": "S'inscrire",
+  "firstNameEmptyDesc": "Le prénom ne peut pas être vide",
+  "invalidUserCredentials": "Identifiants de l'utilisateur invalides"
 }

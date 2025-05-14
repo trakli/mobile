@@ -20,7 +20,7 @@ ApiResponse _$ApiResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ApiResponse {
-  int get statusCode => throw _privateConstructorUsedError;
+// required int statusCode,
   String get message => throw _privateConstructorUsedError;
   dynamic get data => throw _privateConstructorUsedError;
   bool get success => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $ApiResponseCopyWith<$Res> {
           ApiResponse value, $Res Function(ApiResponse) then) =
       _$ApiResponseCopyWithImpl<$Res, ApiResponse>;
   @useResult
-  $Res call({int statusCode, String message, dynamic data, bool success});
+  $Res call({String message, dynamic data, bool success});
 }
 
 /// @nodoc
@@ -59,16 +59,11 @@ class _$ApiResponseCopyWithImpl<$Res, $Val extends ApiResponse>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? statusCode = null,
     Object? message = null,
     Object? data = freezed,
     Object? success = null,
   }) {
     return _then(_value.copyWith(
-      statusCode: null == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -93,7 +88,7 @@ abstract class _$$ApiResponseImplCopyWith<$Res>
       __$$ApiResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int statusCode, String message, dynamic data, bool success});
+  $Res call({String message, dynamic data, bool success});
 }
 
 /// @nodoc
@@ -109,16 +104,11 @@ class __$$ApiResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? statusCode = null,
     Object? message = null,
     Object? data = freezed,
     Object? success = null,
   }) {
     return _then(_$ApiResponseImpl(
-      statusCode: null == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -139,16 +129,12 @@ class __$$ApiResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiResponseImpl implements _ApiResponse {
   const _$ApiResponseImpl(
-      {required this.statusCode,
-      required this.message,
-      required this.data,
-      required this.success});
+      {required this.message, required this.data, required this.success});
 
   factory _$ApiResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiResponseImplFromJson(json);
 
-  @override
-  final int statusCode;
+// required int statusCode,
   @override
   final String message;
   @override
@@ -158,7 +144,7 @@ class _$ApiResponseImpl implements _ApiResponse {
 
   @override
   String toString() {
-    return 'ApiResponse(statusCode: $statusCode, message: $message, data: $data, success: $success)';
+    return 'ApiResponse(message: $message, data: $data, success: $success)';
   }
 
   @override
@@ -166,8 +152,6 @@ class _$ApiResponseImpl implements _ApiResponse {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ApiResponseImpl &&
-            (identical(other.statusCode, statusCode) ||
-                other.statusCode == statusCode) &&
             (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality().equals(other.data, data) &&
             (identical(other.success, success) || other.success == success));
@@ -175,8 +159,8 @@ class _$ApiResponseImpl implements _ApiResponse {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, statusCode, message,
-      const DeepCollectionEquality().hash(data), success);
+  int get hashCode => Object.hash(
+      runtimeType, message, const DeepCollectionEquality().hash(data), success);
 
   /// Create a copy of ApiResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -196,16 +180,14 @@ class _$ApiResponseImpl implements _ApiResponse {
 
 abstract class _ApiResponse implements ApiResponse {
   const factory _ApiResponse(
-      {required final int statusCode,
-      required final String message,
+      {required final String message,
       required final dynamic data,
       required final bool success}) = _$ApiResponseImpl;
 
   factory _ApiResponse.fromJson(Map<String, dynamic> json) =
       _$ApiResponseImpl.fromJson;
 
-  @override
-  int get statusCode;
+// required int statusCode,
   @override
   String get message;
   @override

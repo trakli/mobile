@@ -1,3 +1,5 @@
+import 'package:trakli/core/error/utils/field_error.dart';
+
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -38,8 +40,12 @@ class NetworkException extends ApiException {
   NetworkException(super.message);
 }
 
+class UnknownException extends ApiException {
+  UnknownException(super.message);
+}
+
 class ValidationException extends ApiException {
-  final List<String> errors;
+  final List<FieldError> errors;
 
   ValidationException(super.message, {required this.errors})
       : super(statusCode: 422);

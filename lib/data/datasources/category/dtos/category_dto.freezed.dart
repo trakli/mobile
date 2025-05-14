@@ -22,7 +22,7 @@ CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) {
 mixin _$CategoryDto {
   @JsonKey(name: 'client_generated_id')
   String get clientId => throw _privateConstructorUsedError;
-  CategoryType get type => throw _privateConstructorUsedError;
+  TransactionType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at', fromJson: DateTime.parse)
@@ -56,7 +56,7 @@ abstract class $CategoryDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'client_generated_id') String clientId,
-      CategoryType type,
+      TransactionType type,
       String name,
       String? description,
       @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
@@ -106,7 +106,7 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
+              as TransactionType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -167,7 +167,7 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'client_generated_id') String clientId,
-      CategoryType type,
+      TransactionType type,
       String name,
       String? description,
       @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
@@ -216,7 +216,7 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as CategoryType,
+              as TransactionType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -283,7 +283,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
   @JsonKey(name: 'client_generated_id')
   final String clientId;
   @override
-  final CategoryType type;
+  final TransactionType type;
   @override
   final String name;
   @override
@@ -372,7 +372,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
 abstract class _CategoryDto implements CategoryDto {
   const factory _CategoryDto(
           {@JsonKey(name: 'client_generated_id') required final String clientId,
-          required final CategoryType type,
+          required final TransactionType type,
           required final String name,
           final String? description,
           @JsonKey(name: 'created_at', fromJson: DateTime.parse)
@@ -394,7 +394,7 @@ abstract class _CategoryDto implements CategoryDto {
   @JsonKey(name: 'client_generated_id')
   String get clientId;
   @override
-  CategoryType get type;
+  TransactionType get type;
   @override
   String get name;
   @override

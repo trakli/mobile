@@ -1,9 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 
@@ -12,6 +16,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthCubit>().state.user;
+
     return Scaffold(
       appBar: CustomAppBar(
         titleText: LocaleKeys.profile.tr(),
@@ -81,14 +87,14 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'John Doe',
+              user?.fullName ?? 'John Doe',
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'you@example.com',
+              user?.email ?? 'you@example.com',
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
@@ -157,7 +163,7 @@ class ProfileScreen extends StatelessWidget {
                       Column(
                         children: [
                           Text(LocaleKeys.phoneNumber.tr()),
-                          const Text('+201234567890'),
+                          Text(user?.phone ?? 'No phone number'),
                         ],
                       ),
                       const Spacer(),
@@ -165,34 +171,76 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      width: 0.5,
-                      color: transactionTileBorderColor,
-                    ),
-                  ),
-                  child: Row(
-                    spacing: 16.w,
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color: Colors.red.withValues(alpha: 0.2),
+                (user != null)
+                    ? GestureDetector(
+                        onTap: () {
+                          context.read<AuthCubit>().logout();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              width: 0.5,
+                              color: transactionTileBorderColor,
+                            ),
+                          ),
+                          child: Row(
+                            spacing: 16.w,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  color: Colors.red.withValues(alpha: 0.2),
+                                ),
+                                child: const Icon(Icons.logout),
+                              ),
+                              const Text("Log out"),
+                              const Spacer(),
+                              const Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
                         ),
-                        child: const Icon(Icons.logout),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          AppNavigator.removeAllPreviousAndPush(
+                            context,
+                            const OnboardingScreen(),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              width: 0.5,
+                              color: transactionTileBorderColor,
+                            ),
+                          ),
+                          child: Row(
+                            spacing: 16.w,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  color: Colors.red.withValues(alpha: 0.2),
+                                ),
+                                child: const Icon(Icons.logout),
+                              ),
+                              const Text("Sign up"),
+                              const Spacer(),
+                              const Icon(Icons.keyboard_arrow_right_outlined),
+                            ],
+                          ),
+                        ),
                       ),
-                      const Text("Log out"),
-                      const Spacer(),
-                      const Icon(Icons.keyboard_arrow_right_outlined),
-                    ],
-                  ),
-                ),
               ],
             ),
           ],

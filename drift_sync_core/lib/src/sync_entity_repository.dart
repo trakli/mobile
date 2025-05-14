@@ -13,12 +13,8 @@ enum DataDestination { local, both }
 /// Each of these
 /// methods works by attempting to first use
 /// online data with the fallback of the offline data.
-abstract class SyncEntityRepository<
-  TAppDatabase extends SynchronizerDb,
-  TEntity,
-  TKey,
-  TServerKey
-> {
+abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
+    TEntity, TKey, TServerKey> {
   const SyncEntityRepository({required this.syncHandler, required this.db});
 
   final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;
@@ -39,54 +35,68 @@ abstract class SyncEntityRepository<
   @protected
   Future<TEntity?> getRemote(TServerKey id) async {
     try {
-      final e = await syncHandler.getRemote(id);
-      return e;
-    } on UnavailableException catch (_) {
+      return await syncHandler.getRemote(id);
+    } on UnavailableException {
       return null;
     }
   }
 
   Future<(TEntity, DataDestination)> put(TEntity entity) async {
-    final remoteCreated = await putRemote(entity);
+    final serverId = syncHandler.getServerId(entity);
+    final remoteCreated = serverId != null ? await putRemote(entity) : null;
     final created = remoteCreated ?? entity;
-
     final ds =
         remoteCreated == null ? DataDestination.local : DataDestination.both;
 
-    await this.db.transaction(() async {
-      // await syncHandler.upsertLocal(created);
-
-      if (remoteCreated == null) {
-        final localChange = PendingLocalChange.put(
-          protoBytes: syncHandler.marshal(entity),
-          entityType: syncHandler.entityType,
-          entityId: syncHandler.getClientId(entity),
-          entityRev: syncHandler.getRev(entity),
-        );
-        await db.insertLocalChange(localChange);
-      } else {
-        await db.concludeEntityLocalChanges(
-          syncHandler.entityType,
-          syncHandler.getServerId(entity),
-          Operation.put,
-        );
-      }
-    });
-
+    await _handleLocalStorage(entity, remoteCreated);
     return (created, ds);
   }
 
-  /// Tries to update remotely.
-  /// Returns:
-  /// - The updated entity if succeed
-  /// - null if unavailable
-  /// throws if any other exception
+  Future<(TEntity, DataDestination)> post(TEntity entity) async {
+    final remoteCreated = await putRemote(entity);
+    final created = remoteCreated ?? entity;
+    final ds =
+        remoteCreated == null ? DataDestination.local : DataDestination.both;
+
+    await _handleLocalStorage(created, remoteCreated);
+    return (created, ds);
+  }
+
+  Future<void> _handleLocalStorage(
+      TEntity entity, TEntity? remoteCreated) async {
+    await db.transaction(() async {
+      if (remoteCreated == null) {
+        await _createPendingChange(entity);
+      } else {
+        await _concludeEntityChanges(entity);
+      }
+    });
+  }
+
+  Future<void> _createPendingChange(TEntity entity) async {
+    final localChange = PendingLocalChange.put(
+      protoBytes: syncHandler.marshal(entity),
+      entityType: syncHandler.entityType,
+      entityId: syncHandler.getClientId(entity),
+      entityRev: syncHandler.getRev(entity),
+    );
+    await db.insertLocalChange(localChange);
+  }
+
+  Future<void> _concludeEntityChanges(TEntity entity) async {
+    await db.concludeEntityLocalChanges(
+      syncHandler.entityType,
+      syncHandler.getServerId(entity),
+      Operation.put,
+    );
+    await syncHandler.upsertLocal(entity);
+  }
+
   @protected
   Future<TEntity?> putRemote(TEntity entity) async {
     try {
-      final created = await syncHandler.putRemote(entity);
-      return created;
-    } on UnavailableException catch (_) {
+      return await syncHandler.putRemote(entity);
+    } on UnavailableException {
       return null;
     }
   }
@@ -95,38 +105,44 @@ abstract class SyncEntityRepository<
     final synced = await deleteRemote(entity);
     final ds = synced ? DataDestination.both : DataDestination.local;
 
-    await db.transaction(() async {
-      await syncHandler.deleteLocal(entity);
-      if (!synced) {
-        final localChange = PendingLocalChange.delete(
-          entityType: syncHandler.entityType,
-          data: syncHandler.marshal(entity),
-          entityId: syncHandler.getClientId(entity),
-          entityRev: syncHandler.getRev(entity),
-        );
-        await db.insertLocalChange(localChange);
-      } else {
-        await db.concludeEntityLocalChanges(
-          syncHandler.entityType,
-          syncHandler.getServerId(entity),
-          Operation.delete,
-        );
-      }
-    });
-
+    await _handleDeleteStorage(entity, synced);
     return ds;
   }
 
-  // Tries to delete the entity remotely
-  // Returns:
-  // - true if succeeded
-  // - false if unavailable
-  // throws if any other exception
+  Future<void> _handleDeleteStorage(TEntity entity, bool synced) async {
+    await db.transaction(() async {
+      await syncHandler.deleteLocal(entity);
+      if (!synced) {
+        await _createDeletePendingChange(entity);
+      } else {
+        await _concludeDeleteChanges(entity);
+      }
+    });
+  }
+
+  Future<void> _createDeletePendingChange(TEntity entity) async {
+    final localChange = PendingLocalChange.delete(
+      entityType: syncHandler.entityType,
+      data: syncHandler.marshal(entity),
+      entityId: syncHandler.getClientId(entity),
+      entityRev: syncHandler.getRev(entity),
+    );
+    await db.insertLocalChange(localChange);
+  }
+
+  Future<void> _concludeDeleteChanges(TEntity entity) async {
+    await db.concludeEntityLocalChanges(
+      syncHandler.entityType,
+      syncHandler.getServerId(entity),
+      Operation.delete,
+    );
+  }
+
   Future<bool> deleteRemote(TEntity entity) async {
     try {
       await syncHandler.deleteRemote(entity);
       return true;
-    } on UnavailableException catch (_) {
+    } on UnavailableException {
       return false;
     }
   }

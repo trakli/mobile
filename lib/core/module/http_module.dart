@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
+import 'package:trakli/core/network/interceptors/token_interceptor.dart';
+import 'package:trakli/data/datasources/auth/token_manager.dart';
+import 'package:trakli/di/injection.dart';
 
 @module
 abstract class InjectHttpClientModule {
@@ -8,12 +12,14 @@ abstract class InjectHttpClientModule {
   // late TokenManager tokenManager;
 
   @Named('HttpUrl')
-  @dev
   String get devHttpUrl => 'https://api.dev.trakli.app/api/v1/';
 
-  @Named('HttpUrl')
-  @prod
-  String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
+  // @Named('HttpUrl')
+  // @prod
+  // String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
+
+  // @lazySingleton
+  // TokenManager get tokenManager => TokenManager();
 
   @lazySingleton
   Dio dio(@Named('HttpUrl') String url) {
@@ -23,8 +29,8 @@ abstract class InjectHttpClientModule {
 
     dio.interceptors.addAll([
       // RemoveNullValuesInterceptor(),
-      // // TokenInterceptor(tokenManager),
-      // LoggerInterceptor()
+      TokenInterceptor(getIt<TokenManager>()),
+      LoggerInterceptor()
     ]);
 
     return dio;

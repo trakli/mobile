@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 
@@ -20,9 +18,9 @@ class FieldError with _$FieldError {
 
   static List<FieldError> getErrors(dynamic data) {
     // ignore: avoid_dynamic_calls
-    final dataErrors = jsonDecode(data.toString());
+    // final dataErrors = jsonDecode(data.toString());
     // ignore: avoid_dynamic_calls
-    final errors = dataErrors['errors'];
+    final errors = data['errors'];
 
     logger.e(data);
 
@@ -42,6 +40,19 @@ class FieldError with _$FieldError {
       } catch (e) {
         logger.e(e);
       }
+    }
+
+    if (errors is List) {
+      final errorsList = List<Map<String, dynamic>>.from(errors);
+
+      return errorsList
+          .expand((e) => e.entries.map(
+                (e) => FieldError(
+                  field: e.key,
+                  messages: List<String>.from(e.value as List<dynamic>),
+                ),
+              ))
+          .toList();
     }
 
     // ignore: avoid_dynamic_calls

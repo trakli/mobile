@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:injectable/injectable.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
 /// Adds a global error handler to the Flutter app.
@@ -19,6 +21,11 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      configureDependencies(Environment.dev);
+
+      // Initialize sync database
+      // getIt<SynchAppDatabase>().init();
+
       await EasyLocalization.ensureInitialized();
 
       runApp(

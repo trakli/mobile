@@ -63,8 +63,8 @@ class SharedPrefsImpl implements SharedPrefs {
   @override
   Future<bool> clearAll() => _prefs.clear();
 
-  @postConstruct
-  Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
+  // @postConstruct
+  // Future<void> init() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  // }
 }

@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -14,8 +14,9 @@ import 'dart:ui' as ui;
 class AddCategoryForm extends StatefulWidget {
   final Color accentColor;
   final CategoryEntity? category;
+  final TransactionType type;
   final Function(
-          String name, String description, CategoryType type, IconData? icon)
+          String name, String description, TransactionType type, IconData? icon)
       onSubmit;
 
   const AddCategoryForm({
@@ -23,6 +24,7 @@ class AddCategoryForm extends StatefulWidget {
     this.accentColor = const Color(0xFFEB5757),
     this.category,
     required this.onSubmit,
+    required this.type,
   });
 
   @override
@@ -34,7 +36,6 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late IconData? selectedIcon;
-  late CategoryType selectedType;
 
   @override
   void initState() {
@@ -42,8 +43,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
     _nameController = TextEditingController(text: widget.category?.name);
     _descriptionController =
         TextEditingController(text: widget.category?.description);
-    selectedType = widget.category?.type ?? CategoryType.expense;
-    selectedIcon = Icons.category;
+    selectedIcon = Icons.add;
   }
 
   @override
@@ -95,8 +95,8 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                           ),
                         ),
                         Positioned(
-                          right: 8.w,
-                          bottom: 8.h,
+                          right: 10.w,
+                          bottom: 10.h,
                           child: Icon(
                             selectedIcon ?? Icons.category,
                             color: widget.accentColor,
@@ -140,44 +140,6 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                 hintText: LocaleKeys.typeHere.tr(),
               ),
             ),
-            SizedBox(height: 20.h),
-            Text(
-              "Type",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<CategoryType>(
-                    title: const Text('Expense'),
-                    value: CategoryType.expense,
-                    groupValue: selectedType,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedType = value!;
-                      });
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: RadioListTile<CategoryType>(
-                    title: const Text('Income'),
-                    value: CategoryType.income,
-                    groupValue: selectedType,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedType = value!;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
             SizedBox(height: 40.h),
             SizedBox(
               height: 54.h,
@@ -190,7 +152,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                       widget.onSubmit(
                         _nameController.text,
                         _descriptionController.text,
-                        selectedType,
+                        widget.type,
                         selectedIcon,
                       );
                     }

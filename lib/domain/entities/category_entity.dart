@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/dto/sync_state_dto.dart';
 
 part 'category_entity.freezed.dart';
@@ -9,7 +9,7 @@ part 'category_entity.g.dart';
 class CategoryEntity with _$CategoryEntity {
   const factory CategoryEntity({
     @JsonKey(name: 'client_generated_id') String? clientGeneratedId,
-    required CategoryType type,
+    required TransactionType type,
     required String name,
     String? description,
     @JsonKey(name: 'created_at') DateTime? createdAt,

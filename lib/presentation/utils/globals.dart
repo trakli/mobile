@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 const String maxUploadSizeInMB = "5Mo";
 final List<Locale> supportedLanguages = [
   const Locale('en'),
@@ -22,27 +24,27 @@ final List<String> supportedFormDisplays = [
 List<CategoryEntity> incomeTransactions = const [
   CategoryEntity(
     name: "Salary",
-    type: CategoryType.income,
+    type: TransactionType.income,
     clientGeneratedId: "1",
   ),
   CategoryEntity(
     name: "Freelance",
-    type: CategoryType.income,
+    type: TransactionType.income,
     clientGeneratedId: "2",
   ),
   CategoryEntity(
     name: "Gifts",
-    type: CategoryType.income,
+    type: TransactionType.income,
     clientGeneratedId: "3",
   ),
   CategoryEntity(
     name: "Donations",
-    type: CategoryType.income,
+    type: TransactionType.income,
     clientGeneratedId: "4",
   ),
   CategoryEntity(
     name: "Other Income",
-    type: CategoryType.income,
+    type: TransactionType.income,
     clientGeneratedId: "5",
   ),
 ];
@@ -50,42 +52,42 @@ List<CategoryEntity> incomeTransactions = const [
 List<CategoryEntity> expenseTransactions = const [
   CategoryEntity(
     name: "Rent",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "6",
   ),
   CategoryEntity(
     name: "Groceries",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "7",
   ),
   CategoryEntity(
     name: "Utilities",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "8",
   ),
   CategoryEntity(
     name: "Transportation",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "9",
   ),
   CategoryEntity(
     name: "Health",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "10",
   ),
   CategoryEntity(
     name: "Fitness",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "11",
   ),
   CategoryEntity(
     name: "Shopping",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "12",
   ),
   CategoryEntity(
     name: "Travel",
-    type: CategoryType.expense,
+    type: TransactionType.expense,
     clientGeneratedId: "13",
   ),
 ];

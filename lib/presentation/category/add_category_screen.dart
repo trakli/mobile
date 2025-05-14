@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/constants/colors.dart';
 import 'package:trakli/core/constants/text_styles.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_state.dart';
@@ -12,12 +13,14 @@ import 'package:trakli/presentation/utils/helpers.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   final CategoryEntity? category;
+  final TransactionType type;
   final Color? accentColor;
 
   const AddCategoryScreen({
     super.key,
     this.category,
     this.accentColor,
+    required this.type,
   });
 
   @override
@@ -47,7 +50,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
           if (state.failure.hasError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.failure.message),
+                content: Text(state.failure.customMessage),
                 backgroundColor: Colors.red,
               ),
             );
@@ -62,6 +65,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
             padding: EdgeInsets.all(16.r),
             child: AddCategoryForm(
               category: widget.category,
+              type: widget.type,
               accentColor: widget.accentColor ?? const Color(0xFFEB5757),
               onSubmit: (name, description, type, icon) {
                 hideKeyBoard();
@@ -70,7 +74,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                         clientId: widget.category!.clientGeneratedId!,
                         name: name,
                         slug: _generateSlug(name),
-                        type: type,
                         userId: widget.category!.userId,
                         description: description,
                       );
@@ -78,7 +81,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   context.read<CategoryCubit>().addCategory(
                         name: name,
                         slug: _generateSlug(name),
-                        type: type,
+                        type: widget.type,
                         userId: 1,
                         description: description,
                       );

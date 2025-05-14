@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/parties.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
-import 'package:trakli/data/database/tables/enums.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 
 @DataClassName('Transaction')

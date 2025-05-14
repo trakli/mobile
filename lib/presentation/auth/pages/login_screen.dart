@@ -4,8 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/login_with_email_screen.dart';
-import 'package:trakli/presentation/onboard_settings_screen.dart';
+import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
+import 'package:trakli/presentation/auth/pages/register_screen.dart';
+import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 
@@ -63,7 +64,14 @@ class LoginScreen extends StatelessWidget {
               width: double.infinity,
               height: 54.h,
               child: PrimaryButton(
-                onPress: () {},
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterScreen(),
+                    ),
+                  );
+                },
                 buttonText: LocaleKeys.createAccount.tr(),
               ),
             ),
@@ -96,7 +104,9 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(
                   height: 54.h,
                   child: PrimaryButton(
-                    onPress: () {},
+                    onPress: () {
+                      // TODO: Implement Google sign in
+                    },
                     iconPath: Assets.images.google,
                     borderColor: const Color(0xFF79828E),
                     backgroundColor: Colors.white,
@@ -105,7 +115,9 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(
                   height: 54.h,
                   child: PrimaryButton(
-                    onPress: () {},
+                    onPress: () {
+                      // TODO: Implement Apple sign in
+                    },
                     iconPath: Assets.images.apple,
                     buttonTextColor: const Color(0xFF79828E),
                     borderColor: const Color(0xFF79828E),
