@@ -135,12 +135,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         categories.where((c) => !categoryIds.contains(c.clientId)).toList();
 
     for (var category in categoriesToRemove) {
-      await database.delete(database.transactionCategories).delete(
-            TransactionCategoriesCompanion.insert(
-              transactionClientId: model.first.clientId,
-              categoryClientId: category.clientId,
-            ),
-          );
+      await (database.delete(database.transactionCategories)
+            ..where((row) =>
+                row.transactionClientId.equals(model.first.clientId) &
+                row.categoryClientId.equals(category.clientId)))
+          .go();
     }
 
     final categoriesToAdd = categoryIds

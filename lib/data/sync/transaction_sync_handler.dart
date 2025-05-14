@@ -23,11 +23,8 @@ class TransactionSyncHandler
   @override
   String get entityType => 'transaction';
 
-
   @override
   String getRev(TransactionCompleteDto entity) => entity.transaction.rev ?? '1';
-
-
 
   @override
   Future<TransactionCompleteDto> unmarshal(
@@ -98,6 +95,21 @@ class TransactionSyncHandler
     );
 
     await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
+
+    final categories =
+        await db.getCategoriesForTransaction(entity.transaction.clientId);
+
+    final categoriesToRemove = categories
+        .where((c) => !entity.categories.any((cc) => cc.clientId == c.clientId))
+        .toList();
+
+    //Removes stale category links
+    //Filter out transactionCategories
+    for (var category in categoriesToRemove) {
+      await db.transactionCategories.deleteWhere((row) =>
+          row.transactionClientId.equals(entity.transaction.clientId) &
+          row.categoryClientId.equals(category.clientId));
+    }
 
     for (var category in entity.categories) {
       await db.transactionCategories.insertOne(

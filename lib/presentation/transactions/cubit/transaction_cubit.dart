@@ -27,7 +27,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     required this.deleteTransactionUseCase,
     required this.listenToTransactionsUseCase,
   }) : super(TransactionState.initial()) {
-    // loadTransactions();
     listenForChanges();
   }
 
@@ -76,13 +75,12 @@ class TransactionCubit extends Cubit<TransactionState> {
         isSaving: false,
         failure: failure,
       )),
-      (_) {
-        emit(state.copyWith(
+      (_) => emit(
+        state.copyWith(
           isSaving: false,
           failure: const Failure.none(),
-        ));
-        loadTransactions();
-      },
+        ),
+      ),
     );
   }
 
@@ -106,13 +104,10 @@ class TransactionCubit extends Cubit<TransactionState> {
         isSaving: false,
         failure: failure,
       )),
-      (_) {
-        emit(state.copyWith(
-          isSaving: false,
-          failure: const Failure.none(),
-        ));
-        loadTransactions();
-      },
+      (_) => emit(state.copyWith(
+        isSaving: false,
+        failure: const Failure.none(),
+      )),
     );
   }
 
@@ -143,7 +138,7 @@ class TransactionCubit extends Cubit<TransactionState> {
   }
 
   Future<void> listenForChanges() async {
-    // emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true));
 
     _transactionSubscription = listenToTransactionsUseCase(NoParams()).listen(
       (either) => either.fold(
@@ -163,150 +158,3 @@ class TransactionCubit extends Cubit<TransactionState> {
     );
   }
 }
-
-// import 'dart:async';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:trakli/core/error/failures/failures.dart';
-// import 'package:trakli/domain/entities/transaction_entity.dart';
-// import 'package:trakli/domain/usecases/transaction/create_transaction_usecase.dart';
-// import 'package:trakli/domain/usecases/transaction/delete_transaction_usecase.dart';
-// import 'package:trakli/domain/usecases/transaction/get_all_transactions_usecase.dart';
-// import 'package:trakli/domain/usecases/transaction/update_transaction_usecase.dart';
-// import 'package:trakli/domain/usecases/listen_to_transactions_usecase.dart';
-
-// part 'transaction_bloc.freezed.dart';
-// part 'transaction_event.dart';
-// part 'transaction_state.dart';
-
-// class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
-//   final GetAllTransactionsUseCase getAllTransactions;
-//   final CreateTransactionUseCase createTransaction;
-//   final UpdateTransactionUseCase updateTransaction;
-//   final DeleteTransactionUseCase deleteTransaction;
-//   final ListenToTransactionsUseCase listenToTransactions;
-//   StreamSubscription? _transactionSubscription;
-
-//   TransactionBloc({
-//     required this.getAllTransactions,
-//     required this.createTransaction,
-//     required this.updateTransaction,
-//     required this.deleteTransaction,
-//     required this.listenToTransactions,
-//   }) : super(const TransactionState.initial()) {
-//     on<TransactionEvent>((event, emit) async {
-//       await event.map(
-//         getAllTransactions: (e) => _onGetAllTransactions(e, emit),
-//         updateTransactions: (e) => _onUpdateTransactions(e, emit),
-//         insertTransaction: (e) => _onInsertTransaction(e, emit),
-//         updateTransaction: (e) => _onUpdateTransaction(e, emit),
-//         deleteTransaction: (e) => _onDeleteTransaction(e, emit),
-//       );
-//     });
-//     _transactionSubscription = listenToTransactions().listen(
-//       (either) => either.fold(
-//         (failure) => {},
-//         (transactions) =>
-//             add(TransactionEvent.updateTransactions(transactions)),
-//       ),
-//     );
-//   }
-
-//   @override
-//   Future<void> close() {
-//     _transactionSubscription?.cancel();
-//     return super.close();
-//   }
-
-//   Future<void> _onGetAllTransactions(
-//     GetAllTransactions event,
-//     Emitter<TransactionState> emit,
-//   ) async {
-//     emit(const TransactionState.loading());
-//     final result = await getAllTransactions();
-//     result.fold(
-//       (failure) => emit(TransactionState.error(failure)),
-//       (transactions) => emit(TransactionState.loaded(transactions)),
-//     );
-//   }
-
-//   Future<void> _onUpdateTransactions(
-//     UpdateTransaction event,
-//     Emitter<TransactionState> emit,
-//   ) async {
-//     emit(TransactionState.loaded(event.transactions));
-//   }
-
-//   Future<void> _onInsertTransaction(
-//     InsertTransaction event,
-//     Emitter<TransactionState> emit,
-//   ) async {
-//     emit(const TransactionState.loading());
-//     final result = await createTransaction(
-//       CreateTransactionParams(
-//         amount: event.amount,
-//         description: event.description,
-//         title: event.title,
-//         category: event.category,
-//       ),
-//     );
-//     result.fold(
-//       (failure) => emit(TransactionState.error(failure)),
-//       (_) => add(const TransactionEvent.getAllTransactions()),
-//     );
-//   }
-
-//   Future<void> _onUpdateTransaction(
-//     UpdateTransaction event,
-//     Emitter<TransactionState> emit,
-//   ) async {
-//     emit(const TransactionState.loading());
-//     final result = await updateTransaction(
-//       UpdateTransactionParams(
-//         id: event.id,
-//         amount: event.amount,
-//         description: event.description,
-//         category: event.category,
-//       ),
-//     );
-//     result.fold(
-//       (failure) => emit(TransactionState.error(failure)),
-//       (_) => add(const TransactionEvent.getAllTransactions()),
-//     );
-//   }
-
-//   Future<void> _onDeleteTransaction(
-//     DeleteTransaction event,
-//     Emitter<TransactionState> emit,
-//   ) async {
-//     emit(const TransactionState.loading());
-//     final result = await deleteTransaction(event.id);
-//     result.fold(
-//       (failure) => emit(TransactionState.error(failure)),
-//       (_) => add(const TransactionEvent.getAllTransactions()),
-//     );
-//   }
-
-  // Future<void> listenForChanges() async {
-  //   emit(state.copyWith(isLoading: true));
-  //   _notesSubscription = _repo.listenToScratchNotes().listen(
-  //     (failureOrNotes) {
-  //       failureOrNotes.fold(
-  //         (failure) => emit(
-  //           state.copyWith(
-  //             isLoading: false,
-  //             failure: failure,
-  //           ),
-  //         ),
-  //         (scratchNotes) => emit(
-  //           state.copyWith(
-  //             isLoading: false,
-  //             failure: Failure.none(),
-  //             notes: scratchNotes,
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-// }
