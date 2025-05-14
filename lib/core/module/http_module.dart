@@ -12,12 +12,11 @@ abstract class InjectHttpClientModule {
   // late TokenManager tokenManager;
 
   @Named('HttpUrl')
-  @dev
   String get devHttpUrl => 'https://api.dev.trakli.app/api/v1/';
 
-  @Named('HttpUrl')
-  @prod
-  String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
+  // @Named('HttpUrl')
+  // @prod
+  // String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
 
   // @lazySingleton
   // TokenManager get tokenManager => TokenManager();

@@ -80,9 +80,6 @@ import '../presentation/bloc/transaction/transaction_cubit.dart' as _i218;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
 
-const String _dev = 'dev';
-const String _prod = 'prod';
-
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
   _i174.GetIt getIt, {
@@ -102,13 +99,12 @@ _i174.GetIt $initGetIt(
       () => _i150.MockTransactionRemoteDataSource());
   gh.singleton<_i789.SharedPrefs>(() => _i789.SharedPrefsImpl());
   gh.factory<_i483.TokenManager>(() => const _i483.TokenManagerImpl());
-  gh.singleton<_i683.PreferenceManager>(
-      () => _i683.PreferenceManagerImpl()..init());
   gh.factory<String>(
     () => injectHttpClientModule.devHttpUrl,
     instanceName: 'HttpUrl',
-    registerFor: {_dev},
   );
+  gh.singleton<_i683.PreferenceManager>(
+      () => _i683.PreferenceManagerImpl()..init());
   gh.factory<_i276.AuthLocalDataSource>(
       () => _i276.AuthLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.factory<_i662.TransactionLocalDataSource>(
@@ -117,11 +113,6 @@ _i174.GetIt $initGetIt(
       () => _i148.CategoryLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.lazySingleton<_i361.Dio>(
       () => injectHttpClientModule.dio(gh<String>(instanceName: 'HttpUrl')));
-  gh.factory<String>(
-    () => injectHttpClientModule.prodHttpUrl,
-    instanceName: 'HttpUrl',
-    registerFor: {_prod},
-  );
   gh.factory<_i558.CategoryRemoteDataSource>(
       () => _i558.CategoryRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.lazySingleton<_i463.CategorySyncHandler>(() => _i463.CategorySyncHandler(
