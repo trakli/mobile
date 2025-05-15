@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   easy_localization: ^3.0.7
-  flutter_svg: ^2.0.10
+  flutter_svg: ^2.1.0
   flutter_screenutil: ^5.9.3
   pinput: ^5.0.0
   flutter_bloc: ^8.1.6
