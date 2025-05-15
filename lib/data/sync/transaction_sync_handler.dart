@@ -51,7 +51,7 @@ class TransactionSyncHandler
 
   @override
   bool shouldPersistRemote(TransactionCompleteDto entity) {
-    return entity.categories.contains(null);
+    return !entity.categories.map((c) => c.id).contains(null);
   }
 
   @override

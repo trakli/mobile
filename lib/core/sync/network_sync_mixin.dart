@@ -1,26 +1,25 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import '../utils/services/logger.dart';
 import 'sync_timing.dart';
 
 mixin NetworkSyncMixin {
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  StreamSubscription<InternetStatus>? _internetSubscription;
   bool _isConnected = false;
   final _syncTiming = SyncTiming();
+  final _internetChecker = InternetConnection();
 
   void initializeNetworkSync(Future<void> Function() syncFunction) {
-    _setupConnectivityListener(syncFunction);
-    // _syncTiming.scheduleSync(syncFunction);
+    _setupInternetChecker(syncFunction);
   }
 
-  void _setupConnectivityListener(Future<void> Function() syncFunction) {
-    _connectivitySubscription?.cancel();
-    _connectivitySubscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) async {
+//
+  void _setupInternetChecker(Future<void> Function() syncFunction) {
+    _internetSubscription?.cancel();
+    _internetSubscription =
+        _internetChecker.onStatusChange.listen((InternetStatus status) async {
       final wasConnected = _isConnected;
-
-      _isConnected = result != ConnectivityResult.none;
+      _isConnected = status == InternetStatus.connected;
 
       if (!wasConnected && _isConnected) {
         logger.info('Internet connectivity restored');
@@ -51,7 +50,7 @@ mixin NetworkSyncMixin {
   }
 
   Future<void> disposeNetworkSync() async {
-    await _connectivitySubscription?.cancel();
+    await _internetSubscription?.cancel();
     _syncTiming.cancelSync();
   }
 }
