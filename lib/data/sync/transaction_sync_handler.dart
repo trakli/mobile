@@ -50,6 +50,11 @@ class TransactionSyncHandler
   }
 
   @override
+  bool shouldPersistRemote(TransactionCompleteDto entity) {
+    return entity.categories.contains(null);
+  }
+
+  @override
   Future<List<TransactionCompleteDto>> restGetAllRemote() async {
     return remoteDataSource.getAllTransactions();
   }

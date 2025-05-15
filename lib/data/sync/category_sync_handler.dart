@@ -35,6 +35,11 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   }
 
   @override
+  bool shouldPersistRemote(Category entity) {
+    return true;
+  }
+
+  @override
   Future<List<Category>> restGetAllRemote() async {
     return remoteDataSource.getAllCategories();
   }

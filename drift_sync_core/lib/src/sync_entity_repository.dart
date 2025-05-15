@@ -75,7 +75,7 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
 
   Future<void> _createPendingChange(TEntity entity) async {
     final localChange = PendingLocalChange.put(
-      protoBytes: syncHandler.marshal(entity),
+      entityData: syncHandler.marshal(entity),
       entityType: syncHandler.entityType,
       entityId: syncHandler.getClientId(entity),
       entityRev: syncHandler.getRev(entity),
@@ -95,7 +95,10 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
   @protected
   Future<TEntity?> putRemote(TEntity entity) async {
     try {
-      return await syncHandler.putRemote(entity);
+      if (syncHandler.shouldPersistRemote(entity)) {
+        return await syncHandler.putRemote(entity);
+      }
+      return null;
     } on UnavailableException {
       return null;
     }

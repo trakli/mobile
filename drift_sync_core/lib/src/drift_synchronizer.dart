@@ -162,7 +162,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     SyncTypeHandler<dynamic, dynamic, dynamic> handler,
   ) async {
     final entity = await handler.unmarshal(localChange.data);
-    if (localChange.deleted) {
+    if (localChange. deleted) {
       // For delete operations, try to use server ID if available
       final serverId = handler.getServerId(entity);
       if (serverId != null) {
