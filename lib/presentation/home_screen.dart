@@ -69,8 +69,8 @@ class HomeScreen extends StatelessWidget {
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
+              horizontal: 15.w,
+              vertical: 15.h,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
