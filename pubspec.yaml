@@ -62,7 +62,7 @@ dependencies:
   path_provider: ^2.1.2
   drift_sync_core:
     path: drift_sync_core/
-  freezed_annotation: ^2.4.1
+  freezed_annotation: ^3.0.0
   uuid: ^4.5.1
   fpdart: ^1.1.1
   injectable: ^2.5.0
@@ -90,7 +90,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   drift_dev: ^2.26.0
   build_runner: ^2.4.15
-  freezed: ^2.4.5
+  freezed: ^3.0.6
   json_serializable: ^6.7.1
   injectable_generator: ^2.7.0
 
