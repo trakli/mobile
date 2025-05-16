@@ -9,10 +9,20 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/forms/add_transaction_form.dart';
-import 'package:trakli/presentation/utils/forms/add_transaction_form_compact_layout.dart';
+import 'package:trakli/presentation/transactions/add_transaction_form_compact_layout.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 
 class AddTransactionScreen extends StatefulWidget {
-  const AddTransactionScreen({super.key});
+  final TransactionType transactionType;
+  final Color accentColor;
+  final TransactionCompleteEntity? transaction;
+
+  const AddTransactionScreen({
+    super.key,
+    this.transactionType = TransactionType.income,
+    this.accentColor = const Color(0xFFEB5757),
+    this.transaction,
+  });
 
   @override
   State<AddTransactionScreen> createState() => _AddTransactionScreenState();
@@ -32,7 +42,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
       });
     });
 
-    tabController = TabController(length: 2, vsync: this);
+    final controlLenght = widget.transaction != null ? 1 : 2;
+
+    tabController = TabController(length: controlLenght, vsync: this);
+    if (widget.transaction != null) {
+      tabController.index =
+          widget.transaction!.transaction.type == TransactionType.income
+              ? 0
+              : 1;
+    }
     tabController.addListener(() {
       setState(() {});
     });
@@ -51,7 +69,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
         headerTextColor: const Color(0xFFEBEDEC),
-        titleText: LocaleKeys.addTransaction.tr(),
+        titleText: widget.transaction != null
+            ? LocaleKeys.editTransaction.tr()
+            : LocaleKeys.addTransaction.tr(),
       ),
       body: Column(
         children: [
@@ -81,42 +101,48 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
               color: const Color(0xFF1D3229),
             ),
             tabs: [
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 4.w,
-                  children: [
-                    SvgPicture.asset(
-                      Assets.images.arrowSwapDown,
-                      colorFilter: ColorFilter.mode(
-                        (tabController.index == 0)
-                            ? Theme.of(context).primaryColor
-                            : Colors.black,
-                        BlendMode.srcIn,
+              if (widget.transaction == null ||
+                  widget.transaction!.transaction.type ==
+                      TransactionType.income)
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      SvgPicture.asset(
+                        Assets.images.arrowSwapDown,
+                        colorFilter: ColorFilter.mode(
+                          (tabController.index == 0)
+                              ? Theme.of(context).primaryColor
+                              : Colors.black,
+                          BlendMode.srcIn,
+                        ),
                       ),
-                    ),
-                    Text(LocaleKeys.transactionIncome.tr())
-                  ],
+                      Text(LocaleKeys.transactionIncome.tr())
+                    ],
+                  ),
                 ),
-              ),
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 4.w,
-                  children: [
-                    SvgPicture.asset(
-                      Assets.images.arrowSwapUp,
-                      colorFilter: ColorFilter.mode(
-                        (tabController.index == 0)
-                            ? Colors.black
-                            : const Color(0xFFEB5757),
-                        BlendMode.srcIn,
+              if (widget.transaction == null ||
+                  widget.transaction!.transaction.type ==
+                      TransactionType.expense)
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      SvgPicture.asset(
+                        Assets.images.arrowSwapUp,
+                        colorFilter: ColorFilter.mode(
+                          (tabController.index == 0)
+                              ? Colors.black
+                              : const Color(0xFFEB5757),
+                          BlendMode.srcIn,
+                        ),
                       ),
-                    ),
-                    Text(LocaleKeys.transactionExpense.tr())
-                  ],
+                      Text(LocaleKeys.transactionExpense.tr())
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
           Expanded(
@@ -124,20 +150,32 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
               controller: tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                formDisplay == 'full'
-                    ? AddTransactionForm(
-                        accentColor: Theme.of(context).primaryColor,
-                      )
-                    : AddTransactionFormCompactLayout(
-                        accentColor: Theme.of(context).primaryColor,
-                      ),
-                formDisplay == 'full'
-                    ? const AddTransactionForm(
-                        transactionType: TransactionType.expense,
-                      )
-                    : const AddTransactionFormCompactLayout(
-                        transactionType: TransactionType.expense,
-                      ),
+                if (widget.transaction == null ||
+                    widget.transaction!.transaction.type ==
+                        TransactionType.income)
+                  (formDisplay == 'full'
+                      ? AddTransactionForm(
+                          accentColor: Theme.of(context).primaryColor,
+                          transactionCompleteEntity: widget.transaction,
+                        )
+                      : AddTransactionFormCompactLayout(
+                          accentColor: Theme.of(context).primaryColor,
+                          transactionCompleteEntity: widget.transaction,
+                        )),
+                if (widget.transaction == null ||
+                    widget.transaction!.transaction.type ==
+                        TransactionType.expense)
+                  (formDisplay == 'full'
+                      ? AddTransactionForm(
+                          transactionType: TransactionType.expense,
+                          accentColor: Theme.of(context).primaryColor,
+                          transactionCompleteEntity: widget.transaction,
+                        )
+                      : AddTransactionFormCompactLayout(
+                          transactionType: TransactionType.expense,
+                          accentColor: Theme.of(context).primaryColor,
+                          transactionCompleteEntity: widget.transaction,
+                        )),
               ],
             ),
           ),

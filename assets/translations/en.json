@@ -106,5 +106,19 @@
   "confirmPassword": "Confirm password",
   "register": "Register",
   "firstNameEmptyDesc": "First name cannot be empty",
-  "invalidUserCredentials": "Invalid user credentials"
+  "invalidUserCredentials": "Invalid user credentials",
+  "editTransaction": "Edit transaction",
+  "deleteTransaction": "Delete transaction",
+  "deleteTransactionConfirmation": "Are you sure you want to delete this transaction?",
+  "invalidRequestDesc": "Invalid request. Please check your input and try again.",
+  "noError": "No error",
+  "internetConnectionDesc": "Please check your internet connection and try again.",
+  "notFoundDesc": "The requested resource was not found.",
+  "serverErrorDesc": "A server error occurred. Please try again later.",
+  "cacheErrorDesc": "A cache error occurred. Please try again later.",
+  "syncErrorDesc": "A sync error occurred. Please try again later.",
+  "unauthorizedErrorDesc": "Unauthorized error. Please try again later.",
+  "unknownErrorDesc": "An unknown error occurred. Please try again later.",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

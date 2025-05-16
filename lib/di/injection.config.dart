@@ -27,8 +27,6 @@ import '../data/datasources/auth/preference_manager.dart' as _i683;
 import '../data/datasources/auth/token_manager.dart' as _i483;
 import '../data/datasources/category/category_local_datasource.dart' as _i148;
 import '../data/datasources/category/category_remote_datasource.dart' as _i558;
-import '../data/datasources/transaction/mock_transaction_remote_datasource.dart'
-    as _i150;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
     as _i662;
 import '../data/datasources/transaction/transaction_remote_datasource.dart'
@@ -76,9 +74,9 @@ import '../domain/usecases/transaction/usecase.dart' as _i1022;
 import '../presentation/auth/cubits/auth/auth_cubit.dart' as _i872;
 import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
-import '../presentation/bloc/transaction/transaction_cubit.dart' as _i218;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
+import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 
 // initializes the registration of main-scope dependencies inside of GetIt
 _i174.GetIt $initGetIt(
@@ -95,8 +93,6 @@ _i174.GetIt $initGetIt(
   final syncModule = _$SyncModule();
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
-  gh.factory<_i79.TransactionRemoteDataSource>(
-      () => _i150.MockTransactionRemoteDataSource());
   gh.singleton<_i789.SharedPrefs>(() => _i789.SharedPrefsImpl());
   gh.factory<_i483.TokenManager>(() => const _i483.TokenManagerImpl());
   gh.factory<String>(
@@ -119,20 +115,10 @@ _i174.GetIt $initGetIt(
         gh<_i704.AppDatabase>(),
         gh<_i558.CategoryRemoteDataSource>(),
       ));
-  gh.lazySingleton<_i893.TransactionSyncHandler>(
-      () => _i893.TransactionSyncHandler(
-            gh<_i704.AppDatabase>(),
-            gh<_i79.TransactionRemoteDataSource>(),
-          ));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i867.OnboardingRepository>(
       () => _i386.OnboardingRepositoryImpl(gh<_i683.PreferenceManager>()));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
-      () => syncModule.provideSyncTypeHandlers(
-            gh<_i893.TransactionSyncHandler>(),
-            gh<_i463.CategorySyncHandler>(),
-          ));
   gh.factory<_i243.SaveOnboardingState>(
       () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.factory<_i575.GetOnboardingState>(
@@ -142,6 +128,8 @@ _i174.GetIt $initGetIt(
         localDataSource: gh<_i148.CategoryLocalDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
+  gh.factory<_i79.TransactionRemoteDataSource>(
+      () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i986.UpdateCategoryUseCase>(
       () => _i986.UpdateCategoryUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i292.DeleteCategoryUseCase>(
@@ -150,22 +138,6 @@ _i174.GetIt $initGetIt(
       () => _i445.AddCategoryUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i961.GetCategoriesUseCase>(
       () => _i961.GetCategoriesUseCase(gh<_i410.CategoryRepository>()));
-  gh.lazySingleton<_i118.TransactionRepository>(
-      () => _i114.TransactionRepositoryImpl(
-            syncHandler: gh<_i893.TransactionSyncHandler>(),
-            localDataSource: gh<_i662.TransactionLocalDataSource>(),
-            db: gh<_i704.AppDatabase>(),
-          ));
-  gh.factory<_i947.GetAllTransactionsUseCase>(
-      () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i669.CreateTransactionUseCase>(
-      () => _i669.CreateTransactionUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i973.ListenToTransactionsUseCase>(() =>
-      _i973.ListenToTransactionsUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i241.UpdateTransactionUseCase>(
-      () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i163.DeleteTransactionUseCase>(
-      () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
         gh<_i575.GetOnboardingState>(),
         gh<_i243.SaveOnboardingState>(),
@@ -179,28 +151,24 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i500.ListenToCategoriesUseCase>(
       () => _i500.ListenToCategoriesUseCase(gh<_i410.CategoryRepository>()));
-  gh.factory<_i218.TransactionCubit>(() => _i218.TransactionCubit(
-        getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
-        createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
-        updateTransactionUseCase: gh<_i1022.UpdateTransactionUseCase>(),
-        deleteTransactionUseCase: gh<_i1022.DeleteTransactionUseCase>(),
-        listenToTransactionsUseCase: gh<_i1022.ListenToTransactionsUseCase>(),
-      ));
+  gh.lazySingleton<_i893.TransactionSyncHandler>(
+      () => _i893.TransactionSyncHandler(
+            gh<_i704.AppDatabase>(),
+            gh<_i79.TransactionRemoteDataSource>(),
+          ));
   gh.factory<_i705.RegisterUseCase>(
       () => _i705.RegisterUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i524.LoginWithEmailUseCase>(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i400.LoginWithPhoneUseCase>(
       () => _i400.LoginWithPhoneUseCase(gh<_i800.AuthRepository>()));
-  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
-        appDatabase: gh<_i704.AppDatabase>(),
-        typeHandlers:
-            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
-        dio: gh<_i361.Dio>(),
-        networkInfo: gh<_i6.NetworkInfo>(),
-      ));
   gh.factory<_i831.RegisterCubit>(
       () => _i831.RegisterCubit(gh<_i705.RegisterUseCase>()));
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
+      () => syncModule.provideSyncTypeHandlers(
+            gh<_i893.TransactionSyncHandler>(),
+            gh<_i463.CategorySyncHandler>(),
+          ));
   gh.factory<_i42.LoginByEmailUsecase>(
       () => _i42.LoginByEmailUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i498.LoginByPhoneUsecase>(
@@ -229,10 +197,40 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i640.LogoutUsecase>(
       () => _i640.LogoutUsecase(gh<_i800.AuthRepository>()));
+  gh.lazySingleton<_i118.TransactionRepository>(
+      () => _i114.TransactionRepositoryImpl(
+            syncHandler: gh<_i893.TransactionSyncHandler>(),
+            localDataSource: gh<_i662.TransactionLocalDataSource>(),
+            db: gh<_i704.AppDatabase>(),
+          ));
+  gh.factory<_i947.GetAllTransactionsUseCase>(
+      () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i669.CreateTransactionUseCase>(
+      () => _i669.CreateTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i973.ListenToTransactionsUseCase>(() =>
+      _i973.ListenToTransactionsUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i241.UpdateTransactionUseCase>(
+      () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i163.DeleteTransactionUseCase>(
+      () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i117.TransactionCubit>(() => _i117.TransactionCubit(
+        getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
+        createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
+        updateTransactionUseCase: gh<_i1022.UpdateTransactionUseCase>(),
+        deleteTransactionUseCase: gh<_i1022.DeleteTransactionUseCase>(),
+        listenToTransactionsUseCase: gh<_i1022.ListenToTransactionsUseCase>(),
+      ));
   gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
         gh<_i444.StreamAuthStatus>(),
         gh<_i880.GetLoggedInUser>(),
         gh<_i640.LogoutUsecase>(),
+      ));
+  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
+        appDatabase: gh<_i704.AppDatabase>(),
+        typeHandlers:
+            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
+        dio: gh<_i361.Dio>(),
+        networkInfo: gh<_i6.NetworkInfo>(),
       ));
   return getIt;
 }

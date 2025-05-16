@@ -2,8 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 
-// import 'package:freezed_annotation/freezed_annotation.dart' hide JsonKey;
-
 @DataClassName('Category')
 class Categories extends Table with SyncTable {
   TextColumn get name => text().unique()();

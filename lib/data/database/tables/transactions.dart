@@ -2,10 +2,20 @@ import 'package:drift/drift.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/parties.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+
+// typedef Transaction = ({
+//   int id,
+//   double amount,
+//   TransactionType type,
+//   String description,
+//   DateTime datetime,
+// });
 
 @DataClassName('Transaction')
+
+// @UseRowClass(Transaction)
 class Transactions extends Table with SyncTable {
   // Note: id and clientId are inherited from SyncTable
   // id is for server, clientId is for local

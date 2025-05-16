@@ -1,10 +1,16 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -19,11 +25,13 @@ import 'package:trakli/presentation/utils/helpers.dart';
 class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
+  final TransactionCompleteEntity? transactionCompleteEntity;
 
   const AddTransactionFormCompactLayout({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
+    this.transactionCompleteEntity,
   });
 
   @override
@@ -40,15 +48,43 @@ class _AddTransactionFormCompactLayoutState
   TimeOfDay time = TimeOfDay.now();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  CategoryEntity? _selectedCategory;
+  final _formKey = GlobalKey<FormState>();
+
   Currency? currency;
   final pieData = StatisticsProvider().getPieData;
 
   @override
   void initState() {
-    // TODO: implement initState
-    dateController.text = dateFormat.format(date);
-    timeController.text = timeFormat.format(date);
     super.initState();
+
+    // dateController.text = dateFormat.format(date);
+    // timeController.text = timeFormat.format(date);
+
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+      descriptionController.text =
+          widget.transactionCompleteEntity!.transaction.description;
+      date = widget.transactionCompleteEntity!.transaction.datetime;
+      dateController.text = dateFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      timeController.text = timeFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      if (widget.transactionCompleteEntity?.categories != null &&
+          widget.transactionCompleteEntity!.categories.isNotEmpty) {
+        _selectedCategory = widget.transactionCompleteEntity!.categories.first;
+      }
+    } else {
+      date = DateTime.now();
+      dateController.text = dateFormat.format(date);
+      timeController.text = timeFormat.format(date);
+    }
+
+    final onboardingEntity = context.read<OnboardingCubit>().state.entity;
+    currency = onboardingEntity?.selectedCurrency;
   }
 
   @override
@@ -59,6 +95,7 @@ class _AddTransactionFormCompactLayoutState
         vertical: 16.h,
       ),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,6 +121,7 @@ class _AddTransactionFormCompactLayoutState
                       children: [
                         Expanded(
                           child: TextFormField(
+                            controller: amountController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: "Ex: 250 000",
@@ -409,27 +447,38 @@ class _AddTransactionFormCompactLayoutState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: CustomDropdownSearch<ChartData>(
-                            label: "",
-                            accentColor: widget.accentColor,
-                            items: (filter, infiniteScrollProps) {
-                              return pieData
-                                  .map((data) => data)
-                                  .toList()
-                                  .where((ChartData el) => el.property
-                                      .toLowerCase()
-                                      .contains(filter.toLowerCase()))
-                                  .toList();
-                            },
-                            itemAsString: (item) => item.property,
-                            onChanged: (value) => {
-                              debugPrint(value?.property),
-                            },
-                            compareFn: (i1, i2) => i1 == i2,
-                            filterFn: (el, filter) {
-                              return el.property.toLowerCase().contains(
-                                    filter.toLowerCase(),
-                                  );
+                          child: BlocBuilder<CategoryCubit, CategoryState>(
+                            builder: (context, state) {
+                              //Category by transaction type
+                              final searchCategories = state.categories.where(
+                                  (element) =>
+                                      element.type == widget.transactionType);
+
+                              return CustomDropdownSearch<CategoryEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                selectedItem: _selectedCategory,
+                                items: (filter, infiniteScrollProps) {
+                                  return searchCategories
+                                      .map((data) => data)
+                                      .toList()
+                                      .where((CategoryEntity el) => el.name
+                                          .toLowerCase()
+                                          .contains(filter.toLowerCase()))
+                                      .toList();
+                                },
+                                itemAsString: (item) => item.name.toLowerCase(),
+                                onChanged: (value) => {
+                                  debugPrint(value?.name),
+                                  _selectedCategory = value
+                                },
+                                compareFn: (i1, i2) => i1 == i2,
+                                filterFn: (el, filter) {
+                                  return el.name.toLowerCase().contains(
+                                        filter.toLowerCase(),
+                                      );
+                                },
+                              );
                             },
                           ),
                         ),
@@ -476,6 +525,7 @@ class _AddTransactionFormCompactLayoutState
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: descriptionController,
               maxLines: 2,
               decoration: InputDecoration(
                 hintText: LocaleKeys.transactionTypeHere.tr(),
@@ -595,8 +645,33 @@ class _AddTransactionFormCompactLayoutState
                           WidgetStatePropertyAll(widget.accentColor),
                     ),
                     onPressed: () {
-                      if (Form.of(context).validate()) {
-                        // Do something
+                      if (_formKey.currentState!.validate()) {
+                        final amount = double.parse(amountController.text);
+                        final description = descriptionController.text;
+
+                        if (widget.transactionCompleteEntity != null) {
+                          context.read<TransactionCubit>().updateTransaction(
+                                id: widget.transactionCompleteEntity!
+                                    .transaction.clientId,
+                                amount: amount,
+                                description: description,
+                                datetime: date,
+                                categoryIds: _selectedCategory != null
+                                    ? [_selectedCategory!.clientId]
+                                    : [],
+                              );
+                        } else {
+                          context.read<TransactionCubit>().addTransaction(
+                                amount: amount,
+                                description: description,
+                                categoryIds: _selectedCategory != null
+                                    ? [_selectedCategory!.clientId]
+                                    : [],
+                                type: widget.transactionType,
+                                datetime: date,
+                              );
+                        }
+                        Navigator.pop(context);
                       }
                     },
                     child: Row(
@@ -604,9 +679,14 @@ class _AddTransactionFormCompactLayoutState
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          widget.transactionType == TransactionType.income
-                              ? LocaleKeys.transactionRecordIncome.tr()
-                              : LocaleKeys.transactionRecordExpenses.tr(),
+                          widget.transactionCompleteEntity != null
+                              ? (widget.transactionType ==
+                                      TransactionType.income
+                                  ? "Update income"
+                                  : "Update expenses")
+                              : widget.transactionType == TransactionType.income
+                                  ? LocaleKeys.transactionRecordIncome.tr()
+                                  : LocaleKeys.transactionRecordExpenses.tr(),
                         ),
                         SvgPicture.asset(
                           Assets.images.add,

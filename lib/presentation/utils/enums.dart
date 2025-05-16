@@ -39,3 +39,5 @@ enum SelectIconType {
   selectEmoji,
   selectFromGalleryOrCamera,
 }
+
+enum CategorizableType { transaction }

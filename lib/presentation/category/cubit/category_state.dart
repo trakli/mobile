@@ -1,8 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/core/error/failures/failures.dart';
-import 'package:trakli/domain/entities/category_entity.dart';
-
-part 'category_state.freezed.dart';
+part of 'category_cubit.dart';
 
 @freezed
 class CategoryState with _$CategoryState {

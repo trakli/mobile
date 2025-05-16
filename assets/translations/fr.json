@@ -106,5 +106,19 @@
   "confirmPassword": "Confirmer le mot de passe",
   "register": "S'inscrire",
   "firstNameEmptyDesc": "Le prénom ne peut pas être vide",
-  "invalidUserCredentials": "Identifiants de l'utilisateur invalides"
+  "invalidUserCredentials": "Identifiants de l'utilisateur invalides",
+  "editTransaction": "Modifier la transaction",
+  "deleteTransaction": "Supprimer la transaction",
+  "deleteTransactionConfirmation": "Êtes-vous sûr de vouloir supprimer cette transaction ?",
+  "invalidRequestDesc": "Requête invalide. Veuillez vérifier vos entrées et réessayer.",
+  "noError": "Aucun erreur",
+  "internetConnectionDesc": "Veuillez vérifier votre connexion internet et réessayer.",
+  "notFoundDesc": "La ressource demandée n'a pas été trouvée.",
+  "serverErrorDesc": "Une erreur de serveur est survenue. Veuillez réessayer plus tard.",
+  "cacheErrorDesc": "Une erreur de cache est survenue. Veuillez réessayer plus tard.",
+  "syncErrorDesc": "Une erreur de synchronisation est survenue. Veuillez réessayer plus tard.",
+  "unauthorizedErrorDesc": "Une erreur d'autorisation est survenue. Veuillez réessayer plus tard.",
+  "unknownErrorDesc": "Une erreur inconnue est survenue. Veuillez réessayer plus tard.",
+  "cancel": "Annuler",
+  "delete": "Supprimer"
 }

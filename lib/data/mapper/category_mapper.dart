@@ -10,7 +10,7 @@ class CategoryMapper {
       type: c.type,
       userId: c.userId,
       description: c.description,
-      clientGeneratedId: c.clientId,
+      clientId: c.clientId,
       createdAt: c.createdAt,
       updatedAt: null,
       lastSyncedAt: null,

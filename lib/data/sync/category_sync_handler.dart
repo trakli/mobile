@@ -25,13 +25,18 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   String getRev(Category entity) => entity.rev ?? '1';
 
   @override
-  Category unmarshal(Map<String, dynamic> entityJson) {
+  Future<Category> unmarshal(Map<String, dynamic> entityJson) async {
     return Category.fromJson(entityJson);
   }
 
   @override
   Map<String, dynamic> marshal(Category entity) {
     return entity.toJson();
+  }
+
+  @override
+  bool shouldPersistRemote(Category entity) {
+    return true;
   }
 
   @override
@@ -76,6 +81,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       slug: Value(entity.slug),
       userId: Value(entity.userId),
       createdAt: Value(entity.createdAt),
+      lastSyncedAt: Value(entity.lastSyncedAt),
     );
     await table.insertOne(category, mode: InsertMode.insertOrReplace);
   }
@@ -91,6 +97,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
           slug: Value(entity.slug),
           userId: Value(entity.userId),
           createdAt: Value(entity.createdAt),
+          lastSyncedAt: Value(entity.lastSyncedAt),
         ));
     await table.insertAll(categories, mode: InsertMode.insertOrReplace);
   }

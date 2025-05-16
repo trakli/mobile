@@ -1,5 +1,5 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:injectable/injectable.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 abstract class NetworkInfo {
   Future<bool> get isConnected;
@@ -9,12 +9,12 @@ abstract class NetworkInfo {
 class NetworkInfoImpl implements NetworkInfo {
   NetworkInfoImpl();
 
-  late Connectivity _connectivity;
+  late InternetConnection _internetConnection;
 
   @override
   Future<bool> get isConnected async {
-    final connectivityResulst = await _connectivity.checkConnectivity();
-    if (connectivityResulst == ConnectivityResult.none) {
+    final connectivityResulst = await _internetConnection.hasInternetAccess;
+    if (connectivityResulst == false) {
       return false;
     } else {
       return true;
@@ -23,6 +23,6 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @postConstruct
   void init() {
-    _connectivity = Connectivity();
+    _internetConnection = InternetConnection();
   }
 }

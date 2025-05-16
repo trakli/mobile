@@ -32,8 +32,10 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   Future<TEntity> putRemote(TEntity entity);
   Future<void> deleteRemote(TEntity entity);
 
-  TEntity unmarshal(Map<String, dynamic> entityBytes);
+  Future<TEntity> unmarshal(Map<String, dynamic> entityBytes);
   Map<String, dynamic> marshal(TEntity entity);
+
+  bool shouldPersistRemote(TEntity entity);
 }
 
 // Helper typedefs for clarity

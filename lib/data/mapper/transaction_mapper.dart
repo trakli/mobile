@@ -1,7 +1,10 @@
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
+import 'package:trakli/data/mapper/category_mapper.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 
-class TransactionMapper {
+class _TransactionMapper {
   static TransactionEntity toDomain(Transaction row) {
     return TransactionEntity(
       clientId: row.clientId,
@@ -10,25 +13,23 @@ class TransactionMapper {
       lastSyncedAt: row.lastSyncedAt,
       createdAt: row.createdAt,
       datetime: row.datetime,
-      type: row.type, 
+      type: row.type,
       updatedAt: row.updatedAt,
     );
   }
+}
 
-  static List<TransactionEntity> toDomainList(List<Transaction> dataList) {
-    return dataList.map((data) => toDomain(data)).toList();
+class TransactionCompleteModelMapper {
+  static TransactionCompleteEntity toDomain(TransactionCompleteDto data) {
+    return TransactionCompleteEntity(
+      transaction: _TransactionMapper.toDomain(data.transaction),
+      categories:
+          data.categories.map((c) => CategoryMapper.toDomain(c)).toList(),
+    );
   }
 
-  static Transaction toData(TransactionEntity entity) {
-    return Transaction(
-      clientId: entity.clientId,
-      amount: entity.amount,
-      description: entity.description,
-      // rev: entity.rev,
-      type: entity.type,
-      datetime: entity.datetime,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    );
+  static List<TransactionCompleteEntity> toDomainList(
+      List<TransactionCompleteDto> dataList) {
+    return dataList.map((data) => toDomain(data)).toList();
   }
 }

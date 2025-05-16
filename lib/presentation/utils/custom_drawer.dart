@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/category_screen.dart';
@@ -13,6 +15,7 @@ import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/savings/my_savings_screen.dart';
 import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/widgets/database_viewer.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -20,8 +23,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       child: Container(
         color: Colors.white,
         child: Column(
@@ -140,6 +142,19 @@ class CustomDrawer extends StatelessWidget {
               ),
               title: Text(LocaleKeys.settings.tr()),
             ),
+            if (kDebugMode) ...[
+              const Divider(),
+              ListTile(
+                onTap: () {
+                  AppNavigator.push(
+                    context,
+                    DatabaseViewer(database: getIt()),
+                  );
+                },
+                leading: const Icon(Icons.storage),
+                title: const Text("Database Viewer"),
+              ),
+            ],
           ],
         ),
       ),

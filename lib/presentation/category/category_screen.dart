@@ -7,7 +7,6 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
-import 'package:trakli/presentation/category/cubit/category_state.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
@@ -224,7 +223,7 @@ class _CategoryScreenState extends State<CategoryScreen>
           onDelete: () {
             context
                 .read<CategoryCubit>()
-                .deleteCategory(category.clientGeneratedId!);
+                .deleteCategory(category.clientId);
           },
         );
       },

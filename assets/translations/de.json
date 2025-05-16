@@ -106,5 +106,19 @@
   "confirmPassword": "Passwort bestätigen",
   "register": "Registrieren",
   "firstNameEmptyDesc": "Vorname darf nicht leer sein",
-  "invalidUserCredentials": "Ungültige Anmeldeinformationen"
+  "invalidUserCredentials": "Ungültige Anmeldeinformationen",
+  "editTransaction": "Transaktion bearbeiten",
+  "deleteTransaction": "Transaktion löschen",
+  "deleteTransactionConfirmation": "Soll diese Transaktion wirklich gelöscht werden?",
+  "invalidRequestDesc": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.",
+  "noError": "Kein Fehler",
+  "internetConnectionDesc": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+  "notFoundDesc": "Die angeforderte Ressource wurde nicht gefunden.",
+  "serverErrorDesc": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "cacheErrorDesc": "Ein Cachefehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "syncErrorDesc": "Ein Synchronisierungsfehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "unauthorizedErrorDesc": "Eine Autorisierungsfehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "unknownErrorDesc": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+  "cancel": "Abbrechen",
+  "delete": "Löschen"
 }

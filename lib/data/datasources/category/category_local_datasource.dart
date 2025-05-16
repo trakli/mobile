@@ -33,7 +33,9 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
   @override
   Future<List<Category>> getAllCategories() async {
-    return await database.select(database.categories).get();
+    return (database.select(database.categories)
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)]))
+        .get();
   }
 
   @override

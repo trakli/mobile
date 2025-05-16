@@ -4,8 +4,6 @@ import 'package:drift/drift.dart';
 
 @DataClassName('LocalChange')
 class LocalChanges extends Table {
-  // IntColumn get id => integer().autoIncrement()();
-
   TextColumn get entityType => text()();
   TextColumn get entityId => text()();
   TextColumn get entityRev => text()();

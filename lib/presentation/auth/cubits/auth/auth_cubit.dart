@@ -24,9 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
     this._streamAuthStatus,
     this._getLoggedInUser,
     this._logoutUsecase,
-  ) : super(const AuthState.initial()) {
-    // listenToAuthStatus();
-  }
+  ) : super(const AuthState.initial());
 
   void listenToAuthStatus() {
     _authSubscription?.cancel();

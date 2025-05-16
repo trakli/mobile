@@ -21,74 +21,87 @@ final List<String> supportedFormDisplays = [
   'compact',
 ];
 
-List<CategoryEntity> incomeTransactions = const [
+List<CategoryEntity> incomeTransactions = [
   CategoryEntity(
     name: "Salary",
     type: TransactionType.income,
-    clientGeneratedId: "1",
+    clientId: "1",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Freelance",
     type: TransactionType.income,
-    clientGeneratedId: "2",
+    clientId: "2",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Gifts",
     type: TransactionType.income,
-    clientGeneratedId: "3",
+    clientId: "3",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Donations",
     type: TransactionType.income,
-    clientGeneratedId: "4",
+    clientId: "4",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Other Income",
     type: TransactionType.income,
-    clientGeneratedId: "5",
+    clientId: "5",
+    createdAt: DateTime.now(),
   ),
 ];
 
-List<CategoryEntity> expenseTransactions = const [
+List<CategoryEntity> expenseTransactions = [
   CategoryEntity(
     name: "Rent",
     type: TransactionType.expense,
-    clientGeneratedId: "6",
+    clientId: "6",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Groceries",
     type: TransactionType.expense,
-    clientGeneratedId: "7",
+    clientId: "7",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Utilities",
     type: TransactionType.expense,
-    clientGeneratedId: "8",
+    clientId: "8",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Transportation",
     type: TransactionType.expense,
-    clientGeneratedId: "9",
+    clientId: "9",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Health",
     type: TransactionType.expense,
-    clientGeneratedId: "10",
+    clientId: "10",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Fitness",
     type: TransactionType.expense,
-    clientGeneratedId: "11",
+    clientId: "11",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Shopping",
     type: TransactionType.expense,
-    clientGeneratedId: "12",
+    clientId: "12",
+    createdAt: DateTime.now(),
   ),
   CategoryEntity(
     name: "Travel",
     type: TransactionType.expense,
-    clientGeneratedId: "13",
+    clientId: "13",
+    createdAt: DateTime.now(),
   ),
 ];
 

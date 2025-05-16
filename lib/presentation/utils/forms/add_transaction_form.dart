@@ -1,15 +1,18 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_wallet_screen.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_wallet_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
@@ -20,11 +23,13 @@ import 'package:trakli/presentation/utils/helpers.dart';
 class AddTransactionForm extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
+  final TransactionCompleteEntity? transactionCompleteEntity;
 
   const AddTransactionForm({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
+    this.transactionCompleteEntity,
   });
 
   @override
@@ -39,14 +44,31 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   TimeOfDay time = TimeOfDay.now();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
   Currency? currency;
   final pieData = StatisticsProvider().getPieData;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    dateController.text = dateFormat.format(date);
-    timeController.text = timeFormat.format(date);
     super.initState();
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+      descriptionController.text =
+          widget.transactionCompleteEntity!.transaction.description;
+      date = widget.transactionCompleteEntity!.transaction.datetime;
+      dateController.text = dateFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      timeController.text = timeFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+    } else {
+      date = DateTime.now();
+      dateController.text = dateFormat.format(date);
+      timeController.text = timeFormat.format(date);
+    }
   }
 
   @override
@@ -57,6 +79,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
         vertical: 16.h,
       ),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -76,6 +99,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      controller: amountController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Ex: 250 000",
@@ -88,7 +112,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          // return LocaleKeys.transactionAmountError.tr();
                           return "Amount is required";
                         }
                         final number = double.tryParse(value);
@@ -183,7 +206,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          // return LocaleKeys.transactionAmountError.tr();
                           return "Wallet is required";
                         }
                         return null;
@@ -405,27 +427,39 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: CustomDropdownSearch<ChartData>(
-                      label: "",
-                      accentColor: widget.accentColor,
-                      items: (filter, infiniteScrollProps) {
-                        return pieData
-                            .map((data) => data)
-                            .toList()
-                            .where((ChartData el) => el.property
-                                .toLowerCase()
-                                .contains(filter.toLowerCase()))
-                            .toList();
+                    child: TextFormField(
+                      controller: categoryController,
+                      readOnly: true,
+                      onTap: () {
+                        showCustomBottomSheet(
+                          context,
+                          widget: const SelectWalletBottomSheet(),
+                        );
                       },
-                      itemAsString: (item) => item.property,
-                      onChanged: (value) => {
-                        debugPrint(value?.property),
-                      },
-                      compareFn: (i1, i2) => i1 == i2,
-                      filterFn: (el, filter) {
-                        return el.property.toLowerCase().contains(
-                              filter.toLowerCase(),
-                            );
+                      decoration: InputDecoration(
+                        hintText: "Select category",
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: widget.accentColor,
+                          ),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: SvgPicture.asset(
+                            Assets.images.arrowDown,
+                            colorFilter: ColorFilter.mode(
+                              Colors.grey.shade500,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Category is required";
+                        }
+                        return null;
                       },
                     ),
                   ),
@@ -469,6 +503,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: descriptionController,
               decoration: InputDecoration(
                 hintText: LocaleKeys.transactionTypeHere.tr(),
                 focusedBorder: OutlineInputBorder(
@@ -478,7 +513,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                   ),
                 ),
               ),
-              onTap: () async {},
             ),
             SizedBox(height: 16.h),
             Text(
@@ -596,8 +630,27 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           WidgetStatePropertyAll(widget.accentColor),
                     ),
                     onPressed: () {
-                      if (Form.of(context).validate()) {
-                        // Do something
+                      if (_formKey.currentState!.validate()) {
+                        final amount = double.parse(amountController.text);
+                        final description = descriptionController.text;
+
+                        if (widget.transactionCompleteEntity != null) {
+                          context.read<TransactionCubit>().updateTransaction(
+                                id: widget.transactionCompleteEntity!
+                                    .transaction.clientId,
+                                amount: amount,
+                                description: description,
+                              );
+                        } else {
+                          context.read<TransactionCubit>().addTransaction(
+                                amount: amount,
+                                description: description,
+                                type: widget.transactionType,
+                                datetime: date,
+                              );
+
+                          Navigator.pop(context);
+                        }
                       }
                     },
                     child: Row(
