@@ -14,7 +14,7 @@ import 'package:trakli/data/database/tables/wallets.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'dart:io';
 import 'tables/sync_statuc.dart';
-import 'package:trakli/data/database/tables/source_categories.dart';
+import 'package:trakli/data/database/tables/categorizables.dart';
 
 part 'app_database.g.dart';
 
@@ -27,7 +27,7 @@ part 'app_database.g.dart';
   Wallets,
   LocalChanges,
   SyncMetadata,
-  SourceCategories,
+  Categorizables,
 ])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
@@ -88,15 +88,15 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   }
 
   Future<List<Category>> getCategoriesForTransaction(
-      String transactionId, SourceType sourceType) async {
+      String transactionId, CategorizableType sourceType) async {
     final query = select(categories).join([
       innerJoin(
-        sourceCategories,
-        sourceCategories.categoryClientId.equalsExp(categories.clientId),
+        categorizables,
+        categorizables.categoryClientId.equalsExp(categories.clientId),
       )
     ])
-      ..where(sourceCategories.sourceId.equals(transactionId) &
-          sourceCategories.sourceType.equals(sourceType.name));
+      ..where(categorizables.categorizableId.equals(transactionId) &
+          categorizables.categorizableType.equals(sourceType.name));
 
     final results = await query.get();
     return results.map((row) => row.readTable(categories)).toList();
@@ -105,7 +105,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     //   String sourceId, SourceType sourceType) {
     // return (select(categories)
     //       ..where((category) => existsQuery(
-    //             select(sourceCategories)
+    //             select(categorizables)
     //               ..where((row) =>
     //                   row.sourceId.equals(sourceId) &
     //                   row.sourceType.equals(sourceType.name) &

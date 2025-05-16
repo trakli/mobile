@@ -38,19 +38,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     // Create a query that joins transactions with their categories
     final query = database.select(database.transactions).join([
       leftOuterJoin(
-        database.sourceCategories,
-        database.sourceCategories.sourceId
+        database.categorizables,
+        database.categorizables.categorizableId
                 .equalsExp(database.transactions.clientId) &
-            database.sourceCategories.sourceType
-                .equals(SourceType.transaction.name),
+            database.categorizables.categorizableType
+                .equals(CategorizableType.transaction.name),
       ),
       leftOuterJoin(
         database.categories,
         database.categories.clientId
-            .equalsExp(database.sourceCategories.categoryClientId),
+            .equalsExp(database.categorizables.categoryClientId),
       ),
     ])
-      ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
+      ..orderBy([OrderingTerm.asc(database.transactions.createdAt)]);
 
     final rows = await query.get();
     return mapTransactionAndComplete(rows);
@@ -89,10 +89,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         );
 
     for (var categoryId in categoryIds) {
-      await database.into(database.sourceCategories).insert(
-            SourceCategoriesCompanion.insert(
-              sourceId: model.clientId,
-              sourceType: SourceType.transaction,
+      await database.into(database.categorizables).insert(
+            CategorizablesCompanion.insert(
+              categorizableId: model.clientId,
+              categorizableType: CategorizableType.transaction,
               categoryClientId: categoryId,
             ),
           );
@@ -100,7 +100,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
     final categories = await database.getCategoriesForTransaction(
       model.clientId,
-      SourceType.transaction,
+      CategorizableType.transaction,
     );
 
     return TransactionCompleteDto.fromTransaction(
@@ -133,7 +133,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
       final categories = await database.getCategoriesForTransaction(
         model.first.clientId,
-        SourceType.transaction,
+        CategorizableType.transaction,
       );
 
       if (categoryIds == null) {
@@ -147,10 +147,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           categories.where((c) => !categoryIds.contains(c.clientId)).toList();
 
       for (var category in categoriesToRemove) {
-        await database.sourceCategories.deleteWhere(
+        await database.categorizables.deleteWhere(
           (row) =>
-              row.sourceId.equals(model.first.clientId) &
-              row.sourceType.equals(SourceType.transaction.name) &
+              row.categorizableId.equals(model.first.clientId) &
+              row.categorizableType.equals(CategorizableType.transaction.name) &
               row.categoryClientId.equals(category.clientId),
         );
       }
@@ -160,10 +160,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           .toList();
 
       for (var categoryId in categoriesToAdd) {
-        await database.into(database.sourceCategories).insert(
-              SourceCategoriesCompanion.insert(
-                sourceId: model.first.clientId,
-                sourceType: SourceType.transaction,
+        await database.into(database.categorizables).insert(
+              CategorizablesCompanion.insert(
+                categorizableId: model.first.clientId,
+                categorizableType: CategorizableType.transaction,
                 categoryClientId: categoryId,
               ),
             );
@@ -171,7 +171,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
       final finalCategories = await database.getCategoriesForTransaction(
         model.first.clientId,
-        SourceType.transaction,
+        CategorizableType.transaction,
       );
 
       return TransactionCompleteDto.fromTransaction(
@@ -199,19 +199,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     // Create a query that joins transactions with their categories
     final query = database.select(database.transactions).join([
       leftOuterJoin(
-        database.sourceCategories,
-        database.sourceCategories.sourceId
+        database.categorizables,
+        database.categorizables.categorizableId
                 .equalsExp(database.transactions.clientId) &
-            database.sourceCategories.sourceType
-                .equals(SourceType.transaction.name),
+            database.categorizables.categorizableType
+                .equals(CategorizableType.transaction.name),
       ),
       leftOuterJoin(
         database.categories,
         database.categories.clientId
-            .equalsExp(database.sourceCategories.categoryClientId),
+            .equalsExp(database.categorizables.categoryClientId),
       ),
     ])
-      ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
+      ..orderBy([OrderingTerm.asc(database.transactions.createdAt)]);
 
     // Map the results to a structured format
     return query.watch().map((rows) {
@@ -255,3 +255,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     return transactionMap.values.toList();
   }
 }
+
+
+
+
+// DateTime (2025-05-16 04:29:30.000Z)
+
+// DateTime (2025-05-16 03:13:49.000Z)

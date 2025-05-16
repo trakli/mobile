@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
@@ -14,24 +15,6 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/presentation/utils/dialogs.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-
-extension StringExtension on String {
-  String extractWords({int maxSize = 10}) {
-    // Split the string into words.
-    List<String> words = trim().split(RegExp(r'\s+'));
-
-    // Check the combined length of the first two words.
-    String result;
-    if (words.length >= 2 && ('${words[0]} ${words[1]}').length <= maxSize) {
-      result = '${words[0]} ${words[1]}';
-    } else {
-      result = words[0];
-    }
-
-    // Trim the result to a maximum length of 10.
-    return result.length > maxSize ? result.substring(0, maxSize) : result;
-  }
-}
 
 class TransactionTile extends StatefulWidget {
   final TransactionCompleteEntity transaction;
@@ -143,7 +126,7 @@ class _TransactionTileState extends State<TransactionTile> {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: SizedBox(
-                        width: 40.w,
+                        width: 50.w,
                         child: Text(
                           'Mia Smith'.extractWords(maxSize: 10),
                           overflow: TextOverflow.ellipsis,
@@ -186,7 +169,7 @@ class _TransactionTileState extends State<TransactionTile> {
                           SizedBox(
                             width: 40.w,
                             child: Text(
-                              'Defaultsss'.extractWords(maxSize: 10),
+                              'Default'.extractWords(maxSize: 10),
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.blueAccent,
@@ -347,9 +330,7 @@ class _TransactionTileState extends State<TransactionTile> {
                 ),
               ),
             ),
-           
             itemBuilder: (BuildContext context) => [
-             
               PopupMenuItem(
                 onTap: _handleEdit,
                 height: 40.h,

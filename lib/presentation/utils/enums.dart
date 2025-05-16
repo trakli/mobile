@@ -40,4 +40,4 @@ enum SelectIconType {
   selectFromGalleryOrCamera,
 }
 
-enum SourceType { transaction }
+enum CategorizableType { transaction }

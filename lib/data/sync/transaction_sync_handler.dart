@@ -35,7 +35,7 @@ class TransactionSyncHandler
 
     final categories = await db.getCategoriesForTransaction(
       transactionCompleteModel.transaction.clientId,
-      SourceType.transaction,
+      CategorizableType.transaction,
     );
 
     return TransactionCompleteDto.fromTransaction(
@@ -89,46 +89,49 @@ class TransactionSyncHandler
 
   @override
   Future<void> upsertLocal(TransactionCompleteDto entity) async {
-    final transaction = TransactionsCompanion(
-      id: Value(entity.transaction.id),
-      amount: Value(entity.transaction.amount),
-      description: Value(entity.transaction.description),
-      clientId: Value(entity.transaction.clientId),
-      type: Value(entity.transaction.type),
-      datetime: Value(entity.transaction.datetime),
-      createdAt: Value(entity.transaction.createdAt),
-      lastSyncedAt: Value(entity.transaction.lastSyncedAt),
-      updatedAt: Value(entity.transaction.updatedAt),
-    );
+    return db.transaction(() async {
+      final transaction = TransactionsCompanion(
+        id: Value(entity.transaction.id),
+        amount: Value(entity.transaction.amount),
+        description: Value(entity.transaction.description),
+        clientId: Value(entity.transaction.clientId),
+        type: Value(entity.transaction.type),
+        datetime: Value(entity.transaction.datetime),
+        createdAt: Value(entity.transaction.createdAt),
+        lastSyncedAt: Value(entity.transaction.lastSyncedAt),
+        updatedAt: Value(entity.transaction.updatedAt),
+      );
 
-    await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
+      await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
 
-    final categories = await db.getCategoriesForTransaction(
-      entity.transaction.clientId,
-      SourceType.transaction,
-    );
+      final categories = await db.getCategoriesForTransaction(
+        entity.transaction.clientId,
+        CategorizableType.transaction,
+      );
 
-    final categoriesToRemove = categories
-        .where((c) => !entity.categories.any((cc) => cc.clientId == c.clientId))
-        .toList();
+      final categoriesToRemove = categories
+          .where(
+              (c) => !entity.categories.any((cc) => cc.clientId == c.clientId))
+          .toList();
 
-    //Removes stale category links
-    for (var category in categoriesToRemove) {
-      await db.sourceCategories.deleteWhere((row) =>
-          row.sourceId.equals(entity.transaction.clientId) &
-          row.sourceType.equals(SourceType.transaction.name) &
-          row.categoryClientId.equals(category.clientId));
-    }
+      //Removes stale category links
+      for (var category in categoriesToRemove) {
+        await db.categorizables.deleteWhere((row) =>
+            row.categorizableId.equals(entity.transaction.clientId) &
+            row.categorizableType.equals(CategorizableType.transaction.name) &
+            row.categoryClientId.equals(category.clientId));
+      }
 
-    for (var category in entity.categories) {
-      await db.sourceCategories.insertOne(
-          SourceCategoriesCompanion.insert(
-            sourceId: entity.transaction.clientId,
-            sourceType: SourceType.transaction,
-            categoryClientId: category.clientId,
-          ),
-          mode: InsertMode.insertOrReplace);
-    }
+      for (var category in entity.categories) {
+        await db.categorizables.insertOne(
+            CategorizablesCompanion.insert(
+              categorizableId: entity.transaction.clientId,
+              categorizableType: CategorizableType.transaction,
+              categoryClientId: category.clientId,
+            ),
+            mode: InsertMode.insertOrReplace);
+      }
+    });
   }
 
   @override
@@ -157,7 +160,7 @@ class TransactionSyncHandler
         transaction: result.first,
         categories: await db.getCategoriesForTransaction(
           result.first.clientId,
-          SourceType.transaction,
+          CategorizableType.transaction,
         ));
   }
 
@@ -169,7 +172,7 @@ class TransactionSyncHandler
         transaction: result.first,
         categories: await db.getCategoriesForTransaction(
           result.first.clientId,
-          SourceType.transaction,
+          CategorizableType.transaction,
         ));
   }
 

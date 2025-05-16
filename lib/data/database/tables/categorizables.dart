@@ -2,17 +2,18 @@ import 'package:drift/drift.dart';
 import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
-@DataClassName('SourceCategory')
-class SourceCategories extends Table {
+@DataClassName('Categorizable')
+class Categorizables extends Table {
   // The ID of the source (transaction, invoice, etc.)
-  TextColumn get sourceId => text()();
+  TextColumn get categorizableId => text()();
 
   // The type of the source (transaction, invoice, category)
-  TextColumn get sourceType => textEnum<SourceType>()();
+  TextColumn get categorizableType => textEnum<CategorizableType>()();
 
   // Reference to the category
   TextColumn get categoryClientId => text().references(Categories, #clientId)();
 
   @override
-  Set<Column> get primaryKey => {sourceId, sourceType, categoryClientId};
+  Set<Column> get primaryKey =>
+      {categorizableId, categorizableType, categoryClientId};
 }

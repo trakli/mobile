@@ -3424,22 +3424,23 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadatas> {
   }
 }
 
-class $SourceCategoriesTable extends SourceCategories
-    with TableInfo<$SourceCategoriesTable, SourceCategory> {
+class $CategorizablesTable extends Categorizables
+    with TableInfo<$CategorizablesTable, Categorizable> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SourceCategoriesTable(this.attachedDatabase, [this._alias]);
+  $CategorizablesTable(this.attachedDatabase, [this._alias]);
   @override
-  late final GeneratedColumn<String> sourceId = GeneratedColumn<String>(
-      'source_id', aliasedName, false,
+  late final GeneratedColumn<String> categorizableId = GeneratedColumn<String>(
+      'categorizable_id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  late final GeneratedColumnWithTypeConverter<SourceType, String> sourceType =
-      GeneratedColumn<String>('source_type', aliasedName, false,
+  late final GeneratedColumnWithTypeConverter<CategorizableType, String>
+      categorizableType = GeneratedColumn<String>(
+              'categorizable_type', aliasedName, false,
               type: DriftSqlType.string, requiredDuringInsert: true)
-          .withConverter<SourceType>(
-              $SourceCategoriesTable.$convertersourceType);
+          .withConverter<CategorizableType>(
+              $CategorizablesTable.$convertercategorizableType);
   @override
   late final GeneratedColumn<String> categoryClientId = GeneratedColumn<String>(
       'category_client_id', aliasedName, false,
@@ -3449,73 +3450,75 @@ class $SourceCategoriesTable extends SourceCategories
           'REFERENCES categories (client_id)'));
   @override
   List<GeneratedColumn> get $columns =>
-      [sourceId, sourceType, categoryClientId];
+      [categorizableId, categorizableType, categoryClientId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'source_categories';
+  static const String $name = 'categorizables';
   @override
   Set<GeneratedColumn> get $primaryKey =>
-      {sourceId, sourceType, categoryClientId};
+      {categorizableId, categorizableType, categoryClientId};
   @override
-  SourceCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Categorizable map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SourceCategory(
-      sourceId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}source_id'])!,
-      sourceType: $SourceCategoriesTable.$convertersourceType.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}source_type'])!),
+    return Categorizable(
+      categorizableId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}categorizable_id'])!,
+      categorizableType: $CategorizablesTable.$convertercategorizableType
+          .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
+              data['${effectivePrefix}categorizable_type'])!),
       categoryClientId: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}category_client_id'])!,
     );
   }
 
   @override
-  $SourceCategoriesTable createAlias(String alias) {
-    return $SourceCategoriesTable(attachedDatabase, alias);
+  $CategorizablesTable createAlias(String alias) {
+    return $CategorizablesTable(attachedDatabase, alias);
   }
 
-  static JsonTypeConverter2<SourceType, String, String> $convertersourceType =
-      const EnumNameConverter<SourceType>(SourceType.values);
+  static JsonTypeConverter2<CategorizableType, String, String>
+      $convertercategorizableType =
+      const EnumNameConverter<CategorizableType>(CategorizableType.values);
 }
 
-class SourceCategory extends DataClass implements Insertable<SourceCategory> {
-  final String sourceId;
-  final SourceType sourceType;
+class Categorizable extends DataClass implements Insertable<Categorizable> {
+  final String categorizableId;
+  final CategorizableType categorizableType;
   final String categoryClientId;
-  const SourceCategory(
-      {required this.sourceId,
-      required this.sourceType,
+  const Categorizable(
+      {required this.categorizableId,
+      required this.categorizableType,
       required this.categoryClientId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['source_id'] = Variable<String>(sourceId);
+    map['categorizable_id'] = Variable<String>(categorizableId);
     {
-      map['source_type'] = Variable<String>(
-          $SourceCategoriesTable.$convertersourceType.toSql(sourceType));
+      map['categorizable_type'] = Variable<String>($CategorizablesTable
+          .$convertercategorizableType
+          .toSql(categorizableType));
     }
     map['category_client_id'] = Variable<String>(categoryClientId);
     return map;
   }
 
-  SourceCategoriesCompanion toCompanion(bool nullToAbsent) {
-    return SourceCategoriesCompanion(
-      sourceId: Value(sourceId),
-      sourceType: Value(sourceType),
+  CategorizablesCompanion toCompanion(bool nullToAbsent) {
+    return CategorizablesCompanion(
+      categorizableId: Value(categorizableId),
+      categorizableType: Value(categorizableType),
       categoryClientId: Value(categoryClientId),
     );
   }
 
-  factory SourceCategory.fromJson(Map<String, dynamic> json,
+  factory Categorizable.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SourceCategory(
-      sourceId: serializer.fromJson<String>(json['sourceId']),
-      sourceType: $SourceCategoriesTable.$convertersourceType
-          .fromJson(serializer.fromJson<String>(json['sourceType'])),
+    return Categorizable(
+      categorizableId: serializer.fromJson<String>(json['categorizableId']),
+      categorizableType: $CategorizablesTable.$convertercategorizableType
+          .fromJson(serializer.fromJson<String>(json['categorizableType'])),
       categoryClientId: serializer.fromJson<String>(json['categoryClientId']),
     );
   }
@@ -3523,27 +3526,31 @@ class SourceCategory extends DataClass implements Insertable<SourceCategory> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'sourceId': serializer.toJson<String>(sourceId),
-      'sourceType': serializer.toJson<String>(
-          $SourceCategoriesTable.$convertersourceType.toJson(sourceType)),
+      'categorizableId': serializer.toJson<String>(categorizableId),
+      'categorizableType': serializer.toJson<String>($CategorizablesTable
+          .$convertercategorizableType
+          .toJson(categorizableType)),
       'categoryClientId': serializer.toJson<String>(categoryClientId),
     };
   }
 
-  SourceCategory copyWith(
-          {String? sourceId,
-          SourceType? sourceType,
+  Categorizable copyWith(
+          {String? categorizableId,
+          CategorizableType? categorizableType,
           String? categoryClientId}) =>
-      SourceCategory(
-        sourceId: sourceId ?? this.sourceId,
-        sourceType: sourceType ?? this.sourceType,
+      Categorizable(
+        categorizableId: categorizableId ?? this.categorizableId,
+        categorizableType: categorizableType ?? this.categorizableType,
         categoryClientId: categoryClientId ?? this.categoryClientId,
       );
-  SourceCategory copyWithCompanion(SourceCategoriesCompanion data) {
-    return SourceCategory(
-      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
-      sourceType:
-          data.sourceType.present ? data.sourceType.value : this.sourceType,
+  Categorizable copyWithCompanion(CategorizablesCompanion data) {
+    return Categorizable(
+      categorizableId: data.categorizableId.present
+          ? data.categorizableId.value
+          : this.categorizableId,
+      categorizableType: data.categorizableType.present
+          ? data.categorizableType.value
+          : this.categorizableType,
       categoryClientId: data.categoryClientId.present
           ? data.categoryClientId.value
           : this.categoryClientId,
@@ -3552,66 +3559,67 @@ class SourceCategory extends DataClass implements Insertable<SourceCategory> {
 
   @override
   String toString() {
-    return (StringBuffer('SourceCategory(')
-          ..write('sourceId: $sourceId, ')
-          ..write('sourceType: $sourceType, ')
+    return (StringBuffer('Categorizable(')
+          ..write('categorizableId: $categorizableId, ')
+          ..write('categorizableType: $categorizableType, ')
           ..write('categoryClientId: $categoryClientId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(sourceId, sourceType, categoryClientId);
+  int get hashCode =>
+      Object.hash(categorizableId, categorizableType, categoryClientId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SourceCategory &&
-          other.sourceId == this.sourceId &&
-          other.sourceType == this.sourceType &&
+      (other is Categorizable &&
+          other.categorizableId == this.categorizableId &&
+          other.categorizableType == this.categorizableType &&
           other.categoryClientId == this.categoryClientId);
 }
 
-class SourceCategoriesCompanion extends UpdateCompanion<SourceCategory> {
-  final Value<String> sourceId;
-  final Value<SourceType> sourceType;
+class CategorizablesCompanion extends UpdateCompanion<Categorizable> {
+  final Value<String> categorizableId;
+  final Value<CategorizableType> categorizableType;
   final Value<String> categoryClientId;
   final Value<int> rowid;
-  const SourceCategoriesCompanion({
-    this.sourceId = const Value.absent(),
-    this.sourceType = const Value.absent(),
+  const CategorizablesCompanion({
+    this.categorizableId = const Value.absent(),
+    this.categorizableType = const Value.absent(),
     this.categoryClientId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  SourceCategoriesCompanion.insert({
-    required String sourceId,
-    required SourceType sourceType,
+  CategorizablesCompanion.insert({
+    required String categorizableId,
+    required CategorizableType categorizableType,
     required String categoryClientId,
     this.rowid = const Value.absent(),
-  })  : sourceId = Value(sourceId),
-        sourceType = Value(sourceType),
+  })  : categorizableId = Value(categorizableId),
+        categorizableType = Value(categorizableType),
         categoryClientId = Value(categoryClientId);
-  static Insertable<SourceCategory> custom({
-    Expression<String>? sourceId,
-    Expression<String>? sourceType,
+  static Insertable<Categorizable> custom({
+    Expression<String>? categorizableId,
+    Expression<String>? categorizableType,
     Expression<String>? categoryClientId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (sourceId != null) 'source_id': sourceId,
-      if (sourceType != null) 'source_type': sourceType,
+      if (categorizableId != null) 'categorizable_id': categorizableId,
+      if (categorizableType != null) 'categorizable_type': categorizableType,
       if (categoryClientId != null) 'category_client_id': categoryClientId,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  SourceCategoriesCompanion copyWith(
-      {Value<String>? sourceId,
-      Value<SourceType>? sourceType,
+  CategorizablesCompanion copyWith(
+      {Value<String>? categorizableId,
+      Value<CategorizableType>? categorizableType,
       Value<String>? categoryClientId,
       Value<int>? rowid}) {
-    return SourceCategoriesCompanion(
-      sourceId: sourceId ?? this.sourceId,
-      sourceType: sourceType ?? this.sourceType,
+    return CategorizablesCompanion(
+      categorizableId: categorizableId ?? this.categorizableId,
+      categorizableType: categorizableType ?? this.categorizableType,
       categoryClientId: categoryClientId ?? this.categoryClientId,
       rowid: rowid ?? this.rowid,
     );
@@ -3620,12 +3628,13 @@ class SourceCategoriesCompanion extends UpdateCompanion<SourceCategory> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (sourceId.present) {
-      map['source_id'] = Variable<String>(sourceId.value);
+    if (categorizableId.present) {
+      map['categorizable_id'] = Variable<String>(categorizableId.value);
     }
-    if (sourceType.present) {
-      map['source_type'] = Variable<String>(
-          $SourceCategoriesTable.$convertersourceType.toSql(sourceType.value));
+    if (categorizableType.present) {
+      map['categorizable_type'] = Variable<String>($CategorizablesTable
+          .$convertercategorizableType
+          .toSql(categorizableType.value));
     }
     if (categoryClientId.present) {
       map['category_client_id'] = Variable<String>(categoryClientId.value);
@@ -3638,9 +3647,9 @@ class SourceCategoriesCompanion extends UpdateCompanion<SourceCategory> {
 
   @override
   String toString() {
-    return (StringBuffer('SourceCategoriesCompanion(')
-          ..write('sourceId: $sourceId, ')
-          ..write('sourceType: $sourceType, ')
+    return (StringBuffer('CategorizablesCompanion(')
+          ..write('categorizableId: $categorizableId, ')
+          ..write('categorizableType: $categorizableType, ')
           ..write('categoryClientId: $categoryClientId, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -3659,8 +3668,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UsersTable users = $UsersTable(this);
   late final $LocalChangesTable localChanges = $LocalChangesTable(this);
   late final $SyncMetadataTable syncMetadata = $SyncMetadataTable(this);
-  late final $SourceCategoriesTable sourceCategories =
-      $SourceCategoriesTable(this);
+  late final $CategorizablesTable categorizables = $CategorizablesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3674,7 +3682,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         users,
         localChanges,
         syncMetadata,
-        sourceCategories
+        categorizables
       ];
   @override
   DriftDatabaseOptions get options =>
@@ -5272,20 +5280,18 @@ final class $$CategoriesTableReferences
     extends BaseReferences<_$AppDatabase, $CategoriesTable, Category> {
   $$CategoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$SourceCategoriesTable, List<SourceCategory>>
-      _sourceCategoriesRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.sourceCategories,
-              aliasName: $_aliasNameGenerator(db.categories.clientId,
-                  db.sourceCategories.categoryClientId));
+  static MultiTypedResultKey<$CategorizablesTable, List<Categorizable>>
+      _categorizablesRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.categorizables,
+              aliasName: $_aliasNameGenerator(
+                  db.categories.clientId, db.categorizables.categoryClientId));
 
-  $$SourceCategoriesTableProcessedTableManager get sourceCategoriesRefs {
-    final manager =
-        $$SourceCategoriesTableTableManager($_db, $_db.sourceCategories).filter(
-            (f) => f.categoryClientId.clientId
-                .sqlEquals($_itemColumn<String>('client_id')!));
+  $$CategorizablesTableProcessedTableManager get categorizablesRefs {
+    final manager = $$CategorizablesTableTableManager($_db, $_db.categorizables)
+        .filter((f) => f.categoryClientId.clientId
+            .sqlEquals($_itemColumn<String>('client_id')!));
 
-    final cache =
-        $_typedResult.readTableOrNull(_sourceCategoriesRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(_categorizablesRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -5335,19 +5341,19 @@ class $$CategoriesTableFilterComposer
   ColumnFilters<int> get userId => $composableBuilder(
       column: $table.userId, builder: (column) => ColumnFilters(column));
 
-  Expression<bool> sourceCategoriesRefs(
-      Expression<bool> Function($$SourceCategoriesTableFilterComposer f) f) {
-    final $$SourceCategoriesTableFilterComposer composer = $composerBuilder(
+  Expression<bool> categorizablesRefs(
+      Expression<bool> Function($$CategorizablesTableFilterComposer f) f) {
+    final $$CategorizablesTableFilterComposer composer = $composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.clientId,
-        referencedTable: $db.sourceCategories,
+        referencedTable: $db.categorizables,
         getReferencedColumn: (t) => t.categoryClientId,
         builder: (joinBuilder,
                 {$addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer}) =>
-            $$SourceCategoriesTableFilterComposer(
+            $$CategorizablesTableFilterComposer(
               $db: $db,
-              $table: $db.sourceCategories,
+              $table: $db.categorizables,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -5443,19 +5449,19 @@ class $$CategoriesTableAnnotationComposer
   GeneratedColumn<int> get userId =>
       $composableBuilder(column: $table.userId, builder: (column) => column);
 
-  Expression<T> sourceCategoriesRefs<T extends Object>(
-      Expression<T> Function($$SourceCategoriesTableAnnotationComposer a) f) {
-    final $$SourceCategoriesTableAnnotationComposer composer = $composerBuilder(
+  Expression<T> categorizablesRefs<T extends Object>(
+      Expression<T> Function($$CategorizablesTableAnnotationComposer a) f) {
+    final $$CategorizablesTableAnnotationComposer composer = $composerBuilder(
         composer: this,
         getCurrentColumn: (t) => t.clientId,
-        referencedTable: $db.sourceCategories,
+        referencedTable: $db.categorizables,
         getReferencedColumn: (t) => t.categoryClientId,
         builder: (joinBuilder,
                 {$addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer}) =>
-            $$SourceCategoriesTableAnnotationComposer(
+            $$CategorizablesTableAnnotationComposer(
               $db: $db,
-              $table: $db.sourceCategories,
+              $table: $db.categorizables,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -5476,7 +5482,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
     $$CategoriesTableUpdateCompanionBuilder,
     (Category, $$CategoriesTableReferences),
     Category,
-    PrefetchHooks Function({bool sourceCategoriesRefs})> {
+    PrefetchHooks Function({bool categorizablesRefs})> {
   $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
       : super(TableManagerState(
           db: db,
@@ -5549,24 +5555,24 @@ class $$CategoriesTableTableManager extends RootTableManager<
                     $$CategoriesTableReferences(db, table, e)
                   ))
               .toList(),
-          prefetchHooksCallback: ({sourceCategoriesRefs = false}) {
+          prefetchHooksCallback: ({categorizablesRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
-                if (sourceCategoriesRefs) db.sourceCategories
+                if (categorizablesRefs) db.categorizables
               ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
                 return [
-                  if (sourceCategoriesRefs)
+                  if (categorizablesRefs)
                     await $_getPrefetchedData<Category, $CategoriesTable,
-                            SourceCategory>(
+                            Categorizable>(
                         currentTable: table,
                         referencedTable: $$CategoriesTableReferences
-                            ._sourceCategoriesRefsTable(db),
+                            ._categorizablesRefsTable(db),
                         managerFromTypedResult: (p0) =>
                             $$CategoriesTableReferences(db, table, p0)
-                                .sourceCategoriesRefs,
+                                .categorizablesRefs,
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems.where(
                                 (e) => e.categoryClientId == item.clientId),
@@ -5589,7 +5595,7 @@ typedef $$CategoriesTableProcessedTableManager = ProcessedTableManager<
     $$CategoriesTableUpdateCompanionBuilder,
     (Category, $$CategoriesTableReferences),
     Category,
-    PrefetchHooks Function({bool sourceCategoriesRefs})>;
+    PrefetchHooks Function({bool categorizablesRefs})>;
 typedef $$UsersTableCreateCompanionBuilder = UsersCompanion Function({
   Value<int> id,
   required String email,
@@ -6185,29 +6191,29 @@ typedef $$SyncMetadataTableProcessedTableManager = ProcessedTableManager<
     ),
     SyncMetadatas,
     PrefetchHooks Function()>;
-typedef $$SourceCategoriesTableCreateCompanionBuilder
-    = SourceCategoriesCompanion Function({
-  required String sourceId,
-  required SourceType sourceType,
+typedef $$CategorizablesTableCreateCompanionBuilder = CategorizablesCompanion
+    Function({
+  required String categorizableId,
+  required CategorizableType categorizableType,
   required String categoryClientId,
   Value<int> rowid,
 });
-typedef $$SourceCategoriesTableUpdateCompanionBuilder
-    = SourceCategoriesCompanion Function({
-  Value<String> sourceId,
-  Value<SourceType> sourceType,
+typedef $$CategorizablesTableUpdateCompanionBuilder = CategorizablesCompanion
+    Function({
+  Value<String> categorizableId,
+  Value<CategorizableType> categorizableType,
   Value<String> categoryClientId,
   Value<int> rowid,
 });
 
-final class $$SourceCategoriesTableReferences extends BaseReferences<
-    _$AppDatabase, $SourceCategoriesTable, SourceCategory> {
-  $$SourceCategoriesTableReferences(
+final class $$CategorizablesTableReferences
+    extends BaseReferences<_$AppDatabase, $CategorizablesTable, Categorizable> {
+  $$CategorizablesTableReferences(
       super.$_db, super.$_table, super.$_typedResult);
 
   static $CategoriesTable _categoryClientIdTable(_$AppDatabase db) =>
       db.categories.createAlias($_aliasNameGenerator(
-          db.sourceCategories.categoryClientId, db.categories.clientId));
+          db.categorizables.categoryClientId, db.categories.clientId));
 
   $$CategoriesTableProcessedTableManager get categoryClientId {
     final $_column = $_itemColumn<String>('category_client_id')!;
@@ -6221,21 +6227,22 @@ final class $$SourceCategoriesTableReferences extends BaseReferences<
   }
 }
 
-class $$SourceCategoriesTableFilterComposer
-    extends Composer<_$AppDatabase, $SourceCategoriesTable> {
-  $$SourceCategoriesTableFilterComposer({
+class $$CategorizablesTableFilterComposer
+    extends Composer<_$AppDatabase, $CategorizablesTable> {
+  $$CategorizablesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get sourceId => $composableBuilder(
-      column: $table.sourceId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get categorizableId => $composableBuilder(
+      column: $table.categorizableId,
+      builder: (column) => ColumnFilters(column));
 
-  ColumnWithTypeConverterFilters<SourceType, SourceType, String>
-      get sourceType => $composableBuilder(
-          column: $table.sourceType,
+  ColumnWithTypeConverterFilters<CategorizableType, CategorizableType, String>
+      get categorizableType => $composableBuilder(
+          column: $table.categorizableType,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
   $$CategoriesTableFilterComposer get categoryClientId {
@@ -6259,20 +6266,22 @@ class $$SourceCategoriesTableFilterComposer
   }
 }
 
-class $$SourceCategoriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $SourceCategoriesTable> {
-  $$SourceCategoriesTableOrderingComposer({
+class $$CategorizablesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CategorizablesTable> {
+  $$CategorizablesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get sourceId => $composableBuilder(
-      column: $table.sourceId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get categorizableId => $composableBuilder(
+      column: $table.categorizableId,
+      builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get sourceType => $composableBuilder(
-      column: $table.sourceType, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get categorizableType => $composableBuilder(
+      column: $table.categorizableType,
+      builder: (column) => ColumnOrderings(column));
 
   $$CategoriesTableOrderingComposer get categoryClientId {
     final $$CategoriesTableOrderingComposer composer = $composerBuilder(
@@ -6295,21 +6304,21 @@ class $$SourceCategoriesTableOrderingComposer
   }
 }
 
-class $$SourceCategoriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $SourceCategoriesTable> {
-  $$SourceCategoriesTableAnnotationComposer({
+class $$CategorizablesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CategorizablesTable> {
+  $$CategorizablesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get sourceId =>
-      $composableBuilder(column: $table.sourceId, builder: (column) => column);
+  GeneratedColumn<String> get categorizableId => $composableBuilder(
+      column: $table.categorizableId, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<SourceType, String> get sourceType =>
-      $composableBuilder(
-          column: $table.sourceType, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<CategorizableType, String>
+      get categorizableType => $composableBuilder(
+          column: $table.categorizableType, builder: (column) => column);
 
   $$CategoriesTableAnnotationComposer get categoryClientId {
     final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
@@ -6332,57 +6341,57 @@ class $$SourceCategoriesTableAnnotationComposer
   }
 }
 
-class $$SourceCategoriesTableTableManager extends RootTableManager<
+class $$CategorizablesTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $SourceCategoriesTable,
-    SourceCategory,
-    $$SourceCategoriesTableFilterComposer,
-    $$SourceCategoriesTableOrderingComposer,
-    $$SourceCategoriesTableAnnotationComposer,
-    $$SourceCategoriesTableCreateCompanionBuilder,
-    $$SourceCategoriesTableUpdateCompanionBuilder,
-    (SourceCategory, $$SourceCategoriesTableReferences),
-    SourceCategory,
+    $CategorizablesTable,
+    Categorizable,
+    $$CategorizablesTableFilterComposer,
+    $$CategorizablesTableOrderingComposer,
+    $$CategorizablesTableAnnotationComposer,
+    $$CategorizablesTableCreateCompanionBuilder,
+    $$CategorizablesTableUpdateCompanionBuilder,
+    (Categorizable, $$CategorizablesTableReferences),
+    Categorizable,
     PrefetchHooks Function({bool categoryClientId})> {
-  $$SourceCategoriesTableTableManager(
-      _$AppDatabase db, $SourceCategoriesTable table)
+  $$CategorizablesTableTableManager(
+      _$AppDatabase db, $CategorizablesTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$SourceCategoriesTableFilterComposer($db: db, $table: table),
+              $$CategorizablesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$SourceCategoriesTableOrderingComposer($db: db, $table: table),
+              $$CategorizablesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$SourceCategoriesTableAnnotationComposer($db: db, $table: table),
+              $$CategorizablesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<String> sourceId = const Value.absent(),
-            Value<SourceType> sourceType = const Value.absent(),
+            Value<String> categorizableId = const Value.absent(),
+            Value<CategorizableType> categorizableType = const Value.absent(),
             Value<String> categoryClientId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
-              SourceCategoriesCompanion(
-            sourceId: sourceId,
-            sourceType: sourceType,
+              CategorizablesCompanion(
+            categorizableId: categorizableId,
+            categorizableType: categorizableType,
             categoryClientId: categoryClientId,
             rowid: rowid,
           ),
           createCompanionCallback: ({
-            required String sourceId,
-            required SourceType sourceType,
+            required String categorizableId,
+            required CategorizableType categorizableType,
             required String categoryClientId,
             Value<int> rowid = const Value.absent(),
           }) =>
-              SourceCategoriesCompanion.insert(
-            sourceId: sourceId,
-            sourceType: sourceType,
+              CategorizablesCompanion.insert(
+            categorizableId: categorizableId,
+            categorizableType: categorizableType,
             categoryClientId: categoryClientId,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (
                     e.readTable(table),
-                    $$SourceCategoriesTableReferences(db, table, e)
+                    $$CategorizablesTableReferences(db, table, e)
                   ))
               .toList(),
           prefetchHooksCallback: ({categoryClientId = false}) {
@@ -6406,9 +6415,9 @@ class $$SourceCategoriesTableTableManager extends RootTableManager<
                   state = state.withJoin(
                     currentTable: table,
                     currentColumn: table.categoryClientId,
-                    referencedTable: $$SourceCategoriesTableReferences
+                    referencedTable: $$CategorizablesTableReferences
                         ._categoryClientIdTable(db),
-                    referencedColumn: $$SourceCategoriesTableReferences
+                    referencedColumn: $$CategorizablesTableReferences
                         ._categoryClientIdTable(db)
                         .clientId,
                   ) as T;
@@ -6424,17 +6433,17 @@ class $$SourceCategoriesTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$SourceCategoriesTableProcessedTableManager = ProcessedTableManager<
+typedef $$CategorizablesTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
-    $SourceCategoriesTable,
-    SourceCategory,
-    $$SourceCategoriesTableFilterComposer,
-    $$SourceCategoriesTableOrderingComposer,
-    $$SourceCategoriesTableAnnotationComposer,
-    $$SourceCategoriesTableCreateCompanionBuilder,
-    $$SourceCategoriesTableUpdateCompanionBuilder,
-    (SourceCategory, $$SourceCategoriesTableReferences),
-    SourceCategory,
+    $CategorizablesTable,
+    Categorizable,
+    $$CategorizablesTableFilterComposer,
+    $$CategorizablesTableOrderingComposer,
+    $$CategorizablesTableAnnotationComposer,
+    $$CategorizablesTableCreateCompanionBuilder,
+    $$CategorizablesTableUpdateCompanionBuilder,
+    (Categorizable, $$CategorizablesTableReferences),
+    Categorizable,
     PrefetchHooks Function({bool categoryClientId})>;
 
 class $AppDatabaseManager {
@@ -6456,6 +6465,6 @@ class $AppDatabaseManager {
       $$LocalChangesTableTableManager(_db, _db.localChanges);
   $$SyncMetadataTableTableManager get syncMetadata =>
       $$SyncMetadataTableTableManager(_db, _db.syncMetadata);
-  $$SourceCategoriesTableTableManager get sourceCategories =>
-      $$SourceCategoriesTableTableManager(_db, _db.sourceCategories);
+  $$CategorizablesTableTableManager get categorizables =>
+      $$CategorizablesTableTableManager(_db, _db.categorizables);
 }
