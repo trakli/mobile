@@ -106,5 +106,19 @@
   "confirmPassword": "Conferma password",
   "register": "Registrati",
   "firstNameEmptyDesc": "Il nome non può essere vuoto",
-  "invalidUserCredentials": "Credenziali utente non valide"
+  "invalidUserCredentials": "Credenziali utente non valide",
+  "editTransaction": "Modifica transazione",
+  "deleteTransaction": "Elimina transazione",
+  "deleteTransactionConfirmation": "Sei sicuro di voler eliminare questa transazione?",
+  "invalidRequestDesc": "Richiesta non valida. Per favore, controlla le tue entrate e riprova.",
+  "noError": "Nessun errore",
+  "internetConnectionDesc": "Per favore, controlla la tua connessione internet e riprova.",
+  "notFoundDesc": "La risorsa richiesta non è stata trovata.",
+  "serverErrorDesc": "Si è verificato un errore del server. Per favore, riprova più tardi.",
+  "cacheErrorDesc": "Si è verificato un errore di cache. Per favore, riprova più tardi.",
+  "syncErrorDesc": "Si è verificato un errore di sincronizzazione. Per favore, riprova più tardi.",
+  "unauthorizedErrorDesc": "Si è verificato un errore di autorizzazione. Per favore, riprova più tardi.",
+  "unknownErrorDesc": "Si è verificato un errore sconosciuto. Per favore, riprova più tardi.",
+  "cancel": "Annulla",
+  "delete": "Elimina"
 }

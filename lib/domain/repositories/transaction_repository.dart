@@ -19,6 +19,7 @@ abstract class TransactionRepository {
     double? amount,
     String? description,
     List<String>? categoryIds,
+    DateTime? datetime,
   );
   Future<Either<Failure, Unit>> deleteTransaction(String id);
 

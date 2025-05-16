@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -22,11 +23,13 @@ import 'package:trakli/presentation/utils/helpers.dart';
 class AddTransactionForm extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
+  final TransactionCompleteEntity? transactionCompleteEntity;
 
   const AddTransactionForm({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
+    this.transactionCompleteEntity,
   });
 
   @override
@@ -50,9 +53,22 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
 
   @override
   void initState() {
-    dateController.text = dateFormat.format(date);
-    timeController.text = timeFormat.format(date);
     super.initState();
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+      descriptionController.text =
+          widget.transactionCompleteEntity!.transaction.description;
+      date = widget.transactionCompleteEntity!.transaction.datetime;
+      dateController.text = dateFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      timeController.text = timeFormat
+          .format(widget.transactionCompleteEntity!.transaction.datetime);
+    } else {
+      date = DateTime.now();
+      dateController.text = dateFormat.format(date);
+      timeController.text = timeFormat.format(date);
+    }
   }
 
   @override
@@ -617,18 +633,24 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       if (_formKey.currentState!.validate()) {
                         final amount = double.parse(amountController.text);
                         final description = descriptionController.text;
-                        final categoryId = categoryController
-                            .text; // This should be the category ID
 
-                        context.read<TransactionCubit>().addTransaction(
-                              amount: amount,
-                              description: description,
-                              categoryId: categoryId,
-                              type: widget.transactionType,
-                              datetime: date,
-                            );
+                        if (widget.transactionCompleteEntity != null) {
+                          context.read<TransactionCubit>().updateTransaction(
+                                id: widget.transactionCompleteEntity!
+                                    .transaction.clientId,
+                                amount: amount,
+                                description: description,
+                              );
+                        } else {
+                          context.read<TransactionCubit>().addTransaction(
+                                amount: amount,
+                                description: description,
+                                type: widget.transactionType,
+                                datetime: date,
+                              );
 
-                        Navigator.pop(context);
+                          Navigator.pop(context);
+                        }
                       }
                     },
                     child: Row(

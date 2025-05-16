@@ -2,12 +2,18 @@ import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/add_transaction_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/presentation/utils/dialogs.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 
 extension StringExtension on String {
   String extractWords({int maxSize = 10}) {
@@ -43,6 +49,31 @@ class TransactionTile extends StatefulWidget {
 
 class _TransactionTileState extends State<TransactionTile> {
   DateFormat format = DateFormat('dd/MM/yyyy');
+
+  void _handleEdit() {
+    AppNavigator.push(
+        context,
+        AddTransactionScreen(
+          transaction: widget.transaction,
+          transactionType: widget.transaction.transaction.type,
+          accentColor: widget.accentColor,
+        ));
+  }
+
+  void _handleDelete() async {
+    final shouldDelete = await showDeleteConfirmationDialog(
+      context,
+      title: LocaleKeys.deleteTransaction.tr(),
+      message: LocaleKeys.deleteTransactionConfirmation.tr(),
+    );
+
+    if (shouldDelete) {
+      if (!mounted) return;
+      context.read<TransactionCubit>().deleteTransaction(
+            widget.transaction.transaction.clientId,
+          );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -316,30 +347,11 @@ class _TransactionTileState extends State<TransactionTile> {
                 ),
               ),
             ),
-            // icon: Icon(
-            //   Icons.more_vert,
-            //   size: 20.r,
-            //   color: const Color(0xFF576760),
-            // ),
+           
             itemBuilder: (BuildContext context) => [
-              // PopupMenuItem<String>(
-              //   value: 'edit',
-              //   child: Row(
-              //     children: [
-              //       Icon(Icons.edit, size: 18.r, color: widget.accentColor),
-              //       SizedBox(width: 8.w),
-              //       Text(
-              //         'Edit',
-              //         style: TextStyle(
-              //           color: const Color(0xFF576760),
-              //           fontSize: 14.sp,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+             
               PopupMenuItem(
-                // onTap: widget.onEdit,
+                onTap: _handleEdit,
                 height: 40.h,
                 child: Row(
                   spacing: 8.w,
@@ -365,7 +377,7 @@ class _TransactionTileState extends State<TransactionTile> {
                 ),
               ),
               PopupMenuItem(
-                // onTap: _showDeleteConfirmation,
+                onTap: _handleDelete,
                 height: 40.h,
                 child: Row(
                   spacing: 8.w,

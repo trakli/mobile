@@ -30,6 +30,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     double? amount,
     String? description,
     List<String>? categoryIds,
+    DateTime? datetime,
   ) async {
     try {
       final transaction = await localDataSource.updateTransaction(
@@ -37,6 +38,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         amount,
         description,
         categoryIds,
+        datetime,
       );
 
       unawaited(put(transaction));

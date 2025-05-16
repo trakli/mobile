@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class LocaleKeys {
+abstract class  LocaleKeys {
   static const appName = 'appName';
   static const welcomeText = 'welcomeText';
   static const welcomeTo = 'welcomeTo';
@@ -54,8 +54,7 @@ abstract class LocaleKeys {
   static const moneyReceived = 'moneyReceived';
   static const totalCompanies = 'totalCompanies';
   static const transactionLast30Days = 'transactionLast30Days';
-  static const transactionLast30DaysPerParties =
-      'transactionLast30DaysPerParties';
+  static const transactionLast30DaysPerParties = 'transactionLast30DaysPerParties';
   static const totalExpenses = 'totalExpenses';
   static const totalSavings = 'totalSavings';
   static const totalSpent = 'totalSpent';
@@ -112,4 +111,19 @@ abstract class LocaleKeys {
   static const register = 'register';
   static const firstNameEmptyDesc = 'firstNameEmptyDesc';
   static const invalidUserCredentials = 'invalidUserCredentials';
+  static const editTransaction = 'editTransaction';
+  static const deleteTransaction = 'deleteTransaction';
+  static const deleteTransactionConfirmation = 'deleteTransactionConfirmation';
+  static const invalidRequestDesc = 'invalidRequestDesc';
+  static const noError = 'noError';
+  static const internetConnectionDesc = 'internetConnectionDesc';
+  static const notFoundDesc = 'notFoundDesc';
+  static const serverErrorDesc = 'serverErrorDesc';
+  static const cacheErrorDesc = 'cacheErrorDesc';
+  static const syncErrorDesc = 'syncErrorDesc';
+  static const unauthorizedErrorDesc = 'unauthorizedErrorDesc';
+  static const unknownErrorDesc = 'unknownErrorDesc';
+  static const cancel = 'cancel';
+  static const delete = 'delete';
+
 }

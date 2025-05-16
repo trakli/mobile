@@ -20,6 +20,7 @@ abstract class TransactionLocalDataSource {
     double? amount,
     String? description,
     List<String>? categoryIds,
+    DateTime? datetime,
   );
   Future<TransactionCompleteDto> deleteTransaction(String id);
 
@@ -114,64 +115,70 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     double? amount,
     String? description,
     List<String>? categoryIds,
+    DateTime? datetime,
   ) async {
-    final model = await (database.update(database.transactions)
-          ..where((t) => t.clientId.equals(id)))
-        .writeReturning(
-      TransactionsCompanion(
-        amount: amount != null ? Value(amount) : const Value.absent(),
-        description:
-            description != null ? Value(description) : const Value.absent(),
-      ),
-    );
+    return database.transaction(() async {
+      final model = await (database.update(database.transactions)
+            ..where((t) => t.clientId.equals(id)))
+          .writeReturning(
+        TransactionsCompanion(
+          amount: amount != null ? Value(amount) : const Value.absent(),
+          description:
+              description != null ? Value(description) : const Value.absent(),
+          datetime: datetime != null
+              ? Value(formatServerIsoDateTime(datetime))
+              : const Value.absent(),
+        ),
+      );
 
-    final categories = await database.getCategoriesForTransaction(
-      model.first.clientId,
-      SourceType.transaction,
-    );
+      final categories = await database.getCategoriesForTransaction(
+        model.first.clientId,
+        SourceType.transaction,
+      );
 
-    if (categoryIds == null) {
+      if (categoryIds == null) {
+        return TransactionCompleteDto.fromTransaction(
+          transaction: model.first,
+          categories: categories,
+        );
+      }
+
+      final categoriesToRemove =
+          categories.where((c) => !categoryIds.contains(c.clientId)).toList();
+
+      for (var category in categoriesToRemove) {
+        await database.sourceCategories.deleteWhere(
+          (row) =>
+              row.sourceId.equals(model.first.clientId) &
+              row.sourceType.equals(SourceType.transaction.name) &
+              row.categoryClientId.equals(category.clientId),
+        );
+      }
+
+      final categoriesToAdd = categoryIds
+          .where((c) => !categories.any((cc) => cc.clientId == c))
+          .toList();
+
+      for (var categoryId in categoriesToAdd) {
+        await database.into(database.sourceCategories).insert(
+              SourceCategoriesCompanion.insert(
+                sourceId: model.first.clientId,
+                sourceType: SourceType.transaction,
+                categoryClientId: categoryId,
+              ),
+            );
+      }
+
+      final finalCategories = await database.getCategoriesForTransaction(
+        model.first.clientId,
+        SourceType.transaction,
+      );
+
       return TransactionCompleteDto.fromTransaction(
         transaction: model.first,
-        categories: categories,
+        categories: finalCategories,
       );
-    }
-
-    final categoriesToRemove =
-        categories.where((c) => !categoryIds.contains(c.clientId)).toList();
-
-    for (var category in categoriesToRemove) {
-      await database.sourceCategories.deleteWhere(
-        (row) =>
-            row.sourceId.equals(model.first.clientId) &
-            row.sourceType.equals(SourceType.transaction.name) &
-            row.categoryClientId.equals(category.clientId),
-      );
-    }
-
-    final categoriesToAdd = categoryIds
-        .where((c) => !categories.any((cc) => cc.clientId == c))
-        .toList();
-
-    for (var categoryId in categoriesToAdd) {
-      await database.into(database.sourceCategories).insert(
-            SourceCategoriesCompanion.insert(
-              sourceId: model.first.clientId,
-              sourceType: SourceType.transaction,
-              categoryClientId: categoryId,
-            ),
-          );
-    }
-
-    final finalCategories = await database.getCategoriesForTransaction(
-      model.first.clientId,
-      SourceType.transaction,
-    );
-
-    return TransactionCompleteDto.fromTransaction(
-      transaction: model.first,
-      categories: finalCategories,
-    );
+    });
   }
 
   @override

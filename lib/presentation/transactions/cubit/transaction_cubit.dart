@@ -56,7 +56,7 @@ class TransactionCubit extends Cubit<TransactionState> {
   Future<void> addTransaction({
     required double amount,
     required String description,
-    required String categoryId,
+    List<String>? categoryIds,
     required TransactionType type,
     required DateTime datetime,
   }) async {
@@ -65,7 +65,7 @@ class TransactionCubit extends Cubit<TransactionState> {
       CreateTransactionParams(
         amount: amount,
         description: description,
-        categoryIds: [categoryId],
+        categoryIds: categoryIds ?? [],
         type: type,
         datetime: datetime,
       ),
@@ -89,6 +89,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     double? amount,
     String? description,
     List<String>? categoryIds,
+    DateTime? datetime,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
@@ -97,6 +98,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         amount: amount,
         description: description,
         categoryIds: categoryIds,
+        datetime: datetime,
       ),
     );
     result.fold(

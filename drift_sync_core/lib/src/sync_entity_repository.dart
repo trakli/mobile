@@ -20,18 +20,6 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
   final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;
   final TAppDatabase db;
 
-  // Future<(TEntity, DataSource)> get(TKey id) async {
-  //   final remote = await getRemote(id);
-
-  //   if (remote != null) {
-  //     await syncHandler.upsertLocal(remote);
-  //     return (remote, DataSource.remote);
-  //   }
-
-  //   final local = await syncHandler.getLocalByClientId(id);
-  //   return (local, DataSource.local);
-  // }
-
   @protected
   Future<TEntity?> getRemote(TServerKey id) async {
     try {

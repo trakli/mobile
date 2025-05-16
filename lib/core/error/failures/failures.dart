@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/error/utils/field_error.dart';
-import 'package:trakli/generated/locale_keys.g.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 part 'failures.freezed.dart';
 
@@ -28,9 +28,6 @@ class Failure with _$Failure {
 
   // Getter for message
   String get customMessage => map(
-        serverError: (ServerFailure failure) => failure.message,
-        cacheError: (CacheFailure failure) => failure.message,
-        syncError: (SyncFailure failure) => failure.message,
         validationError: (ValidationFailure failure) {
           if (failure.errors.isEmpty) return failure.message;
           final errorMessage = failure.errors.first.messages.join(', ');
@@ -39,18 +36,23 @@ class Failure with _$Failure {
         unauthorizedError: (UnauthorizedFailure _) =>
             LocaleKeys.invalidUserCredentials.tr(),
         unknownError: (UnknownFailure _) =>
-            'An unexpected error occurred. Please try again.',
+            LocaleKeys.unknownErrorDesc.tr(),
         badRequest: (_BadRequest failure) {
           if (failure.error != null) return failure.error!;
           if (failure.errors != null && failure.errors!.isNotEmpty) {
             return failure.errors!.map((e) => e.messages.join(', ')).join('; ');
           }
-          return 'Invalid request. Please check your input and try again.';
+          return LocaleKeys.invalidRequestDesc.tr();
         },
-        none: (NoneFailure _) => 'No error',
-        notFound: (NotFoundFailure _) =>
-            'The requested resource was not found.',
+        none: (NoneFailure _) => LocaleKeys.noError.tr(),
+        notFound: (NotFoundFailure _) => LocaleKeys.notFoundDesc.tr(),
         networkError: (NetworkFailure _) =>
-            'Please check your internet connection and try again.',
+            LocaleKeys.internetConnectionDesc.tr(),
+        serverError: (ServerFailure failure) =>
+            LocaleKeys.serverErrorDesc.tr(),
+        cacheError: (CacheFailure failure) =>
+            LocaleKeys.cacheErrorDesc.tr(),
+        syncError: (SyncFailure failure) =>
+            LocaleKeys.syncErrorDesc.tr(),
       );
 }
