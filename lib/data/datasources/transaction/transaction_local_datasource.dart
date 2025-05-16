@@ -50,7 +50,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             .equalsExp(database.categorizables.categoryClientId),
       ),
     ])
-      ..orderBy([OrderingTerm.asc(database.transactions.createdAt)]);
+      ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
     final rows = await query.get();
     return mapTransactionAndComplete(rows);
@@ -211,7 +211,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             .equalsExp(database.categorizables.categoryClientId),
       ),
     ])
-      ..orderBy([OrderingTerm.asc(database.transactions.createdAt)]);
+      ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
     // Map the results to a structured format
     return query.watch().map((rows) {

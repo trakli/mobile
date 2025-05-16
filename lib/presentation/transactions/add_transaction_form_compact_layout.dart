@@ -9,6 +9,7 @@ import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -57,6 +58,8 @@ class _AddTransactionFormCompactLayoutState
 
   @override
   void initState() {
+    super.initState();
+
     // dateController.text = dateFormat.format(date);
     // timeController.text = timeFormat.format(date);
 
@@ -79,7 +82,9 @@ class _AddTransactionFormCompactLayoutState
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
     }
-    super.initState();
+
+    final onboardingEntity = context.read<OnboardingCubit>().state.entity;
+    currency = onboardingEntity?.selectedCurrency;
   }
 
   @override
