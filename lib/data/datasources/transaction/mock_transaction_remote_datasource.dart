@@ -1,13 +1,13 @@
 import 'dart:async';
-import 'package:injectable/injectable.dart';
-import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 
-@Injectable(as: TransactionRemoteDataSource)
+// @Injectable(as: TransactionRemoteDataSource)
 class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   // Simulated database
-  final List<Transaction> _transactions = [];
-  final _controller = StreamController<List<Transaction>>.broadcast();
+  final List<TransactionCompleteDto> _transactions = [];
+  final _controller =
+      StreamController<List<TransactionCompleteDto>>.broadcast();
 
   // Simulate network delay
   Future<T> _simulateDelay<T>(Future<T> Function() action) async {
@@ -16,56 +16,29 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<List<Transaction>> getAllTransactions() async {
+  Future<List<TransactionCompleteDto>> getAllTransactions() async {
     return _simulateDelay(() async => _transactions);
   }
 
   @override
-  Future<Transaction> insertTransaction(Transaction transaction) async {
+  Future<TransactionCompleteDto> insertTransaction(
+      TransactionCompleteDto transaction) async {
     return _simulateDelay(() async {
-      // final requestOptions = RequestOptions(path: 'transactions');
-      // const reason = 'Connection error';
-
-      // // throw DioException.connectionError(
-      // //   requestOptions: requestOptions,
-      // //   reason: reason,
-      // // );
-
-      // final updated = transaction.copyWith(
-      //     // serverId: Value(
-      //     //   const Uuid().v8(),
-      //     // ),
-      //     // lastSyncedAt: Value(
-      //     //   DateTime.now(),
-      //     // ),
-      //     );
-
-      // _transactions.add(updated);
-
       _notifyListeners();
       return transaction;
     });
   }
 
   @override
-  Future<Transaction> updateTransaction(Transaction transaction) async {
+  Future<TransactionCompleteDto> updateTransaction(
+      TransactionCompleteDto transaction) async {
     return _simulateDelay(() async {
-      // final requestOptions = RequestOptions(path: 'transactions');
-      // const reason = 'Connection error';
-
-      // throw DioException.connectionError(
-      //     requestOptions: requestOptions, reason: reason);
-
-      final index = _transactions.indexWhere((t) => t.id == transaction.id);
+      final index = _transactions
+          .indexWhere((t) => t.transaction.id == transaction.transaction.id);
       if (index == -1) {
         throw Exception('Transaction not found');
       }
-      _transactions[index] = transaction
-        ..copyWith(
-            // lastSyncedAt: Value(
-            //   DateTime.now(),
-            // ),
-            );
+
       _notifyListeners();
       return transaction;
     });
@@ -74,23 +47,24 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   @override
   Future<void> deleteTransaction(int id) async {
     await _simulateDelay(() async {
-      _transactions.removeWhere((t) => t.id == id);
+      _transactions.removeWhere((t) => t.transaction.id == id);
       _notifyListeners();
     });
   }
 
   @override
-  Future<Transaction> getTransaction(int id) async {
+  Future<TransactionCompleteDto> getTransaction(int id) async {
     return _simulateDelay(() async {
       final transaction = _transactions.firstWhere(
-        (t) => t.id == id,
+        (t) => t.transaction.id == id,
         orElse: () => throw Exception('Transaction not found'),
       );
       return transaction;
     });
   }
 
-  Stream<List<Transaction>> get transactionsStream => _controller.stream;
+  Stream<List<TransactionCompleteDto>> get transactionsStream =>
+      _controller.stream;
 
   // Notify listeners of changes
   void _notifyListeners() {
@@ -103,7 +77,7 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   }
 
   // Helper methods for testing
-  void addMockTransactions(List<Transaction> transactions) {
+  void addMockTransactions(List<TransactionCompleteDto> transactions) {
     _transactions.addAll(transactions);
     _notifyListeners();
   }

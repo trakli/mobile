@@ -27,21 +27,4 @@ class CategoryDto with _$CategoryDto {
 
   factory CategoryDto.fromJson(Map<String, dynamic> json) =>
       _$CategoryDtoFromJson(json);
-
-  // Convert to local Data for drift
-  // factory Category toLocal() {
-  //   return Category(
-  //     id: id,
-  //     name: name,
-  //     description: description,
-  //     clientId: clientId,
-  //     type: type,
-  //     createdAt: createdAt,
-  //     updatedAt: updatedAt,
-  //     lastSyncedAt: lastSyncedAt,
-  //     // syncState: syncState,
-  //     slug: slug,
-  //     userId: userId,
-  //   );
-  // }
 }

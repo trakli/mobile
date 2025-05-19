@@ -2,11 +2,11 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import '../../../core/error/failures/failures.dart';
-import '../../../core/usecases/usecase.dart';
-import '../../../domain/entities/onboarding_entity.dart';
-import '../../../domain/usecases/onboarding/get_onboarding_state.dart';
-import '../../../domain/usecases/onboarding/save_onboarding_state.dart';
+import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/onboarding_entity.dart';
+import 'package:trakli/domain/usecases/onboarding/get_onboarding_state.dart';
+import 'package:trakli/domain/usecases/onboarding/save_onboarding_state.dart';
 
 part 'onboarding_state.dart';
 part 'onboarding_cubit.freezed.dart';

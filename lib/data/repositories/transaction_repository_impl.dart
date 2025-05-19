@@ -3,26 +3,25 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/repositories/transaction_repository.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/datasources/transaction/transaction_local_datasource.dart';
 import 'package:trakli/data/mapper/transaction_mapper.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
-import '../../domain/entities/transaction_entity.dart';
-import '../../core/error/failures/failures.dart';
-import '../../domain/repositories/transaction_repository.dart';
 
 @LazySingleton(as: TransactionRepository)
-class TransactionRepositoryImpl
-    extends SyncEntityRepository<AppDatabase, Transaction, String, int>
-    implements TransactionRepository {
+class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
+    TransactionCompleteDto, String, int> implements TransactionRepository {
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
     required this.localDataSource,
     required super.db,
   }) : super(syncHandler: syncHandler);
 
-  // final DriftSynchronizer<AppDatabase> synchronizer;
   final TransactionLocalDataSource localDataSource;
 
   @override
@@ -30,14 +29,16 @@ class TransactionRepositoryImpl
     String id,
     double? amount,
     String? description,
-    String? category,
+    List<String>? categoryIds,
+    DateTime? datetime,
   ) async {
     try {
       final transaction = await localDataSource.updateTransaction(
         id,
         amount,
         description,
-        category,
+        categoryIds,
+        datetime,
       );
 
       unawaited(put(transaction));
@@ -63,15 +64,15 @@ class TransactionRepositoryImpl
   Future<Either<Failure, Unit>> insertTransaction(
     double amount,
     String description,
-    String category,
+    List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
   ) async {
     try {
       final transaction = await localDataSource.insertTransaction(
-          amount, description, category, type, datetime);
+          amount, description, categoryIds, type, datetime);
 
-      unawaited(put(transaction));
+      unawaited(post(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
@@ -79,19 +80,21 @@ class TransactionRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<TransactionEntity>>> getAllTransactions() async {
+  Future<Either<Failure, List<TransactionCompleteEntity>>>
+      getAllTransactions() async {
     try {
       final transactions = await localDataSource.getAllTransactions();
-      return Right(TransactionMapper.toDomainList(transactions));
+      return Right(TransactionCompleteModelMapper.toDomainList(transactions));
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
     }
   }
 
   @override
-  Stream<Either<Failure, List<TransactionEntity>>> listenToTransactions() {
+  Stream<Either<Failure, List<TransactionCompleteEntity>>>
+      listenToTransactions() {
     return localDataSource.listenToTransaction().map((transactions) {
-      return Right(TransactionMapper.toDomainList(transactions));
+      return Right(TransactionCompleteModelMapper.toDomainList(transactions));
     });
   }
 }

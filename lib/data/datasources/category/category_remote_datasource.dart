@@ -41,7 +41,9 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   Future<Category?> getCategory(int id) async {
     final response = await dio.get('categories/$id');
     if (response.data == null) return null;
-    return Category.fromJson(response.data);
+
+    final apiResponse = ApiResponse.fromJson(response.data);
+    return Category.fromJson(apiResponse.data);
   }
 
   @override
@@ -75,7 +77,9 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         'description': category.description,
       },
     );
-    return Category.fromJson(response.data);
+
+    final apiResponse = ApiResponse.fromJson(response.data);
+    return Category.fromJson(apiResponse.data);
   }
 
   @override
