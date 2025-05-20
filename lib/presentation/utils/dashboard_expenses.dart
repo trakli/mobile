@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:trakli/core/utils/currency_formatter.dart';
 import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -33,22 +36,24 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
             ),
             RichText(
               text: TextSpan(
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: textColor,
-                ),
-                text: "Total Income: ",
-                children: [
-                  TextSpan(
-                    text: "138,000 XAF",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  )
-                ]
-              ),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: textColor,
+                  ),
+                  text: "Total Income: ",
+                  children: [
+                    TextSpan(
+                      text: CurrencyFormatter.formatAmountWithSymbol(
+                        context,
+                        138000,
+                      ),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                    )
+                  ]),
             ),
           ],
         ),
@@ -69,15 +74,17 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                   text: "Total Expense: ",
                   children: [
                     TextSpan(
-                      text: "24,478 XAF",
+                      text: CurrencyFormatter.formatAmountWithSymbol(
+                        context,
+                        24478,
+                      ),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).primaryColorDark,
                       ),
                     )
-                  ]
-              ),
+                  ]),
             ),
           ],
         ),
@@ -110,7 +117,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '138k',
+                          CurrencyFormatter.formatAmount(138000),
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.bold,
@@ -118,7 +125,11 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                           ),
                         ),
                         Text(
-                          "XAF",
+                          context
+                                  .watch<OnboardingCubit>()
+                                  .state
+                                  .currencySymbol ??
+                              "XAF",
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -132,7 +143,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '24k',
+                          CurrencyFormatter.formatAmount(24478),
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.bold,
@@ -140,7 +151,11 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                           ),
                         ),
                         Text(
-                          "XAF",
+                          context
+                                  .watch<OnboardingCubit>()
+                                  .state
+                                  .currencySymbol ??
+                              "XAF",
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,

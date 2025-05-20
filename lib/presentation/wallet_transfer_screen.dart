@@ -309,7 +309,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                 child: PrimaryButton(
                   onPress: () {
                     hideKeyBoard();
-                    if(_formKey.currentState!.validate()) {
+                    if (_formKey.currentState!.validate()) {
                       // Do something
                     }
                   },

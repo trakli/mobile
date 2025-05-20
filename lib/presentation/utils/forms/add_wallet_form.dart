@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/utils/currency_formatter.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -16,7 +17,6 @@ class AddWalletForm extends StatefulWidget {
 
 class _AddWalletFormState extends State<AddWalletForm> {
   Currency? currency;
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
               decoration: const InputDecoration(
                 hintText: "Enter name",
               ),
-              validator: (value){
-                if(value == null || value.isEmpty){
+              validator: (value) {
+                if (value == null || value.isEmpty) {
                   return "Name is required";
                 }
                 return null;
@@ -76,10 +76,10 @@ class _AddWalletFormState extends State<AddWalletForm> {
                           return "Amount is required";
                         }
                         final number = double.tryParse(value);
-                        if(number == null){
+                        if (number == null) {
                           return "Must be a number";
                         }
-                        if(number == 0){
+                        if (number == 0) {
                           return "Amount must not be 0";
                         }
                         return null;
@@ -91,14 +91,13 @@ class _AddWalletFormState extends State<AddWalletForm> {
                       showCurrencyPicker(
                         context: context,
                         theme: CurrencyPickerThemeData(
-                          bottomSheetHeight: 0.7.sh,
-                          backgroundColor: Colors.white,
-                          flagSize: 24.sp,
-                          subtitleTextStyle: TextStyle(
-                            fontSize: 12.sp,
-                            color: Theme.of(context).primaryColor,
-                          )
-                        ),
+                            bottomSheetHeight: 0.7.sh,
+                            backgroundColor: Colors.white,
+                            flagSize: 24.sp,
+                            subtitleTextStyle: TextStyle(
+                              fontSize: 12.sp,
+                              color: Theme.of(context).primaryColor,
+                            )),
                         onSelect: (Currency currencyValue) {
                           setState(() {
                             currency = currencyValue;
@@ -116,7 +115,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Text(currency?.code ?? "XAF"),
+                        child: Text(CurrencyFormatter.formatAmountWithSymbol(
+                            context, 0)),
                       ),
                     ),
                   )
@@ -143,39 +143,37 @@ class _AddWalletFormState extends State<AddWalletForm> {
             SizedBox(
               height: 54.h,
               width: double.infinity,
-              child: Builder(
-                builder: (context) {
-                  return ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        Theme.of(context).primaryColor,
-                      ),
+              child: Builder(builder: (context) {
+                return ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).primaryColor,
                     ),
-                    onPressed: () {
-                      hideKeyBoard();
-                      if(Form.of(context).validate()){
-                        // Do something
-                      }
-                    },
-                    child: Row(
-                      spacing: 8.w,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Create wallet"),
-                        SvgPicture.asset(
-                          Assets.images.add,
-                          width: 24,
-                          height: 24,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                }
-              ),
+                  ),
+                  onPressed: () {
+                    hideKeyBoard();
+                    if (Form.of(context).validate()) {
+                      // Do something
+                    }
+                  },
+                  child: Row(
+                    spacing: 8.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Create wallet"),
+                      SvgPicture.asset(
+                        Assets.images.add,
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              }),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/utils/currency_formatter.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -66,7 +67,10 @@ class WalletTile extends StatelessWidget {
                   ),
                   subtitle: Text(
                     LocaleKeys.balanceAmountWithCurrency.tr(
-                      args: ["300,000", "XAF"],
+                      args: [
+                        CurrencyFormatter.formatAmountWithSymbol(
+                            context, 300000)
+                      ],
                     ),
                     style: TextStyle(
                       fontSize: 24.sp,
@@ -246,7 +250,10 @@ class WalletTile extends StatelessWidget {
                           ),
                           Text(
                             LocaleKeys.balanceAmountWithCurrency.tr(
-                              args: ["150,000", "XAF"],
+                              args: [
+                                CurrencyFormatter.formatAmountWithSymbol(
+                                    context, 150000)
+                              ],
                             ),
                             style: TextStyle(
                               fontSize: 16.sp,
@@ -292,7 +299,10 @@ class WalletTile extends StatelessWidget {
                           ),
                           Text(
                             LocaleKeys.balanceAmountWithCurrency.tr(
-                              args: ["150,000", "XAF"],
+                              args: [
+                                CurrencyFormatter.formatAmountWithSymbol(
+                                    context, 150000)
+                              ],
                             ),
                             style: TextStyle(
                               fontSize: 16.sp,
