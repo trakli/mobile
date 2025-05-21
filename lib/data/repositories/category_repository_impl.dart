@@ -9,7 +9,7 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/repositories/category_repository.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:trakli/data/sync/category_sync_handler.dart';
-import 'package:trakli/data/mapper/category_mapper.dart';
+import 'package:trakli/data/mappers/category_mapper.dart';
 
 @LazySingleton(as: CategoryRepository)
 class CategoryRepositoryImpl

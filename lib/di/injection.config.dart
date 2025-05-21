@@ -27,18 +27,27 @@ import '../data/datasources/auth/preference_manager.dart' as _i683;
 import '../data/datasources/auth/token_manager.dart' as _i483;
 import '../data/datasources/category/category_local_datasource.dart' as _i148;
 import '../data/datasources/category/category_remote_datasource.dart' as _i558;
+import '../data/datasources/exchange-rate/exchange_rate_local_datasource.dart'
+    as _i900;
+import '../data/datasources/exchange-rate/exchange_rate_remote_datasource.dart'
+    as _i632;
+import '../data/datasources/onboarding/onboarding_local_data_source.dart'
+    as _i480;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
     as _i662;
 import '../data/datasources/transaction/transaction_remote_datasource.dart'
     as _i79;
+import '../data/mappers/onboarding_mapper.dart' as _i481;
 import '../data/repositories/auth_repository_imp.dart' as _i135;
 import '../data/repositories/category_repository_impl.dart' as _i324;
+import '../data/repositories/exchange_rate_imp.dart' as _i827;
 import '../data/repositories/onboarding_repository_impl.dart' as _i386;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/sync/category_sync_handler.dart' as _i463;
 import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
+import '../domain/repositories/exchange_rate_repository.dart' as _i1057;
 import '../domain/repositories/onboarding_repository.dart' as _i867;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
@@ -58,6 +67,7 @@ import '../domain/usecases/category/delete_category_usecase.dart' as _i292;
 import '../domain/usecases/category/get_categories_usecase.dart' as _i961;
 import '../domain/usecases/category/listen_to_categories_usecase.dart' as _i500;
 import '../domain/usecases/category/update_category_usecase.dart' as _i986;
+import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/onboarding/get_onboarding_state.dart' as _i575;
 import '../domain/usecases/onboarding/save_onboarding_state.dart' as _i243;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
@@ -75,6 +85,7 @@ import '../presentation/auth/cubits/auth/auth_cubit.dart' as _i872;
 import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
+import '../presentation/exchange_rate/cubit/exchange_rate_cubit.dart' as _i311;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 
@@ -91,8 +102,11 @@ _i174.GetIt $initGetIt(
   );
   final injectHttpClientModule = _$InjectHttpClientModule();
   final syncModule = _$SyncModule();
+  gh.factory<_i481.OnboardingMapper>(() => _i481.OnboardingMapper());
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
+  gh.factory<_i632.ExchangeRateRemoteDataSource>(
+      () => _i632.ExchangeRateRemoteDataSourceImpl());
   gh.singleton<_i789.SharedPrefs>(() => _i789.SharedPrefsImpl());
   gh.factory<_i483.TokenManager>(() => const _i483.TokenManagerImpl());
   gh.factory<String>(
@@ -115,21 +129,27 @@ _i174.GetIt $initGetIt(
         gh<_i704.AppDatabase>(),
         gh<_i558.CategoryRemoteDataSource>(),
       ));
+  gh.factory<_i480.OnboardingLocalDataSource>(
+      () => _i480.OnboardingLocalDataSourceImpl(gh<_i683.PreferenceManager>()));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
-  gh.factory<_i867.OnboardingRepository>(
-      () => _i386.OnboardingRepositoryImpl(gh<_i683.PreferenceManager>()));
-  gh.factory<_i243.SaveOnboardingState>(
-      () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
-  gh.factory<_i575.GetOnboardingState>(
-      () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i900.ExchangeRateLocalDataSource>(() =>
+      _i900.ExchangeRateLocalDataSourceImpl(gh<_i683.PreferenceManager>()));
   gh.lazySingleton<_i410.CategoryRepository>(() => _i324.CategoryRepositoryImpl(
         syncHandler: gh<_i463.CategorySyncHandler>(),
         localDataSource: gh<_i148.CategoryLocalDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
+  gh.factory<_i867.OnboardingRepository>(() =>
+      _i386.OnboardingRepositoryImpl(gh<_i480.OnboardingLocalDataSource>()));
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.singleton<_i1057.ExchangeRateRepository>(
+      () => _i827.ExchangeRateRepositoryImpl(
+            remoteDataSource: gh<_i632.ExchangeRateRemoteDataSource>(),
+            localDataSource: gh<_i900.ExchangeRateLocalDataSource>(),
+            onboardingLocalDataSource: gh<_i480.OnboardingLocalDataSource>(),
+          ));
   gh.factory<_i986.UpdateCategoryUseCase>(
       () => _i986.UpdateCategoryUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i292.DeleteCategoryUseCase>(
@@ -138,10 +158,6 @@ _i174.GetIt $initGetIt(
       () => _i445.AddCategoryUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i961.GetCategoriesUseCase>(
       () => _i961.GetCategoriesUseCase(gh<_i410.CategoryRepository>()));
-  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
-        gh<_i575.GetOnboardingState>(),
-        gh<_i243.SaveOnboardingState>(),
-      ));
   gh.singleton<_i800.AuthRepository>(() => _i135.AuthRepositoryImpl(
         remoteDataSource: gh<_i496.AuthRemoteDataSource>(),
         localDataSource: gh<_i276.AuthLocalDataSource>(),
@@ -185,6 +201,12 @@ _i174.GetIt $initGetIt(
       () => _i2.OnboardingCompleted(gh<_i800.AuthRepository>()));
   gh.factory<_i880.GetLoggedInUser>(
       () => _i880.GetLoggedInUser(gh<_i800.AuthRepository>()));
+  gh.factory<_i243.SaveOnboardingState>(
+      () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i575.GetOnboardingState>(
+      () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i397.ListenExchangeRate>(
+      () => _i397.ListenExchangeRate(gh<_i1057.ExchangeRateRepository>()));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
         gh<_i768.LoginWithEmailPassword>(),
         gh<_i723.LoginWithPhonePassword>(),
@@ -205,14 +227,24 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i947.GetAllTransactionsUseCase>(
       () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i669.CreateTransactionUseCase>(
-      () => _i669.CreateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i973.ListenToTransactionsUseCase>(() =>
       _i973.ListenToTransactionsUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i241.UpdateTransactionUseCase>(
-      () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
+        gh<_i575.GetOnboardingState>(),
+        gh<_i243.SaveOnboardingState>(),
+      ));
+  gh.factory<_i669.CreateTransactionUseCase>(
+      () => _i669.CreateTransactionUseCase(
+            gh<_i118.TransactionRepository>(),
+            gh<_i1057.ExchangeRateRepository>(),
+          ));
+  gh.factory<_i241.UpdateTransactionUseCase>(
+      () => _i241.UpdateTransactionUseCase(
+            gh<_i118.TransactionRepository>(),
+            gh<_i1057.ExchangeRateRepository>(),
+          ));
   gh.factory<_i117.TransactionCubit>(() => _i117.TransactionCubit(
         getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
         createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
@@ -232,6 +264,8 @@ _i174.GetIt $initGetIt(
         dio: gh<_i361.Dio>(),
         networkInfo: gh<_i6.NetworkInfo>(),
       ));
+  gh.factory<_i311.ExchangeRateCubit>(
+      () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   return getIt;
 }
 

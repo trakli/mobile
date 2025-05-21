@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
@@ -186,7 +187,11 @@ class _TransactionTileState extends State<TransactionTile> {
                 Column(
                   children: [
                     Text(
-                      "${transaction.amount} XAF",
+                      CurrencyFormater.formatAmountWithSymbol(
+                        context,
+                        transaction.amount,
+                        compact: true,
+                      ),
                       style: TextStyle(
                         color: widget.accentColor,
                         fontSize: 12.sp,

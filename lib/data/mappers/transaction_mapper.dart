@@ -1,6 +1,6 @@
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
-import 'package:trakli/data/mapper/category_mapper.dart';
+import 'package:trakli/data/mappers/category_mapper.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 

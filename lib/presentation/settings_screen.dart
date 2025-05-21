@@ -5,9 +5,11 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
@@ -23,8 +25,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  Currency? currency;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,55 +69,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 size: 16.sp,
               ),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: () {
-                showCurrencyPicker(
-                  context: context,
-                  theme: CurrencyPickerThemeData(
-                    bottomSheetHeight: 0.7.sh,
-                    backgroundColor: Colors.white,
-                    flagSize: 24.sp,
-                    subtitleTextStyle: TextStyle(
-                      fontSize: 12.sp,
+            BlocBuilder<OnboardingCubit, OnboardingState>(
+              builder: (context, state) {
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    showCurrencyPicker(
+                      context: context,
+                      theme: CurrencyPickerThemeData(
+                        bottomSheetHeight: 0.7.sh,
+                        backgroundColor: Colors.white,
+                        flagSize: 24.sp,
+                        subtitleTextStyle: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      onSelect: (Currency currencyValue) {
+                        context
+                            .read<OnboardingCubit>()
+                            .selectCurrency(currencyValue);
+                      },
+                    );
+                  },
+                  leading: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                    ),
+                    child: Icon(
+                      Icons.currency_exchange,
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  onSelect: (Currency currencyValue) {
-                    setState(() {
-                      currency = currencyValue;
-                    });
-                  },
+                  title: const Text(
+                    "Default currency",
+                  ),
+                  subtitle: state.entity?.selectedCurrency != null
+                      ? Text(
+                          state.entity?.selectedCurrency?.code ?? "",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )
+                      : null,
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16.sp,
+                  ),
                 );
               },
-              leading: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                ),
-                child: Icon(
-                  Icons.currency_exchange,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              title: const Text(
-                "Default currency",
-              ),
-              subtitle: currency != null
-                  ? Text(
-                      currency?.code ?? "",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    )
-                  : null,
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                size: 16.sp,
-              ),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,

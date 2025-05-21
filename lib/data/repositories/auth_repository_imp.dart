@@ -10,7 +10,7 @@ import 'package:trakli/data/datasources/auth/auth_local_data_source.dart';
 import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
-import 'package:trakli/data/mapper/user_mapper.dart';
+import 'package:trakli/data/mappers/user_mapper.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
@@ -33,9 +33,6 @@ class AuthRepositoryImpl implements AuthRepository {
         _localDataSource = localDataSource,
         _tokenManager = tokenManager,
         _preferenceManager = preferenceManager;
-
-  // @override
-  // Stream<AuthStatus> get authStatus => _authStatusController.stream;
 
   @override
   Stream<AuthStatus> get authStatus async* {
