@@ -10,7 +10,7 @@ import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/repositories/transaction_repository.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/datasources/transaction/transaction_local_datasource.dart';
-import 'package:trakli/data/mapper/transaction_mapper.dart';
+import 'package:trakli/data/mappers/transaction_mapper.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
 
 @LazySingleton(as: TransactionRepository)

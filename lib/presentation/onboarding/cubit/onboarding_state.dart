@@ -11,6 +11,10 @@ class OnboardingState with _$OnboardingState {
 
   OnboardingEntity? get entity =>
       this is _Success ? (this as _Success).entity : null;
+
+  String? get currencySymbol => this is _Success
+      ? (this as _Success).entity.selectedCurrency?.symbol
+      : null;
 }
 
- // Create state 
+// Create state

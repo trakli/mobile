@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formatter.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -115,7 +115,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Text(CurrencyFormatter.formatAmountWithSymbol(
+                        child: Text(CurrencyFormater.formatAmountWithSymbol(
                             context, 0)),
                       ),
                     ),

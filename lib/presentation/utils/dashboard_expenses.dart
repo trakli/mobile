@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:trakli/core/utils/currency_formatter.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
@@ -43,7 +43,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                   text: "Total Income: ",
                   children: [
                     TextSpan(
-                      text: CurrencyFormatter.formatAmountWithSymbol(
+                      text: CurrencyFormater.formatAmountWithSymbol(
                         context,
                         138000,
                       ),
@@ -74,7 +74,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                   text: "Total Expense: ",
                   children: [
                     TextSpan(
-                      text: CurrencyFormatter.formatAmountWithSymbol(
+                      text: CurrencyFormater.formatAmountWithSymbol(
                         context,
                         24478,
                       ),
@@ -117,7 +117,11 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          CurrencyFormatter.formatAmount(138000),
+                          CurrencyFormater.formatAmount(
+                            context,
+                            138000,
+                            compact: true,
+                          ),
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.bold,
@@ -143,7 +147,11 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          CurrencyFormatter.formatAmount(24478),
+                          CurrencyFormater.formatAmount(
+                            context,
+                            24478,
+                            compact: true,
+                          ),
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.bold,

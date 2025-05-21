@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trakli/data/datasources/exchange-rate/dto/exchange_rate_dto.dart';
 
 abstract class PreferenceManager {
   Future<void> saveUserId(int userId);
@@ -8,6 +11,9 @@ abstract class PreferenceManager {
   Future<void> clearAll();
   Future<void> onboardingCompleted();
   Future<bool> isOnboardingCompleted();
+  Future<void> saveExchangeRate(
+      String baseCurrency, ExchangeRateDto exchangeRate);
+  Future<ExchangeRateDto?> getExchangeRate(String baseCurrency);
   SharedPreferences get prefs;
 }
 
@@ -58,5 +64,20 @@ class PreferenceManagerImpl implements PreferenceManager {
   @override
   Future<void> clearAll() async {
     await _prefs.clear();
+  }
+
+  @override
+  Future<ExchangeRateDto?> getExchangeRate(String baseCurrency) async {
+    final exchangeRate = _prefs.getString(baseCurrency);
+    if (exchangeRate == null) {
+      return null;
+    }
+    return ExchangeRateDto.fromJson(jsonDecode(exchangeRate));
+  }
+
+  @override
+  Future<void> saveExchangeRate(
+      String baseCurrency, ExchangeRateDto exchangeRate) async {
+    _prefs.setString(baseCurrency, jsonEncode(exchangeRate.toJson()));
   }
 }

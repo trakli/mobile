@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
@@ -51,12 +52,17 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final pieData = StatisticsProvider().getPieData;
   final _formKey = GlobalKey<FormState>();
 
+  setAmountController(Currency? currency) {
+    amountController.text = convertAmountFromCurrencyWihContext(context,
+            widget.transactionCompleteEntity!.transaction.amount, currency)
+        .toStringAsFixed(decimalDigits);
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.transactionCompleteEntity != null) {
-      amountController.text =
-          widget.transactionCompleteEntity!.transaction.amount.toString();
+      setAmountController(currency);
       descriptionController.text =
           widget.transactionCompleteEntity!.transaction.description;
       date = widget.transactionCompleteEntity!.transaction.datetime;
@@ -140,6 +146,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                         onSelect: (Currency currencyValue) {
                           setState(() {
                             currency = currencyValue;
+                            setAmountController(currency);
                           });
                         },
                       );
@@ -640,6 +647,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                     .transaction.clientId,
                                 amount: amount,
                                 description: description,
+                                currency: currency?.code,
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
@@ -647,6 +655,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 description: description,
                                 type: widget.transactionType,
                                 datetime: date,
+                                currency: currency?.code,
                               );
 
                           Navigator.pop(context);

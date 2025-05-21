@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/core/utils/currency_formatter.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 
 class GraphWidget extends StatelessWidget {
   const GraphWidget({super.key});
@@ -14,7 +14,7 @@ class GraphWidget extends StatelessWidget {
     final List<ChartStatistics> chartData = StatisticsProvider().getChartData();
     return SfCartesianChart(
       title: ChartTitle(
-        text: CurrencyFormatter.formatAmountWithSymbol(context, 138000),
+        text: CurrencyFormater.formatAmountWithSymbol(context, 138000),
         alignment: ChartAlignment.near,
         textStyle: TextStyle(
           fontSize: 20.sp,
