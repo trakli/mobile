@@ -1,7 +1,7 @@
-import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -30,12 +30,10 @@ class CategoryTile extends StatefulWidget {
 }
 
 class _CategoryTileState extends State<CategoryTile> {
-  Currency? currency;
   final int randomValue = math.Random().nextInt(5000);
 
   @override
   void initState() {
-    currency = CurrencyService().findByCode("USD");
     super.initState();
   }
 
@@ -234,10 +232,10 @@ class _CategoryTileState extends State<CategoryTile> {
                               widget.category.type.name == 'expense' ? "-" : "",
                           children: [
                             TextSpan(
-                              text: currency?.symbol ?? "",
-                            ),
-                            TextSpan(
-                              text: randomValue.toString(),
+                              text: CurrencyFormater.formatAmountWithSymbol(
+                                context,
+                                randomValue.toDouble(),
+                              ),
                             ),
                           ],
                         ),

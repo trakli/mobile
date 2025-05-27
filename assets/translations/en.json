@@ -88,7 +88,7 @@
   "profile": "Profile",
   "settings": "Settings",
   "typeHere": "Type here",
-  "balanceAmountWithCurrency": "{} {}",
+  "balanceAmountWithCurrency": "{}",
   "totalBalance": "Total balance",
   "selectLanguage": "Select language",
   "seeAll": "See all",

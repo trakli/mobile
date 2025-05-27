@@ -18,3 +18,14 @@ DateTime? dateTimeFromStringNull(String? isoString) {
   if (isoString == null) return null;
   return DateTime.parse(isoString);
 }
+
+DateTime dateTimeFromUnixSeconds(num timestamp) {
+  return DateTime.fromMillisecondsSinceEpoch(
+    timestamp.toInt() * 1000,
+    isUtc: true,
+  );
+}
+
+num dateTimeToUnixSeconds(DateTime datetime) {
+  return datetime.millisecondsSinceEpoch / 1000;
+}

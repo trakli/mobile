@@ -9,8 +9,11 @@ class OnboardingState with _$OnboardingState {
 
   const OnboardingState._();
 
-  OnboardingEntity? get entity =>
-      this is _Success ? (this as _Success).entity : null;
-}
+  OnboardingEntity? get entity => whenOrNull(
+        success: (entity) => entity,
+      );
 
- // Create state 
+  String? get currencySymbol => this is _Success
+      ? (this as _Success).entity.selectedCurrency?.symbol
+      : null;
+}

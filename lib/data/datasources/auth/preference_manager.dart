@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trakli/core/constants/key_constants.dart';
+import 'package:trakli/data/datasources/exchange-rate/dto/exchange_rate_dto.dart';
 
 abstract class PreferenceManager {
   Future<void> saveUserId(int userId);
@@ -8,14 +12,18 @@ abstract class PreferenceManager {
   Future<void> clearAll();
   Future<void> onboardingCompleted();
   Future<bool> isOnboardingCompleted();
+  Future<void> saveExchangeRate(
+      String baseCurrency, ExchangeRateDto exchangeRate);
+  Future<ExchangeRateDto?> getExchangeRate(String baseCurrency);
+
+  Future<bool> setString(String key, String value);
+  Future<bool> remove(String key);
+  String? getString(String key);
   SharedPreferences get prefs;
 }
 
 @Singleton(as: PreferenceManager)
 class PreferenceManagerImpl implements PreferenceManager {
-  static const _userIdKey = 'user_id';
-  static const _onboardingCompletedKey = 'onboarding_completed';
-
   late final SharedPreferences _prefs;
 
   @override
@@ -23,27 +31,27 @@ class PreferenceManagerImpl implements PreferenceManager {
 
   @override
   Future<void> saveUserId(int userId) async {
-    await _prefs.setInt(_userIdKey, userId);
+    await _prefs.setInt(KeyConstants.userIdKey, userId);
   }
 
   @override
   Future<void> onboardingCompleted() async {
-    await _prefs.setBool(_onboardingCompletedKey, true);
+    await _prefs.setBool(KeyConstants.onboardingCompletedKey, true);
   }
 
   @override
   Future<bool> isOnboardingCompleted() async {
-    return _prefs.getBool(_onboardingCompletedKey) ?? false;
+    return _prefs.getBool(KeyConstants.onboardingCompletedKey) ?? false;
   }
 
   @override
   Future<int?> getUserId() async {
-    return _prefs.getInt(_userIdKey);
+    return _prefs.getInt(KeyConstants.userIdKey);
   }
 
   @override
   Future<void> clearUserId() async {
-    await _prefs.remove(_userIdKey);
+    await _prefs.remove(KeyConstants.userIdKey);
   }
 
   Future<void> initStart() async {
@@ -58,5 +66,37 @@ class PreferenceManagerImpl implements PreferenceManager {
   @override
   Future<void> clearAll() async {
     await _prefs.clear();
+  }
+
+  @override
+  Future<ExchangeRateDto?> getExchangeRate(String baseCurrency) async {
+    final exchangeRate =
+        _prefs.getString('${KeyConstants.exchangeRatePrefix}$baseCurrency');
+    if (exchangeRate == null) {
+      return null;
+    }
+    return ExchangeRateDto.fromJson(jsonDecode(exchangeRate));
+  }
+
+  @override
+  Future<void> saveExchangeRate(
+      String baseCurrency, ExchangeRateDto exchangeRate) async {
+    _prefs.setString('${KeyConstants.exchangeRatePrefix}$baseCurrency',
+        jsonEncode(exchangeRate.toJson()));
+  }
+
+  @override
+  String? getString(String key) {
+    return _prefs.getString(key);
+  }
+
+  @override
+  Future<bool> setString(String key, String value) {
+    return _prefs.setString(key, value);
+  }
+
+  @override
+  Future<bool> remove(String key) {
+    return _prefs.remove(key);
   }
 }

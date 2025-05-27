@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
@@ -53,8 +54,27 @@ class _AddTransactionFormCompactLayoutState
   CategoryEntity? _selectedCategory;
   final _formKey = GlobalKey<FormState>();
 
-  Currency? currency;
+  Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
+
+  void setNewCurrency(Currency currencyValue) {
+    if (currencyValue.code == currentCurrency?.code) {
+      return;
+    } else {
+      currentCurrency = currencyValue;
+      setAmountController(currentCurrency);
+    }
+  }
+
+  setAmountController(Currency? currency) {
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text = convertAmountFromCurrencyWihContext(context,
+              widget.transactionCompleteEntity!.transaction.amount, currency)
+          .toStringAsFixed(decimalDigits);
+    } else {
+      amountController.text = '';
+    }
+  }
 
   @override
   void initState() {
@@ -64,8 +84,7 @@ class _AddTransactionFormCompactLayoutState
     // timeController.text = timeFormat.format(date);
 
     if (widget.transactionCompleteEntity != null) {
-      amountController.text =
-          widget.transactionCompleteEntity!.transaction.amount.toString();
+      setAmountController(null);
       descriptionController.text =
           widget.transactionCompleteEntity!.transaction.description;
       date = widget.transactionCompleteEntity!.transaction.datetime;
@@ -84,7 +103,7 @@ class _AddTransactionFormCompactLayoutState
     }
 
     final onboardingEntity = context.read<OnboardingCubit>().state.entity;
-    currency = onboardingEntity?.selectedCurrency;
+    currentCurrency = onboardingEntity?.selectedCurrency;
   }
 
   @override
@@ -162,7 +181,7 @@ class _AddTransactionFormCompactLayoutState
                                   )),
                               onSelect: (Currency currencyValue) {
                                 setState(() {
-                                  currency = currencyValue;
+                                  setNewCurrency(currencyValue);
                                 });
                               },
                             );
@@ -177,7 +196,7 @@ class _AddTransactionFormCompactLayoutState
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Center(
-                              child: Text(currency?.code ?? "XAF"),
+                              child: Text(currentCurrency?.code ?? "XAF"),
                             ),
                           ),
                         )
@@ -659,6 +678,7 @@ class _AddTransactionFormCompactLayoutState
                                 categoryIds: _selectedCategory != null
                                     ? [_selectedCategory!.clientId]
                                     : [],
+                                currency: currentCurrency?.code,
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
@@ -669,6 +689,7 @@ class _AddTransactionFormCompactLayoutState
                                     : [],
                                 type: widget.transactionType,
                                 datetime: date,
+                                currency: currentCurrency?.code,
                               );
                         }
                         Navigator.pop(context);

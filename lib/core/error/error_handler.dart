@@ -10,13 +10,13 @@ class ErrorHandler {
     try {
       return await apiCall();
     } on DioException catch (err) {
-      throw _handleDioException(err);
+      throw handleDioException(err);
     } catch (error, stacktrace) {
-      throw _handleUnknownException(error, stacktrace);
+      throw handleUnknownException(error, stacktrace);
     }
   }
 
-  static ApiException _handleDioException(DioException err) {
+  static ApiException handleDioException(DioException err) {
     if (err.type == DioExceptionType.connectionError) {
       return NetworkException('No internet connection');
     }
@@ -65,7 +65,7 @@ class ErrorHandler {
     // }
   }
 
-  static ApiException _handleUnknownException(
+  static ApiException handleUnknownException(
     Object error,
     StackTrace stacktrace,
   ) {

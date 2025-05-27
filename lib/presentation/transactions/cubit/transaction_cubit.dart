@@ -59,6 +59,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     List<String>? categoryIds,
     required TransactionType type,
     required DateTime datetime,
+    required String? currency,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
@@ -68,6 +69,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         categoryIds: categoryIds ?? [],
         type: type,
         datetime: datetime,
+        currency: currency,
       ),
     );
     result.fold(
@@ -90,6 +92,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
+    String? currency,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
@@ -99,6 +102,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         description: description,
         categoryIds: categoryIds,
         datetime: datetime,
+        currency: currency,
       ),
     );
     result.fold(
