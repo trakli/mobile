@@ -46,10 +46,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
 
     tabController = TabController(length: controlLenght, vsync: this);
     if (widget.transaction != null) {
-      tabController.index =
-          widget.transaction!.transaction.type == TransactionType.income
-              ? 0
-              : 1;
+      tabController.index = 0;
     }
     tabController.addListener(() {
       setState(() {});
