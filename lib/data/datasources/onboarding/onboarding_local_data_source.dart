@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/data/models/onboarding_model.dart';
 
@@ -11,7 +12,6 @@ abstract class OnboardingLocalDataSource {
 
 @Injectable(as: OnboardingLocalDataSource)
 class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
-  static const String _currencyKey = 'selected_currency';
   final PreferenceManager _preferenceManager;
 
   OnboardingLocalDataSourceImpl(this._preferenceManager);
@@ -19,14 +19,15 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
   @override
   Future<void> saveOnboardingState(OnboardingModel model) async {
     if (model.selectedCurrency != null) {
-      await _preferenceManager.prefs
-          .setString(_currencyKey, jsonEncode(model.toJson()));
+      await _preferenceManager.setString(
+          KeyConstants.selectedCurrency, jsonEncode(model.toJson()));
     }
   }
 
   @override
   Future<OnboardingModel?> getOnboardingState() async {
-    final savedCurrencyCode = _preferenceManager.prefs.getString(_currencyKey);
+    final savedCurrencyCode =
+        _preferenceManager.getString(KeyConstants.selectedCurrency);
 
     if (savedCurrencyCode == null) {
       return null;
@@ -38,6 +39,6 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
 
   @override
   Future<void> resetOnboarding() async {
-    await _preferenceManager.prefs.remove(_currencyKey);
+    await _preferenceManager.remove(KeyConstants.selectedCurrency);
   }
 }

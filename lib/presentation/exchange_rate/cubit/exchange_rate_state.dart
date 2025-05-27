@@ -8,5 +8,5 @@ class ExchangeRateState with _$ExchangeRateState {
   const ExchangeRateState._();
 
   ExchangeRateEntity? get entity =>
-      this is _Success ? (this as _Success).entity : null;
+      whenOrNull(success: (entity) => entity);
 }

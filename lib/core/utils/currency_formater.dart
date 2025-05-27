@@ -21,7 +21,7 @@ class CurrencyFormater {
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
     double amountInBaseCurrency =
-        convertAmounFromDefault(amount, currency, exchangeRateEntity);
+        convertAmountFromDefault(amount, currency, exchangeRateEntity);
 
     if (currency?.symbolOnLeft == false) {
       NumberFormat format;
@@ -70,7 +70,7 @@ class CurrencyFormater {
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
     double amountInBaseCurrency =
-        convertAmounFromDefault(amount, currency, exchangeRateEntity);
+        convertAmountFromDefault(amount, currency, exchangeRateEntity);
 
     NumberFormat format;
     if (compact) {
@@ -89,7 +89,7 @@ class CurrencyFormater {
     return cu;
   }
 
-  static double convertAmounFromDefault(
+  static double convertAmountFromDefault(
     double amount,
     Currency? currency,
     ExchangeRateEntity? exchangeRateEntity,

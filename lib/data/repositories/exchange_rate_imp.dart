@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/data/datasources/exchange-rate/exchange_rate_local_datasource.dart';
@@ -46,14 +47,20 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
 
     if ((exchangeRate == null) ||
         exchangeRate.timeNextUpdated.isBefore(DateTime.now())) {
-      final exchangeRateRemote = await remoteDataSource.getExchangeRate();
-      final exchangeRateEntity =
-          ExchangeRateMapper.toDomain(exchangeRateRemote);
+      try {
+        final exchangeRateRemote = await remoteDataSource.getExchangeRate();
+        final exchangeRateEntity =
+            ExchangeRateMapper.toDomain(exchangeRateRemote);
 
-      await localDataSource.saveExchangeRate(
-          exchangeRateRemote.baseCode, exchangeRateRemote);
+        await localDataSource.saveExchangeRate(
+            exchangeRateRemote.baseCode, exchangeRateRemote);
 
-      yield exchangeRateEntity;
+        yield exchangeRateEntity;
+      } on DioException catch (err) {
+        throw ErrorHandler.handleDioException(err);
+      } catch (error, stacktrace) {
+        throw ErrorHandler.handleUnknownException(error, stacktrace);
+      }
     }
 
     yield* _exchangeRateController.stream;

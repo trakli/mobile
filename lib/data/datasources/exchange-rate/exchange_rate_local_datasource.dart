@@ -22,6 +22,8 @@ class ExchangeRateLocalDataSourceImpl implements ExchangeRateLocalDataSource {
     return exchangeRate;
   }
 
+  /// Saves exchange rate data for the given base currency.
+  /// May throw exceptions if storage operations fail.
   @override
   Future<void> saveExchangeRate(
       String baseCurrency, ExchangeRateDto exchangeRate) async {

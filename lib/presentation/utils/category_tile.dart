@@ -237,9 +237,6 @@ class _CategoryTileState extends State<CategoryTile> {
                                 randomValue.toDouble(),
                               ),
                             ),
-                            // TextSpan(
-                            //   text: randomValue.toString(),
-                            // ),
                           ],
                         ),
                       )
