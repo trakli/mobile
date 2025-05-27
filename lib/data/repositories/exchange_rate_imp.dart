@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
@@ -30,24 +31,30 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
 
   @override
   Stream<ExchangeRateEntity> get listenToExchangeRate async* {
-    final exchangeRateDto = await localDataSource.getExchangeRate(defaultCurrencyCode);
+    final exchangeRateDto =
+        await localDataSource.getExchangeRate(defaultCurrencyCode);
     if (exchangeRateDto != null) {
       yield ExchangeRateMapper.toDomain(exchangeRateDto);
     }
 
-    final exchangeRate = await localDataSource.getExchangeRate(defaultCurrencyCode);
+    final exchangeRate =
+        await localDataSource.getExchangeRate(defaultCurrencyCode);
 
     if (exchangeRate != null) {
       yield ExchangeRateMapper.toDomain(exchangeRate);
     }
 
-    final exchangeRateRemote = await remoteDataSource.getExchangeRate();
-    final exchangeRateEntity = ExchangeRateMapper.toDomain(exchangeRateRemote);
+    if ((exchangeRate == null) ||
+        exchangeRate.timeNextUpdated.isBefore(DateTime.now())) {
+      final exchangeRateRemote = await remoteDataSource.getExchangeRate();
+      final exchangeRateEntity =
+          ExchangeRateMapper.toDomain(exchangeRateRemote);
 
-    await localDataSource.saveExchangeRate(
-        exchangeRateRemote.baseCode, exchangeRateRemote);
+      await localDataSource.saveExchangeRate(
+          exchangeRateRemote.baseCode, exchangeRateRemote);
 
-    yield exchangeRateEntity;
+      yield exchangeRateEntity;
+    }
 
     yield* _exchangeRateController.stream;
   }
