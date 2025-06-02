@@ -16,7 +16,8 @@ import 'package:trakli/presentation/utils/globals.dart';
 class MainNavigationScreen extends StatelessWidget {
   MainNavigationScreen({super.key});
 
-  final List<Widget> screens = NavigationScreen.values.map((e) => e.screen).toList();
+  final List<Widget> screens =
+      NavigationScreen.values.map((e) => e.screen).toList();
 
   @override
   Widget build(BuildContext context) {

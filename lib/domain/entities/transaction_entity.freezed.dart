@@ -29,6 +29,7 @@ mixin _$TransactionEntity {
   TransactionType get type => throw _privateConstructorUsedError;
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
   String get rev => throw _privateConstructorUsedError;
+  String? get walletClientId => throw _privateConstructorUsedError;
 
   /// Serializes this TransactionEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,7 +56,8 @@ abstract class $TransactionEntityCopyWith<$Res> {
       DateTime datetime,
       TransactionType type,
       DateTime? lastSyncedAt,
-      String rev});
+      String rev,
+      String? walletClientId});
 }
 
 /// @nodoc
@@ -82,6 +84,7 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
     Object? type = null,
     Object? lastSyncedAt = freezed,
     Object? rev = null,
+    Object? walletClientId = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -120,6 +123,10 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
           ? _value.rev
           : rev // ignore: cast_nullable_to_non_nullable
               as String,
+      walletClientId: freezed == walletClientId
+          ? _value.walletClientId
+          : walletClientId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -141,7 +148,8 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
       DateTime datetime,
       TransactionType type,
       DateTime? lastSyncedAt,
-      String rev});
+      String rev,
+      String? walletClientId});
 }
 
 /// @nodoc
@@ -166,6 +174,7 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
     Object? type = null,
     Object? lastSyncedAt = freezed,
     Object? rev = null,
+    Object? walletClientId = freezed,
   }) {
     return _then(_$TransactionEntityImpl(
       clientId: null == clientId
@@ -204,6 +213,10 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
           ? _value.rev
           : rev // ignore: cast_nullable_to_non_nullable
               as String,
+      walletClientId: freezed == walletClientId
+          ? _value.walletClientId
+          : walletClientId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -220,7 +233,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
       required this.datetime,
       required this.type,
       this.lastSyncedAt,
-      this.rev = '1'});
+      this.rev = '1',
+      this.walletClientId});
 
   factory _$TransactionEntityImpl.fromJson(Map<String, dynamic> json) =>
       _$$TransactionEntityImplFromJson(json);
@@ -244,10 +258,12 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   @override
   @JsonKey()
   final String rev;
+  @override
+  final String? walletClientId;
 
   @override
   String toString() {
-    return 'TransactionEntity(clientId: $clientId, amount: $amount, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, datetime: $datetime, type: $type, lastSyncedAt: $lastSyncedAt, rev: $rev)';
+    return 'TransactionEntity(clientId: $clientId, amount: $amount, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, datetime: $datetime, type: $type, lastSyncedAt: $lastSyncedAt, rev: $rev, walletClientId: $walletClientId)';
   }
 
   @override
@@ -269,13 +285,15 @@ class _$TransactionEntityImpl implements _TransactionEntity {
             (identical(other.type, type) || other.type == type) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
-            (identical(other.rev, rev) || other.rev == rev));
+            (identical(other.rev, rev) || other.rev == rev) &&
+            (identical(other.walletClientId, walletClientId) ||
+                other.walletClientId == walletClientId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, clientId, amount, description,
-      createdAt, updatedAt, datetime, type, lastSyncedAt, rev);
+      createdAt, updatedAt, datetime, type, lastSyncedAt, rev, walletClientId);
 
   /// Create a copy of TransactionEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -304,7 +322,8 @@ abstract class _TransactionEntity implements TransactionEntity {
       required final DateTime datetime,
       required final TransactionType type,
       final DateTime? lastSyncedAt,
-      final String rev}) = _$TransactionEntityImpl;
+      final String rev,
+      final String? walletClientId}) = _$TransactionEntityImpl;
 
   factory _TransactionEntity.fromJson(Map<String, dynamic> json) =
       _$TransactionEntityImpl.fromJson;
@@ -327,6 +346,8 @@ abstract class _TransactionEntity implements TransactionEntity {
   DateTime? get lastSyncedAt;
   @override
   String get rev;
+  @override
+  String? get walletClientId;
 
   /// Create a copy of TransactionEntity
   /// with the given fields replaced by the non-null parameter values.

@@ -7,6 +7,5 @@ class ExchangeRateState with _$ExchangeRateState {
 
   const ExchangeRateState._();
 
-  ExchangeRateEntity? get entity =>
-      whenOrNull(success: (entity) => entity);
+  ExchangeRateEntity? get entity => whenOrNull(success: (entity) => entity);
 }

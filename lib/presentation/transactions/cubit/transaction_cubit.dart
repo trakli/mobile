@@ -60,6 +60,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required TransactionType type,
     required DateTime datetime,
     required String? currency,
+    required String walletClientId,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
@@ -70,6 +71,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         type: type,
         datetime: datetime,
         currency: currency,
+        walletClientId: walletClientId,
       ),
     );
     result.fold(

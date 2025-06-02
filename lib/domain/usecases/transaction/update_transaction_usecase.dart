@@ -2,7 +2,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/repositories/exchange_rate_repository.dart';
 import 'package:trakli/domain/repositories/transaction_repository.dart';
 
@@ -16,20 +15,21 @@ class UpdateTransactionUseCase
 
   @override
   Future<Either<Failure, Unit>> call(UpdateTransactionParams params) async {
-    final exchangeRateRequest = await exchangeRateRepository.getExchangeRate();
+    // final exchangeRateRequest = await exchangeRateRepository.getExchangeRate();
 
-    return exchangeRateRequest.fold((l) => Left(l), (exchangeRate) {
-      double amountInBaseCurrency =
-          convertAmountToDefault(params.amount!, params.currency, exchangeRate);
+    // return exchangeRateRequest.fold((l) => Left(l), (exchangeRate) {
+    //   double amountInBaseCurrency =
+    //       convertAmountToDefault(params.amount!, params.currency, exchangeRate);
 
-      return repository.updateTransaction(
-        params.id,
-        amountInBaseCurrency,
-        params.description,
-        params.categoryIds,
-        params.datetime,
-      );
-    });
+    return repository.updateTransaction(
+      params.id,
+      params.amount,
+      params.description,
+      params.categoryIds,
+      params.datetime,
+      params.walletClientId,
+    );
+    // });
   }
 }
 
@@ -40,6 +40,7 @@ class UpdateTransactionParams {
   final List<String>? categoryIds;
   final DateTime? datetime;
   final String? currency;
+  final String? walletClientId;
 
   UpdateTransactionParams({
     required this.id,
@@ -48,5 +49,6 @@ class UpdateTransactionParams {
     this.categoryIds,
     this.datetime,
     this.currency,
+    this.walletClientId,
   });
 }

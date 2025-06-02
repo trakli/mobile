@@ -5,13 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -48,14 +49,19 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   TextEditingController amountController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
+  TextEditingController walletController = TextEditingController();
   Currency? currency;
+  WalletEntity? selectedWallet;
   final pieData = StatisticsProvider().getPieData;
   final _formKey = GlobalKey<FormState>();
 
   setAmountController(Currency? currency) {
-    amountController.text = convertAmountFromCurrencyWihContext(context,
-            widget.transactionCompleteEntity!.transaction.amount, currency)
-        .toStringAsFixed(decimalDigits);
+    // amountController.text = convertAmountFromCurrencyWihContext(context,
+    //         widget.transactionCompleteEntity!.transaction.amount, currency)
+    //     .toStringAsFixed(decimalDigits);
+
+    amountController.text =
+        widget.transactionCompleteEntity!.transaction.amount.toString();
   }
 
   @override
@@ -70,6 +76,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
           .format(widget.transactionCompleteEntity!.transaction.datetime);
       timeController.text = timeFormat
           .format(widget.transactionCompleteEntity!.transaction.datetime);
+
+      if (widget.transactionCompleteEntity?.wallet != null) {
+        selectedWallet = widget.transactionCompleteEntity!.wallet;
+        walletController.text = selectedWallet!.name;
+      }
     } else {
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
@@ -186,10 +197,24 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                   Expanded(
                     child: TextFormField(
                       readOnly: true,
+                      controller: walletController,
                       onTap: () {
                         showCustomBottomSheet(
                           context,
-                          widget: const SelectWalletBottomSheet(),
+                          widget: BlocBuilder<WalletCubit, WalletState>(
+                            builder: (context, state) {
+                              return SelectWalletBottomSheet(
+                                wallets: state.wallets,
+                                onSelect: (wallet) {
+                                  setState(() {
+                                    selectedWallet = wallet;
+                                    walletController.text = wallet.name;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          ),
                         );
                       },
                       decoration: InputDecoration(
@@ -440,7 +465,20 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       onTap: () {
                         showCustomBottomSheet(
                           context,
-                          widget: const SelectWalletBottomSheet(),
+                          widget: BlocBuilder<WalletCubit, WalletState>(
+                            builder: (context, state) {
+                              return SelectWalletBottomSheet(
+                                wallets: state.wallets,
+                                onSelect: (wallet) {
+                                  setState(() {
+                                    selectedWallet = wallet;
+                                    categoryController.text = wallet.name;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          ),
                         );
                       },
                       decoration: InputDecoration(
@@ -649,13 +687,24 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 description: description,
                                 currency: currency?.code,
                               );
+                          Navigator.pop(context);
                         } else {
+                          if (selectedWallet == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please select a wallet'),
+                              ),
+                            );
+                            return;
+                          }
+
                           context.read<TransactionCubit>().addTransaction(
                                 amount: amount,
                                 description: description,
                                 type: widget.transactionType,
                                 datetime: date,
                                 currency: currency?.code,
+                                walletClientId: selectedWallet!.clientId,
                               );
 
                           Navigator.pop(context);

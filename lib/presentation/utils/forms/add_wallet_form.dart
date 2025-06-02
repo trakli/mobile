@@ -1,22 +1,100 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AddWalletForm extends StatefulWidget {
-  const AddWalletForm({super.key});
+  final WalletEntity? wallet;
+
+  const AddWalletForm({
+    super.key,
+    this.wallet,
+  });
 
   @override
   State<AddWalletForm> createState() => _AddWalletFormState();
 }
 
 class _AddWalletFormState extends State<AddWalletForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _balanceController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  late WalletType _selectedType;
   Currency? currency;
+  // Currency? defaultCurrency;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedType = widget.wallet?.type ?? WalletType.cash;
+    currency = context.read<OnboardingCubit>().state.entity?.selectedCurrency;
+
+    if (widget.wallet != null) {
+      _nameController.text = widget.wallet!.name;
+      _balanceController.text = widget.wallet!.balance.toString();
+      _descriptionController.text = widget.wallet!.description ?? '';
+      // Set the currency if it exists in the wallet
+      currency = widget.wallet!.currency ?? currency;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _balanceController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final walletCubit = context.read<WalletCubit>();
+
+      if (widget.wallet != null) {
+        // Update existing wallet
+        walletCubit.updateWallet(
+          clientId: widget.wallet!.clientId,
+          name: _nameController.text,
+          type: _selectedType,
+          balance: double.parse(_balanceController.text),
+          description: _descriptionController.text.isEmpty
+              ? null
+              : _descriptionController.text,
+        );
+      } else {
+        if (currency == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please select a currency'),
+            ),
+          );
+          return;
+        }
+        // Create new wallet
+        walletCubit.addWallet(
+          name: _nameController.text,
+          type: _selectedType,
+          balance: double.parse(_balanceController.text),
+          currency: currency!.code,
+          description: _descriptionController.text.isEmpty
+              ? null
+              : _descriptionController.text,
+        );
+      }
+      AppNavigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +104,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
         vertical: 16.h,
       ),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -39,6 +118,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: _nameController,
               decoration: const InputDecoration(
                 hintText: "Enter name",
               ),
@@ -66,13 +146,13 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      controller: _balanceController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         hintText: "Ex: 250 000",
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          // return LocaleKeys.transactionAmountError.tr();
                           return "Amount is required";
                         }
                         final number = double.tryParse(value);
@@ -87,24 +167,26 @@ class _AddWalletFormState extends State<AddWalletForm> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () async {
-                      showCurrencyPicker(
-                        context: context,
-                        theme: CurrencyPickerThemeData(
-                            bottomSheetHeight: 0.7.sh,
-                            backgroundColor: Colors.white,
-                            flagSize: 24.sp,
-                            subtitleTextStyle: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(context).primaryColor,
-                            )),
-                        onSelect: (Currency currencyValue) {
-                          setState(() {
-                            currency = currencyValue;
-                          });
-                        },
-                      );
-                    },
+                    // onTap: widget.wallet == null
+                    //     ? () async {
+                    //         showCurrencyPicker(
+                    //           context: context,
+                    //           theme: CurrencyPickerThemeData(
+                    //               bottomSheetHeight: 0.7.sh,
+                    //               backgroundColor: Colors.white,
+                    //               flagSize: 24.sp,
+                    //               subtitleTextStyle: TextStyle(
+                    //                 fontSize: 12.sp,
+                    //                 color: Theme.of(context).primaryColor,
+                    //               )),
+                    //           onSelect: (Currency currencyValue) {
+                    //             setState(() {
+                    //               currency = currencyValue;
+                    //             });
+                    //           },
+                    //         );
+                    //       }
+                    //     : null,
                     child: Container(
                       width: 60.w,
                       constraints: BoxConstraints(
@@ -115,13 +197,43 @@ class _AddWalletFormState extends State<AddWalletForm> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Text(CurrencyFormater.formatAmountWithSymbol(
-                            context, 0)),
+                        child: Text(currency?.code ??
+                            widget.wallet?.currencyCode ??
+                            'XAF'),
                       ),
                     ),
                   )
                 ],
               ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              "Type",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).primaryColorDark,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            DropdownButtonFormField<WalletType>(
+              value: _selectedType,
+              decoration: const InputDecoration(
+                hintText: "Select wallet type",
+              ),
+              items: WalletType.values.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: Text(type.customName),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    _selectedType = value;
+                  });
+                }
+              },
             ),
             SizedBox(height: 20.h),
             Text(
@@ -134,6 +246,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 8.h),
             TextFormField(
+              controller: _descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: LocaleKeys.typeHere.tr(),
@@ -143,26 +256,33 @@ class _AddWalletFormState extends State<AddWalletForm> {
             SizedBox(
               height: 54.h,
               width: double.infinity,
-              child: Builder(builder: (context) {
+              child: BlocBuilder<WalletCubit, WalletState>(
+                  builder: (context, state) {
                 return ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(
                       Theme.of(context).primaryColor,
                     ),
                   ),
-                  onPressed: () {
-                    hideKeyBoard();
-                    if (Form.of(context).validate()) {
-                      // Do something
-                    }
-                  },
+                  onPressed: state.isSaving
+                      ? null
+                      : () {
+                          hideKeyBoard();
+                          if (_formKey.currentState?.validate() ?? false) {
+                            _submitForm();
+                          }
+                        },
                   child: Row(
                     spacing: 8.w,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Create wallet"),
+                      Text(widget.wallet != null
+                          ? "Update wallet"
+                          : "Create wallet"),
                       SvgPicture.asset(
-                        Assets.images.add,
+                        widget.wallet != null
+                            ? Assets.images.edit2
+                            : Assets.images.add,
                         width: 24,
                         height: 24,
                         colorFilter: const ColorFilter.mode(

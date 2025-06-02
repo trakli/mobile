@@ -187,4 +187,19 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       mode: InsertMode.insertOrReplace,
     );
   }
+
+  Future<Wallet?> getWalletForTransaction(String clientId) async {
+    final query = select(wallets).join([
+      innerJoin(
+        transactions,
+        transactions.walletClientId.equalsExp(wallets.clientId),
+      )
+    ])
+      ..where(transactions.clientId.equals(clientId));
+
+    final results = await query.getSingleOrNull();
+    return results?.readTable(wallets);
+  }
+
+  
 }

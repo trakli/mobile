@@ -13,6 +13,10 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
       'id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
       'client_id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -58,18 +62,15 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
       'currency', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant('USD'));
+      defaultValue: const Constant('XAF'));
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
       'description', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
-      'user_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
   List<GeneratedColumn> get $columns => [
         id,
+        userId,
         clientId,
         rev,
         createdAt,
@@ -79,8 +80,7 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
         type,
         balance,
         currency,
-        description,
-        userId
+        description
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -95,6 +95,8 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
     return Wallet(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
       clientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
       rev: attachedDatabase.typeMapping
@@ -115,8 +117,6 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
           .read(DriftSqlType.string, data['${effectivePrefix}currency'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
     );
   }
 
@@ -131,6 +131,7 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
 
 class Wallet extends DataClass implements Insertable<Wallet> {
   final int? id;
+  final int? userId;
   final String clientId;
   final String? rev;
   final DateTime createdAt;
@@ -141,9 +142,9 @@ class Wallet extends DataClass implements Insertable<Wallet> {
   final double balance;
   final String currency;
   final String? description;
-  final int userId;
   const Wallet(
       {this.id,
+      this.userId,
       required this.clientId,
       this.rev,
       required this.createdAt,
@@ -153,13 +154,15 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       required this.type,
       required this.balance,
       required this.currency,
-      this.description,
-      required this.userId});
+      this.description});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
     }
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || rev != null) {
@@ -179,13 +182,14 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['user_id'] = Variable<int>(userId);
     return map;
   }
 
   WalletsCompanion toCompanion(bool nullToAbsent) {
     return WalletsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       clientId: Value(clientId),
       rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
       createdAt: Value(createdAt),
@@ -200,7 +204,6 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      userId: Value(userId),
     );
   }
 
@@ -209,6 +212,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Wallet(
       id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
       clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
@@ -220,7 +224,6 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       balance: serializer.fromJson<double>(json['balance']),
       currency: serializer.fromJson<String>(json['currency']),
       description: serializer.fromJson<String?>(json['description']),
-      userId: serializer.fromJson<int>(json['userId']),
     );
   }
   @override
@@ -228,6 +231,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
       'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
       'created_at': serializer.toJson<DateTime>(createdAt),
@@ -239,12 +243,12 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       'balance': serializer.toJson<double>(balance),
       'currency': serializer.toJson<String>(currency),
       'description': serializer.toJson<String?>(description),
-      'userId': serializer.toJson<int>(userId),
     };
   }
 
   Wallet copyWith(
           {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
           String? clientId,
           Value<String?> rev = const Value.absent(),
           DateTime? createdAt,
@@ -254,10 +258,10 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           WalletType? type,
           double? balance,
           String? currency,
-          Value<String?> description = const Value.absent(),
-          int? userId}) =>
+          Value<String?> description = const Value.absent()}) =>
       Wallet(
         id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
         clientId: clientId ?? this.clientId,
         rev: rev.present ? rev.value : this.rev,
         createdAt: createdAt ?? this.createdAt,
@@ -269,11 +273,11 @@ class Wallet extends DataClass implements Insertable<Wallet> {
         balance: balance ?? this.balance,
         currency: currency ?? this.currency,
         description: description.present ? description.value : this.description,
-        userId: userId ?? this.userId,
       );
   Wallet copyWithCompanion(WalletsCompanion data) {
     return Wallet(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       rev: data.rev.present ? data.rev.value : this.rev,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -287,7 +291,6 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       currency: data.currency.present ? data.currency.value : this.currency,
       description:
           data.description.present ? data.description.value : this.description,
-      userId: data.userId.present ? data.userId.value : this.userId,
     );
   }
 
@@ -295,6 +298,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
   String toString() {
     return (StringBuffer('Wallet(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -304,20 +308,20 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           ..write('type: $type, ')
           ..write('balance: $balance, ')
           ..write('currency: $currency, ')
-          ..write('description: $description, ')
-          ..write('userId: $userId')
+          ..write('description: $description')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, clientId, rev, createdAt, updatedAt,
-      lastSyncedAt, name, type, balance, currency, description, userId);
+  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
+      updatedAt, lastSyncedAt, name, type, balance, currency, description);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Wallet &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.clientId == this.clientId &&
           other.rev == this.rev &&
           other.createdAt == this.createdAt &&
@@ -327,12 +331,12 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           other.type == this.type &&
           other.balance == this.balance &&
           other.currency == this.currency &&
-          other.description == this.description &&
-          other.userId == this.userId);
+          other.description == this.description);
 }
 
 class WalletsCompanion extends UpdateCompanion<Wallet> {
   final Value<int?> id;
+  final Value<int?> userId;
   final Value<String> clientId;
   final Value<String?> rev;
   final Value<DateTime> createdAt;
@@ -343,10 +347,10 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
   final Value<double> balance;
   final Value<String> currency;
   final Value<String?> description;
-  final Value<int> userId;
   final Value<int> rowid;
   const WalletsCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -357,11 +361,11 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     this.balance = const Value.absent(),
     this.currency = const Value.absent(),
     this.description = const Value.absent(),
-    this.userId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   WalletsCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required String clientId,
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -372,14 +376,13 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     this.balance = const Value.absent(),
     this.currency = const Value.absent(),
     this.description = const Value.absent(),
-    required int userId,
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name),
-        type = Value(type),
-        userId = Value(userId);
+        type = Value(type);
   static Insertable<Wallet> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? clientId,
     Expression<String>? rev,
     Expression<DateTime>? createdAt,
@@ -390,11 +393,11 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     Expression<double>? balance,
     Expression<String>? currency,
     Expression<String>? description,
-    Expression<int>? userId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (clientId != null) 'client_id': clientId,
       if (rev != null) 'rev': rev,
       if (createdAt != null) 'created_at': createdAt,
@@ -405,13 +408,13 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       if (balance != null) 'balance': balance,
       if (currency != null) 'currency': currency,
       if (description != null) 'description': description,
-      if (userId != null) 'user_id': userId,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   WalletsCompanion copyWith(
       {Value<int?>? id,
+      Value<int?>? userId,
       Value<String>? clientId,
       Value<String?>? rev,
       Value<DateTime>? createdAt,
@@ -422,10 +425,10 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       Value<double>? balance,
       Value<String>? currency,
       Value<String?>? description,
-      Value<int>? userId,
       Value<int>? rowid}) {
     return WalletsCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
       rev: rev ?? this.rev,
       createdAt: createdAt ?? this.createdAt,
@@ -436,7 +439,6 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       balance: balance ?? this.balance,
       currency: currency ?? this.currency,
       description: description ?? this.description,
-      userId: userId ?? this.userId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -446,6 +448,9 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -478,9 +483,6 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
-    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -491,6 +493,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
   String toString() {
     return (StringBuffer('WalletsCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -501,7 +504,6 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
           ..write('balance: $balance, ')
           ..write('currency: $currency, ')
           ..write('description: $description, ')
-          ..write('userId: $userId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -516,6 +518,10 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
@@ -554,6 +560,7 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        userId,
         clientId,
         rev,
         createdAt,
@@ -575,6 +582,8 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
     return Party(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
       clientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
       rev: attachedDatabase.typeMapping
@@ -600,6 +609,7 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
 
 class Party extends DataClass implements Insertable<Party> {
   final int? id;
+  final int? userId;
   final String clientId;
   final String? rev;
   final DateTime createdAt;
@@ -609,6 +619,7 @@ class Party extends DataClass implements Insertable<Party> {
   final String? description;
   const Party(
       {this.id,
+      this.userId,
       required this.clientId,
       this.rev,
       required this.createdAt,
@@ -621,6 +632,9 @@ class Party extends DataClass implements Insertable<Party> {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
     }
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || rev != null) {
@@ -641,6 +655,8 @@ class Party extends DataClass implements Insertable<Party> {
   PartiesCompanion toCompanion(bool nullToAbsent) {
     return PartiesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       clientId: Value(clientId),
       rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
       createdAt: Value(createdAt),
@@ -660,6 +676,7 @@ class Party extends DataClass implements Insertable<Party> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Party(
       id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
       clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
@@ -674,6 +691,7 @@ class Party extends DataClass implements Insertable<Party> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
       'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
       'created_at': serializer.toJson<DateTime>(createdAt),
@@ -686,6 +704,7 @@ class Party extends DataClass implements Insertable<Party> {
 
   Party copyWith(
           {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
           String? clientId,
           Value<String?> rev = const Value.absent(),
           DateTime? createdAt,
@@ -695,6 +714,7 @@ class Party extends DataClass implements Insertable<Party> {
           Value<String?> description = const Value.absent()}) =>
       Party(
         id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
         clientId: clientId ?? this.clientId,
         rev: rev.present ? rev.value : this.rev,
         createdAt: createdAt ?? this.createdAt,
@@ -707,6 +727,7 @@ class Party extends DataClass implements Insertable<Party> {
   Party copyWithCompanion(PartiesCompanion data) {
     return Party(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       rev: data.rev.present ? data.rev.value : this.rev,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -724,6 +745,7 @@ class Party extends DataClass implements Insertable<Party> {
   String toString() {
     return (StringBuffer('Party(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -736,13 +758,14 @@ class Party extends DataClass implements Insertable<Party> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, clientId, rev, createdAt, updatedAt, lastSyncedAt, name, description);
+  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
+      updatedAt, lastSyncedAt, name, description);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Party &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.clientId == this.clientId &&
           other.rev == this.rev &&
           other.createdAt == this.createdAt &&
@@ -754,6 +777,7 @@ class Party extends DataClass implements Insertable<Party> {
 
 class PartiesCompanion extends UpdateCompanion<Party> {
   final Value<int?> id;
+  final Value<int?> userId;
   final Value<String> clientId;
   final Value<String?> rev;
   final Value<DateTime> createdAt;
@@ -764,6 +788,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   final Value<int> rowid;
   const PartiesCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -775,6 +800,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   });
   PartiesCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required String clientId,
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -787,6 +813,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
         name = Value(name);
   static Insertable<Party> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? clientId,
     Expression<String>? rev,
     Expression<DateTime>? createdAt,
@@ -798,6 +825,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (clientId != null) 'client_id': clientId,
       if (rev != null) 'rev': rev,
       if (createdAt != null) 'created_at': createdAt,
@@ -811,6 +839,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
 
   PartiesCompanion copyWith(
       {Value<int?>? id,
+      Value<int?>? userId,
       Value<String>? clientId,
       Value<String?>? rev,
       Value<DateTime>? createdAt,
@@ -821,6 +850,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       Value<int>? rowid}) {
     return PartiesCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
       rev: rev ?? this.rev,
       createdAt: createdAt ?? this.createdAt,
@@ -837,6 +867,9 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -869,6 +902,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   String toString() {
     return (StringBuffer('PartiesCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -890,6 +924,10 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
@@ -928,6 +966,7 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        userId,
         clientId,
         rev,
         createdAt,
@@ -949,6 +988,8 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     return Group(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
       clientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
       rev: attachedDatabase.typeMapping
@@ -974,6 +1015,7 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
 
 class Group extends DataClass implements Insertable<Group> {
   final int? id;
+  final int? userId;
   final String clientId;
   final String? rev;
   final DateTime createdAt;
@@ -983,6 +1025,7 @@ class Group extends DataClass implements Insertable<Group> {
   final String? description;
   const Group(
       {this.id,
+      this.userId,
       required this.clientId,
       this.rev,
       required this.createdAt,
@@ -995,6 +1038,9 @@ class Group extends DataClass implements Insertable<Group> {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
     }
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || rev != null) {
@@ -1015,6 +1061,8 @@ class Group extends DataClass implements Insertable<Group> {
   GroupsCompanion toCompanion(bool nullToAbsent) {
     return GroupsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       clientId: Value(clientId),
       rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
       createdAt: Value(createdAt),
@@ -1034,6 +1082,7 @@ class Group extends DataClass implements Insertable<Group> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Group(
       id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
       clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
@@ -1048,6 +1097,7 @@ class Group extends DataClass implements Insertable<Group> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
       'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
       'created_at': serializer.toJson<DateTime>(createdAt),
@@ -1060,6 +1110,7 @@ class Group extends DataClass implements Insertable<Group> {
 
   Group copyWith(
           {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
           String? clientId,
           Value<String?> rev = const Value.absent(),
           DateTime? createdAt,
@@ -1069,6 +1120,7 @@ class Group extends DataClass implements Insertable<Group> {
           Value<String?> description = const Value.absent()}) =>
       Group(
         id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
         clientId: clientId ?? this.clientId,
         rev: rev.present ? rev.value : this.rev,
         createdAt: createdAt ?? this.createdAt,
@@ -1081,6 +1133,7 @@ class Group extends DataClass implements Insertable<Group> {
   Group copyWithCompanion(GroupsCompanion data) {
     return Group(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       rev: data.rev.present ? data.rev.value : this.rev,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -1098,6 +1151,7 @@ class Group extends DataClass implements Insertable<Group> {
   String toString() {
     return (StringBuffer('Group(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -1110,13 +1164,14 @@ class Group extends DataClass implements Insertable<Group> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, clientId, rev, createdAt, updatedAt, lastSyncedAt, name, description);
+  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
+      updatedAt, lastSyncedAt, name, description);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Group &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.clientId == this.clientId &&
           other.rev == this.rev &&
           other.createdAt == this.createdAt &&
@@ -1128,6 +1183,7 @@ class Group extends DataClass implements Insertable<Group> {
 
 class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<int?> id;
+  final Value<int?> userId;
   final Value<String> clientId;
   final Value<String?> rev;
   final Value<DateTime> createdAt;
@@ -1138,6 +1194,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<int> rowid;
   const GroupsCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1149,6 +1206,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   });
   GroupsCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required String clientId,
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1161,6 +1219,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
         name = Value(name);
   static Insertable<Group> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? clientId,
     Expression<String>? rev,
     Expression<DateTime>? createdAt,
@@ -1172,6 +1231,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (clientId != null) 'client_id': clientId,
       if (rev != null) 'rev': rev,
       if (createdAt != null) 'created_at': createdAt,
@@ -1185,6 +1245,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
 
   GroupsCompanion copyWith(
       {Value<int?>? id,
+      Value<int?>? userId,
       Value<String>? clientId,
       Value<String?>? rev,
       Value<DateTime>? createdAt,
@@ -1195,6 +1256,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       Value<int>? rowid}) {
     return GroupsCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
       rev: rev ?? this.rev,
       createdAt: createdAt ?? this.createdAt,
@@ -1211,6 +1273,9 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -1243,6 +1308,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   String toString() {
     return (StringBuffer('GroupsCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -1265,6 +1331,10 @@ class $TransactionsTable extends Transactions
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
@@ -1323,9 +1393,9 @@ class $TransactionsTable extends Transactions
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> walletClientId = GeneratedColumn<String>(
-      'wallet_client_id', aliasedName, true,
+      'wallet_client_id', aliasedName, false,
       type: DriftSqlType.string,
-      requiredDuringInsert: false,
+      requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES wallets (client_id)'));
   @override
@@ -1345,6 +1415,7 @@ class $TransactionsTable extends Transactions
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        userId,
         clientId,
         rev,
         createdAt,
@@ -1374,6 +1445,8 @@ class $TransactionsTable extends Transactions
     return Transaction(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
       clientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
       rev: attachedDatabase.typeMapping
@@ -1400,7 +1473,7 @@ class $TransactionsTable extends Transactions
       groupId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}group_id']),
       walletClientId: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}wallet_client_id']),
+          DriftSqlType.string, data['${effectivePrefix}wallet_client_id'])!,
       partyClientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}party_client_id']),
       groupClientId: attachedDatabase.typeMapping
@@ -1419,6 +1492,7 @@ class $TransactionsTable extends Transactions
 
 class Transaction extends DataClass implements Insertable<Transaction> {
   final int? id;
+  final int? userId;
   final String clientId;
   final String? rev;
   final DateTime createdAt;
@@ -1431,11 +1505,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final int? partyId;
   final int? walletId;
   final int? groupId;
-  final String? walletClientId;
+  final String walletClientId;
   final String? partyClientId;
   final String? groupClientId;
   const Transaction(
       {this.id,
+      this.userId,
       required this.clientId,
       this.rev,
       required this.createdAt,
@@ -1448,7 +1523,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       this.partyId,
       this.walletId,
       this.groupId,
-      this.walletClientId,
+      required this.walletClientId,
       this.partyClientId,
       this.groupClientId});
   @override
@@ -1456,6 +1531,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
     }
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || rev != null) {
@@ -1484,9 +1562,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || groupId != null) {
       map['group_id'] = Variable<int>(groupId);
     }
-    if (!nullToAbsent || walletClientId != null) {
-      map['wallet_client_id'] = Variable<String>(walletClientId);
-    }
+    map['wallet_client_id'] = Variable<String>(walletClientId);
     if (!nullToAbsent || partyClientId != null) {
       map['party_client_id'] = Variable<String>(partyClientId);
     }
@@ -1499,6 +1575,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   TransactionsCompanion toCompanion(bool nullToAbsent) {
     return TransactionsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       clientId: Value(clientId),
       rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
       createdAt: Value(createdAt),
@@ -1521,9 +1599,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       groupId: groupId == null && nullToAbsent
           ? const Value.absent()
           : Value(groupId),
-      walletClientId: walletClientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(walletClientId),
+      walletClientId: Value(walletClientId),
       partyClientId: partyClientId == null && nullToAbsent
           ? const Value.absent()
           : Value(partyClientId),
@@ -1538,6 +1614,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Transaction(
       id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
       clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
@@ -1551,7 +1628,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       partyId: serializer.fromJson<int?>(json['party_id']),
       walletId: serializer.fromJson<int?>(json['wallet_id']),
       groupId: serializer.fromJson<int?>(json['group_id']),
-      walletClientId: serializer.fromJson<String?>(json['walletClientId']),
+      walletClientId: serializer.fromJson<String>(json['walletClientId']),
       partyClientId: serializer.fromJson<String?>(json['partyClientId']),
       groupClientId: serializer.fromJson<String?>(json['groupClientId']),
     );
@@ -1561,6 +1638,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
       'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
       'created_at': serializer.toJson<DateTime>(createdAt),
@@ -1574,7 +1652,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'party_id': serializer.toJson<int?>(partyId),
       'wallet_id': serializer.toJson<int?>(walletId),
       'group_id': serializer.toJson<int?>(groupId),
-      'walletClientId': serializer.toJson<String?>(walletClientId),
+      'walletClientId': serializer.toJson<String>(walletClientId),
       'partyClientId': serializer.toJson<String?>(partyClientId),
       'groupClientId': serializer.toJson<String?>(groupClientId),
     };
@@ -1582,6 +1660,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
 
   Transaction copyWith(
           {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
           String? clientId,
           Value<String?> rev = const Value.absent(),
           DateTime? createdAt,
@@ -1594,11 +1673,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           Value<int?> partyId = const Value.absent(),
           Value<int?> walletId = const Value.absent(),
           Value<int?> groupId = const Value.absent(),
-          Value<String?> walletClientId = const Value.absent(),
+          String? walletClientId,
           Value<String?> partyClientId = const Value.absent(),
           Value<String?> groupClientId = const Value.absent()}) =>
       Transaction(
         id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
         clientId: clientId ?? this.clientId,
         rev: rev.present ? rev.value : this.rev,
         createdAt: createdAt ?? this.createdAt,
@@ -1612,8 +1692,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         partyId: partyId.present ? partyId.value : this.partyId,
         walletId: walletId.present ? walletId.value : this.walletId,
         groupId: groupId.present ? groupId.value : this.groupId,
-        walletClientId:
-            walletClientId.present ? walletClientId.value : this.walletClientId,
+        walletClientId: walletClientId ?? this.walletClientId,
         partyClientId:
             partyClientId.present ? partyClientId.value : this.partyClientId,
         groupClientId:
@@ -1622,6 +1701,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   Transaction copyWithCompanion(TransactionsCompanion data) {
     return Transaction(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       rev: data.rev.present ? data.rev.value : this.rev,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -1653,6 +1733,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   String toString() {
     return (StringBuffer('Transaction(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -1675,6 +1756,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   @override
   int get hashCode => Object.hash(
       id,
+      userId,
       clientId,
       rev,
       createdAt,
@@ -1695,6 +1777,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       identical(this, other) ||
       (other is Transaction &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.clientId == this.clientId &&
           other.rev == this.rev &&
           other.createdAt == this.createdAt &&
@@ -1714,6 +1797,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
 
 class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<int?> id;
+  final Value<int?> userId;
   final Value<String> clientId;
   final Value<String?> rev;
   final Value<DateTime> createdAt;
@@ -1726,12 +1810,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<int?> partyId;
   final Value<int?> walletId;
   final Value<int?> groupId;
-  final Value<String?> walletClientId;
+  final Value<String> walletClientId;
   final Value<String?> partyClientId;
   final Value<String?> groupClientId;
   final Value<int> rowid;
   const TransactionsCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1751,6 +1836,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   });
   TransactionsCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required String clientId,
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1763,16 +1849,18 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.partyId = const Value.absent(),
     this.walletId = const Value.absent(),
     this.groupId = const Value.absent(),
-    this.walletClientId = const Value.absent(),
+    required String walletClientId,
     this.partyClientId = const Value.absent(),
     this.groupClientId = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         amount = Value(amount),
         type = Value(type),
-        datetime = Value(datetime);
+        datetime = Value(datetime),
+        walletClientId = Value(walletClientId);
   static Insertable<Transaction> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? clientId,
     Expression<String>? rev,
     Expression<DateTime>? createdAt,
@@ -1792,6 +1880,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (clientId != null) 'client_id': clientId,
       if (rev != null) 'rev': rev,
       if (createdAt != null) 'created_at': createdAt,
@@ -1813,6 +1902,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
 
   TransactionsCompanion copyWith(
       {Value<int?>? id,
+      Value<int?>? userId,
       Value<String>? clientId,
       Value<String?>? rev,
       Value<DateTime>? createdAt,
@@ -1825,12 +1915,13 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<int?>? partyId,
       Value<int?>? walletId,
       Value<int?>? groupId,
-      Value<String?>? walletClientId,
+      Value<String>? walletClientId,
       Value<String?>? partyClientId,
       Value<String?>? groupClientId,
       Value<int>? rowid}) {
     return TransactionsCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
       rev: rev ?? this.rev,
       createdAt: createdAt ?? this.createdAt,
@@ -1855,6 +1946,9 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -1912,6 +2006,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   String toString() {
     return (StringBuffer('TransactionsCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -1942,6 +2037,10 @@ class $CategoriesTable extends Categories
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
@@ -1989,12 +2088,9 @@ class $CategoriesTable extends Categories
               type: DriftSqlType.string, requiredDuringInsert: true)
           .withConverter<TransactionType>($CategoriesTable.$convertertype);
   @override
-  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
-      'user_id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  @override
   List<GeneratedColumn> get $columns => [
         id,
+        userId,
         clientId,
         rev,
         createdAt,
@@ -2003,8 +2099,7 @@ class $CategoriesTable extends Categories
         name,
         slug,
         description,
-        type,
-        userId
+        type
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2019,6 +2114,8 @@ class $CategoriesTable extends Categories
     return Category(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
       clientId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
       rev: attachedDatabase.typeMapping
@@ -2037,8 +2134,6 @@ class $CategoriesTable extends Categories
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       type: $CategoriesTable.$convertertype.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!),
-      userId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}user_id'])!,
     );
   }
 
@@ -2053,6 +2148,7 @@ class $CategoriesTable extends Categories
 
 class Category extends DataClass implements Insertable<Category> {
   final int? id;
+  final int? userId;
   final String clientId;
   final String? rev;
   final DateTime createdAt;
@@ -2062,9 +2158,9 @@ class Category extends DataClass implements Insertable<Category> {
   final String slug;
   final String? description;
   final TransactionType type;
-  final int userId;
   const Category(
       {this.id,
+      this.userId,
       required this.clientId,
       this.rev,
       required this.createdAt,
@@ -2073,13 +2169,15 @@ class Category extends DataClass implements Insertable<Category> {
       required this.name,
       required this.slug,
       this.description,
-      required this.type,
-      required this.userId});
+      required this.type});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
     }
     map['client_id'] = Variable<String>(clientId);
     if (!nullToAbsent || rev != null) {
@@ -2099,13 +2197,14 @@ class Category extends DataClass implements Insertable<Category> {
       map['type'] =
           Variable<String>($CategoriesTable.$convertertype.toSql(type));
     }
-    map['user_id'] = Variable<int>(userId);
     return map;
   }
 
   CategoriesCompanion toCompanion(bool nullToAbsent) {
     return CategoriesCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
       clientId: Value(clientId),
       rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
       createdAt: Value(createdAt),
@@ -2119,7 +2218,6 @@ class Category extends DataClass implements Insertable<Category> {
           ? const Value.absent()
           : Value(description),
       type: Value(type),
-      userId: Value(userId),
     );
   }
 
@@ -2128,6 +2226,7 @@ class Category extends DataClass implements Insertable<Category> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Category(
       id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
       clientId: serializer.fromJson<String>(json['client_generated_id']),
       rev: serializer.fromJson<String?>(json['rev']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
@@ -2138,7 +2237,6 @@ class Category extends DataClass implements Insertable<Category> {
       description: serializer.fromJson<String?>(json['description']),
       type: $CategoriesTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
-      userId: serializer.fromJson<int>(json['user_id']),
     );
   }
   @override
@@ -2146,6 +2244,7 @@ class Category extends DataClass implements Insertable<Category> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
       'client_generated_id': serializer.toJson<String>(clientId),
       'rev': serializer.toJson<String?>(rev),
       'created_at': serializer.toJson<DateTime>(createdAt),
@@ -2156,12 +2255,12 @@ class Category extends DataClass implements Insertable<Category> {
       'description': serializer.toJson<String?>(description),
       'type': serializer
           .toJson<String>($CategoriesTable.$convertertype.toJson(type)),
-      'user_id': serializer.toJson<int>(userId),
     };
   }
 
   Category copyWith(
           {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
           String? clientId,
           Value<String?> rev = const Value.absent(),
           DateTime? createdAt,
@@ -2170,10 +2269,10 @@ class Category extends DataClass implements Insertable<Category> {
           String? name,
           String? slug,
           Value<String?> description = const Value.absent(),
-          TransactionType? type,
-          int? userId}) =>
+          TransactionType? type}) =>
       Category(
         id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
         clientId: clientId ?? this.clientId,
         rev: rev.present ? rev.value : this.rev,
         createdAt: createdAt ?? this.createdAt,
@@ -2184,11 +2283,11 @@ class Category extends DataClass implements Insertable<Category> {
         slug: slug ?? this.slug,
         description: description.present ? description.value : this.description,
         type: type ?? this.type,
-        userId: userId ?? this.userId,
       );
   Category copyWithCompanion(CategoriesCompanion data) {
     return Category(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       clientId: data.clientId.present ? data.clientId.value : this.clientId,
       rev: data.rev.present ? data.rev.value : this.rev,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -2201,7 +2300,6 @@ class Category extends DataClass implements Insertable<Category> {
       description:
           data.description.present ? data.description.value : this.description,
       type: data.type.present ? data.type.value : this.type,
-      userId: data.userId.present ? data.userId.value : this.userId,
     );
   }
 
@@ -2209,6 +2307,7 @@ class Category extends DataClass implements Insertable<Category> {
   String toString() {
     return (StringBuffer('Category(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -2217,20 +2316,20 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('name: $name, ')
           ..write('slug: $slug, ')
           ..write('description: $description, ')
-          ..write('type: $type, ')
-          ..write('userId: $userId')
+          ..write('type: $type')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, clientId, rev, createdAt, updatedAt,
-      lastSyncedAt, name, slug, description, type, userId);
+  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
+      updatedAt, lastSyncedAt, name, slug, description, type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Category &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.clientId == this.clientId &&
           other.rev == this.rev &&
           other.createdAt == this.createdAt &&
@@ -2239,12 +2338,12 @@ class Category extends DataClass implements Insertable<Category> {
           other.name == this.name &&
           other.slug == this.slug &&
           other.description == this.description &&
-          other.type == this.type &&
-          other.userId == this.userId);
+          other.type == this.type);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<int?> id;
+  final Value<int?> userId;
   final Value<String> clientId;
   final Value<String?> rev;
   final Value<DateTime> createdAt;
@@ -2254,10 +2353,10 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String> slug;
   final Value<String?> description;
   final Value<TransactionType> type;
-  final Value<int> userId;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.clientId = const Value.absent(),
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2267,11 +2366,11 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.slug = const Value.absent(),
     this.description = const Value.absent(),
     this.type = const Value.absent(),
-    this.userId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required String clientId,
     this.rev = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2281,15 +2380,14 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     required String slug,
     this.description = const Value.absent(),
     required TransactionType type,
-    required int userId,
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name),
         slug = Value(slug),
-        type = Value(type),
-        userId = Value(userId);
+        type = Value(type);
   static Insertable<Category> custom({
     Expression<int>? id,
+    Expression<int>? userId,
     Expression<String>? clientId,
     Expression<String>? rev,
     Expression<DateTime>? createdAt,
@@ -2299,11 +2397,11 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<String>? slug,
     Expression<String>? description,
     Expression<String>? type,
-    Expression<int>? userId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (clientId != null) 'client_id': clientId,
       if (rev != null) 'rev': rev,
       if (createdAt != null) 'created_at': createdAt,
@@ -2313,13 +2411,13 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (slug != null) 'slug': slug,
       if (description != null) 'description': description,
       if (type != null) 'type': type,
-      if (userId != null) 'user_id': userId,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   CategoriesCompanion copyWith(
       {Value<int?>? id,
+      Value<int?>? userId,
       Value<String>? clientId,
       Value<String?>? rev,
       Value<DateTime>? createdAt,
@@ -2329,10 +2427,10 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       Value<String>? slug,
       Value<String?>? description,
       Value<TransactionType>? type,
-      Value<int>? userId,
       Value<int>? rowid}) {
     return CategoriesCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
       rev: rev ?? this.rev,
       createdAt: createdAt ?? this.createdAt,
@@ -2342,7 +2440,6 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       slug: slug ?? this.slug,
       description: description ?? this.description,
       type: type ?? this.type,
-      userId: userId ?? this.userId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2352,6 +2449,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
     }
     if (clientId.present) {
       map['client_id'] = Variable<String>(clientId.value);
@@ -2381,9 +2481,6 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       map['type'] =
           Variable<String>($CategoriesTable.$convertertype.toSql(type.value));
     }
-    if (userId.present) {
-      map['user_id'] = Variable<int>(userId.value);
-    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2394,6 +2491,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   String toString() {
     return (StringBuffer('CategoriesCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('clientId: $clientId, ')
           ..write('rev: $rev, ')
           ..write('createdAt: $createdAt, ')
@@ -2403,7 +2501,6 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('slug: $slug, ')
           ..write('description: $description, ')
           ..write('type: $type, ')
-          ..write('userId: $userId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3691,6 +3788,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   required String clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -3701,11 +3799,11 @@ typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({
   Value<double> balance,
   Value<String> currency,
   Value<String?> description,
-  required int userId,
   Value<int> rowid,
 });
 typedef $$WalletsTableUpdateCompanionBuilder = WalletsCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   Value<String> clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -3716,7 +3814,6 @@ typedef $$WalletsTableUpdateCompanionBuilder = WalletsCompanion Function({
   Value<double> balance,
   Value<String> currency,
   Value<String?> description,
-  Value<int> userId,
   Value<int> rowid,
 });
 
@@ -3753,6 +3850,9 @@ class $$WalletsTableFilterComposer
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnFilters(column));
 
@@ -3784,9 +3884,6 @@ class $$WalletsTableFilterComposer
 
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnFilters(column));
 
   Expression<bool> transactionsRefs(
       Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
@@ -3822,6 +3919,9 @@ class $$WalletsTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnOrderings(column));
 
@@ -3852,9 +3952,6 @@ class $$WalletsTableOrderingComposer
 
   ColumnOrderings<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnOrderings(column));
 }
 
 class $$WalletsTableAnnotationComposer
@@ -3868,6 +3965,9 @@ class $$WalletsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get clientId =>
       $composableBuilder(column: $table.clientId, builder: (column) => column);
@@ -3898,9 +3998,6 @@ class $$WalletsTableAnnotationComposer
 
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
-
-  GeneratedColumn<int> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   Expression<T> transactionsRefs<T extends Object>(
       Expression<T> Function($$TransactionsTableAnnotationComposer a) f) {
@@ -3948,6 +4045,7 @@ class $$WalletsTableTableManager extends RootTableManager<
               $$WalletsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             Value<String> clientId = const Value.absent(),
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -3958,11 +4056,11 @@ class $$WalletsTableTableManager extends RootTableManager<
             Value<double> balance = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            Value<int> userId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               WalletsCompanion(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -3973,11 +4071,11 @@ class $$WalletsTableTableManager extends RootTableManager<
             balance: balance,
             currency: currency,
             description: description,
-            userId: userId,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             required String clientId,
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -3988,11 +4086,11 @@ class $$WalletsTableTableManager extends RootTableManager<
             Value<double> balance = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            required int userId,
             Value<int> rowid = const Value.absent(),
           }) =>
               WalletsCompanion.insert(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -4003,7 +4101,6 @@ class $$WalletsTableTableManager extends RootTableManager<
             balance: balance,
             currency: currency,
             description: description,
-            userId: userId,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -4051,6 +4148,7 @@ typedef $$WalletsTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function({bool transactionsRefs})>;
 typedef $$PartiesTableCreateCompanionBuilder = PartiesCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   required String clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4062,6 +4160,7 @@ typedef $$PartiesTableCreateCompanionBuilder = PartiesCompanion Function({
 });
 typedef $$PartiesTableUpdateCompanionBuilder = PartiesCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   Value<String> clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4104,6 +4203,9 @@ class $$PartiesTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnFilters(column));
@@ -4160,6 +4262,9 @@ class $$PartiesTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnOrderings(column));
 
@@ -4194,6 +4299,9 @@ class $$PartiesTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get clientId =>
       $composableBuilder(column: $table.clientId, builder: (column) => column);
@@ -4262,6 +4370,7 @@ class $$PartiesTableTableManager extends RootTableManager<
               $$PartiesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             Value<String> clientId = const Value.absent(),
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -4273,6 +4382,7 @@ class $$PartiesTableTableManager extends RootTableManager<
           }) =>
               PartiesCompanion(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -4284,6 +4394,7 @@ class $$PartiesTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             required String clientId,
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -4295,6 +4406,7 @@ class $$PartiesTableTableManager extends RootTableManager<
           }) =>
               PartiesCompanion.insert(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -4349,6 +4461,7 @@ typedef $$PartiesTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function({bool transactionsRefs})>;
 typedef $$GroupsTableCreateCompanionBuilder = GroupsCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   required String clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4360,6 +4473,7 @@ typedef $$GroupsTableCreateCompanionBuilder = GroupsCompanion Function({
 });
 typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   Value<String> clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4402,6 +4516,9 @@ class $$GroupsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnFilters(column));
@@ -4458,6 +4575,9 @@ class $$GroupsTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnOrderings(column));
 
@@ -4492,6 +4612,9 @@ class $$GroupsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get clientId =>
       $composableBuilder(column: $table.clientId, builder: (column) => column);
@@ -4560,6 +4683,7 @@ class $$GroupsTableTableManager extends RootTableManager<
               $$GroupsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             Value<String> clientId = const Value.absent(),
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -4571,6 +4695,7 @@ class $$GroupsTableTableManager extends RootTableManager<
           }) =>
               GroupsCompanion(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -4582,6 +4707,7 @@ class $$GroupsTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             required String clientId,
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -4593,6 +4719,7 @@ class $$GroupsTableTableManager extends RootTableManager<
           }) =>
               GroupsCompanion.insert(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -4647,6 +4774,7 @@ typedef $$GroupsTableProcessedTableManager = ProcessedTableManager<
 typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
     Function({
   Value<int?> id,
+  Value<int?> userId,
   required String clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4659,7 +4787,7 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
   Value<int?> partyId,
   Value<int?> walletId,
   Value<int?> groupId,
-  Value<String?> walletClientId,
+  required String walletClientId,
   Value<String?> partyClientId,
   Value<String?> groupClientId,
   Value<int> rowid,
@@ -4667,6 +4795,7 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
 typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
     Function({
   Value<int?> id,
+  Value<int?> userId,
   Value<String> clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -4679,7 +4808,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
   Value<int?> partyId,
   Value<int?> walletId,
   Value<int?> groupId,
-  Value<String?> walletClientId,
+  Value<String> walletClientId,
   Value<String?> partyClientId,
   Value<String?> groupClientId,
   Value<int> rowid,
@@ -4693,9 +4822,9 @@ final class $$TransactionsTableReferences
       db.wallets.createAlias($_aliasNameGenerator(
           db.transactions.walletClientId, db.wallets.clientId));
 
-  $$WalletsTableProcessedTableManager? get walletClientId {
-    final $_column = $_itemColumn<String>('wallet_client_id');
-    if ($_column == null) return null;
+  $$WalletsTableProcessedTableManager get walletClientId {
+    final $_column = $_itemColumn<String>('wallet_client_id')!;
+
     final manager = $$WalletsTableTableManager($_db, $_db.wallets)
         .filter((f) => f.clientId.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_walletClientIdTable($_db));
@@ -4746,6 +4875,9 @@ class $$TransactionsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnFilters(column));
@@ -4858,6 +4990,9 @@ class $$TransactionsTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnOrderings(column));
 
@@ -4967,6 +5102,9 @@ class $$TransactionsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get clientId =>
       $composableBuilder(column: $table.clientId, builder: (column) => column);
@@ -5090,6 +5228,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
               $$TransactionsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             Value<String> clientId = const Value.absent(),
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5102,13 +5241,14 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<int?> partyId = const Value.absent(),
             Value<int?> walletId = const Value.absent(),
             Value<int?> groupId = const Value.absent(),
-            Value<String?> walletClientId = const Value.absent(),
+            Value<String> walletClientId = const Value.absent(),
             Value<String?> partyClientId = const Value.absent(),
             Value<String?> groupClientId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TransactionsCompanion(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -5128,6 +5268,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             required String clientId,
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5140,13 +5281,14 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<int?> partyId = const Value.absent(),
             Value<int?> walletId = const Value.absent(),
             Value<int?> groupId = const Value.absent(),
-            Value<String?> walletClientId = const Value.absent(),
+            required String walletClientId,
             Value<String?> partyClientId = const Value.absent(),
             Value<String?> groupClientId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TransactionsCompanion.insert(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -5249,6 +5391,7 @@ typedef $$TransactionsTableProcessedTableManager = ProcessedTableManager<
         {bool walletClientId, bool partyClientId, bool groupClientId})>;
 typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   required String clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -5258,11 +5401,11 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String slug,
   Value<String?> description,
   required TransactionType type,
-  required int userId,
   Value<int> rowid,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int?> id,
+  Value<int?> userId,
   Value<String> clientId,
   Value<String?> rev,
   Value<DateTime> createdAt,
@@ -5272,7 +5415,6 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> slug,
   Value<String?> description,
   Value<TransactionType> type,
-  Value<int> userId,
   Value<int> rowid,
 });
 
@@ -5309,6 +5451,9 @@ class $$CategoriesTableFilterComposer
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnFilters(column));
 
@@ -5337,9 +5482,6 @@ class $$CategoriesTableFilterComposer
       get type => $composableBuilder(
           column: $table.type,
           builder: (column) => ColumnWithTypeConverterFilters(column));
-
-  ColumnFilters<int> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnFilters(column));
 
   Expression<bool> categorizablesRefs(
       Expression<bool> Function($$CategorizablesTableFilterComposer f) f) {
@@ -5375,6 +5517,9 @@ class $$CategoriesTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get clientId => $composableBuilder(
       column: $table.clientId, builder: (column) => ColumnOrderings(column));
 
@@ -5402,9 +5547,6 @@ class $$CategoriesTableOrderingComposer
 
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get userId => $composableBuilder(
-      column: $table.userId, builder: (column) => ColumnOrderings(column));
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -5418,6 +5560,9 @@ class $$CategoriesTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<String> get clientId =>
       $composableBuilder(column: $table.clientId, builder: (column) => column);
@@ -5445,9 +5590,6 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<TransactionType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
-
-  GeneratedColumn<int> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   Expression<T> categorizablesRefs<T extends Object>(
       Expression<T> Function($$CategorizablesTableAnnotationComposer a) f) {
@@ -5495,6 +5637,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
               $$CategoriesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             Value<String> clientId = const Value.absent(),
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5504,11 +5647,11 @@ class $$CategoriesTableTableManager extends RootTableManager<
             Value<String> slug = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<TransactionType> type = const Value.absent(),
-            Value<int> userId = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               CategoriesCompanion(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -5518,11 +5661,11 @@ class $$CategoriesTableTableManager extends RootTableManager<
             slug: slug,
             description: description,
             type: type,
-            userId: userId,
             rowid: rowid,
           ),
           createCompanionCallback: ({
             Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
             required String clientId,
             Value<String?> rev = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5532,11 +5675,11 @@ class $$CategoriesTableTableManager extends RootTableManager<
             required String slug,
             Value<String?> description = const Value.absent(),
             required TransactionType type,
-            required int userId,
             Value<int> rowid = const Value.absent(),
           }) =>
               CategoriesCompanion.insert(
             id: id,
+            userId: userId,
             clientId: clientId,
             rev: rev,
             createdAt: createdAt,
@@ -5546,7 +5689,6 @@ class $$CategoriesTableTableManager extends RootTableManager<
             slug: slug,
             description: description,
             type: type,
-            userId: userId,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

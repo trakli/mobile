@@ -2,6 +2,7 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/sync/category_sync_handler.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
+import 'package:trakli/data/sync/wallet_sync_handler.dart';
 
 @module
 abstract class SyncModule {
@@ -9,12 +10,12 @@ abstract class SyncModule {
   Set<SyncTypeHandler<dynamic, dynamic, dynamic>> provideSyncTypeHandlers(
     TransactionSyncHandler transactionTypeHandler,
     CategorySyncHandler categoryTypeHandler,
+    WalletSyncHandler walletTypeHandler,
   ) {
     return {
       categoryTypeHandler,
       transactionTypeHandler,
+      walletTypeHandler,
     };
   }
 }
-
-

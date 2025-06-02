@@ -35,8 +35,7 @@ class Failure with _$Failure {
         },
         unauthorizedError: (UnauthorizedFailure _) =>
             LocaleKeys.invalidUserCredentials.tr(),
-        unknownError: (UnknownFailure _) =>
-            LocaleKeys.unknownErrorDesc.tr(),
+        unknownError: (UnknownFailure _) => LocaleKeys.unknownErrorDesc.tr(),
         badRequest: (_BadRequest failure) {
           if (failure.error != null) return failure.error!;
           if (failure.errors != null && failure.errors!.isNotEmpty) {
@@ -48,11 +47,8 @@ class Failure with _$Failure {
         notFound: (NotFoundFailure _) => LocaleKeys.notFoundDesc.tr(),
         networkError: (NetworkFailure _) =>
             LocaleKeys.internetConnectionDesc.tr(),
-        serverError: (ServerFailure failure) =>
-            LocaleKeys.serverErrorDesc.tr(),
-        cacheError: (CacheFailure failure) =>
-            LocaleKeys.cacheErrorDesc.tr(),
-        syncError: (SyncFailure failure) =>
-            LocaleKeys.syncErrorDesc.tr(),
+        serverError: (ServerFailure failure) => LocaleKeys.serverErrorDesc.tr(),
+        cacheError: (CacheFailure failure) => LocaleKeys.cacheErrorDesc.tr(),
+        syncError: (SyncFailure failure) => LocaleKeys.syncErrorDesc.tr(),
       );
 }

@@ -4,6 +4,9 @@ mixin SyncTable on Table {
   // Server ID (nullable since it's assigned by the server)
   IntColumn get id => integer().nullable()();
 
+  @JsonKey('user_id')
+  IntColumn get userId => integer().nullable()();
+
   // Client ID (required, generated locally)
   @JsonKey(
     'client_generated_id',

@@ -52,9 +52,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           error: (failure) {
             hideLoader();
             showSnackBar(
-              message: failure.customMessage,
-              backgroundColor: expenseRedText
-            );
+                message: failure.customMessage,
+                backgroundColor: expenseRedText);
           },
         );
       },

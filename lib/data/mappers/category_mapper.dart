@@ -12,9 +12,8 @@ class CategoryMapper {
       description: c.description,
       clientId: c.clientId,
       createdAt: c.createdAt,
-      updatedAt: null,
-      lastSyncedAt: null,
-      syncState: null,
+      updatedAt: c.updatedAt,
+      lastSyncedAt: c.lastSyncedAt,
     );
   }
 

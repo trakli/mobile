@@ -44,7 +44,7 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
   @override
   Future<TEntity> putRemote(TEntity entity) async {
     try {
-      final updated = await restPutRemote(entity);
+      final updated = await   restPutRemote(entity);
       return updated;
     } on DioException catch (exception) {
       if (isUnavailable(exception)) {

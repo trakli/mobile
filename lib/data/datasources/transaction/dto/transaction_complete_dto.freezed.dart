@@ -20,6 +20,8 @@ mixin _$TransactionCompleteDto {
   Transaction get transaction => throw _privateConstructorUsedError;
   @CategoryConverter()
   List<Category> get categories => throw _privateConstructorUsedError;
+  @WalletConverter()
+  Wallet get wallet => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.
@@ -36,7 +38,8 @@ abstract class $TransactionCompleteDtoCopyWith<$Res> {
   @useResult
   $Res call(
       {@TransactionConverter() Transaction transaction,
-      @CategoryConverter() List<Category> categories});
+      @CategoryConverter() List<Category> categories,
+      @WalletConverter() Wallet wallet});
 }
 
 /// @nodoc
@@ -57,6 +60,7 @@ class _$TransactionCompleteDtoCopyWithImpl<$Res,
   $Res call({
     Object? transaction = freezed,
     Object? categories = null,
+    Object? wallet = freezed,
   }) {
     return _then(_value.copyWith(
       transaction: freezed == transaction
@@ -67,6 +71,10 @@ class _$TransactionCompleteDtoCopyWithImpl<$Res,
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<Category>,
+      wallet: freezed == wallet
+          ? _value.wallet
+          : wallet // ignore: cast_nullable_to_non_nullable
+              as Wallet,
     ) as $Val);
   }
 }
@@ -82,7 +90,8 @@ abstract class _$$TransactionCompleteDtoImplCopyWith<$Res>
   @useResult
   $Res call(
       {@TransactionConverter() Transaction transaction,
-      @CategoryConverter() List<Category> categories});
+      @CategoryConverter() List<Category> categories,
+      @WalletConverter() Wallet wallet});
 }
 
 /// @nodoc
@@ -102,6 +111,7 @@ class __$$TransactionCompleteDtoImplCopyWithImpl<$Res>
   $Res call({
     Object? transaction = freezed,
     Object? categories = null,
+    Object? wallet = freezed,
   }) {
     return _then(_$TransactionCompleteDtoImpl(
       transaction: freezed == transaction
@@ -112,6 +122,10 @@ class __$$TransactionCompleteDtoImplCopyWithImpl<$Res>
           ? _value._categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<Category>,
+      wallet: freezed == wallet
+          ? _value.wallet
+          : wallet // ignore: cast_nullable_to_non_nullable
+              as Wallet,
     ));
   }
 }
@@ -121,7 +135,8 @@ class __$$TransactionCompleteDtoImplCopyWithImpl<$Res>
 class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
   const _$TransactionCompleteDtoImpl(
       {@TransactionConverter() required this.transaction,
-      @CategoryConverter() final List<Category> categories = const []})
+      @CategoryConverter() final List<Category> categories = const [],
+      @WalletConverter() required this.wallet})
       : _categories = categories,
         super._();
 
@@ -139,8 +154,12 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
   }
 
   @override
+  @WalletConverter()
+  final Wallet wallet;
+
+  @override
   String toString() {
-    return 'TransactionCompleteDto(transaction: $transaction, categories: $categories)';
+    return 'TransactionCompleteDto(transaction: $transaction, categories: $categories, wallet: $wallet)';
   }
 
   @override
@@ -151,14 +170,16 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
             const DeepCollectionEquality()
                 .equals(other.transaction, transaction) &&
             const DeepCollectionEquality()
-                .equals(other._categories, _categories));
+                .equals(other._categories, _categories) &&
+            const DeepCollectionEquality().equals(other.wallet, wallet));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(transaction),
-      const DeepCollectionEquality().hash(_categories));
+      const DeepCollectionEquality().hash(_categories),
+      const DeepCollectionEquality().hash(wallet));
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.
@@ -173,7 +194,8 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
 abstract class _TransactionCompleteDto extends TransactionCompleteDto {
   const factory _TransactionCompleteDto(
           {@TransactionConverter() required final Transaction transaction,
-          @CategoryConverter() final List<Category> categories}) =
+          @CategoryConverter() final List<Category> categories,
+          @WalletConverter() required final Wallet wallet}) =
       _$TransactionCompleteDtoImpl;
   const _TransactionCompleteDto._() : super._();
 
@@ -183,6 +205,9 @@ abstract class _TransactionCompleteDto extends TransactionCompleteDto {
   @override
   @CategoryConverter()
   List<Category> get categories;
+  @override
+  @WalletConverter()
+  Wallet get wallet;
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.

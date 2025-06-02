@@ -14,14 +14,17 @@ class CurrencyFormater {
     double amount, {
     bool compact = false,
     int? currentDecimalDigits,
+    Currency? currency,
+    bool useDefaultCurrency = false,
   }) {
-    Currency? currency;
+    currency = currency ??
+        context.watch<OnboardingCubit>().state.entity?.selectedCurrency;
 
-    currency = context.watch<OnboardingCubit>().state.entity?.selectedCurrency;
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
-    double amountInBaseCurrency =
-        convertAmountFromDefault(amount, currency, exchangeRateEntity);
+    double amountInBaseCurrency = useDefaultCurrency
+        ? convertAmountFromDefault(amount, currency, exchangeRateEntity)
+        : amount;
 
     if (currency?.symbolOnLeft == false) {
       NumberFormat format;
@@ -63,14 +66,17 @@ class CurrencyFormater {
     double amount, {
     bool compact = false,
     int? currentDecimalDigits,
+    bool useDefaultCurrency = false,
+    Currency? currency,
   }) {
-    Currency? currency =
+    currency = currency ??
         context.watch<OnboardingCubit>().state.entity?.selectedCurrency;
 
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
-    double amountInBaseCurrency =
-        convertAmountFromDefault(amount, currency, exchangeRateEntity);
+    double amountInBaseCurrency = useDefaultCurrency
+        ? convertAmountFromDefault(amount, currency, exchangeRateEntity)
+        : amount;
 
     NumberFormat format;
     if (compact) {
@@ -85,19 +91,22 @@ class CurrencyFormater {
       );
     }
 
-    final cu = format.format(amountInBaseCurrency);
-    return cu;
+    final formattedAmount = format.format(amountInBaseCurrency);
+
+    return formattedAmount;
   }
 
   static double convertAmountFromDefault(
     double amount,
     Currency? currency,
-    ExchangeRateEntity? exchangeRateEntity,
-  ) {
-    final exchangeRate =
-        exchangeRateEntity?.rates[currency?.code ?? 'XAF'] ?? 1;
+    ExchangeRateEntity? exchangeRateEntity, {
+    bool useDefaultCurrency = false,
+  }) {
+    final exchangeRate = useDefaultCurrency
+        ? exchangeRateEntity?.rates[currency?.code ?? 'XAF'] ?? 1
+        : 1;
 
-    final amountInBaseCurrency = amount * exchangeRate;
+    final amountInBaseCurrency = amount / exchangeRate;
     return amountInBaseCurrency;
   }
 }
@@ -110,16 +119,19 @@ double convertAmountToDefault(
   return amountInBaseCurrency;
 }
 
-double convertAmountFromCurrencyWihContext(
-    BuildContext context, double amount, Currency? currency) {
-  final exchangeRateEntity = context.read<ExchangeRateCubit>().state.entity;
+// double convertAmountFromCurrencyWihContext(
+//   BuildContext context,
+//   double amount,
+//   Currency? currency,
+// ) {
+//   final exchangeRateEntity = context.read<ExchangeRateCubit>().state.entity;
 
-  Currency? selectedCurrency = currency ??
-      context.read<OnboardingCubit>().state.entity?.selectedCurrency;
+//   Currency? selectedCurrency = currency ??
+//       context.read<OnboardingCubit>().state.entity?.selectedCurrency;
 
-  final amountInBaseCurrency = selectedCurrency != null
-      ? amount * (exchangeRateEntity?.rates[selectedCurrency.code] ?? 1)
-      : amount;
+//   final amountInBaseCurrency = selectedCurrency != null
+//       ? amount * (exchangeRateEntity?.rates[selectedCurrency.code] ?? 1)
+//       : amount;
 
-  return amountInBaseCurrency;
-}
+//   return amountInBaseCurrency;
+// }

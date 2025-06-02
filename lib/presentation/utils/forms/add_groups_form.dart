@@ -33,8 +33,8 @@ class AddGroupsForm extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: LocaleKeys.groupEnterGroupName.tr(),
               ),
-              validator: (value){
-                if(value == null || value.isEmpty){
+              validator: (value) {
+                if (value == null || value.isEmpty) {
                   return "Name is required";
                 }
                 return null;
@@ -60,36 +60,34 @@ class AddGroupsForm extends StatelessWidget {
             SizedBox(
               height: 54.h,
               width: double.infinity,
-              child: Builder(
-                builder: (context) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      hideKeyBoard();
-                      if(Form.of(context).validate()){
-                        // Do something
-                      }
-                    },
-                    child: Row(
-                      spacing: 8.w,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          LocaleKeys.groupCreateGroup.tr(),
+              child: Builder(builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    hideKeyBoard();
+                    if (Form.of(context).validate()) {
+                      // Do something
+                    }
+                  },
+                  child: Row(
+                    spacing: 8.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        LocaleKeys.groupCreateGroup.tr(),
+                      ),
+                      SvgPicture.asset(
+                        Assets.images.add,
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
                         ),
-                        SvgPicture.asset(
-                          Assets.images.add,
-                          width: 24,
-                          height: 24,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                }
-              ),
+                      )
+                    ],
+                  ),
+                );
+              }),
             ),
           ],
         ),

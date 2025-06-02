@@ -14,6 +14,7 @@ abstract class TransactionLocalDataSource {
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
+    String walletClientId,
   );
   Future<TransactionCompleteDto> updateTransaction(
     String id,
@@ -21,6 +22,7 @@ abstract class TransactionLocalDataSource {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
+    String? walletClientId,
   );
   Future<TransactionCompleteDto> deleteTransaction(String id);
 
@@ -49,6 +51,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.categories.clientId
             .equalsExp(database.categorizables.categoryClientId),
       ),
+      leftOuterJoin(
+        database.wallets,
+        database.wallets.clientId
+            .equalsExp(database.transactions.walletClientId),
+      ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
@@ -59,11 +66,13 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
   @override
   Future<TransactionCompleteDto> insertTransaction(
     double amount,
-    String? description,
+    String description,
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
+    String walletClientId,
   ) async {
+    // Verify that all categories exist
     for (var categoryId in categoryIds) {
       final categoryModel = await (database.select(database.categories)
             ..where((c) => c.clientId.equals(categoryId)))
@@ -74,19 +83,43 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
     }
 
+    // Verify that the wallet exists
+    final wallet = await (database.select(database.wallets)
+          ..where((w) => w.clientId.equals(walletClientId)))
+        .getSingleOrNull();
+
+    if (wallet == null) {
+      throw Exception('Wallet $walletClientId not found');
+    }
+
     // Ensure UTC time and format for server compatibility
     final now = formatServerIsoDateTime(DateTime.now());
     final utcDatetime = formatServerIsoDateTime(datetime);
 
     final model = await database.into(database.transactions).insertReturning(
           TransactionsCompanion.insert(
-              clientId: const Uuid().v4(),
-              amount: amount,
-              description: Value(description),
-              type: type,
-              datetime: utcDatetime,
-              createdAt: Value(now)),
+            clientId: const Uuid().v4(),
+            amount: amount,
+            description: Value(description),
+            type: type,
+            datetime: utcDatetime,
+            createdAt: Value(now),
+            walletClientId: walletClientId,
+          ),
         );
+
+    // Update wallet balance
+    await (database.update(database.wallets)
+          ..where((w) => w.clientId.equals(walletClientId)))
+        .write(
+      WalletsCompanion(
+        balance: Value(
+          type == TransactionType.income
+              ? wallet.balance + amount
+              : wallet.balance - amount,
+        ),
+      ),
+    );
 
     for (var categoryId in categoryIds) {
       await database.into(database.categorizables).insert(
@@ -103,9 +136,18 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       CategorizableType.transaction,
     );
 
-    return TransactionCompleteDto.fromTransaction(
+    final updatedWallet = await (database.select(database.wallets)
+          ..where((w) => w.clientId.equals(walletClientId)))
+        .getSingleOrNull();
+
+    if (updatedWallet == null) {
+      throw Exception('Wallet $walletClientId not found');
+    }
+
+    return TransactionCompleteDto.                                                                                                                     fromTransaction(
       transaction: model,
       categories: categories,
+      wallet: updatedWallet,
     );
   }
 
@@ -116,8 +158,59 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
+    String? walletClientId,
   ) async {
     return database.transaction(() async {
+      // Get the original transaction
+      final originalTransaction = await (database.select(database.transactions)
+            ..where((t) => t.clientId.equals(id)))
+          .getSingle();
+
+      // If wallet is being changed or amount is being updated, handle wallet balances
+      if (walletClientId != null || amount != null) {
+        // Get the original wallet
+        final originalWallet = await (database.select(database.wallets)
+              ..where(
+                  (w) => w.clientId.equals(originalTransaction.walletClientId)))
+            .getSingleOrNull();
+
+        if (originalWallet != null) {
+          // Revert the original transaction
+          await database.update(database.wallets).write(
+                WalletsCompanion(
+                  balance: Value(
+                    originalTransaction.type == TransactionType.income
+                        ? originalWallet.balance - originalTransaction.amount
+                        : originalWallet.balance + originalTransaction.amount,
+                  ),
+                ),
+              );
+        }
+
+        // If wallet is being changed, update the new wallet's balance
+        if (walletClientId != null) {
+          final newWallet = await (database.select(database.wallets)
+                ..where((w) => w.clientId.equals(walletClientId)))
+              .getSingleOrNull();
+
+          if (newWallet == null) {
+            throw Exception('New wallet $walletClientId not found');
+          }
+
+          await database.update(database.wallets).write(
+                WalletsCompanion(
+                  balance: Value(
+                    originalTransaction.type == TransactionType.income
+                        ? newWallet.balance +
+                            (amount ?? originalTransaction.amount)
+                        : newWallet.balance -
+                            (amount ?? originalTransaction.amount),
+                  ),
+                ),
+              );
+        }
+      }
+
       final model = await (database.update(database.transactions)
             ..where((t) => t.clientId.equals(id)))
           .writeReturning(
@@ -128,6 +221,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           datetime: datetime != null
               ? Value(formatServerIsoDateTime(datetime))
               : const Value.absent(),
+          walletClientId: walletClientId != null
+              ? Value(walletClientId)
+              : const Value.absent(),
         ),
       );
 
@@ -136,10 +232,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         CategorizableType.transaction,
       );
 
+      final wallet = await (database.select(database.wallets)
+            ..where((w) => w.clientId.equals(model.first.walletClientId)))
+          .getSingleOrNull();
+
+      if (wallet == null) {
+        throw Exception('Wallet ${model.first.walletClientId} not found');
+      }
+
       if (categoryIds == null) {
         return TransactionCompleteDto.fromTransaction(
           transaction: model.first,
           categories: categories,
+          wallet: wallet,
         );
       }
 
@@ -177,26 +282,49 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       return TransactionCompleteDto.fromTransaction(
         transaction: model.first,
         categories: finalCategories,
+        wallet: wallet,
       );
     });
   }
 
   @override
   Future<TransactionCompleteDto> deleteTransaction(String id) async {
-    final model = await (database.select(database.transactions)
-          ..where((t) => t.clientId.equals(id)))
-        .getSingle();
+    return database.transaction(() async {
+      final transaction = await (database.select(database.transactions)
+            ..where((t) => t.clientId.equals(id)))
+          .getSingle();
 
-    await database.delete(database.transactions).delete(model);
+      // Update wallet balance if transaction has a wallet
+      final wallet = await (database.select(database.wallets)
+            ..where((w) => w.clientId.equals(transaction.walletClientId)))
+          .getSingleOrNull();
 
-    return TransactionCompleteDto.fromTransaction(
-      transaction: model,
-    );
+      if (wallet == null) {
+        throw Exception('Wallet ${transaction.walletClientId} not found');
+      }
+
+      await database.update(database.wallets).write(
+            WalletsCompanion(
+              balance: Value(
+                transaction.type == TransactionType.income
+                    ? wallet.balance - transaction.amount
+                    : wallet.balance + transaction.amount,
+              ),
+            ),
+          );
+
+      await database.delete(database.transactions).delete(transaction);
+
+      return TransactionCompleteDto.fromTransaction(
+        transaction: transaction,
+        wallet: wallet,
+      );
+    });
   }
 
   @override
   Stream<List<TransactionCompleteDto>> listenToTransaction() {
-    // Create a query that joins transactions with their categories
+    // Create a query that joins transactions with their categories and wallets
     final query = database.select(database.transactions).join([
       leftOuterJoin(
         database.categorizables,
@@ -209,6 +337,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.categories,
         database.categories.clientId
             .equalsExp(database.categorizables.categoryClientId),
+      ),
+      leftOuterJoin(
+        database.wallets,
+        database.wallets.clientId
+            .equalsExp(database.transactions.walletClientId),
       ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
@@ -226,6 +359,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     for (final row in rows) {
       final transaction = row.readTable(database.transactions);
       final category = row.readTableOrNull(database.categories);
+      final wallet = row.readTableOrNull(database.wallets);
+
+      if (wallet == null) {
+        throw Exception('Wallet ${transaction.walletClientId} not found');
+      }
 
       // Initialize the transaction entry if not exists
       transactionMap.putIfAbsent(
@@ -233,6 +371,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           () => TransactionCompleteDto.fromTransaction(
                 transaction: transaction,
                 categories: [],
+                wallet: wallet,
               ));
 
       // Add the category if it exists (leftOuterJoin may return null)
@@ -246,6 +385,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
               TransactionCompleteDto.fromTransaction(
             transaction: transaction,
             categories: currentCategories,
+            wallet: wallet,
           );
         }
       }
@@ -255,9 +395,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     return transactionMap.values.toList();
   }
 }
-
-
-
 
 // DateTime (2025-05-16 04:29:30.000Z)
 

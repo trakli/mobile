@@ -12,7 +12,8 @@ class GetAllTransactionsUseCase implements UseCase<void, NoParams> {
   GetAllTransactionsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<TransactionCompleteEntity>>> call(NoParams params) async {
+  Future<Either<Failure, List<TransactionCompleteEntity>>> call(
+      NoParams params) async {
     return await repository.getAllTransactions();
   }
 }
