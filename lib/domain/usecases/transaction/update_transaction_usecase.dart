@@ -15,11 +15,6 @@ class UpdateTransactionUseCase
 
   @override
   Future<Either<Failure, Unit>> call(UpdateTransactionParams params) async {
-    // final exchangeRateRequest = await exchangeRateRepository.getExchangeRate();
-
-    // return exchangeRateRequest.fold((l) => Left(l), (exchangeRate) {
-    //   double amountInBaseCurrency =
-    //       convertAmountToDefault(params.amount!, params.currency, exchangeRate);
 
     return repository.updateTransaction(
       params.id,

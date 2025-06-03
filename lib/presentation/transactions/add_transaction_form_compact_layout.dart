@@ -186,37 +186,17 @@ class _AddTransactionFormCompactLayoutState
                             },
                           ),
                         ),
-                        GestureDetector(
-                          // onTap: () {
-                          //   showCurrencyPicker(
-                          //     context: context,
-                          //     theme: CurrencyPickerThemeData(
-                          //         bottomSheetHeight: 0.7.sh,
-                          //         backgroundColor: Colors.white,
-                          //         flagSize: 24.sp,
-                          //         subtitleTextStyle: TextStyle(
-                          //           fontSize: 12.sp,
-                          //           color: Theme.of(context).primaryColor,
-                          //         )),
-                          //     onSelect: (Currency currencyValue) {
-                          //       setState(() {
-                          //         setNewCurrency(currencyValue);
-                          //       });
-                          //     },
-                          //   );
-                          // },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(currentCurrency?.code ?? "XAF"),
-                            ),
+                        Container(
+                          width: 60.w,
+                          constraints: BoxConstraints(
+                            maxHeight: 50.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDEE1E0),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(currentCurrency?.code ?? "XAF"),
                           ),
                         )
                       ],

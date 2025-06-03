@@ -16,7 +16,6 @@ class CreateTransactionUseCase
 
   @override
   Future<Either<Failure, Unit>> call(CreateTransactionParams params) async {
-    // final exchangeRateRequest = await exchangeRateRepository.getExchangeRate();
 
     return repository.insertTransaction(
       params.amount,
@@ -26,23 +25,6 @@ class CreateTransactionUseCase
       params.datetime,
       params.walletClientId,
     );
-
-    // return exchangeRateRequest.fold(
-    //   (l) => Left(l),
-    //   (exchangeRate) {
-    //     final amountInBaseCurrency = convertAmountToDefault(
-    //         params.amount, params.currency, exchangeRate);
-
-    //     return repository.insertTransaction(
-    //       amountInBaseCurrency,
-    //       params.description,
-    //       params.categoryIds,
-    //       params.type,
-    //       params.datetime,
-    //       params.walletClientId,
-    //     );
-    //   },
-    // );
   }
 }
 

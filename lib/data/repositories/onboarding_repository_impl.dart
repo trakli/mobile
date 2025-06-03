@@ -25,13 +25,6 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       await _localDataSource
           .saveOnboardingState(OnboardingMapper.toModel(entity));
 
-      // final formalModel = await _localDataSource.getOnboardingState();
-
-      // if (formalModel != null) {
-      //   await _exchangeRateRepository.updateDefaultCurrency(
-      //       formalModel.selectedCurrency?.code ?? 'XAF');
-      // }
-
       final code = entity.selectedCurrency?.code;
 
       if (code != null) {

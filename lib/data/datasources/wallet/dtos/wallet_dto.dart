@@ -33,14 +33,7 @@ class WalletDto with _$WalletDto {
   factory WalletDto.fromJson(Map<String, dynamic> json) =>
       _$WalletDtoFromJson(json);
 
-  // @override
-  // Map<String, dynamic> toJson() {
-  //   return _$WalletDtoToJson(this);
-  // }
-
   Wallet toModel() {
-    // final wallet = Wallet.fromJson(toJson());
-
     final wallet = Wallet(
       id: id,
       userId: userId,
