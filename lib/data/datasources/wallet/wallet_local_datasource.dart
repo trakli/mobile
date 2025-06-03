@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
@@ -103,6 +104,13 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
 
   @override
   Future<void> deleteWallet(String clientId) async {
+    final transaction = await _getTransactionsByWalletClientId(clientId);
+    if (transaction != null) {
+      throw const ConflictException(
+        message: 'Cannot delete wallet that has transactions',
+      );
+    }
+
     await (database.delete(database.wallets)
           ..where((tbl) => tbl.clientId.equals(clientId)))
         .go();
@@ -118,5 +126,11 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     return (database.select(database.wallets)
           ..orderBy([(w) => OrderingTerm.desc(w.createdAt)]))
         .watch();
+  }
+
+  Future<Transaction?> _getTransactionsByWalletClientId(String clientId) {
+    return (database.select(database.transactions)
+          ..where((t) => t.walletClientId.equals(clientId)))
+        .getSingleOrNull();
   }
 }

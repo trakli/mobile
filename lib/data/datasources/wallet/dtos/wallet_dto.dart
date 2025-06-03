@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/data/models/wallet_stats.dart';
 
 part 'wallet_dto.freezed.dart';
 part 'wallet_dto.g.dart';
@@ -26,6 +27,7 @@ class WalletDto with _$WalletDto {
     DateTime? lastSyncedAt,
     @JsonKey(name: 'sync_state') required SyncStateDto syncState,
     String? rev,
+    @JsonKey(name: 'stats') WalletStats? stats,
   }) = _WalletDto;
 
   const WalletDto._();
@@ -47,6 +49,7 @@ class WalletDto with _$WalletDto {
       currency: currency,
       description: description,
       lastSyncedAt: lastSyncedAt,
+      stats: stats,
     );
 
     return wallet;

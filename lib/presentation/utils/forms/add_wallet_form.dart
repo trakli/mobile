@@ -167,26 +167,26 @@ class _AddWalletFormState extends State<AddWalletForm> {
                     ),
                   ),
                   GestureDetector(
-                    // onTap: widget.wallet == null
-                    //     ? () async {
-                    //         showCurrencyPicker(
-                    //           context: context,
-                    //           theme: CurrencyPickerThemeData(
-                    //               bottomSheetHeight: 0.7.sh,
-                    //               backgroundColor: Colors.white,
-                    //               flagSize: 24.sp,
-                    //               subtitleTextStyle: TextStyle(
-                    //                 fontSize: 12.sp,
-                    //                 color: Theme.of(context).primaryColor,
-                    //               )),
-                    //           onSelect: (Currency currencyValue) {
-                    //             setState(() {
-                    //               currency = currencyValue;
-                    //             });
-                    //           },
-                    //         );
-                    //       }
-                    //     : null,
+                    onTap: widget.wallet == null
+                        ? () async {
+                            showCurrencyPicker(
+                              context: context,
+                              theme: CurrencyPickerThemeData(
+                                  bottomSheetHeight: 0.7.sh,
+                                  backgroundColor: Colors.white,
+                                  flagSize: 24.sp,
+                                  subtitleTextStyle: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Theme.of(context).primaryColor,
+                                  )),
+                              onSelect: (Currency currencyValue) {
+                                setState(() {
+                                  currency = currencyValue;
+                                });
+                              },
+                            );
+                          }
+                        : null,
                     child: Container(
                       width: 60.w,
                       constraints: BoxConstraints(

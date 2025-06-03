@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
@@ -22,7 +23,7 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   final _exchangeRateController =
       StreamController<ExchangeRateEntity>.broadcast();
 
-  var defaultCurrencyCode = 'XAF';
+  var defaultCurrencyCode = KeyConstants.defaultCurrencyCode;
 
   ExchangeRateRepositoryImpl({
     required this.remoteDataSource,
@@ -74,7 +75,8 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   @override
   Future<Either<Failure, ExchangeRateEntity>> refreshExchangeRate() {
     return RepositoryErrorHandler.handleApiCall(() async {
-      final exchangeRateRemote = await remoteDataSource.getExchangeRate(defaultCurrencyCode);
+      final exchangeRateRemote =
+          await remoteDataSource.getExchangeRate(defaultCurrencyCode);
 
       await localDataSource.saveExchangeRate(
           exchangeRateRemote.baseCode, exchangeRateRemote);
@@ -91,7 +93,8 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   @override
   Future<Either<Failure, ExchangeRateEntity>> getExchangeRate() {
     return RepositoryErrorHandler.handleApiCall(() async {
-      final exchangeRateRemote = await remoteDataSource.getExchangeRate(defaultCurrencyCode);
+      final exchangeRateRemote =
+          await remoteDataSource.getExchangeRate(defaultCurrencyCode);
       return ExchangeRateMapper.toDomain(exchangeRateRemote);
     });
   }

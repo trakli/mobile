@@ -14,8 +14,8 @@ abstract class SyncModule {
   ) {
     return {
       categoryTypeHandler,
-      transactionTypeHandler,
       walletTypeHandler,
+      transactionTypeHandler,
     };
   }
 }

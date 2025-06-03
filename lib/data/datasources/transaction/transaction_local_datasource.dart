@@ -4,6 +4,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/data/models/wallet_stats.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class TransactionLocalDataSource {
@@ -108,7 +109,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           ),
         );
 
-    // Update wallet balance
+    // Calculate new stats
+    final currentStats =
+        wallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
+    final newStats = WalletStats(
+      totalIncome: type == TransactionType.income
+          ? currentStats.totalIncome + amount
+          : currentStats.totalIncome,
+      totalExpense: type == TransactionType.expense
+          ? currentStats.totalExpense + amount
+          : currentStats.totalExpense,
+    );
+
+    // Update wallet balance and stats
     await (database.update(database.wallets)
           ..where((w) => w.clientId.equals(walletClientId)))
         .write(
@@ -118,6 +131,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
               ? wallet.balance + amount
               : wallet.balance - amount,
         ),
+        stats: Value(newStats),
       ),
     );
 
@@ -144,7 +158,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       throw Exception('Wallet $walletClientId not found');
     }
 
-    return TransactionCompleteDto.                                                                                                                     fromTransaction(
+    return TransactionCompleteDto.fromTransaction(
       transaction: model,
       categories: categories,
       wallet: updatedWallet,
@@ -175,14 +189,43 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             .getSingleOrNull();
 
         if (originalWallet != null) {
-          // Revert the original transaction
+          // Calculate new stats for original wallet
+          final currentStats = originalWallet.stats ??
+              WalletStats(totalIncome: 0, totalExpense: 0);
+          final newStats = WalletStats(
+            totalIncome: originalTransaction.type == TransactionType.income
+                ? currentStats.totalIncome -
+                    originalTransaction.amount +
+                    (amount ?? originalTransaction.amount)
+                : currentStats.totalIncome,
+            totalExpense: originalTransaction.type == TransactionType.expense
+                ? currentStats.totalExpense -
+                    originalTransaction.amount +
+                    (amount ?? originalTransaction.amount)
+                : currentStats.totalExpense,
+          );
+
+          // First revert the original transaction's effect on balance, then apply the new amount
+          // var balance = originalWallet.balance;
+
+          final newAmount = amount!;
+
+          final balanceAfterRevert =
+              originalTransaction.type == TransactionType.income
+                  ? originalWallet.balance -
+                      originalTransaction.amount // Revert income by subtracting
+                  : originalWallet.balance +
+                      originalTransaction.amount; // Revert expense by adding
+
+          final newBalance = originalTransaction.type == TransactionType.income
+              ? balanceAfterRevert + newAmount // Apply new income by adding
+              : balanceAfterRevert -
+                  newAmount; // Apply new expense by subtracting
+
           await database.update(database.wallets).write(
                 WalletsCompanion(
-                  balance: Value(
-                    originalTransaction.type == TransactionType.income
-                        ? originalWallet.balance - originalTransaction.amount
-                        : originalWallet.balance + originalTransaction.amount,
-                  ),
+                  balance: Value(newBalance),
+                  stats: Value(newStats),
                 ),
               );
         }
@@ -197,15 +240,27 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             throw Exception('New wallet $walletClientId not found');
           }
 
+          // Calculate new stats for new wallet
+          final currentStats =
+              newWallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
+          final newAmount = amount ?? originalTransaction.amount;
+          final newStats = WalletStats(
+            totalIncome: originalTransaction.type == TransactionType.income
+                ? (currentStats.totalIncome) + newAmount
+                : currentStats.totalIncome,
+            totalExpense: originalTransaction.type == TransactionType.expense
+                ? (currentStats.totalExpense) + newAmount
+                : currentStats.totalExpense,
+          );
+
           await database.update(database.wallets).write(
                 WalletsCompanion(
                   balance: Value(
                     originalTransaction.type == TransactionType.income
-                        ? newWallet.balance +
-                            (amount ?? originalTransaction.amount)
-                        : newWallet.balance -
-                            (amount ?? originalTransaction.amount),
+                        ? newWallet.balance + newAmount
+                        : newWallet.balance - newAmount,
                   ),
+                  stats: Value(newStats),
                 ),
               );
         }
@@ -303,6 +358,19 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         throw Exception('Wallet ${transaction.walletClientId} not found');
       }
 
+      // Calculate new stats
+      final currentStats =
+          wallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
+      final newStats = WalletStats(
+        totalIncome: transaction.type == TransactionType.income
+            ? (currentStats.totalIncome) + transaction.amount
+            : currentStats.totalIncome,
+        totalExpense: transaction.type == TransactionType.expense
+            ? (currentStats.totalExpense) + transaction.amount
+            : currentStats.totalExpense,
+      );
+
+      // Update balance and stats
       await database.update(database.wallets).write(
             WalletsCompanion(
               balance: Value(
@@ -310,6 +378,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
                     ? wallet.balance - transaction.amount
                     : wallet.balance + transaction.amount,
               ),
+              stats: Value(newStats),
             ),
           );
 

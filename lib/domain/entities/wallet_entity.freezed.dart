@@ -26,6 +26,7 @@ mixin _$WalletEntity {
   int? get id => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
+  WalletStats? get stats => throw _privateConstructorUsedError;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -50,7 +51,8 @@ abstract class $WalletEntityCopyWith<$Res> {
       DateTime createdAt,
       int? id,
       int? userId,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      WalletStats? stats});
 }
 
 /// @nodoc
@@ -78,6 +80,7 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
     Object? id = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
+    Object? stats = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -120,6 +123,10 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      stats: freezed == stats
+          ? _value.stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as WalletStats?,
     ) as $Val);
   }
 }
@@ -142,7 +149,8 @@ abstract class _$$WalletEntityImplCopyWith<$Res>
       DateTime createdAt,
       int? id,
       int? userId,
-      DateTime updatedAt});
+      DateTime updatedAt,
+      WalletStats? stats});
 }
 
 /// @nodoc
@@ -168,6 +176,7 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
+    Object? stats = freezed,
   }) {
     return _then(_$WalletEntityImpl(
       clientId: null == clientId
@@ -210,6 +219,10 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      stats: freezed == stats
+          ? _value.stats
+          : stats // ignore: cast_nullable_to_non_nullable
+              as WalletStats?,
     ));
   }
 }
@@ -227,7 +240,8 @@ class _$WalletEntityImpl extends _WalletEntity {
       required this.createdAt,
       this.id,
       this.userId,
-      required this.updatedAt})
+      required this.updatedAt,
+      this.stats})
       : super._();
 
   @override
@@ -250,10 +264,12 @@ class _$WalletEntityImpl extends _WalletEntity {
   final int? userId;
   @override
   final DateTime updatedAt;
+  @override
+  final WalletStats? stats;
 
   @override
   String toString() {
-    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt)';
+    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, stats: $stats)';
   }
 
   @override
@@ -275,12 +291,24 @@ class _$WalletEntityImpl extends _WalletEntity {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.stats, stats) || other.stats == stats));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, clientId, type, name,
-      description, balance, currencyCode, createdAt, id, userId, updatedAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      clientId,
+      type,
+      name,
+      description,
+      balance,
+      currencyCode,
+      createdAt,
+      id,
+      userId,
+      updatedAt,
+      stats);
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -302,7 +330,8 @@ abstract class _WalletEntity extends WalletEntity {
       required final DateTime createdAt,
       final int? id,
       final int? userId,
-      required final DateTime updatedAt}) = _$WalletEntityImpl;
+      required final DateTime updatedAt,
+      final WalletStats? stats}) = _$WalletEntityImpl;
   const _WalletEntity._() : super._();
 
   @override
@@ -325,6 +354,8 @@ abstract class _WalletEntity extends WalletEntity {
   int? get userId;
   @override
   DateTime get updatedAt;
+  @override
+  WalletStats? get stats;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.

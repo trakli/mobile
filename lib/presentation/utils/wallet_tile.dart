@@ -294,7 +294,7 @@ class WalletTile extends StatelessWidget {
                               args: [
                                 CurrencyFormater.formatAmountWithSymbol(
                                   context,
-                                  wallet.balance > 0 ? wallet.balance : 0,
+                                  wallet.stats?.totalIncome ?? 0,
                                   currency: wallet.currency,
                                 )
                               ],
@@ -346,7 +346,7 @@ class WalletTile extends StatelessWidget {
                               args: [
                                 CurrencyFormater.formatAmountWithSymbol(
                                   context,
-                                  wallet.balance < 0 ? -wallet.balance : 0,
+                                  wallet.stats?.totalExpense ?? 0,
                                   currency: wallet.currency,
                                 )
                               ],

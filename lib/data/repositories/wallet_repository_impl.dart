@@ -50,7 +50,7 @@ class WalletRepositoryImpl
         description: description,
       );
 
-      unawaited(syncHandler.putRemote(wallet));
+      unawaited(put(wallet));
       return unit;
     });
   }
@@ -79,7 +79,7 @@ class WalletRepositoryImpl
         description: description,
       );
 
-      unawaited(syncHandler.putRemote(wallet));
+      unawaited(put(wallet));
       return unit;
     });
   }

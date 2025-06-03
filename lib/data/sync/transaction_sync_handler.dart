@@ -62,7 +62,15 @@ class TransactionSyncHandler
 
   @override
   bool shouldPersistRemote(TransactionCompleteDto entity) {
-    return !entity.categories.map((c) => c.id).contains(null);
+    // Check if any of the categories is null or wallet is null
+    final hasNullCategory = entity.categories.map((c) => c.id).contains(null);
+    final hasNullWalletId = entity.wallet.id == null;
+
+    // Return false if either has null values
+    if (hasNullCategory || hasNullWalletId) {
+      return false;
+    }
+    return true;
   }
 
   @override

@@ -14,6 +14,7 @@ class WalletMapper {
       id: row.id,
       userId: row.userId,
       updatedAt: row.updatedAt,
+      stats: row.stats,
     );
   }
 

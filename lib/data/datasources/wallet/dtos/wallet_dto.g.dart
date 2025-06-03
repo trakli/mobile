@@ -23,6 +23,9 @@ _$WalletDtoImpl _$$WalletDtoImplFromJson(Map<String, dynamic> json) =>
       syncState:
           SyncStateDto.fromJson(json['sync_state'] as Map<String, dynamic>),
       rev: json['rev'] as String?,
+      stats: json['stats'] == null
+          ? null
+          : WalletStats.fromJson(json['stats'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$WalletDtoImplToJson(_$WalletDtoImpl instance) =>
@@ -40,6 +43,7 @@ Map<String, dynamic> _$$WalletDtoImplToJson(_$WalletDtoImpl instance) =>
       'last_synced_at': instance.lastSyncedAt?.toIso8601String(),
       'sync_state': instance.syncState.toJson(),
       'rev': instance.rev,
+      'stats': instance.stats?.toJson(),
     };
 
 const _$WalletTypeEnumMap = {
