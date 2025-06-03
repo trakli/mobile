@@ -36,9 +36,120 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
   final AppDatabase database;
 
+  List<TransactionCompleteDto> mapTransactionAndComplete(
+      List<TypedResult> rows) {
+    final transactionMap = <String, TransactionCompleteDto>{};
+
+    for (final row in rows) {
+      final transaction = row.readTable(database.transactions);
+      final category = row.readTableOrNull(database.categories);
+      final wallet = row.readTableOrNull(database.wallets);
+
+      if (wallet == null) {
+        throw Exception('Wallet ${transaction.walletClientId} not found');
+      }
+
+      // Initialize the transaction entry if not exists
+      transactionMap.putIfAbsent(
+          transaction.clientId,
+          () => TransactionCompleteDto.fromTransaction(
+                transaction: transaction,
+                categories: [],
+                wallet: wallet,
+              ));
+
+      // Add the category if it exists (leftOuterJoin may return null)
+      if (category != null) {
+        final currentCategories = List<Category>.from(
+            transactionMap[transaction.clientId]?.categories ?? []);
+        if (!currentCategories.any((c) => c.clientId == category.clientId)) {
+          currentCategories.add(category);
+          // Create a new TransactionCompleteModel with the updated categories
+          transactionMap[transaction.clientId] =
+              TransactionCompleteDto.fromTransaction(
+            transaction: transaction,
+            categories: currentCategories,
+            wallet: wallet,
+          );
+        }
+      }
+    }
+
+    return transactionMap.values.toList();
+  }
+
+  /// Updates wallet balance and stats based on transaction changes
+  /// If [isDelete] is true, it will revert the transaction's effect
+  /// If [isUpdate] is true, it will first revert the old transaction and then apply the new one
+  Future<void> _updateWalletBalanceAndStats({
+    required Wallet wallet,
+    required Transaction transaction,
+    double? newAmount,
+    bool isDelete = false,
+    bool isUpdate = false,
+  }) async {
+    final currentStats =
+        wallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
+    double balanceChange = 0;
+    WalletStats newStats;
+
+    if (isDelete) {
+      // For deletion, reverse the transaction's effect
+      balanceChange = transaction.type == TransactionType.income
+          ? -transaction.amount // Remove income
+          : transaction.amount; // Add back expense
+      newStats = WalletStats(
+        totalIncome: transaction.type == TransactionType.income
+            ? currentStats.totalIncome - transaction.amount
+            : currentStats.totalIncome,
+        totalExpense: transaction.type == TransactionType.expense
+            ? currentStats.totalExpense - transaction.amount
+            : currentStats.totalExpense,
+      );
+    } else if (isUpdate && newAmount != null) {
+      // For updates, first revert old amount then apply new amount
+      final revertAmount = transaction.type == TransactionType.income
+          ? -transaction.amount
+          : transaction.amount;
+      final applyAmount =
+          transaction.type == TransactionType.income ? newAmount : -newAmount;
+      balanceChange = revertAmount + applyAmount;
+
+      newStats = WalletStats(
+        totalIncome: transaction.type == TransactionType.income
+            ? currentStats.totalIncome - transaction.amount + newAmount
+            : currentStats.totalIncome,
+        totalExpense: transaction.type == TransactionType.expense
+            ? currentStats.totalExpense - transaction.amount + newAmount
+            : currentStats.totalExpense,
+      );
+    } else {
+      // For new transactions
+      balanceChange = transaction.type == TransactionType.income
+          ? transaction.amount
+          : -transaction.amount;
+      newStats = WalletStats(
+        totalIncome: transaction.type == TransactionType.income
+            ? currentStats.totalIncome + transaction.amount
+            : currentStats.totalIncome,
+        totalExpense: transaction.type == TransactionType.expense
+            ? currentStats.totalExpense + transaction.amount
+            : currentStats.totalExpense,
+      );
+    }
+
+    await (database.update(database.wallets)
+          ..where((w) => w.clientId.equals(wallet.clientId)))
+        .write(
+      WalletsCompanion(
+        balance: Value(wallet.balance + balanceChange),
+        stats: Value(newStats),
+      ),
+    );
+  }
+
   @override
   Future<List<TransactionCompleteDto>> getAllTransactions() async {
-    // Create a query that joins transactions with their categories
     final query = database.select(database.transactions).join([
       leftOuterJoin(
         database.categorizables,
@@ -73,7 +184,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     DateTime datetime,
     String walletClientId,
   ) async {
-    // Verify that all categories exist
     for (var categoryId in categoryIds) {
       final categoryModel = await (database.select(database.categories)
             ..where((c) => c.clientId.equals(categoryId)))
@@ -84,7 +194,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
     }
 
-    // Verify that the wallet exists
     final wallet = await (database.select(database.wallets)
           ..where((w) => w.clientId.equals(walletClientId)))
         .getSingleOrNull();
@@ -93,7 +202,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       throw Exception('Wallet $walletClientId not found');
     }
 
-    // Ensure UTC time and format for server compatibility
     final now = formatServerIsoDateTime(DateTime.now());
     final utcDatetime = formatServerIsoDateTime(datetime);
 
@@ -109,30 +217,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           ),
         );
 
-    // Calculate new stats
-    final currentStats =
-        wallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
-    final newStats = WalletStats(
-      totalIncome: type == TransactionType.income
-          ? currentStats.totalIncome + amount
-          : currentStats.totalIncome,
-      totalExpense: type == TransactionType.expense
-          ? currentStats.totalExpense + amount
-          : currentStats.totalExpense,
-    );
-
-    // Update wallet balance and stats
-    await (database.update(database.wallets)
-          ..where((w) => w.clientId.equals(walletClientId)))
-        .write(
-      WalletsCompanion(
-        balance: Value(
-          type == TransactionType.income
-              ? wallet.balance + amount
-              : wallet.balance - amount,
-        ),
-        stats: Value(newStats),
-      ),
+    await _updateWalletBalanceAndStats(
+      wallet: wallet,
+      transaction: model,
     );
 
     for (var categoryId in categoryIds) {
@@ -175,63 +262,27 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     String? walletClientId,
   ) async {
     return database.transaction(() async {
-      // Get the original transaction
       final originalTransaction = await (database.select(database.transactions)
             ..where((t) => t.clientId.equals(id)))
           .getSingle();
 
-      // If wallet is being changed or amount is being updated, handle wallet balances
       if (walletClientId != null || amount != null) {
-        // Get the original wallet
         final originalWallet = await (database.select(database.wallets)
               ..where(
                   (w) => w.clientId.equals(originalTransaction.walletClientId)))
             .getSingleOrNull();
 
         if (originalWallet != null) {
-          // Calculate new stats for original wallet
-          final currentStats = originalWallet.stats ??
-              WalletStats(totalIncome: 0, totalExpense: 0);
-          final newStats = WalletStats(
-            totalIncome: originalTransaction.type == TransactionType.income
-                ? currentStats.totalIncome -
-                    originalTransaction.amount +
-                    (amount ?? originalTransaction.amount)
-                : currentStats.totalIncome,
-            totalExpense: originalTransaction.type == TransactionType.expense
-                ? currentStats.totalExpense -
-                    originalTransaction.amount +
-                    (amount ?? originalTransaction.amount)
-                : currentStats.totalExpense,
+          await _updateWalletBalanceAndStats(
+            wallet: originalWallet,
+            transaction: originalTransaction,
+            newAmount: amount,
+            isUpdate: true,
           );
-
-          // First revert the original transaction's effect on balance, then apply the new amount
-          // var balance = originalWallet.balance;
-
-          final newAmount = amount!;
-
-          final balanceAfterRevert =
-              originalTransaction.type == TransactionType.income
-                  ? originalWallet.balance -
-                      originalTransaction.amount // Revert income by subtracting
-                  : originalWallet.balance +
-                      originalTransaction.amount; // Revert expense by adding
-
-          final newBalance = originalTransaction.type == TransactionType.income
-              ? balanceAfterRevert + newAmount // Apply new income by adding
-              : balanceAfterRevert -
-                  newAmount; // Apply new expense by subtracting
-
-          await database.update(database.wallets).write(
-                WalletsCompanion(
-                  balance: Value(newBalance),
-                  stats: Value(newStats),
-                ),
-              );
         }
 
-        // If wallet is being changed, update the new wallet's balance
-        if (walletClientId != null) {
+        if (walletClientId != null &&
+            walletClientId != originalTransaction.walletClientId) {
           final newWallet = await (database.select(database.wallets)
                 ..where((w) => w.clientId.equals(walletClientId)))
               .getSingleOrNull();
@@ -240,29 +291,12 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             throw Exception('New wallet $walletClientId not found');
           }
 
-          // Calculate new stats for new wallet
-          final currentStats =
-              newWallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
-          final newAmount = amount ?? originalTransaction.amount;
-          final newStats = WalletStats(
-            totalIncome: originalTransaction.type == TransactionType.income
-                ? (currentStats.totalIncome) + newAmount
-                : currentStats.totalIncome,
-            totalExpense: originalTransaction.type == TransactionType.expense
-                ? (currentStats.totalExpense) + newAmount
-                : currentStats.totalExpense,
+          await _updateWalletBalanceAndStats(
+            wallet: newWallet,
+            transaction: originalTransaction.copyWith(
+              amount: amount ?? originalTransaction.amount,
+            ),
           );
-
-          await database.update(database.wallets).write(
-                WalletsCompanion(
-                  balance: Value(
-                    originalTransaction.type == TransactionType.income
-                        ? newWallet.balance + newAmount
-                        : newWallet.balance - newAmount,
-                  ),
-                  stats: Value(newStats),
-                ),
-              );
         }
       }
 
@@ -349,7 +383,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             ..where((t) => t.clientId.equals(id)))
           .getSingle();
 
-      // Update wallet balance if transaction has a wallet
       final wallet = await (database.select(database.wallets)
             ..where((w) => w.clientId.equals(transaction.walletClientId)))
           .getSingleOrNull();
@@ -358,29 +391,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         throw Exception('Wallet ${transaction.walletClientId} not found');
       }
 
-      // Calculate new stats
-      final currentStats =
-          wallet.stats ?? WalletStats(totalIncome: 0, totalExpense: 0);
-      final newStats = WalletStats(
-        totalIncome: transaction.type == TransactionType.income
-            ? (currentStats.totalIncome) + transaction.amount
-            : currentStats.totalIncome,
-        totalExpense: transaction.type == TransactionType.expense
-            ? (currentStats.totalExpense) + transaction.amount
-            : currentStats.totalExpense,
+      await _updateWalletBalanceAndStats(
+        wallet: wallet,
+        transaction: transaction,
+        isDelete: true,
       );
-
-      // Update balance and stats
-      await database.update(database.wallets).write(
-            WalletsCompanion(
-              balance: Value(
-                transaction.type == TransactionType.income
-                    ? wallet.balance - transaction.amount
-                    : wallet.balance + transaction.amount,
-              ),
-              stats: Value(newStats),
-            ),
-          );
 
       await database.delete(database.transactions).delete(transaction);
 
@@ -393,7 +408,6 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
   @override
   Stream<List<TransactionCompleteDto>> listenToTransaction() {
-    // Create a query that joins transactions with their categories and wallets
     final query = database.select(database.transactions).join([
       leftOuterJoin(
         database.categorizables,
@@ -415,56 +429,8 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
-    // Map the results to a structured format
     return query.watch().map((rows) {
       return mapTransactionAndComplete(rows);
     });
   }
-
-  List<TransactionCompleteDto> mapTransactionAndComplete(
-      List<TypedResult> rows) {
-    final transactionMap = <String, TransactionCompleteDto>{};
-
-    for (final row in rows) {
-      final transaction = row.readTable(database.transactions);
-      final category = row.readTableOrNull(database.categories);
-      final wallet = row.readTableOrNull(database.wallets);
-
-      if (wallet == null) {
-        throw Exception('Wallet ${transaction.walletClientId} not found');
-      }
-
-      // Initialize the transaction entry if not exists
-      transactionMap.putIfAbsent(
-          transaction.clientId,
-          () => TransactionCompleteDto.fromTransaction(
-                transaction: transaction,
-                categories: [],
-                wallet: wallet,
-              ));
-
-      // Add the category if it exists (leftOuterJoin may return null)
-      if (category != null) {
-        final currentCategories = List<Category>.from(
-            transactionMap[transaction.clientId]?.categories ?? []);
-        if (!currentCategories.any((c) => c.clientId == category.clientId)) {
-          currentCategories.add(category);
-          // Create a new TransactionCompleteModel with the updated categories
-          transactionMap[transaction.clientId] =
-              TransactionCompleteDto.fromTransaction(
-            transaction: transaction,
-            categories: currentCategories,
-            wallet: wallet,
-          );
-        }
-      }
-    }
-
-    // The data is already ordered from the database query, so we can just return the values
-    return transactionMap.values.toList();
-  }
 }
-
-// DateTime (2025-05-16 04:29:30.000Z)
-
-// DateTime (2025-05-16 03:13:49.000Z)
