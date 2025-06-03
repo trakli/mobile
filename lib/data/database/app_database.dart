@@ -49,11 +49,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
-      onUpgrade: (Migrator m, int from, int to) async {
-        // if (from < 2) {
-        //   await m.addColumn(wallets, wallets.stats);
-        // }
-      },
+      onUpgrade: (Migrator m, int from, int to) async {},
     );
   }
 

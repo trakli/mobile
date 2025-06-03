@@ -11,6 +11,4 @@ class Wallets extends Table with SyncTable {
   TextColumn get currency => text().withDefault(const Constant('XAF'))();
   TextColumn get description => text().nullable()();
   TextColumn get stats => text().map(const WalletStatsConverter()).nullable()();
-  RealColumn get totalIncome => real().withDefault(const Constant(0.0))();
-  RealColumn get totalExpense => real().withDefault(const Constant(0.0))();
 }
