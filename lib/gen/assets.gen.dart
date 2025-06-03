@@ -7,6 +7,8 @@
 // ignore_for_file: type=lint
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
+import 'package:flutter/widgets.dart';
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -55,6 +57,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/calendar.svg
   String get calendar => 'assets/images/calendar.svg';
 
+  /// File path: assets/images/call.svg
+  String get call => 'assets/images/call.svg';
+
   /// File path: assets/images/camera.svg
   String get camera => 'assets/images/camera.svg';
 
@@ -64,8 +69,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/chart.svg
   String get chart => 'assets/images/chart.svg';
 
+  /// File path: assets/images/check-circle.svg
+  String get checkCircle => 'assets/images/check-circle.svg';
+
   /// File path: assets/images/clock.svg
   String get clock => 'assets/images/clock.svg';
+
+  /// File path: assets/images/close.svg
+  String get close => 'assets/images/close.svg';
 
   /// File path: assets/images/document-copy.svg
   String get documentCopy => 'assets/images/document-copy.svg';
@@ -100,6 +111,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/logoGreen.svg
   String get logoGreen => 'assets/images/logoGreen.svg';
 
+  /// File path: assets/images/logout.svg
+  String get logout => 'assets/images/logout.svg';
+
   /// File path: assets/images/menu.svg
   String get menu => 'assets/images/menu.svg';
 
@@ -114,6 +128,13 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/people.svg
   String get people => 'assets/images/people.svg';
+
+  /// File path: assets/images/premium.png
+  AssetGenImage get premiumPng =>
+      const AssetGenImage('assets/images/premium.png');
+
+  /// File path: assets/images/premium.svg
+  String get premiumSvg => 'assets/images/premium.svg';
 
   /// File path: assets/images/refresh.svg
   String get refresh => 'assets/images/refresh.svg';
@@ -145,54 +166,64 @@ class $AssetsImagesGen {
   /// File path: assets/images/wallet.svg
   String get wallet => 'assets/images/wallet.svg';
 
+  /// File path: assets/images/warning.svg
+  String get warning => 'assets/images/warning.svg';
+
   /// List of all assets
-  List<String> get values => [
-    add,
-    appLogo,
-    appLogoGreen,
-    apple,
-    arrowDown,
-    arrowLeft,
-    arrowRight,
-    arrowSwapDown,
-    arrowSwapHorizontal,
-    arrowSwapUp,
-    arrowUpDown,
-    arrowUp,
-    bank,
-    bottomLeftCircle,
-    calendar,
-    camera,
-    category,
-    chart,
-    clock,
-    documentCopy,
-    documentUpload,
-    edit2,
-    eyeSlash,
-    eye,
-    filter,
-    google,
-    home,
-    loginLogo,
-    logo,
-    logoGreen,
-    menu,
-    more,
-    navEllipse,
-    notificationBing,
-    people,
-    refresh,
-    searchSpecial,
-    setting,
-    support,
-    topRightCircle,
-    trash,
-    user,
-    walletAdd,
-    walletMoney,
-    wallet,
-  ];
+  List<dynamic> get values => [
+        add,
+        appLogo,
+        appLogoGreen,
+        apple,
+        arrowDown,
+        arrowLeft,
+        arrowRight,
+        arrowSwapDown,
+        arrowSwapHorizontal,
+        arrowSwapUp,
+        arrowUpDown,
+        arrowUp,
+        bank,
+        bottomLeftCircle,
+        calendar,
+        call,
+        camera,
+        category,
+        chart,
+        checkCircle,
+        clock,
+        close,
+        documentCopy,
+        documentUpload,
+        edit2,
+        eyeSlash,
+        eye,
+        filter,
+        google,
+        home,
+        loginLogo,
+        logo,
+        logoGreen,
+        logout,
+        menu,
+        more,
+        navEllipse,
+        notificationBing,
+        people,
+        premiumPng,
+        premiumSvg,
+        refresh,
+        searchSpecial,
+        setting,
+        support,
+        topRightCircle,
+        trash,
+        user,
+        walletAdd,
+        walletMoney,
+        wallet,
+        warning
+      ];
 }
 
 class $AssetsTranslationsGen {
@@ -218,8 +249,82 @@ class $AssetsTranslationsGen {
 }
 
 class Assets {
-  const Assets._();
+  Assets._();
 
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
+}
+
+class AssetGenImage {
+  const AssetGenImage(this._assetName);
+
+  final String _assetName;
+
+  Image image({
+    Key? key,
+    AssetBundle? bundle,
+    ImageFrameBuilder? frameBuilder,
+    ImageErrorWidgetBuilder? errorBuilder,
+    String? semanticLabel,
+    bool excludeFromSemantics = false,
+    double? scale,
+    double? width,
+    double? height,
+    Color? color,
+    Animation<double>? opacity,
+    BlendMode? colorBlendMode,
+    BoxFit? fit,
+    AlignmentGeometry alignment = Alignment.center,
+    ImageRepeat repeat = ImageRepeat.noRepeat,
+    Rect? centerSlice,
+    bool matchTextDirection = false,
+    bool gaplessPlayback = false,
+    bool isAntiAlias = false,
+    String? package,
+    FilterQuality filterQuality = FilterQuality.low,
+    int? cacheWidth,
+    int? cacheHeight,
+  }) {
+    return Image.asset(
+      _assetName,
+      key: key,
+      bundle: bundle,
+      frameBuilder: frameBuilder,
+      errorBuilder: errorBuilder,
+      semanticLabel: semanticLabel,
+      excludeFromSemantics: excludeFromSemantics,
+      scale: scale,
+      width: width,
+      height: height,
+      color: color,
+      opacity: opacity,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      gaplessPlayback: gaplessPlayback,
+      isAntiAlias: isAntiAlias,
+      package: package,
+      filterQuality: filterQuality,
+      cacheWidth: cacheWidth,
+      cacheHeight: cacheHeight,
+    );
+  }
+
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
+  }
+
+  String get path => _assetName;
+
+  String get keyName => _assetName;
 }

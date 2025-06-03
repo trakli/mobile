@@ -15,6 +15,7 @@ import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/savings/my_savings_screen.dart';
 import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -155,6 +156,10 @@ class CustomDrawer extends StatelessWidget {
                 title: const Text("Database Viewer"),
               ),
             ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: const PremiumTile(),
+            ),
           ],
         ),
       ),

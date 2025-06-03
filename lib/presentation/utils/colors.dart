@@ -21,3 +21,6 @@ Color statFilterColor = const Color(0xFFF5F6F7);
 //Category form widget
 Color emojiBackgroundColor = const Color(0xFFFAFAFA);
 Color backButtonColor = const Color(0xFFE8E9F1);
+
+
+Color neutral300 = const Color(0xFF576760);

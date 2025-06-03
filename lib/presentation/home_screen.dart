@@ -51,7 +51,6 @@ class HomeScreen extends StatelessWidget {
           SizedBox(width: 16.w),
         ],
       ),
-      drawer: const CustomDrawer(),
       body: BlocConsumer<TransactionCubit, TransactionState>(
         listenWhen: (previous, current) => previous.failure != current.failure,
         listener: (BuildContext context, TransactionState state) {

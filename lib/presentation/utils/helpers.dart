@@ -7,13 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-
 import 'package:url_launcher/url_launcher.dart';
-import 'package:trakli/core/error/failures/failures.dart';
 
 Future<File?> pickFile() async {
   try {
@@ -163,6 +162,18 @@ Future<T?> showCustomBottomSheet<T>(
   );
 }
 
+Future<T?> showCustomDialog<T>(
+  context, {
+  required Widget widget,
+}) async {
+  return showDialog<T>(
+    context: context,
+    builder: (context) {
+      return widget;
+    },
+  );
+}
+
 Future<File?> pickImageApp({
   ImageSource sourcePick = ImageSource.gallery,
 }) async {
@@ -193,7 +204,8 @@ Future<File?> pickImageApp({
           aspectRatioPresets: [
             CropAspectRatioPreset.original,
             CropAspectRatioPreset.square,
-            CropAspectRatioPresetCustom(), // IMPORTANT: iOS supports only one custom aspect ratio in preset list
+            CropAspectRatioPresetCustom(),
+            // IMPORTANT: iOS supports only one custom aspect ratio in preset list
           ],
         ),
       ],

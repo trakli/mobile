@@ -41,3 +41,8 @@ enum SelectIconType {
 }
 
 enum CategorizableType { transaction }
+
+enum DialogType {
+  positive,
+  negative,
+}
