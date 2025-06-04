@@ -1,0 +1,40 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/domain/repositories/wallet_repository.dart';
+
+@injectable
+class AddWalletUseCase implements UseCase<Unit, AddWalletUseCaseParams> {
+  final WalletRepository _repository;
+
+  AddWalletUseCase(this._repository);
+
+  @override
+  Future<Either<Failure, Unit>> call(AddWalletUseCaseParams params) async {
+    return await _repository.insertWallet(
+      params.name,
+      params.type,
+      params.balance,
+      params.currency,
+      description: params.description,
+    );
+  }
+}
+
+class AddWalletUseCaseParams {
+  final String name;
+  final WalletType type;
+  final double balance;
+  final String currency;
+  final String? description;
+
+  AddWalletUseCaseParams({
+    required this.name,
+    required this.type,
+    required this.balance,
+    required this.currency,
+    this.description,
+  });
+}

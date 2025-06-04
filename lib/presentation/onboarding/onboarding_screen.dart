@@ -125,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           pointers: [
             RangePointer(
               color: Theme.of(context).primaryColor,
-              value: (currentPage/3) * 100,
+              value: (currentPage / 3) * 100,
               width: 0.2,
               sizeUnit: GaugeSizeUnit.factor,
               enableAnimation: true,
@@ -146,36 +146,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   child: currentPage != 3
                       ? IconButton(
-                    onPressed: () {
-                      pageController
-                          .nextPage(
-                        duration: const Duration(milliseconds: 800),
-                        curve: Curves.easeIn,
-                      ).then((val) {
-                        setState(() {
-                          currentPage += 1;
-                        });
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.arrow_forward_outlined,
-                      color: Colors.white,
-                    ),
-                  )
+                          onPressed: () {
+                            pageController
+                                .nextPage(
+                              duration: const Duration(milliseconds: 800),
+                              curve: Curves.easeIn,
+                            )
+                                .then((val) {
+                              setState(() {
+                                currentPage += 1;
+                              });
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.arrow_forward_outlined,
+                            color: Colors.white,
+                          ),
+                        )
                       : Center(
-                    child: TextButton(
-                      onPressed: () {
-                        navigateToNextPage();
-                      },
-                      child: Text(
-                        LocaleKeys.go.tr().toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
+                          child: TextButton(
+                            onPressed: () {
+                              navigateToNextPage();
+                            },
+                            child: Text(
+                              LocaleKeys.go.tr().toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             )
@@ -216,9 +217,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: animatedProgress,
         ),
         TextButton(
-          onPressed: isLastPage ? null : () {
-            navigateToNextPage();
-          },
+          onPressed: isLastPage
+              ? null
+              : () {
+                  navigateToNextPage();
+                },
           child: Text(
             isLastPage ? "" : LocaleKeys.skip.tr(),
             style: TextStyle(

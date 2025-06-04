@@ -21,7 +21,7 @@ class PartyScreen extends StatelessWidget {
         headerTextColor: const Color(0xFFEBEDEC),
         actions: [
           InkWell(
-            onTap: (){
+            onTap: () {
               AppNavigator.push(context, const AddPartyScreen());
             },
             child: Container(
@@ -29,7 +29,7 @@ class PartyScreen extends StatelessWidget {
               height: 42.r,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
-                color:  const Color(0xFFEBEDEC),
+                color: const Color(0xFFEBEDEC),
               ),
               padding: EdgeInsets.all(8.r),
               child: Center(

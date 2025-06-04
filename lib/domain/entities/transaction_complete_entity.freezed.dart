@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TransactionCompleteEntity {
   TransactionEntity get transaction => throw _privateConstructorUsedError;
   List<CategoryEntity> get categories => throw _privateConstructorUsedError;
+  WalletEntity get wallet => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionCompleteEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -32,9 +33,13 @@ abstract class $TransactionCompleteEntityCopyWith<$Res> {
           $Res Function(TransactionCompleteEntity) then) =
       _$TransactionCompleteEntityCopyWithImpl<$Res, TransactionCompleteEntity>;
   @useResult
-  $Res call({TransactionEntity transaction, List<CategoryEntity> categories});
+  $Res call(
+      {TransactionEntity transaction,
+      List<CategoryEntity> categories,
+      WalletEntity wallet});
 
   $TransactionEntityCopyWith<$Res> get transaction;
+  $WalletEntityCopyWith<$Res> get wallet;
 }
 
 /// @nodoc
@@ -55,6 +60,7 @@ class _$TransactionCompleteEntityCopyWithImpl<$Res,
   $Res call({
     Object? transaction = null,
     Object? categories = null,
+    Object? wallet = null,
   }) {
     return _then(_value.copyWith(
       transaction: null == transaction
@@ -65,6 +71,10 @@ class _$TransactionCompleteEntityCopyWithImpl<$Res,
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<CategoryEntity>,
+      wallet: null == wallet
+          ? _value.wallet
+          : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity,
     ) as $Val);
   }
 
@@ -75,6 +85,16 @@ class _$TransactionCompleteEntityCopyWithImpl<$Res,
   $TransactionEntityCopyWith<$Res> get transaction {
     return $TransactionEntityCopyWith<$Res>(_value.transaction, (value) {
       return _then(_value.copyWith(transaction: value) as $Val);
+    });
+  }
+
+  /// Create a copy of TransactionCompleteEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WalletEntityCopyWith<$Res> get wallet {
+    return $WalletEntityCopyWith<$Res>(_value.wallet, (value) {
+      return _then(_value.copyWith(wallet: value) as $Val);
     });
   }
 }
@@ -88,10 +108,15 @@ abstract class _$$TransactionCompleteEntityImplCopyWith<$Res>
       __$$TransactionCompleteEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({TransactionEntity transaction, List<CategoryEntity> categories});
+  $Res call(
+      {TransactionEntity transaction,
+      List<CategoryEntity> categories,
+      WalletEntity wallet});
 
   @override
   $TransactionEntityCopyWith<$Res> get transaction;
+  @override
+  $WalletEntityCopyWith<$Res> get wallet;
 }
 
 /// @nodoc
@@ -111,6 +136,7 @@ class __$$TransactionCompleteEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? transaction = null,
     Object? categories = null,
+    Object? wallet = null,
   }) {
     return _then(_$TransactionCompleteEntityImpl(
       transaction: null == transaction
@@ -121,6 +147,10 @@ class __$$TransactionCompleteEntityImplCopyWithImpl<$Res>
           ? _value._categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<CategoryEntity>,
+      wallet: null == wallet
+          ? _value.wallet
+          : wallet // ignore: cast_nullable_to_non_nullable
+              as WalletEntity,
     ));
   }
 }
@@ -130,7 +160,8 @@ class __$$TransactionCompleteEntityImplCopyWithImpl<$Res>
 class _$TransactionCompleteEntityImpl implements _TransactionCompleteEntity {
   _$TransactionCompleteEntityImpl(
       {required this.transaction,
-      required final List<CategoryEntity> categories})
+      required final List<CategoryEntity> categories,
+      required this.wallet})
       : _categories = categories;
 
   @override
@@ -144,8 +175,11 @@ class _$TransactionCompleteEntityImpl implements _TransactionCompleteEntity {
   }
 
   @override
+  final WalletEntity wallet;
+
+  @override
   String toString() {
-    return 'TransactionCompleteEntity(transaction: $transaction, categories: $categories)';
+    return 'TransactionCompleteEntity(transaction: $transaction, categories: $categories, wallet: $wallet)';
   }
 
   @override
@@ -156,12 +190,13 @@ class _$TransactionCompleteEntityImpl implements _TransactionCompleteEntity {
             (identical(other.transaction, transaction) ||
                 other.transaction == transaction) &&
             const DeepCollectionEquality()
-                .equals(other._categories, _categories));
+                .equals(other._categories, _categories) &&
+            (identical(other.wallet, wallet) || other.wallet == wallet));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, transaction,
-      const DeepCollectionEquality().hash(_categories));
+      const DeepCollectionEquality().hash(_categories), wallet);
 
   /// Create a copy of TransactionCompleteEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -175,14 +210,16 @@ class _$TransactionCompleteEntityImpl implements _TransactionCompleteEntity {
 
 abstract class _TransactionCompleteEntity implements TransactionCompleteEntity {
   factory _TransactionCompleteEntity(
-          {required final TransactionEntity transaction,
-          required final List<CategoryEntity> categories}) =
-      _$TransactionCompleteEntityImpl;
+      {required final TransactionEntity transaction,
+      required final List<CategoryEntity> categories,
+      required final WalletEntity wallet}) = _$TransactionCompleteEntityImpl;
 
   @override
   TransactionEntity get transaction;
   @override
   List<CategoryEntity> get categories;
+  @override
+  WalletEntity get wallet;
 
   /// Create a copy of TransactionCompleteEntity
   /// with the given fields replaced by the non-null parameter values.

@@ -5,17 +5,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
@@ -52,39 +53,32 @@ class _AddTransactionFormCompactLayoutState
   TextEditingController amountController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   CategoryEntity? _selectedCategory;
+  WalletEntity? _selectedWallet;
   final _formKey = GlobalKey<FormState>();
 
   Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
 
-  void setNewCurrency(Currency currencyValue) {
-    if (currencyValue.code == currentCurrency?.code) {
-      return;
-    } else {
-      currentCurrency = currencyValue;
-      setAmountController(currentCurrency);
-    }
-  }
-
-  setAmountController(Currency? currency) {
-    if (widget.transactionCompleteEntity != null) {
-      amountController.text = convertAmountFromCurrencyWihContext(context,
-              widget.transactionCompleteEntity!.transaction.amount, currency)
-          .toStringAsFixed(decimalDigits);
-    } else {
-      amountController.text = '';
-    }
+  
+  setCurrency(WalletEntity? wallet) {
+    setState(() {
+      currentCurrency = wallet?.currency ?? currentCurrency;
+    });
   }
 
   @override
   void initState() {
     super.initState();
 
-    // dateController.text = dateFormat.format(date);
-    // timeController.text = timeFormat.format(date);
 
     if (widget.transactionCompleteEntity != null) {
-      setAmountController(null);
+
+      final wallet = widget.transactionCompleteEntity?.wallet;
+      setCurrency(wallet);
+
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+
       descriptionController.text =
           widget.transactionCompleteEntity!.transaction.description;
       date = widget.transactionCompleteEntity!.transaction.datetime;
@@ -96,6 +90,9 @@ class _AddTransactionFormCompactLayoutState
           widget.transactionCompleteEntity!.categories.isNotEmpty) {
         _selectedCategory = widget.transactionCompleteEntity!.categories.first;
       }
+      if (widget.transactionCompleteEntity?.wallet != null) {
+        _selectedWallet = widget.transactionCompleteEntity!.wallet;
+      }
     } else {
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
@@ -103,7 +100,7 @@ class _AddTransactionFormCompactLayoutState
     }
 
     final onboardingEntity = context.read<OnboardingCubit>().state.entity;
-    currentCurrency = onboardingEntity?.selectedCurrency;
+    currentCurrency = onboardingEntity?.selectedCurrency ?? currentCurrency;
   }
 
   @override
@@ -167,37 +164,17 @@ class _AddTransactionFormCompactLayoutState
                             },
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            showCurrencyPicker(
-                              context: context,
-                              theme: CurrencyPickerThemeData(
-                                  bottomSheetHeight: 0.7.sh,
-                                  backgroundColor: Colors.white,
-                                  flagSize: 24.sp,
-                                  subtitleTextStyle: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Theme.of(context).primaryColor,
-                                  )),
-                              onSelect: (Currency currencyValue) {
-                                setState(() {
-                                  setNewCurrency(currencyValue);
-                                });
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(currentCurrency?.code ?? "XAF"),
-                            ),
+                        Container(
+                          width: 60.w,
+                          constraints: BoxConstraints(
+                            maxHeight: 50.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDEE1E0),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(currentCurrency?.code ?? "XAF"),
                           ),
                         )
                       ],
@@ -228,26 +205,35 @@ class _AddTransactionFormCompactLayoutState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: CustomDropdownSearch<ChartData>(
-                            label: "",
-                            accentColor: widget.accentColor,
-                            items: (filter, infiniteScrollProps) {
-                              return pieData
-                                  .map((data) => data)
-                                  .toList()
-                                  .where((ChartData el) => el.property
-                                      .toLowerCase()
-                                      .contains(filter.toLowerCase()))
-                                  .toList();
+                          child: BlocBuilder<WalletCubit, WalletState>(
+                            builder: (context, state) {
+                              return CustomDropdownSearch<WalletEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                selectedItem: _selectedWallet,
+                                items: (filter, infiniteScrollProps) {
+                                  return state.wallets;
+                                },
+                                itemAsString: (item) => item.name,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedWallet = value;
+                                    setCurrency(_selectedWallet);
+                                  });
+                                },
+                                compareFn: (i1, i2) =>
+                                    i1.clientId == i2.clientId,
+                                filterFn: (el, filter) => el.name
+                                    .toLowerCase()
+                                    .contains(filter.toLowerCase()),
+                                validator: (value) {
+                                  if (value == null) {
+                                    return "Please select a wallet";
+                                  }
+                                  return null;
+                                },
+                              );
                             },
-                            itemAsString: (item) => item.property,
-                            onChanged: (value) => {
-                              debugPrint(value?.property),
-                            },
-                            compareFn: (i1, i2) => i1 == i2,
-                            filterFn: (el, filter) => el.property
-                                .toLowerCase()
-                                .contains(filter.toLowerCase()),
                           ),
                         ),
                         GestureDetector(
@@ -678,7 +664,7 @@ class _AddTransactionFormCompactLayoutState
                                 categoryIds: _selectedCategory != null
                                     ? [_selectedCategory!.clientId]
                                     : [],
-                                currency: currentCurrency?.code,
+                           
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
@@ -689,7 +675,7 @@ class _AddTransactionFormCompactLayoutState
                                     : [],
                                 type: widget.transactionType,
                                 datetime: date,
-                                currency: currentCurrency?.code,
+                                walletClientId: _selectedWallet?.clientId ?? '',
                               );
                         }
                         Navigator.pop(context);

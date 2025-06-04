@@ -31,7 +31,7 @@ class StatisticsProvider {
     ];
   }
 
- List<ChartData> getPieData = [
+  List<ChartData> getPieData = [
     ChartData(
       'Food',
       30,

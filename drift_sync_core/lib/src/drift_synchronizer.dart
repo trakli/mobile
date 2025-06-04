@@ -91,23 +91,6 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     }
   }
 
-  /// Synchronizes pending local changes to the server does
-  /// full synchronization from the server.
-  Future<void> fullResync() async {
-    _preventConcurrentSync();
-    _updateState(state.start());
-    try {
-      final concluded = await uploadLocalChanges();
-      if (!concluded) {
-        // this means we weren't able to sync all local changes
-        // due to an unavailable server
-        return;
-      }
-      await _fullResync();
-    } finally {
-      _updateState(state.stop());
-    }
-  }
 
   void cancel() {
     _updateState(state.cancel());
@@ -162,7 +145,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     SyncTypeHandler<dynamic, dynamic, dynamic> handler,
   ) async {
     final entity = await handler.unmarshal(localChange.data);
-    if (localChange. deleted) {
+    if (localChange.deleted) {
       // For delete operations, try to use server ID if available
       final serverId = handler.getServerId(entity);
       if (serverId != null) {
@@ -171,6 +154,11 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     } else {
       // For put operations, try to use server ID if available
       final serverId = handler.getServerId(entity);
+
+      if (!handler.shouldPersistRemote(entity)) {
+        return;
+      }
+
       if (serverId != null) {
         final updated = await handler.putRemote(entity);
         await handler.upsertLocal(updated);

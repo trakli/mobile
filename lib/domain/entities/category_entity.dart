@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/data/dto/sync_state_dto.dart';
 
 part 'category_entity.freezed.dart';
+
 @freezed
 class CategoryEntity with _$CategoryEntity {
   const factory CategoryEntity({
@@ -15,7 +15,6 @@ class CategoryEntity with _$CategoryEntity {
     String? slug,
     int? userId,
     DateTime? updatedAt,
-    String? lastSyncedAt,
-    SyncStateDto? syncState,
+    DateTime? lastSyncedAt,
   }) = _CategoryEntity;
 }

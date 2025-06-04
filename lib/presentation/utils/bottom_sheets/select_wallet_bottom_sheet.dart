@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/presentation/utils/wallet_tile_mini.dart';
 
 class SelectWalletBottomSheet extends StatelessWidget {
-  const SelectWalletBottomSheet({super.key});
+  final List<WalletEntity> wallets;
+  final Function(WalletEntity) onSelect;
+
+  const SelectWalletBottomSheet({
+    super.key,
+    required this.wallets,
+    required this.onSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +51,18 @@ class SelectWalletBottomSheet extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             shrinkWrap: true,
-            itemCount: 2,
+            itemCount: wallets.length,
             itemBuilder: (context, index) {
+              final wallet = wallets[index];
               return GestureDetector(
-                onTap: (){
-                  AppNavigator.pop(context);
+                onTap: () {
+                  onSelect(wallet);
                 },
-                child: const WalletTileMini(),
+                child: WalletTileMini(
+                  name: wallet.name,
+                  balance: wallet.balance,
+                  currency: wallet.currencyCode,
+                ),
               );
             },
             separatorBuilder: (context, index) {

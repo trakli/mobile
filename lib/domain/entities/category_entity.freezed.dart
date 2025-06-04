@@ -25,8 +25,7 @@ mixin _$CategoryEntity {
   String? get slug => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
-  String? get lastSyncedAt => throw _privateConstructorUsedError;
-  SyncStateDto? get syncState => throw _privateConstructorUsedError;
+  DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -51,10 +50,7 @@ abstract class $CategoryEntityCopyWith<$Res> {
       String? slug,
       int? userId,
       DateTime? updatedAt,
-      String? lastSyncedAt,
-      SyncStateDto? syncState});
-
-  $SyncStateDtoCopyWith<$Res>? get syncState;
+      DateTime? lastSyncedAt});
 }
 
 /// @nodoc
@@ -82,7 +78,6 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
     Object? userId = freezed,
     Object? updatedAt = freezed,
     Object? lastSyncedAt = freezed,
-    Object? syncState = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -124,26 +119,8 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
       lastSyncedAt: freezed == lastSyncedAt
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      syncState: freezed == syncState
-          ? _value.syncState
-          : syncState // ignore: cast_nullable_to_non_nullable
-              as SyncStateDto?,
+              as DateTime?,
     ) as $Val);
-  }
-
-  /// Create a copy of CategoryEntity
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $SyncStateDtoCopyWith<$Res>? get syncState {
-    if (_value.syncState == null) {
-      return null;
-    }
-
-    return $SyncStateDtoCopyWith<$Res>(_value.syncState!, (value) {
-      return _then(_value.copyWith(syncState: value) as $Val);
-    });
   }
 }
 
@@ -165,11 +142,7 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
       String? slug,
       int? userId,
       DateTime? updatedAt,
-      String? lastSyncedAt,
-      SyncStateDto? syncState});
-
-  @override
-  $SyncStateDtoCopyWith<$Res>? get syncState;
+      DateTime? lastSyncedAt});
 }
 
 /// @nodoc
@@ -195,7 +168,6 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
     Object? userId = freezed,
     Object? updatedAt = freezed,
     Object? lastSyncedAt = freezed,
-    Object? syncState = freezed,
   }) {
     return _then(_$CategoryEntityImpl(
       clientId: null == clientId
@@ -237,11 +209,7 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
       lastSyncedAt: freezed == lastSyncedAt
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      syncState: freezed == syncState
-          ? _value.syncState
-          : syncState // ignore: cast_nullable_to_non_nullable
-              as SyncStateDto?,
+              as DateTime?,
     ));
   }
 }
@@ -259,8 +227,7 @@ class _$CategoryEntityImpl implements _CategoryEntity {
       this.slug,
       this.userId,
       this.updatedAt,
-      this.lastSyncedAt,
-      this.syncState});
+      this.lastSyncedAt});
 
   @override
   final String clientId;
@@ -281,13 +248,11 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   @override
   final DateTime? updatedAt;
   @override
-  final String? lastSyncedAt;
-  @override
-  final SyncStateDto? syncState;
+  final DateTime? lastSyncedAt;
 
   @override
   String toString() {
-    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState)';
+    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt)';
   }
 
   @override
@@ -309,25 +274,12 @@ class _$CategoryEntityImpl implements _CategoryEntity {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
-                other.lastSyncedAt == lastSyncedAt) &&
-            (identical(other.syncState, syncState) ||
-                other.syncState == syncState));
+                other.lastSyncedAt == lastSyncedAt));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      clientId,
-      type,
-      name,
-      description,
-      createdAt,
-      id,
-      slug,
-      userId,
-      updatedAt,
-      lastSyncedAt,
-      syncState);
+  int get hashCode => Object.hash(runtimeType, clientId, type, name,
+      description, createdAt, id, slug, userId, updatedAt, lastSyncedAt);
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -350,8 +302,7 @@ abstract class _CategoryEntity implements CategoryEntity {
       final String? slug,
       final int? userId,
       final DateTime? updatedAt,
-      final String? lastSyncedAt,
-      final SyncStateDto? syncState}) = _$CategoryEntityImpl;
+      final DateTime? lastSyncedAt}) = _$CategoryEntityImpl;
 
   @override
   String get clientId;
@@ -372,9 +323,7 @@ abstract class _CategoryEntity implements CategoryEntity {
   @override
   DateTime? get updatedAt;
   @override
-  String? get lastSyncedAt;
-  @override
-  SyncStateDto? get syncState;
+  DateTime? get lastSyncedAt;
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.

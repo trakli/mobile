@@ -8,7 +8,4 @@ class Categories extends Table with SyncTable {
   TextColumn get slug => text()();
   TextColumn get description => text().nullable()();
   TextColumn get type => textEnum<TransactionType>()();
-
-  @JsonKey('user_id')
-  IntColumn get userId => integer()();
 }

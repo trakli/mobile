@@ -72,7 +72,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
     final response = await dio.put(
       'categories/${category.id}',
       data: {
-        'type': category.type.name,
+        'type': category.type.serverKey,
         'name': category.name,
         'description': category.description,
       },

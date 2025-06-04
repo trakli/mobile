@@ -14,7 +14,6 @@ abstract class CategoryRepository {
     String clientId, {
     String? name,
     String? slug,
-    int? userId,
     String? description,
   });
 

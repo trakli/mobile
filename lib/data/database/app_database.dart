@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
 import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
@@ -12,6 +13,7 @@ import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/data/models/wallet_stats.dart';
 import 'dart:io';
 import 'tables/sync_statuc.dart';
 import 'package:trakli/data/database/tables/categorizables.dart';
@@ -47,9 +49,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
-      onUpgrade: (Migrator m, int from, int to) async {
-        // Add upgrade logic here when needed
-      },
+      onUpgrade: (Migrator m, int from, int to) async {},
     );
   }
 
@@ -186,5 +186,18 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       localChange,
       mode: InsertMode.insertOrReplace,
     );
+  }
+
+  Future<Wallet?> getWalletForTransaction(String clientId) async {
+    final query = select(wallets).join([
+      innerJoin(
+        transactions,
+        transactions.walletClientId.equalsExp(wallets.clientId),
+      )
+    ])
+      ..where(transactions.clientId.equals(clientId));
+
+    final results = await query.getSingleOrNull();
+    return results?.readTable(wallets);
   }
 }

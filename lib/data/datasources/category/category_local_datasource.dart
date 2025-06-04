@@ -19,7 +19,6 @@ abstract class CategoryLocalDataSource {
     String? name,
     String? slug,
     TransactionType? type,
-    int? userId,
     String? description,
   });
   Future<Category> deleteCategory(String clientId);
@@ -51,7 +50,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
             name: name,
             slug: slug,
             type: type,
-            userId: userId,
+            userId: Value(userId),
             description: Value(description),
             createdAt: Value(dateTime),
             updatedAt: Value(dateTime),
@@ -65,7 +64,6 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       {String? name,
       String? slug,
       TransactionType? type,
-      int? userId,
       String? description}) async {
     final model = await (database.update(database.categories)
           ..where((c) => c.clientId.equals(clientId)))
@@ -74,7 +72,6 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
         name: name != null ? Value(name) : const Value.absent(),
         slug: slug != null ? Value(slug) : const Value.absent(),
         type: type != null ? Value(type) : const Value.absent(),
-        userId: userId != null ? Value(userId) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),
       ),

@@ -1,16 +1,25 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/wallet_transfer_screen.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletTile extends StatelessWidget {
-  const WalletTile({super.key});
+  final WalletEntity wallet;
+
+  const WalletTile({
+    super.key,
+    required this.wallet,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +36,6 @@ class WalletTile extends StatelessWidget {
             left: 0,
             child: SvgPicture.asset(
               Assets.images.bottomLeftCircle,
-              // colorFilter: ColorFilter.mode(
-              //   Colors.grey.shade300,
-              //   BlendMode.srcIn,
-              // ),
             ),
           ),
           Padding(
@@ -68,7 +73,11 @@ class WalletTile extends StatelessWidget {
                   subtitle: Text(
                     LocaleKeys.balanceAmountWithCurrency.tr(
                       args: [
-                        CurrencyFormater.formatAmountWithSymbol(context, 300000)
+                        CurrencyFormater.formatAmountWithSymbol(
+                          context,
+                          wallet.balance,
+                          currency: wallet.currency,
+                        )
                       ],
                     ),
                     style: TextStyle(
@@ -97,7 +106,12 @@ class WalletTile extends StatelessWidget {
                       itemBuilder: (context) {
                         return [
                           PopupMenuItem(
-                            onTap: () {},
+                            onTap: () {
+                              AppNavigator.push(
+                                context,
+                                AddWalletScreen(wallet: wallet),
+                              );
+                            },
                             child: Row(
                               spacing: 8.w,
                               children: [
@@ -155,7 +169,35 @@ class WalletTile extends StatelessWidget {
                             ),
                           ),
                           PopupMenuItem(
-                            onTap: () {},
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Delete Wallet'),
+                                  content: Text(
+                                      'Are you sure you want to delete ${wallet.name}?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          AppNavigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        context
+                                            .read<WalletCubit>()
+                                            .deleteWallet(wallet.clientId);
+                                        AppNavigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                             height: 40.h,
                             child: Row(
                               spacing: 8.w,
@@ -251,7 +293,10 @@ class WalletTile extends StatelessWidget {
                             LocaleKeys.balanceAmountWithCurrency.tr(
                               args: [
                                 CurrencyFormater.formatAmountWithSymbol(
-                                    context, 150000)
+                                  context,
+                                  wallet.stats?.totalIncome ?? 0,
+                                  currency: wallet.currency,
+                                )
                               ],
                             ),
                             style: TextStyle(
@@ -300,7 +345,10 @@ class WalletTile extends StatelessWidget {
                             LocaleKeys.balanceAmountWithCurrency.tr(
                               args: [
                                 CurrencyFormater.formatAmountWithSymbol(
-                                    context, 150000)
+                                  context,
+                                  wallet.stats?.totalExpense ?? 0,
+                                  currency: wallet.currency,
+                                )
                               ],
                             ),
                             style: TextStyle(
@@ -317,8 +365,6 @@ class WalletTile extends StatelessWidget {
               ],
             ),
           ),
-
-          // Positioned(child: child)
         ],
       ),
     );

@@ -43,8 +43,7 @@ class Transactions extends Table with SyncTable {
   IntColumn get groupId => integer().nullable()();
 
   // Local references
-  TextColumn get walletClientId =>
-      text().references(Wallets, #clientId).nullable()();
+  TextColumn get walletClientId => text().references(Wallets, #clientId)();
   TextColumn get partyClientId =>
       text().references(Parties, #clientId).nullable()();
   TextColumn get groupClientId =>

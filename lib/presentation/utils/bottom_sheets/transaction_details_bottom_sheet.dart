@@ -114,6 +114,7 @@ class _TransactionDetailsBottomSheetState
                 context,
                 transaction.amount,
                 compact: true,
+                currency: widget.transaction.wallet.currency,
               ),
               style: TextStyle(
                 color: widget.accentColor,

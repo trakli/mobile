@@ -14,7 +14,7 @@ class AddPartyScreen extends StatelessWidget {
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        headerTextColor:  const Color(0xFFEBEDEC),
+        headerTextColor: const Color(0xFFEBEDEC),
         titleText: LocaleKeys.partyAddParty.tr(),
       ),
       body: const AddPartyForm(),
