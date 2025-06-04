@@ -91,23 +91,6 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     }
   }
 
-  /// Synchronizes pending local changes to the server does
-  /// full synchronization from the server.
-  // Future<void> fullResync() async {
-  //   _preventConcurrentSync();
-  //   _updateState(state.start());
-  //   try {
-  //     final concluded = await uploadLocalChanges();
-  //     if (!concluded) {
-  //       // this means we weren't able to sync all local changes
-  //       // due to an unavailable server
-  //       return;
-  //     }
-  //     await _fullResync();
-  //   } finally {
-  //     _updateState(state.stop());
-  //   }
-  // }
 
   void cancel() {
     _updateState(state.cancel());
