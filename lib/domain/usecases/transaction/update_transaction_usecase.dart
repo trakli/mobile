@@ -15,7 +15,6 @@ class UpdateTransactionUseCase
 
   @override
   Future<Either<Failure, Unit>> call(UpdateTransactionParams params) async {
-
     return repository.updateTransaction(
       params.id,
       params.amount,
@@ -33,7 +32,6 @@ class UpdateTransactionParams {
   final String? description;
   final List<String>? categoryIds;
   final DateTime? datetime;
-  final String? currency;
   final String? walletClientId;
 
   UpdateTransactionParams({
@@ -42,7 +40,6 @@ class UpdateTransactionParams {
     this.description,
     this.categoryIds,
     this.datetime,
-    this.currency,
     this.walletClientId,
   });
 }
