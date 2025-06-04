@@ -715,7 +715,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                     .transaction.clientId,
                                 amount: amount,
                                 description: description,
-                                currency: currency?.code,
                                 categoryIds: selectedCategory != null
                                     ? [selectedCategory!.clientId]
                                     : null,
@@ -736,7 +735,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 description: description,
                                 type: widget.transactionType,
                                 datetime: date,
-                                currency: currency?.code,
                                 walletClientId: selectedWallet!.clientId,
                                 categoryIds: selectedCategory != null
                                     ? [selectedCategory!.clientId]

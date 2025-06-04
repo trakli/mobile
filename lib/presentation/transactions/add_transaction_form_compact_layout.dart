@@ -664,7 +664,7 @@ class _AddTransactionFormCompactLayoutState
                                 categoryIds: _selectedCategory != null
                                     ? [_selectedCategory!.clientId]
                                     : [],
-                                currency: currentCurrency?.code,
+                           
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
@@ -675,7 +675,6 @@ class _AddTransactionFormCompactLayoutState
                                     : [],
                                 type: widget.transactionType,
                                 datetime: date,
-                                currency: currentCurrency?.code,
                                 walletClientId: _selectedWallet?.clientId ?? '',
                               );
                         }

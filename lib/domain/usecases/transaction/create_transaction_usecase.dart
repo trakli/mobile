@@ -34,7 +34,6 @@ class CreateTransactionParams {
   final List<String> categoryIds;
   final TransactionType type;
   final DateTime datetime;
-  final String? currency;
   final String walletClientId;
 
   CreateTransactionParams({
@@ -43,7 +42,6 @@ class CreateTransactionParams {
     required this.categoryIds,
     required this.type,
     required this.datetime,
-    required this.currency,
     required this.walletClientId,
   });
 }
