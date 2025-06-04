@@ -1,4 +1,5 @@
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/mappers/wallet_stats_mapper.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 
 class WalletMapper {
@@ -14,7 +15,7 @@ class WalletMapper {
       id: wallet.id,
       userId: wallet.userId,
       updatedAt: wallet.updatedAt,
-      stats: wallet.stats,
+      stats: WalletStatsMapper.toDomainNullable(wallet.stats),
     );
   }
 

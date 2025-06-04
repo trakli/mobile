@@ -60,9 +60,7 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
   @override
   late final GeneratedColumn<String> currency = GeneratedColumn<String>(
       'currency', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant('XAF'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
       'description', aliasedName, true,
@@ -417,13 +415,14 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     required String name,
     required WalletType type,
     this.balance = const Value.absent(),
-    this.currency = const Value.absent(),
+    required String currency,
     this.description = const Value.absent(),
     this.stats = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name),
-        type = Value(type);
+        type = Value(type),
+        currency = Value(currency);
   static Insertable<Wallet> custom({
     Expression<int>? id,
     Expression<int>? userId,
@@ -3850,7 +3849,7 @@ typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({
   required String name,
   required WalletType type,
   Value<double> balance,
-  Value<String> currency,
+  required String currency,
   Value<String?> description,
   Value<WalletStats?> stats,
   Value<int> rowid,
@@ -4152,7 +4151,7 @@ class $$WalletsTableTableManager extends RootTableManager<
             required String name,
             required WalletType type,
             Value<double> balance = const Value.absent(),
-            Value<String> currency = const Value.absent(),
+            required String currency,
             Value<String?> description = const Value.absent(),
             Value<WalletStats?> stats = const Value.absent(),
             Value<int> rowid = const Value.absent(),

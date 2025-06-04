@@ -46,7 +46,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       final wallet = row.readTableOrNull(database.wallets);
 
       if (wallet == null) {
-        throw Exception('Wallet ${transaction.walletClientId} not found');
+        throw Exception('Transaction wallet not found');
       }
 
       // Initialize the transaction entry if not exists
@@ -388,7 +388,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           .getSingleOrNull();
 
       if (wallet == null) {
-        throw Exception('Wallet ${transaction.walletClientId} not found');
+        throw Exception('Transaction wallet not found');
       }
 
       await _updateWalletBalanceAndStats(

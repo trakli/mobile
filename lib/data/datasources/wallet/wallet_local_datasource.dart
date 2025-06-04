@@ -65,7 +65,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
       name: name,
       type: type,
       balance: Value(balance),
-      currency: Value(currency),
+      currency: currency,
       description: Value(description),
       createdAt: Value(dateTime),
       updatedAt: Value(dateTime),
@@ -85,6 +85,9 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     String? currency,
     String? description,
   }) async {
+    final now = DateTime.now();
+    DateTime dateTime = formatServerIsoDateTime(now);
+
     final companion = WalletsCompanion(
       name: name != null ? Value(name) : const Value.absent(),
       type: type != null ? Value(type) : const Value.absent(),
@@ -92,7 +95,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
       currency: currency != null ? Value(currency) : const Value.absent(),
       description:
           description != null ? Value(description) : const Value.absent(),
-      updatedAt: Value(DateTime.now()),
+      updatedAt: Value(dateTime),
     );
 
     final model = await (database.update(database.wallets)

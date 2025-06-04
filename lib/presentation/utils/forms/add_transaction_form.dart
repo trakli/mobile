@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -52,6 +54,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   TextEditingController walletController = TextEditingController();
   Currency? currency;
   WalletEntity? selectedWallet;
+  CategoryEntity? selectedCategory;
   final pieData = StatisticsProvider().getPieData;
   final _formKey = GlobalKey<FormState>();
 
@@ -465,16 +468,43 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       onTap: () {
                         showCustomBottomSheet(
                           context,
-                          widget: BlocBuilder<WalletCubit, WalletState>(
+                          widget: BlocBuilder<CategoryCubit, CategoryState>(
                             builder: (context, state) {
-                              return SelectWalletBottomSheet(
-                                wallets: state.wallets,
-                                onSelect: (wallet) {
+                              //Category by transaction type
+                              final searchCategories = state.categories.where(
+                                  (element) =>
+                                      element.type == widget.transactionType);
+
+                              return CustomDropdownSearch<CategoryEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                selectedItem: selectedCategory,
+                                items: (filter, infiniteScrollProps) {
+                                  return searchCategories
+                                      .map((data) => data)
+                                      .toList()
+                                      .where((CategoryEntity el) => el.name
+                                          .toLowerCase()
+                                          .contains(filter.toLowerCase()))
+                                      .toList();
+                                },
+                                itemAsString: (item) => item.name,
+                                onChanged: (value) {
                                   setState(() {
-                                    selectedWallet = wallet;
-                                    categoryController.text = wallet.name;
+                                    selectedCategory = value;
+                                    if (value != null) {
+                                      categoryController.text = value.name;
+                                    }
+
+                                    Navigator.pop(context);
                                   });
-                                  Navigator.pop(context);
+                                },
+                                compareFn: (i1, i2) =>
+                                    i1.clientId == i2.clientId,
+                                filterFn: (el, filter) {
+                                  return el.name.toLowerCase().contains(
+                                        filter.toLowerCase(),
+                                      );
                                 },
                               );
                             },
@@ -686,6 +716,9 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 amount: amount,
                                 description: description,
                                 currency: currency?.code,
+                                categoryIds: selectedCategory != null
+                                    ? [selectedCategory!.clientId]
+                                    : null,
                               );
                           Navigator.pop(context);
                         } else {
@@ -705,6 +738,9 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 datetime: date,
                                 currency: currency?.code,
                                 walletClientId: selectedWallet!.clientId,
+                                categoryIds: selectedCategory != null
+                                    ? [selectedCategory!.clientId]
+                                    : [],
                               );
 
                           Navigator.pop(context);

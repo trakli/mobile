@@ -59,25 +59,7 @@ class _AddTransactionFormCompactLayoutState
   Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
 
-  // void setNewCurrency(Currency currencyValue) {
-  //   if (currencyValue.code == currentCurrency?.code) {
-  //     return;
-  //   } else {
-  //     currentCurrency = currencyValue;
-  //     setAmountController(currentCurrency);
-  //   }
-  // }
-
-  // setAmountController(Currency? currency) {
-  //   if (widget.transactionCompleteEntity != null) {
-  //     amountController.text = convertAmountFromCurrencyWihContext(context,
-  //             widget.transactionCompleteEntity!.transaction.amount, currency)
-  //         .toStringAsFixed(decimalDigits);
-  //   } else {
-  //     amountController.text = '';
-  //   }
-  // }
-
+  
   setCurrency(WalletEntity? wallet) {
     setState(() {
       currentCurrency = wallet?.currency ?? currentCurrency;
@@ -88,15 +70,11 @@ class _AddTransactionFormCompactLayoutState
   void initState() {
     super.initState();
 
-    // currentCurrency =
-    //     context.read<OnboardingCubit>().state.entity?.selectedCurrency;
 
     if (widget.transactionCompleteEntity != null) {
-      // setAmountController(null);
 
       final wallet = widget.transactionCompleteEntity?.wallet;
       setCurrency(wallet);
-      // currentCurrency = wallet?.currency ?? currentCurrency;
 
       amountController.text =
           widget.transactionCompleteEntity!.transaction.amount.toString();

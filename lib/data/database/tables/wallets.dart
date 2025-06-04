@@ -8,7 +8,7 @@ class Wallets extends Table with SyncTable {
   TextColumn get name => text()();
   TextColumn get type => textEnum<WalletType>()();
   RealColumn get balance => real().withDefault(const Constant(0.0))();
-  TextColumn get currency => text().withDefault(const Constant('XAF'))();
+  TextColumn get currency => text()();
   TextColumn get description => text().nullable()();
   TextColumn get stats => text().map(const WalletStatsConverter()).nullable()();
 }

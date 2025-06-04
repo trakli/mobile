@@ -1,24 +1,25 @@
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/data/mappers/wallet_stats_mapper.dart';
 
 class WalletMapper {
-  static WalletEntity toDomain(Wallet row) {
+  static WalletEntity toDomain(Wallet wallet) {
     return WalletEntity(
-      clientId: row.clientId,
-      name: row.name,
-      type: row.type,
-      balance: row.balance,
-      currencyCode: row.currency,
-      description: row.description,
-      createdAt: row.createdAt,
-      id: row.id,
-      userId: row.userId,
-      updatedAt: row.updatedAt,
-      stats: row.stats,
+      clientId: wallet.clientId,
+      type: wallet.type,
+      name: wallet.name,
+      description: wallet.description,
+      balance: wallet.balance,
+      currencyCode: wallet.currency,
+      createdAt: wallet.createdAt,
+      id: wallet.id,
+      userId: wallet.userId,
+      updatedAt: wallet.updatedAt,
+      stats: WalletStatsMapper.toDomainNullable(wallet.stats),
     );
   }
 
-  static List<WalletEntity> toDomainList(List<Wallet> rows) {
-    return rows.map((row) => toDomain(row)).toList();
+  static List<WalletEntity> toDomainList(List<Wallet> wallets) {
+    return wallets.map((wallet) => toDomain(wallet)).toList();
   }
 }

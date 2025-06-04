@@ -6,7 +6,7 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/repositories/wallet_repository.dart';
 
 @injectable
-class GetWalletsUseCase implements UseCase<void, NoParams> {
+class GetWalletsUseCase implements UseCase<List<WalletEntity>, NoParams> {
   final WalletRepository _repository;
 
   GetWalletsUseCase(this._repository);

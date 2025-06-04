@@ -26,7 +26,7 @@ mixin _$WalletEntity {
   int? get id => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
-  WalletStats? get stats => throw _privateConstructorUsedError;
+  WalletStatsEntity? get stats => throw _privateConstructorUsedError;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -52,7 +52,9 @@ abstract class $WalletEntityCopyWith<$Res> {
       int? id,
       int? userId,
       DateTime updatedAt,
-      WalletStats? stats});
+      WalletStatsEntity? stats});
+
+  $WalletStatsEntityCopyWith<$Res>? get stats;
 }
 
 /// @nodoc
@@ -126,8 +128,22 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
       stats: freezed == stats
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
-              as WalletStats?,
+              as WalletStatsEntity?,
     ) as $Val);
+  }
+
+  /// Create a copy of WalletEntity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WalletStatsEntityCopyWith<$Res>? get stats {
+    if (_value.stats == null) {
+      return null;
+    }
+
+    return $WalletStatsEntityCopyWith<$Res>(_value.stats!, (value) {
+      return _then(_value.copyWith(stats: value) as $Val);
+    });
   }
 }
 
@@ -150,7 +166,10 @@ abstract class _$$WalletEntityImplCopyWith<$Res>
       int? id,
       int? userId,
       DateTime updatedAt,
-      WalletStats? stats});
+      WalletStatsEntity? stats});
+
+  @override
+  $WalletStatsEntityCopyWith<$Res>? get stats;
 }
 
 /// @nodoc
@@ -222,7 +241,7 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
       stats: freezed == stats
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
-              as WalletStats?,
+              as WalletStatsEntity?,
     ));
   }
 }
@@ -265,7 +284,7 @@ class _$WalletEntityImpl extends _WalletEntity {
   @override
   final DateTime updatedAt;
   @override
-  final WalletStats? stats;
+  final WalletStatsEntity? stats;
 
   @override
   String toString() {
@@ -331,7 +350,7 @@ abstract class _WalletEntity extends WalletEntity {
       final int? id,
       final int? userId,
       required final DateTime updatedAt,
-      final WalletStats? stats}) = _$WalletEntityImpl;
+      final WalletStatsEntity? stats}) = _$WalletEntityImpl;
   const _WalletEntity._() : super._();
 
   @override
@@ -355,7 +374,7 @@ abstract class _WalletEntity extends WalletEntity {
   @override
   DateTime get updatedAt;
   @override
-  WalletStats? get stats;
+  WalletStatsEntity? get stats;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.

@@ -24,7 +24,6 @@ class UpdateTransactionUseCase
       params.datetime,
       params.walletClientId,
     );
-    // });
   }
 }
 

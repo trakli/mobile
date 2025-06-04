@@ -118,20 +118,3 @@ double convertAmountToDefault(
 
   return amountInBaseCurrency;
 }
-
-// double convertAmountFromCurrencyWihContext(
-//   BuildContext context,
-//   double amount,
-//   Currency? currency,
-// ) {
-//   final exchangeRateEntity = context.read<ExchangeRateCubit>().state.entity;
-
-//   Currency? selectedCurrency = currency ??
-//       context.read<OnboardingCubit>().state.entity?.selectedCurrency;
-
-//   final amountInBaseCurrency = selectedCurrency != null
-//       ? amount * (exchangeRateEntity?.rates[selectedCurrency.code] ?? 1)
-//       : amount;
-
-//   return amountInBaseCurrency;
-// }

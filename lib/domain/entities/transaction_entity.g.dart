@@ -20,7 +20,7 @@ _$TransactionEntityImpl _$$TransactionEntityImplFromJson(
           ? null
           : DateTime.parse(json['lastSyncedAt'] as String),
       rev: json['rev'] as String? ?? '1',
-      walletClientId: json['walletClientId'] as String?,
+      walletClientId: json['walletClientId'] as String,
     );
 
 Map<String, dynamic> _$$TransactionEntityImplToJson(
