@@ -9,7 +9,6 @@ import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
@@ -23,7 +22,6 @@ import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
-import 'package:trakli/presentation/utils/dialogs/add_party_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
