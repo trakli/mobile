@@ -103,10 +103,10 @@ class _AddTransactionFormCompactLayoutState
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
-    }
 
-    final onboardingEntity = context.read<OnboardingCubit>().state.entity;
-    currentCurrency = onboardingEntity?.selectedCurrency ?? currentCurrency;
+      final onboardingEntity = context.read<OnboardingCubit>().state.entity;
+      currentCurrency = onboardingEntity?.selectedCurrency ?? currentCurrency;
+    }
   }
 
   @override
