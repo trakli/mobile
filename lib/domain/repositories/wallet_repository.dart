@@ -28,13 +28,5 @@ abstract class WalletRepository {
 
   Stream<Either<Failure, List<WalletEntity>>> listenToWallets();
 
-  // Future<Either<Failure, Unit>> createDefaultWallet({
-  //   required String name,
-  //   required WalletType type,
-  //   required int userId,
-  //   String? description,
-  //   String? currencyCode,
-  // });
-
   Future<Either<Failure, bool>> hasAnyWallet();
 }

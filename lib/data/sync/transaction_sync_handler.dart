@@ -72,7 +72,7 @@ class TransactionSyncHandler
     // Check if any of the categories is null or wallet is null
     final hasNullCategory = entity.categories.map((c) => c.id).contains(null);
     final hasNullWalletId = entity.wallet.id == null;
-    final hasNullPartyId = entity.party?.id == null;
+    final hasNullPartyId = entity.party != null && entity.party!.id == null;
 
     // Return false if either has null values
     if (hasNullCategory || hasNullWalletId || hasNullPartyId) {
