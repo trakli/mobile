@@ -33,6 +33,8 @@ import '../data/datasources/exchange-rate/exchange_rate_remote_datasource.dart'
     as _i632;
 import '../data/datasources/onboarding/onboarding_local_data_source.dart'
     as _i480;
+import '../data/datasources/party/party_local_datasource.dart' as _i655;
+import '../data/datasources/party/party_remote_datasource.dart' as _i656;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
     as _i662;
 import '../data/datasources/transaction/transaction_remote_datasource.dart'
@@ -43,15 +45,18 @@ import '../data/repositories/auth_repository_imp.dart' as _i135;
 import '../data/repositories/category_repository_impl.dart' as _i324;
 import '../data/repositories/exchange_rate_imp.dart' as _i827;
 import '../data/repositories/onboarding_repository_impl.dart' as _i386;
+import '../data/repositories/party_repository_impl.dart' as _i168;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/repositories/wallet_repository_impl.dart' as _i305;
 import '../data/sync/category_sync_handler.dart' as _i463;
+import '../data/sync/party_sync_handler.dart' as _i280;
 import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../data/sync/wallet_sync_handler.dart' as _i849;
 import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
 import '../domain/repositories/exchange_rate_repository.dart' as _i1057;
 import '../domain/repositories/onboarding_repository.dart' as _i867;
+import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/wallet_repository.dart' as _i368;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
@@ -74,6 +79,11 @@ import '../domain/usecases/category/update_category_usecase.dart' as _i986;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/onboarding/get_onboarding_state.dart' as _i575;
 import '../domain/usecases/onboarding/save_onboarding_state.dart' as _i243;
+import '../domain/usecases/party/add_party_usecase.dart' as _i84;
+import '../domain/usecases/party/delete_party_usecase.dart' as _i56;
+import '../domain/usecases/party/get_parties_usecase.dart' as _i12;
+import '../domain/usecases/party/listen_to_parties_usecase.dart' as _i714;
+import '../domain/usecases/party/update_party_usecase.dart' as _i911;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
     as _i669;
 import '../domain/usecases/transaction/delete_transaction_usecase.dart'
@@ -98,6 +108,7 @@ import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/exchange_rate/cubit/exchange_rate_cubit.dart' as _i311;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
+import '../presentation/parties/cubit/party_cubit.dart' as _i841;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 import '../presentation/wallets/cubit/wallet_cubit.dart' as _i1068;
 
@@ -126,6 +137,8 @@ _i174.GetIt $initGetIt(
   );
   gh.singleton<_i683.PreferenceManager>(
       () => _i683.PreferenceManagerImpl()..init());
+  gh.factory<_i655.PartyLocalDataSource>(
+      () => _i655.PartyLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.factory<_i276.AuthLocalDataSource>(
       () => _i276.AuthLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.factory<_i849.WalletLocalDataSource>(
@@ -138,6 +151,8 @@ _i174.GetIt $initGetIt(
       () => injectHttpClientModule.dio(gh<String>(instanceName: 'HttpUrl')));
   gh.factory<_i558.CategoryRemoteDataSource>(
       () => _i558.CategoryRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.factory<_i656.PartyRemoteDataSource>(
+      () => _i656.PartyRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.lazySingleton<_i463.CategorySyncHandler>(() => _i463.CategorySyncHandler(
         gh<_i704.AppDatabase>(),
         gh<_i558.CategoryRemoteDataSource>(),
@@ -152,6 +167,10 @@ _i174.GetIt $initGetIt(
         syncHandler: gh<_i463.CategorySyncHandler>(),
         localDataSource: gh<_i148.CategoryLocalDataSource>(),
         db: gh<_i704.AppDatabase>(),
+      ));
+  gh.lazySingleton<_i280.PartySyncHandler>(() => _i280.PartySyncHandler(
+        gh<_i704.AppDatabase>(),
+        gh<_i656.PartyRemoteDataSource>(),
       ));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
@@ -174,6 +193,11 @@ _i174.GetIt $initGetIt(
   gh.singleton<_i867.OnboardingRepository>(() => _i386.OnboardingRepositoryImpl(
         gh<_i480.OnboardingLocalDataSource>(),
         gh<_i1057.ExchangeRateRepository>(),
+      ));
+  gh.lazySingleton<_i661.PartyRepository>(() => _i168.PartyRepositoryImpl(
+        syncHandler: gh<_i280.PartySyncHandler>(),
+        localDataSource: gh<_i655.PartyLocalDataSource>(),
+        db: gh<_i704.AppDatabase>(),
       ));
   gh.singleton<_i800.AuthRepository>(() => _i135.AuthRepositoryImpl(
         remoteDataSource: gh<_i496.AuthRemoteDataSource>(),
@@ -221,6 +245,16 @@ _i174.GetIt $initGetIt(
       () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.factory<_i575.GetOnboardingState>(
       () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i12.GetPartiesUseCase>(
+      () => _i12.GetPartiesUseCase(gh<_i661.PartyRepository>()));
+  gh.factory<_i56.DeletePartyUseCase>(
+      () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
+  gh.factory<_i911.UpdatePartyUseCase>(
+      () => _i911.UpdatePartyUseCase(gh<_i661.PartyRepository>()));
+  gh.factory<_i84.AddPartyUseCase>(
+      () => _i84.AddPartyUseCase(gh<_i661.PartyRepository>()));
+  gh.factory<_i714.ListenToPartiesUseCase>(
+      () => _i714.ListenToPartiesUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i397.ListenExchangeRate>(
       () => _i397.ListenExchangeRate(gh<_i1057.ExchangeRateRepository>()));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
@@ -248,20 +282,23 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i241.UpdateTransactionUseCase>(
+      () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i947.GetAllTransactionsUseCase>(
       () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i973.ListenToTransactionsUseCase>(() =>
       _i973.ListenToTransactionsUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
+        gh<_i575.GetOnboardingState>(),
+        gh<_i243.SaveOnboardingState>(),
+      ));
   gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
       () => syncModule.provideSyncTypeHandlers(
             gh<_i893.TransactionSyncHandler>(),
             gh<_i463.CategorySyncHandler>(),
             gh<_i849.WalletSyncHandler>(),
+            gh<_i280.PartySyncHandler>(),
           ));
-  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
-        gh<_i575.GetOnboardingState>(),
-        gh<_i243.SaveOnboardingState>(),
-      ));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i62.DeleteWalletUseCase>(
@@ -272,11 +309,6 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i669.CreateTransactionUseCase>(
       () => _i669.CreateTransactionUseCase(
-            gh<_i118.TransactionRepository>(),
-            gh<_i1057.ExchangeRateRepository>(),
-          ));
-  gh.factory<_i241.UpdateTransactionUseCase>(
-      () => _i241.UpdateTransactionUseCase(
             gh<_i118.TransactionRepository>(),
             gh<_i1057.ExchangeRateRepository>(),
           ));
@@ -296,6 +328,13 @@ _i174.GetIt $initGetIt(
       () => _i82.ListenToWalletsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i225.EnsureDefaultWalletExistsUseCase>(() =>
       _i225.EnsureDefaultWalletExistsUseCase(gh<_i368.WalletRepository>()));
+  gh.factory<_i841.PartyCubit>(() => _i841.PartyCubit(
+        getPartiesUseCase: gh<_i12.GetPartiesUseCase>(),
+        addPartyUseCase: gh<_i84.AddPartyUseCase>(),
+        updatePartyUseCase: gh<_i911.UpdatePartyUseCase>(),
+        deletePartyUseCase: gh<_i56.DeletePartyUseCase>(),
+        listenToPartiesUseCase: gh<_i714.ListenToPartiesUseCase>(),
+      ));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
         appDatabase: gh<_i704.AppDatabase>(),
         typeHandlers:

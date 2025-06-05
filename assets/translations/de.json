@@ -125,5 +125,12 @@
   "done": "Fertig",
   "selectCurrency": "Währung auswählen",
   "defaultWalletName": "Standard",
-  "defaultWalletDescription": "Standard-Brieftasche automatisch erstellt"
+  "defaultWalletDescription": "Standard-Brieftasche automatisch erstellt",
+  "partyEditParty": "Partei bearbeiten",
+  "partyName": "Name der Partei",
+  "partyNameRequired": "Parteiname ist erforderlich",
+  "partyDescription": "Beschreibung der Partei",
+  "partyUpdate": "Partei aktualisieren",
+  "partyAdd": "Partei hinzufügen",
+  "partyNoParties": "Keine Parteien gefunden"
 }

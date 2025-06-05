@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
-import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
 class DisplayPartyWidget extends StatelessWidget {
-  final TransactionEntity transaction;
+  final PartyEntity? party;
 
-  const DisplayPartyWidget({super.key, required this.transaction});
+  const DisplayPartyWidget({super.key, required this.party});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class DisplayPartyWidget extends StatelessWidget {
           child: SizedBox(
             width: 50.w,
             child: Text(
-              'Mia Smith'.extractWords(maxSize: 10),
+              party?.name ?? 'Unknown'.extractWords(maxSize: 10),
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: transactionTileTextColor,
@@ -53,6 +53,7 @@ class DisplayPartyWidget extends StatelessWidget {
             fontSize: 14.sp,
           ),
         ),
+        SizedBox(width: 4.w),
         Container(
           padding: EdgeInsets.symmetric(
             vertical: 4.h,

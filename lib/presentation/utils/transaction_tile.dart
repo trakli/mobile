@@ -122,7 +122,7 @@ class _TransactionTileState extends State<TransactionTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DisplayPartyWidget(
-                  transaction: transaction,
+                  party: widget.transaction.party,
                 ),
                 Column(
                   children: [
@@ -150,7 +150,9 @@ class _TransactionTileState extends State<TransactionTile> {
                 SizedBox(
                   width: 0.45.sw,
                   child: Text(
-                    transaction.description,
+                    transaction.description.isNotEmpty
+                        ? transaction.description
+                        : 'No description',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: transactionTileTextColor,

@@ -1,6 +1,7 @@
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/data/mappers/category_mapper.dart';
+import 'package:trakli/data/mappers/party_mapper.dart';
 import 'package:trakli/data/mappers/wallet_mapper.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
@@ -28,6 +29,7 @@ class TransactionCompleteModelMapper {
       categories:
           data.categories.map((c) => CategoryMapper.toDomain(c)).toList(),
       wallet: WalletMapper.toDomain(data.wallet),
+      party: data.party != null ? PartyMapper.toDomain(data.party!) : null,
     );
   }
 

@@ -17,6 +17,8 @@ TransactionCompleteDto _$TransactionCompleteDtoFromJson(
           .toList(),
       wallet: const WalletConverter()
           .fromJson(json['wallet'] as Map<String, dynamic>),
+      party: const PartyConverter()
+          .fromJson(json['party'] as Map<String, dynamic>?),
     );
 
 Map<String, dynamic> _$TransactionCompleteDtoToJson(
@@ -26,4 +28,5 @@ Map<String, dynamic> _$TransactionCompleteDtoToJson(
       'categories':
           instance.categories.map(const CategoryConverter().toJson).toList(),
       'wallet': const WalletConverter().toJson(instance.wallet),
+      'party': const PartyConverter().toJson(instance.party),
     };

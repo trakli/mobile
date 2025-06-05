@@ -48,10 +48,17 @@ class TransactionSyncHandler
           'Wallet ${transactionCompleteModel.transaction.walletClientId} not found');
     }
 
+    Party? party;
+    if (transactionCompleteModel.transaction.partyClientId != null) {
+      party = await db.getPartyForTransaction(
+          transactionCompleteModel.transaction.clientId);
+    }
+
     return TransactionCompleteDto.fromTransaction(
       transaction: transactionCompleteModel.transaction,
       categories: categories,
       wallet: wallet,
+      party: party,
     );
   }
 
@@ -65,9 +72,10 @@ class TransactionSyncHandler
     // Check if any of the categories is null or wallet is null
     final hasNullCategory = entity.categories.map((c) => c.id).contains(null);
     final hasNullWalletId = entity.wallet.id == null;
+    final hasNullPartyId = entity.party?.id == null;
 
     // Return false if either has null values
-    if (hasNullCategory || hasNullWalletId) {
+    if (hasNullCategory || hasNullWalletId || hasNullPartyId) {
       return false;
     }
     return true;
@@ -120,6 +128,7 @@ class TransactionSyncHandler
         lastSyncedAt: Value(entity.transaction.lastSyncedAt),
         updatedAt: Value(entity.transaction.updatedAt),
         walletClientId: Value(entity.wallet.clientId),
+        partyClientId: Value(entity.party?.clientId),
       );
 
       await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
@@ -167,6 +176,11 @@ class TransactionSyncHandler
 
       await db.wallets
           .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
+
+      if (entity.party != null) {
+        await db.parties
+            .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
+      }
     });
   }
 
@@ -199,25 +213,9 @@ class TransactionSyncHandler
       throw Exception('Wallet $clientId not found');
     }
 
-    return TransactionCompleteDto.fromTransaction(
-      transaction: result.first,
-      categories: await db.getCategoriesForTransaction(
-        result.first.clientId,
-        CategorizableType.transaction,
-      ),
-      wallet: wallet,
-    );
-  }
-
-  @override
-  Future<TransactionCompleteDto?> getLocalByServerId(int serverId) async {
-    final result =
-        await (db.select(table)..where((t) => t.id.equals(serverId))).get();
-
-    final wallet = await db.getWalletForTransaction(result.first.clientId);
-
-    if (wallet == null) {
-      throw Exception('Wallet ${result.first.clientId} not found');
+    Party? party;
+    if (result.first.partyClientId != null) {
+      party = await db.getPartyForTransaction(clientId);
     }
 
     return TransactionCompleteDto.fromTransaction(
@@ -227,6 +225,38 @@ class TransactionSyncHandler
         CategorizableType.transaction,
       ),
       wallet: wallet,
+      party: party,
+    );
+  }
+
+  @override
+  Future<TransactionCompleteDto?> getLocalByServerId(int serverId) async {
+    final result =
+        await (db.select(table)..where((t) => t.id.equals(serverId))).get();
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    final wallet = await db.getWalletForTransaction(result.first.clientId);
+
+    if (wallet == null) {
+      throw Exception('Wallet ${result.first.clientId} not found');
+    }
+
+    Party? party;
+    if (result.first.partyClientId != null) {
+      party = await db.getPartyForTransaction(result.first.clientId);
+    }
+
+    return TransactionCompleteDto.fromTransaction(
+      transaction: result.first,
+      categories: await db.getCategoriesForTransaction(
+        result.first.clientId,
+        CategorizableType.transaction,
+      ),
+      wallet: wallet,
+      party: party,
     );
   }
 

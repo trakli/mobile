@@ -13,8 +13,9 @@ abstract class TransactionRepository {
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
-    String walletClientId,
-  );
+    String walletClientId, {
+    String? partyClientId,
+  });
 
   Future<Either<Failure, Unit>> updateTransaction(
     String id,
@@ -22,8 +23,9 @@ abstract class TransactionRepository {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
-    String? walletClientId,
-  );
+    String? walletClientId, {
+    String? partyClientId,
+  });
 
   Future<Either<Failure, Unit>> deleteTransaction(String id);
 

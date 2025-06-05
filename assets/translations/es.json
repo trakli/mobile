@@ -125,5 +125,12 @@
   "done": "Listo",
   "selectCurrency": "Seleccionar moneda",
   "defaultWalletName": "Predeterminado",
-  "defaultWalletDescription": "Billetera predeterminada creada automáticamente"
+  "defaultWalletDescription": "Billetera predeterminada creada automáticamente",
+  "partyEditParty": "Editar parte",
+  "partyName": "Nombre de la parte",
+  "partyNameRequired": "El nombre de la parte es requerido",
+  "partyDescription": "Descripción de la parte",
+  "partyUpdate": "Actualizar parte",
+  "partyAdd": "Agregar parte",
+  "partyNoParties": "No se encontraron partes"
 }

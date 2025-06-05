@@ -2,16 +2,14 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/domain/repositories/exchange_rate_repository.dart';
 import 'package:trakli/domain/repositories/transaction_repository.dart';
 
 @injectable
 class UpdateTransactionUseCase
     implements UseCase<Unit, UpdateTransactionParams> {
   final TransactionRepository repository;
-  final ExchangeRateRepository exchangeRateRepository;
 
-  UpdateTransactionUseCase(this.repository, this.exchangeRateRepository);
+  UpdateTransactionUseCase(this.repository);
 
   @override
   Future<Either<Failure, Unit>> call(UpdateTransactionParams params) async {
@@ -22,6 +20,7 @@ class UpdateTransactionUseCase
       params.categoryIds,
       params.datetime,
       params.walletClientId,
+      partyClientId: params.partyClientId,
     );
   }
 }
@@ -33,6 +32,7 @@ class UpdateTransactionParams {
   final List<String>? categoryIds;
   final DateTime? datetime;
   final String? walletClientId;
+  final String? partyClientId;
 
   UpdateTransactionParams({
     required this.id,
@@ -41,5 +41,6 @@ class UpdateTransactionParams {
     this.categoryIds,
     this.datetime,
     this.walletClientId,
+    this.partyClientId,
   });
 }

@@ -31,8 +31,9 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
-    String? walletClientId,
-  ) async {
+    String? walletClientId, {
+    String? partyClientId,
+  }) async {
     try {
       final transaction = await localDataSource.updateTransaction(
         id,
@@ -41,6 +42,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         categoryIds,
         datetime,
         walletClientId,
+        partyClientId: partyClientId,
       );
 
       unawaited(put(transaction));
@@ -69,8 +71,9 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
-    String walletClientId,
-  ) async {
+    String walletClientId, {
+    String? partyClientId,
+  }) async {
     try {
       final transaction = await localDataSource.insertTransaction(
         amount,
@@ -79,6 +82,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         type,
         datetime,
         walletClientId,
+        partyClientId: partyClientId,
       );
 
       unawaited(post(transaction));

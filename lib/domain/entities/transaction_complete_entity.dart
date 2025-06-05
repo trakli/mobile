@@ -1,15 +1,22 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 
-part 'transaction_complete_entity.freezed.dart';
+class TransactionCompleteEntity extends Equatable {
+  final TransactionEntity transaction;
+  final List<CategoryEntity> categories;
+  final WalletEntity wallet;
+  final PartyEntity? party;
 
-@freezed
-class TransactionCompleteEntity with _$TransactionCompleteEntity {
-  factory TransactionCompleteEntity({
-    required TransactionEntity transaction,
-    required List<CategoryEntity> categories,
-    required WalletEntity wallet,
-  }) = _TransactionCompleteEntity;
+  const TransactionCompleteEntity({
+    required this.transaction,
+    required this.categories,
+    required this.wallet,
+    this.party,
+  });
+
+  @override
+  List<Object?> get props => [transaction, categories, wallet, party];
 }

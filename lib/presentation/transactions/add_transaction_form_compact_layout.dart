@@ -6,11 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/parties/add_party_screen.dart';
+import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
@@ -54,12 +57,12 @@ class _AddTransactionFormCompactLayoutState
   TextEditingController descriptionController = TextEditingController();
   CategoryEntity? _selectedCategory;
   WalletEntity? _selectedWallet;
+  PartyEntity? _selectedParty;
   final _formKey = GlobalKey<FormState>();
 
   Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
 
-  
   setCurrency(WalletEntity? wallet) {
     setState(() {
       currentCurrency = wallet?.currency ?? currentCurrency;
@@ -70,9 +73,7 @@ class _AddTransactionFormCompactLayoutState
   void initState() {
     super.initState();
 
-
     if (widget.transactionCompleteEntity != null) {
-
       final wallet = widget.transactionCompleteEntity?.wallet;
       setCurrency(wallet);
 
@@ -90,8 +91,13 @@ class _AddTransactionFormCompactLayoutState
           widget.transactionCompleteEntity!.categories.isNotEmpty) {
         _selectedCategory = widget.transactionCompleteEntity!.categories.first;
       }
+
       if (widget.transactionCompleteEntity?.wallet != null) {
         _selectedWallet = widget.transactionCompleteEntity!.wallet;
+      }
+
+      if (widget.transactionCompleteEntity?.party != null) {
+        _selectedParty = widget.transactionCompleteEntity!.party;
       }
     } else {
       date = DateTime.now();
@@ -377,36 +383,39 @@ class _AddTransactionFormCompactLayoutState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: CustomDropdownSearch<ChartData>(
-                            label: "",
-                            accentColor: widget.accentColor,
-                            items: (filter, infiniteScrollProps) {
-                              return pieData
-                                  .map((data) => data)
-                                  .toList()
-                                  .where((ChartData el) => el.property
-                                      .toLowerCase()
-                                      .contains(filter.toLowerCase()))
-                                  .toList();
+                          child: BlocBuilder<PartyCubit, PartyState>(
+                            builder: (context, state) {
+                              return CustomDropdownSearch<PartyEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                selectedItem: _selectedParty,
+                                items: (filter, infiniteScrollProps) {
+                                  return state.parties;
+                                },
+                                itemAsString: (item) => item.name,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedParty = value;
+                                  });
+                                },
+                                compareFn: (i1, i2) =>
+                                    i1.clientId == i2.clientId,
+                                filterFn: (el, filter) => el.name
+                                    .toLowerCase()
+                                    .contains(filter.toLowerCase()),
+                              );
                             },
-                            itemAsString: (item) => item.property,
-                            onChanged: (value) => {
-                              debugPrint(value?.property),
-                            },
-                            compareFn: (i1, i2) => i1 == i2,
-                            filterFn: (el, filter) => el.property
-                                .toLowerCase()
-                                .contains(filter.toLowerCase()),
                           ),
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return const AddPartyDialog();
-                              },
-                            );
+                            AppNavigator.push(context, const AddPartyScreen());
+                            // await showDialog(
+                            //   context: context,
+                            //   builder: (context) {
+                            //     return const AddPartyDialog();
+                            //   },
+                            // );
                           },
                           child: Container(
                             width: 60.w,
@@ -664,7 +673,7 @@ class _AddTransactionFormCompactLayoutState
                                 categoryIds: _selectedCategory != null
                                     ? [_selectedCategory!.clientId]
                                     : [],
-                           
+                                partyClientId: _selectedParty?.clientId,
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
@@ -676,6 +685,7 @@ class _AddTransactionFormCompactLayoutState
                                 type: widget.transactionType,
                                 datetime: date,
                                 walletClientId: _selectedWallet?.clientId ?? '',
+                                partyClientId: _selectedParty?.clientId,
                               );
                         }
                         Navigator.pop(context);

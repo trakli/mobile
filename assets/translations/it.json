@@ -125,5 +125,12 @@
   "done": "Fatto",
   "selectCurrency": "Seleziona valuta",
   "defaultWalletName": "Predefinito",
-  "defaultWalletDescription": "Portafoglio predefinito creato automaticamente"
+  "defaultWalletDescription": "Portafoglio predefinito creato automaticamente",
+  "partyEditParty": "Modifica parte",
+  "partyName": "Nome della parte",
+  "partyNameRequired": "Il nome della parte è obbligatorio",
+  "partyDescription": "Descrizione della parte",
+  "partyUpdate": "Aggiorna parte",
+  "partyAdd": "Aggiungi parte",
+  "partyNoParties": "Nessuna parte trovata"
 }
