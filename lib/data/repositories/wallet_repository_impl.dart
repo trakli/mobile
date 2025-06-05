@@ -7,7 +7,7 @@ import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/wallet/wallet_local_datasource.dart';
-import 'package:trakli/data/mapper/wallet_mapper.dart';
+import 'package:trakli/data/mappers/wallet_mapper.dart';
 import 'package:trakli/data/sync/wallet_sync_handler.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/repositories/wallet_repository.dart';
@@ -102,6 +102,14 @@ class WalletRepositoryImpl
   Stream<Either<Failure, List<WalletEntity>>> listenToWallets() {
     return localDataSource.listenToWallets().map((wallets) {
       return Right(WalletMapper.toDomainList(wallets));
+    });
+  }
+
+  @override
+  Future<Either<Failure, bool>> hasAnyWallet() async {
+    return RepositoryErrorHandler.handleApiCall(() async {
+      final wallets = await localDataSource.getAllWallets();
+      return wallets.isNotEmpty;
     });
   }
 }

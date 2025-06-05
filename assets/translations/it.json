@@ -120,5 +120,17 @@
   "unauthorizedErrorDesc": "Si è verificato un errore di autorizzazione. Per favore, riprova più tardi.",
   "unknownErrorDesc": "Si è verificato un errore sconosciuto. Per favore, riprova più tardi.",
   "cancel": "Annulla",
-  "delete": "Elimina"
+  "delete": "Elimina",
+  "next": "Avanti",
+  "done": "Fatto",
+  "selectCurrency": "Seleziona valuta",
+  "defaultWalletName": "Predefinito",
+  "defaultWalletDescription": "Portafoglio predefinito creato automaticamente",
+  "partyEditParty": "Modifica parte",
+  "partyName": "Nome della parte",
+  "partyNameRequired": "Il nome della parte è obbligatorio",
+  "partyDescription": "Descrizione della parte",
+  "partyUpdate": "Aggiorna parte",
+  "partyAdd": "Aggiungi parte",
+  "partyNoParties": "Nessuna parte trovata"
 }

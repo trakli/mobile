@@ -11,6 +11,7 @@ import 'package:trakli/domain/usecases/wallet/delete_wallet_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/get_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/listen_to_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/update_wallet_usecase.dart';
+import 'package:trakli/domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart';
 
 part 'wallet_state.dart';
 part 'wallet_cubit.freezed.dart';
@@ -22,6 +23,7 @@ class WalletCubit extends Cubit<WalletState> {
   final UpdateWalletUseCase updateWalletUseCase;
   final DeleteWalletUseCase deleteWalletUseCase;
   final ListenToWalletsUseCase listenToWalletsUseCase;
+  final EnsureDefaultWalletExistsUseCase ensureDefaultWalletExistsUseCase;
   StreamSubscription? _walletSubscription;
 
   WalletCubit({
@@ -30,6 +32,7 @@ class WalletCubit extends Cubit<WalletState> {
     required this.updateWalletUseCase,
     required this.deleteWalletUseCase,
     required this.listenToWalletsUseCase,
+    required this.ensureDefaultWalletExistsUseCase,
   }) : super(WalletState.initial()) {
     listenForChanges();
   }
@@ -52,6 +55,35 @@ class WalletCubit extends Cubit<WalletState> {
       (wallets) => emit(state.copyWith(
         isLoading: false,
         wallets: wallets,
+        failure: const Failure.none(),
+      )),
+    );
+  }
+
+  Future<void> ensureDefaultWallet({
+    required String currencyCode,
+    required WalletType type,
+    required String name,
+    String? description,
+  }) async {
+    emit(state.copyWith(isSaving: true, failure: const Failure.none()));
+
+    final result = await ensureDefaultWalletExistsUseCase(
+      EnsureDefaultWalletParams(
+        currencyCode: currencyCode,
+        name: name,
+        type: type,
+        description: description,
+      ),
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        isSaving: false,
+        failure: failure,
+      )),
+      (_) => emit(state.copyWith(
+        isSaving: false,
         failure: const Failure.none(),
       )),
     );

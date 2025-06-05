@@ -200,4 +200,17 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     final results = await query.getSingleOrNull();
     return results?.readTable(wallets);
   }
+
+  Future<Party?> getPartyForTransaction(String clientId) async {
+    final query = select(parties).join([
+      innerJoin(
+        transactions,
+        transactions.partyClientId.equalsExp(parties.clientId),
+      )
+    ])
+      ..where(transactions.clientId.equals(clientId));
+
+    final results = await query.getSingleOrNull();
+    return results?.readTable(parties);
+  }
 }

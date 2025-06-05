@@ -42,6 +42,7 @@ class _TransactionDetailsBottomSheetState
   Widget build(BuildContext context) {
     final transaction = widget.transaction.transaction;
     final category = widget.transaction.categories;
+    final party = widget.transaction.party;
 
     return SizedBox(
       width: double.infinity,
@@ -132,17 +133,20 @@ class _TransactionDetailsBottomSheetState
               ),
             ),
             SizedBox(height: 16.h),
-            Text(
-              transaction.description,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w400,
+            if (transaction.description.isNotEmpty) ...[
+              Text(
+                transaction.description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
+              SizedBox(height: 8.h),
+            ],
             DisplayPartyWidget(
-              transaction: transaction,
+              party: party,
+              maxNameLength: 20,
             ),
             SizedBox(height: 4.h),
             CategoriesWidget(

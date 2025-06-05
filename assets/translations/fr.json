@@ -120,5 +120,17 @@
   "unauthorizedErrorDesc": "Une erreur d'autorisation est survenue. Veuillez réessayer plus tard.",
   "unknownErrorDesc": "Une erreur inconnue est survenue. Veuillez réessayer plus tard.",
   "cancel": "Annuler",
-  "delete": "Supprimer"
+  "delete": "Supprimer",
+  "next": "Suivant",
+  "done": "Terminé",
+  "selectCurrency": "Sélectionner la devise",
+  "defaultWalletName": "Par défaut",
+  "defaultWalletDescription": "Portefeuille par défaut créé automatiquement",
+  "partyEditParty": "Modifier le tiers",
+  "partyName": "Nom du tiers",
+  "partyNameRequired": "Le nom du tiers est requis",
+  "partyDescription": "Description du tiers",
+  "partyUpdate": "Mettre à jour le tiers",
+  "partyAdd": "Ajouter un tiers",
+  "partyNoParties": "Aucun tiers trouvé"
 }

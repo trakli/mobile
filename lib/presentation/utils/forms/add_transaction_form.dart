@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/models/chart_data_model.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -23,6 +23,7 @@ import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
 import 'package:trakli/presentation/utils/dialogs/add_party_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 
 class AddTransactionForm extends StatefulWidget {
   final TransactionType transactionType;
@@ -52,9 +53,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController walletController = TextEditingController();
+  // TextEditingController partyController = TextEditingController();
   Currency? currency;
   WalletEntity? selectedWallet;
   CategoryEntity? selectedCategory;
+  PartyEntity? selectedParty;
   final pieData = StatisticsProvider().getPieData;
   final _formKey = GlobalKey<FormState>();
 
@@ -396,26 +399,27 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: CustomDropdownSearch<ChartData>(
-                      label: "",
-                      accentColor: widget.accentColor,
-                      items: (filter, infiniteScrollProps) {
-                        return pieData
-                            .map((data) => data)
-                            .toList()
-                            .where((ChartData el) => el.property
-                                .toLowerCase()
-                                .contains(filter.toLowerCase()))
-                            .toList();
+                    child: BlocBuilder<PartyCubit, PartyState>(
+                      builder: (context, state) {
+                        return CustomDropdownSearch<PartyEntity>(
+                          label: "",
+                          accentColor: widget.accentColor,
+                          selectedItem: selectedParty,
+                          items: (filter, infiniteScrollProps) {
+                            return state.parties;
+                          },
+                          itemAsString: (item) => item.name,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedParty = value;
+                            });
+                          },
+                          compareFn: (i1, i2) => i1.clientId == i2.clientId,
+                          filterFn: (el, filter) => el.name
+                              .toLowerCase()
+                              .contains(filter.toLowerCase()),
+                        );
                       },
-                      itemAsString: (item) => item.property,
-                      onChanged: (value) => {
-                        debugPrint(value?.property),
-                      },
-                      compareFn: (i1, i2) => i1 == i2,
-                      filterFn: (el, filter) => el.property
-                          .toLowerCase()
-                          .contains(filter.toLowerCase()),
                     ),
                   ),
                   GestureDetector(
@@ -739,6 +743,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                 categoryIds: selectedCategory != null
                                     ? [selectedCategory!.clientId]
                                     : [],
+                                partyClientId: selectedParty?.clientId,
                               );
 
                           Navigator.pop(context);

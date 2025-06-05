@@ -16,7 +16,6 @@ class CreateTransactionUseCase
 
   @override
   Future<Either<Failure, Unit>> call(CreateTransactionParams params) async {
-
     return repository.insertTransaction(
       params.amount,
       params.description,
@@ -24,6 +23,7 @@ class CreateTransactionUseCase
       params.type,
       params.datetime,
       params.walletClientId,
+      partyClientId: params.partyClientId,
     );
   }
 }
@@ -35,6 +35,7 @@ class CreateTransactionParams {
   final TransactionType type;
   final DateTime datetime;
   final String walletClientId;
+  final String? partyClientId;
 
   CreateTransactionParams({
     required this.amount,
@@ -43,5 +44,6 @@ class CreateTransactionParams {
     required this.type,
     required this.datetime,
     required this.walletClientId,
+    this.partyClientId,
   });
 }

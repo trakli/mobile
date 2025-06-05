@@ -15,16 +15,19 @@ abstract class TransactionLocalDataSource {
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
-    String walletClientId,
-  );
+    String walletClientId, {
+    String? partyClientId,
+  });
   Future<TransactionCompleteDto> updateTransaction(
     String id,
     double? amount,
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
-    String? walletClientId,
-  );
+    String? walletClientId, {
+    String? partyClientId,
+  });
+
   Future<TransactionCompleteDto> deleteTransaction(String id);
 
   Stream<List<TransactionCompleteDto>> listenToTransaction();
@@ -44,6 +47,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       final transaction = row.readTable(database.transactions);
       final category = row.readTableOrNull(database.categories);
       final wallet = row.readTableOrNull(database.wallets);
+      final party = row.readTableOrNull(database.parties);
 
       if (wallet == null) {
         throw Exception('Transaction wallet not found');
@@ -56,6 +60,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
                 transaction: transaction,
                 categories: [],
                 wallet: wallet,
+                party: party,
               ));
 
       // Add the category if it exists (leftOuterJoin may return null)
@@ -70,6 +75,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             transaction: transaction,
             categories: currentCategories,
             wallet: wallet,
+            party: party,
           );
         }
       }
@@ -168,6 +174,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.wallets.clientId
             .equalsExp(database.transactions.walletClientId),
       ),
+      leftOuterJoin(
+        database.parties,
+        database.parties.clientId
+            .equalsExp(database.transactions.partyClientId),
+      ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
@@ -182,8 +193,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
-    String walletClientId,
-  ) async {
+    String walletClientId, {
+    String? partyClientId,
+  }) async {
     for (var categoryId in categoryIds) {
       final categoryModel = await (database.select(database.categories)
             ..where((c) => c.clientId.equals(categoryId)))
@@ -202,6 +214,17 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       throw Exception('Wallet $walletClientId not found');
     }
 
+    Party? party;
+    if (partyClientId != null) {
+      party = await (database.select(database.parties)
+            ..where((p) => p.clientId.equals(partyClientId)))
+          .getSingleOrNull();
+
+      if (party == null) {
+        throw Exception('Party $partyClientId not found');
+      }
+    }
+
     final now = formatServerIsoDateTime(DateTime.now());
     final utcDatetime = formatServerIsoDateTime(datetime);
 
@@ -214,6 +237,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             datetime: utcDatetime,
             createdAt: Value(now),
             walletClientId: walletClientId,
+            partyClientId: Value(partyClientId),
           ),
         );
 
@@ -249,6 +273,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       transaction: model,
       categories: categories,
       wallet: updatedWallet,
+      party: party,
     );
   }
 
@@ -259,8 +284,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
-    String? walletClientId,
-  ) async {
+    String? walletClientId, {
+    String? partyClientId,
+  }) async {
     return database.transaction(() async {
       final originalTransaction = await (database.select(database.transactions)
             ..where((t) => t.clientId.equals(id)))
@@ -300,6 +326,17 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         }
       }
 
+      Party? party;
+      if (partyClientId != null) {
+        party = await (database.select(database.parties)
+              ..where((p) => p.clientId.equals(partyClientId)))
+            .getSingleOrNull();
+
+        if (party == null) {
+          throw Exception('Party $partyClientId not found');
+        }
+      }
+
       final model = await (database.update(database.transactions)
             ..where((t) => t.clientId.equals(id)))
           .writeReturning(
@@ -313,6 +350,8 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           walletClientId: walletClientId != null
               ? Value(walletClientId)
               : const Value.absent(),
+          partyClientId: Value(
+              partyClientId), // This will set null if partyClientId is null
         ),
       );
 
@@ -334,6 +373,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           transaction: model.first,
           categories: categories,
           wallet: wallet,
+          party: party,
         );
       }
 
@@ -372,6 +412,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         transaction: model.first,
         categories: finalCategories,
         wallet: wallet,
+        party: party,
       );
     });
   }
@@ -391,6 +432,14 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         throw Exception('Transaction wallet not found');
       }
 
+      Party? party;
+      final partyClientId = transaction.partyClientId;
+      if (partyClientId != null) {
+        party = await (database.select(database.parties)
+              ..where((p) => p.clientId.equals(partyClientId)))
+            .getSingleOrNull();
+      }
+
       await _updateWalletBalanceAndStats(
         wallet: wallet,
         transaction: transaction,
@@ -402,6 +451,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       return TransactionCompleteDto.fromTransaction(
         transaction: transaction,
         wallet: wallet,
+        party: party,
       );
     });
   }
@@ -425,6 +475,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.wallets,
         database.wallets.clientId
             .equalsExp(database.transactions.walletClientId),
+      ),
+      leftOuterJoin(
+        database.parties,
+        database.parties.clientId
+            .equalsExp(database.transactions.partyClientId),
       ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);

@@ -40,6 +40,13 @@
   "parties": "Parties",
   "partyAddParty": "Add party",
   "partyCreateParty": "Create party",
+  "partyEditParty": "Edit party",
+  "partyName": "Party name",
+  "partyNameRequired": "Party name is required",
+  "partyDescription": "Party description",
+  "partyUpdate": "Update party",
+  "partyAdd": "Add party",
+  "partyNoParties": "No parties found",
   "partyPartyName": "Party name",
   "partyEnterPartyName": "Enter party name",
   "partyPartyDescription": "Party description",
@@ -120,5 +127,10 @@
   "unauthorizedErrorDesc": "Unauthorized error. Please try again later.",
   "unknownErrorDesc": "An unknown error occurred. Please try again later.",
   "cancel": "Cancel",
-  "delete": "Delete"
+  "delete": "Delete",
+  "next": "Next",
+  "done": "Done",
+  "selectCurrency": "Select currency",
+  "defaultWalletName": "Default",
+  "defaultWalletDescription": "Default wallet created automatically"
 }

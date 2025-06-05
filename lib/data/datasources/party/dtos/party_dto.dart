@@ -1,0 +1,35 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trakli/data/database/app_database.dart';
+
+part 'party_dto.freezed.dart';
+part 'party_dto.g.dart';
+
+@freezed
+class PartyDto with _$PartyDto {
+  const factory PartyDto({
+    required int id,
+    required String name,
+    String? description,
+    @JsonKey(name: 'client_generated_id') required String clientId,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    required int userId,
+  }) = _PartyDto;
+
+  factory PartyDto.fromJson(Map<String, dynamic> json) =>
+      _$PartyDtoFromJson(json);
+
+  const PartyDto._();
+
+  Party toModel() {
+    return Party(
+      id: id,
+      name: name,
+      description: description,
+      clientId: clientId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      userId: userId,
+    );
+  }
+}

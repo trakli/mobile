@@ -14,15 +14,22 @@ extension StringExtension on String {
     // Split the string into words.
     List<String> words = trim().split(RegExp(r'\s+'));
 
-    // Check the combined length of the first two words.
-    String result;
-    if (words.length >= 2 && ('${words[0]} ${words[1]}').length <= maxSize) {
-      result = '${words[0]} ${words[1]}';
-    } else {
-      result = words[0];
+    if (words.isEmpty) return '';
+
+    // Build result by adding words until we hit the maxSize limit
+    String result = words[0];
+    int currentIndex = 1;
+
+    while (currentIndex < words.length) {
+      String nextWord = ' ${words[currentIndex]}';
+      if ((result + nextWord).length <= maxSize) {
+        result += nextWord;
+        currentIndex++;
+      } else {
+        break;
+      }
     }
 
-    // Trim the result to a maximum length of 10.
-    return result.length > maxSize ? result.substring(0, maxSize) : result;
+    return result;
   }
 }
