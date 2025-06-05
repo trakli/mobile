@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';

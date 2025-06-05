@@ -13,6 +13,8 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class OnboardSettingsScreen extends StatefulWidget {
   const OnboardSettingsScreen({super.key});
@@ -144,7 +146,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               onPress: () {
                 nextPage();
               },
-              buttonText: "Next",
+              buttonText: LocaleKeys.next.tr(),
             ),
           )
         ],
@@ -155,25 +157,44 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   Widget get pageTwo {
     final state = context.watch<OnboardingCubit>().state;
 
-    return BlocListener<OnboardingCubit, OnboardingState>(
-      listener: (BuildContext context, OnboardingState state) {
-        state.when(
-          initial: () {},
-          loading: () {
-            showLoader();
-          },
-          success: (user) {
-            hideLoader();
-          },
-          error: (failure) {
-            hideLoader();
-            showSnackBar(
-              message: failure.customMessage,
-              borderRadius: 8.r,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<OnboardingCubit, OnboardingState>(
+          listener: (BuildContext context, OnboardingState state) {
+            state.when(
+              initial: () {},
+              loading: () {
+                showLoader();
+              },
+              success: (user) {
+                hideLoader();
+              },
+              error: (failure) {
+                hideLoader();
+                showSnackBar(
+                  message: failure.customMessage,
+                  borderRadius: 8.r,
+                );
+              },
             );
           },
-        );
-      },
+        ),
+        BlocListener<WalletCubit, WalletState>(
+          listenWhen: (previous, current) =>
+              previous.isSaving != current.isSaving,
+          listener: (context, state) {
+            if (state.isSaving) {
+              showLoader();
+            } else {
+              hideLoader();
+              AppNavigator.removeAllPreviousAndPush(
+                context,
+                MainNavigationScreen(),
+              );
+            }
+          },
+        ),
+      ],
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: 16.w,
@@ -189,7 +210,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
             ),
             SizedBox(height: 12.h),
             Text(
-              "Select currency",
+              LocaleKeys.selectCurrency.tr(),
               style: TextStyle(
                 fontSize: 20.sp,
                 color: Colors.grey.shade600,
@@ -261,13 +282,23 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               height: 52.h,
               width: double.infinity,
               child: PrimaryButton(
-                onPress: () {
-                  AppNavigator.removeAllPreviousAndPush(
-                    context,
-                    MainNavigationScreen(),
-                  );
+                onPress: () async {
+                  final currency = context
+                      .read<OnboardingCubit>()
+                      .state
+                      .entity
+                      ?.selectedCurrency;
+                  if (currency != null) {
+                    // Create default wallet with selected currency
+                    await context.read<WalletCubit>().ensureDefaultWallet(
+                          currencyCode: currency.code,
+                          name: LocaleKeys.defaultWalletName.tr(),
+                          type: WalletType.cash,
+                          description: LocaleKeys.defaultWalletDescription.tr(),
+                        );
+                  }
                 },
-                buttonText: "Done",
+                buttonText: LocaleKeys.done.tr(),
               ),
             )
           ],

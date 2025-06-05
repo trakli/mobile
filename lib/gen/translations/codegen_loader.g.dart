@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class LocaleKeys {
+abstract class  LocaleKeys {
   static const appName = 'appName';
   static const welcomeText = 'welcomeText';
   static const welcomeTo = 'welcomeTo';
@@ -54,8 +54,7 @@ abstract class LocaleKeys {
   static const moneyReceived = 'moneyReceived';
   static const totalCompanies = 'totalCompanies';
   static const transactionLast30Days = 'transactionLast30Days';
-  static const transactionLast30DaysPerParties =
-      'transactionLast30DaysPerParties';
+  static const transactionLast30DaysPerParties = 'transactionLast30DaysPerParties';
   static const totalExpenses = 'totalExpenses';
   static const totalSavings = 'totalSavings';
   static const totalSpent = 'totalSpent';
@@ -126,4 +125,10 @@ abstract class LocaleKeys {
   static const unknownErrorDesc = 'unknownErrorDesc';
   static const cancel = 'cancel';
   static const delete = 'delete';
+  static const next = 'next';
+  static const done = 'done';
+  static const selectCurrency = 'selectCurrency';
+  static const defaultWalletName = 'defaultWalletName';
+  static const defaultWalletDescription = 'defaultWalletDescription';
+
 }

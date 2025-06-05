@@ -120,5 +120,10 @@
   "unauthorizedErrorDesc": "Eine Autorisierungsfehler ist aufgetreten. Bitte versuchen Sie es erneut.",
   "unknownErrorDesc": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
   "cancel": "Abbrechen",
-  "delete": "Löschen"
+  "delete": "Löschen",
+  "next": "Weiter",
+  "done": "Fertig",
+  "selectCurrency": "Währung auswählen",
+  "defaultWalletName": "Standard",
+  "defaultWalletDescription": "Standard-Brieftasche automatisch erstellt"
 }

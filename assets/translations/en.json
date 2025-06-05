@@ -120,5 +120,10 @@
   "unauthorizedErrorDesc": "Unauthorized error. Please try again later.",
   "unknownErrorDesc": "An unknown error occurred. Please try again later.",
   "cancel": "Cancel",
-  "delete": "Delete"
+  "delete": "Delete",
+  "next": "Next",
+  "done": "Done",
+  "selectCurrency": "Select currency",
+  "defaultWalletName": "Default",
+  "defaultWalletDescription": "Default wallet created automatically"
 }

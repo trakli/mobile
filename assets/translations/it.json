@@ -120,5 +120,10 @@
   "unauthorizedErrorDesc": "Si è verificato un errore di autorizzazione. Per favore, riprova più tardi.",
   "unknownErrorDesc": "Si è verificato un errore sconosciuto. Per favore, riprova più tardi.",
   "cancel": "Annulla",
-  "delete": "Elimina"
+  "delete": "Elimina",
+  "next": "Avanti",
+  "done": "Fatto",
+  "selectCurrency": "Seleziona valuta",
+  "defaultWalletName": "Predefinito",
+  "defaultWalletDescription": "Portafoglio predefinito creato automaticamente"
 }

@@ -87,6 +87,8 @@ import '../domain/usecases/transaction/update_transaction_usecase.dart'
 import '../domain/usecases/transaction/usecase.dart' as _i1022;
 import '../domain/usecases/wallet/add_wallet_usecase.dart' as _i80;
 import '../domain/usecases/wallet/delete_wallet_usecase.dart' as _i62;
+import '../domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart'
+    as _i225;
 import '../domain/usecases/wallet/get_wallets_usecase.dart' as _i713;
 import '../domain/usecases/wallet/listen_to_wallets_usecase.dart' as _i82;
 import '../domain/usecases/wallet/update_wallet_usecase.dart' as _i418;
@@ -292,6 +294,8 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i82.ListenToWalletsUseCase>(
       () => _i82.ListenToWalletsUseCase(gh<_i368.WalletRepository>()));
+  gh.factory<_i225.EnsureDefaultWalletExistsUseCase>(() =>
+      _i225.EnsureDefaultWalletExistsUseCase(gh<_i368.WalletRepository>()));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
         appDatabase: gh<_i704.AppDatabase>(),
         typeHandlers:
@@ -299,15 +303,17 @@ _i174.GetIt $initGetIt(
         dio: gh<_i361.Dio>(),
         networkInfo: gh<_i6.NetworkInfo>(),
       ));
+  gh.factory<_i311.ExchangeRateCubit>(
+      () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
         getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
         addWalletUseCase: gh<_i80.AddWalletUseCase>(),
         updateWalletUseCase: gh<_i418.UpdateWalletUseCase>(),
         deleteWalletUseCase: gh<_i62.DeleteWalletUseCase>(),
         listenToWalletsUseCase: gh<_i82.ListenToWalletsUseCase>(),
+        ensureDefaultWalletExistsUseCase:
+            gh<_i225.EnsureDefaultWalletExistsUseCase>(),
       ));
-  gh.factory<_i311.ExchangeRateCubit>(
-      () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   return getIt;
 }
 
