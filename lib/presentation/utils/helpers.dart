@@ -162,12 +162,13 @@ Future<T?> showCustomBottomSheet<T>(
   );
 }
 
-Future<T?> showCustomDialog<T>(
-  context, {
+Future<T?> showCustomDialog<T>({
+  bool barrierDismissible = true,
   required Widget widget,
 }) async {
   return showDialog<T>(
-    context: context,
+    context: scaffoldKey.currentContext!,
+    barrierDismissible: barrierDismissible,
     builder: (context) {
       return widget;
     },

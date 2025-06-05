@@ -46,3 +46,8 @@ enum DialogType {
   positive,
   negative,
 }
+
+enum PlanType {
+  monthly,
+  yearly,
+}

@@ -14,6 +14,7 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 
@@ -123,12 +124,7 @@ class ProfileScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               spacing: 12.h,
               children: [
-                InkWell(
-                  onTap: () {
-                    showCustomDialog(context, widget: PopUpDialog());
-                  },
-                  child: const PremiumTile(),
-                ),
+                const PremiumTile(),
                 ActionTile(
                   title: "Account Info",
                   iconPath: Assets.images.user,
@@ -148,14 +144,23 @@ class ProfileScreen extends StatelessWidget {
                   iconPath: Assets.images.logout,
                   actionColor: Colors.red,
                   onTap: () {
-                    if (user != null) {
-                      context.read<AuthCubit>().logout();
-                    } else {
-                      AppNavigator.removeAllPreviousAndPush(
-                        context,
-                        const OnboardingScreen(),
-                      );
-                    }
+                    showCustomDialog(
+                      widget: PopUpDialog(
+                        title: 'Log Out',
+                        subTitle: 'Are you sure you want to logout?',
+                        dialogType: DialogType.negative,
+                        mainAction: () {
+                          if (user != null) {
+                            context.read<AuthCubit>().logout();
+                          } else {
+                            AppNavigator.removeAllPreviousAndPush(
+                              context,
+                              const OnboardingScreen(),
+                            );
+                          }
+                        },
+                      ),
+                    );
                   },
                 ),
               ],

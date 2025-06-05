@@ -36,7 +36,7 @@ class InfoTile extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: neutral300,
+              color: neutralN300,
             ),
           ),
           Row(

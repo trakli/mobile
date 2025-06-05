@@ -24,6 +24,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/apple.svg
   String get apple => 'assets/images/apple.svg';
 
+  /// File path: assets/images/arrow-circle-right.svg
+  String get arrowCircleRight => 'assets/images/arrow-circle-right.svg';
+
   /// File path: assets/images/arrow-down.svg
   String get arrowDown => 'assets/images/arrow-down.svg';
 
@@ -175,6 +178,7 @@ class $AssetsImagesGen {
         appLogo,
         appLogoGreen,
         apple,
+        arrowCircleRight,
         arrowDown,
         arrowLeft,
         arrowRight,

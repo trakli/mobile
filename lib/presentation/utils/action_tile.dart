@@ -69,7 +69,7 @@ class ActionTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.normal,
-                      color: neutral300,
+                      color: neutralN300,
                     ),
                   ),
               ],

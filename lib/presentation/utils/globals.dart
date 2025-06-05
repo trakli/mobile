@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -241,3 +241,6 @@ final List<HeroIcons> heroIconsCategories = [
   HeroIcons.wrench,
   HeroIcons.wrenchScrewdriver,
 ];
+
+const String loremIpsum =
+    "Lorem ipsum dolor sit amet consectetur. Aliquam integer at sed a at leo vulputate at. Etiam blandit proin amet.";
