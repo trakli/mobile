@@ -161,19 +161,6 @@ class TransactionSyncHandler
             mode: InsertMode.insertOrReplace);
       }
 
-      // final wallet = WalletsCompanion(
-      //   id: Value(entity.wallet.id),
-      //   rev: Value(entity.wallet.rev),
-      //   name: Value(entity.wallet.name),
-      //   type: Value(entity.wallet.type),
-      //   currency: Value(entity.wallet.currency),
-      //   clientId: Value(entity.wallet.clientId),
-      //   balance: Value(entity.wallet.balance),
-      //   lastSyncedAt: Value(entity.wallet.lastSyncedAt),
-      //   updatedAt: Value(entity.wallet.updatedAt),
-      //   createdAt: Value(entity.wallet.createdAt),
-      // );
-
       await db.wallets
           .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
 

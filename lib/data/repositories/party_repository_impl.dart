@@ -4,7 +4,6 @@ import 'package:drift_sync_core/drift_sync_core.dart' as sync;
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
-import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/party/party_local_datasource.dart';
 import 'package:trakli/data/mappers/party_mapper.dart';
@@ -43,7 +42,7 @@ class PartyRepositoryImpl
         description: description,
       );
 
-      unawaited(put(party));
+      unawaited(post(party));
       return unit;
     });
   }
@@ -70,7 +69,7 @@ class PartyRepositoryImpl
   Future<Either<Failure, Unit>> deleteParty(String clientId) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final party = await localDataSource.deleteParty(clientId);
-      unawaited(syncHandler.deleteRemote(party));
+      unawaited(delete(party));
       return unit;
     });
   }

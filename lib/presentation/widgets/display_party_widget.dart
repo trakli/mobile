@@ -8,89 +8,108 @@ import 'package:trakli/presentation/utils/colors.dart';
 
 class DisplayPartyWidget extends StatelessWidget {
   final PartyEntity? party;
+  final int maxNameLength;
 
-  const DisplayPartyWidget({super.key, required this.party});
+  const DisplayPartyWidget({
+    super.key,
+    required this.party,
+    this.maxNameLength = 10,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "From",
-          style: TextStyle(
-            color: const Color(0xFF576760),
-            fontSize: 9.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(
-            vertical: 4.h,
-            horizontal: 8.w,
-          ),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F6F7),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: SizedBox(
-            width: 50.w,
-            child: Text(
-              party?.name ?? 'Unknown'.extractWords(maxSize: 10),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: transactionTileTextColor,
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w700,
-              ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 2.h,
+        horizontal: 6.w,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "From",
+            style: TextStyle(
+              color: const Color(0xFF576760),
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ),
-        Text(
-          "-",
-          style: TextStyle(
-            color: transactionTileTextColor,
-            fontSize: 14.sp,
-          ),
-        ),
-        SizedBox(width: 4.w),
-        Container(
-          padding: EdgeInsets.symmetric(
-            vertical: 4.h,
-            horizontal: 8.w,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.blueAccent.withAlpha(50),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            spacing: 4.w,
-            children: [
-              SvgPicture.asset(
-                width: 12.w,
-                height: 12.h,
-                Assets.images.wallet,
-                colorFilter: const ColorFilter.mode(
-                  Colors.blueAccent,
-                  BlendMode.srcIn,
-                ),
-              ),
-              SizedBox(
-                width: 40.w,
-                child: Text(
-                  'Default'.extractWords(maxSize: 10),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.blueAccent,
-                    fontSize: 9.sp,
-                    fontWeight: FontWeight.w700,
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 4.h,
+              horizontal: 8.w,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F6F7),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  // width: 50.w,
+                  child: Text(
+                    (party?.name ?? 'Unknown')
+                        .extractWords(maxSize: maxNameLength),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: transactionTileTextColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+          Text(
+            "-",
+            style: TextStyle(
+              color: transactionTileTextColor,
+              fontSize: 14.sp,
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 4.h,
+              horizontal: 8.w,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent.withAlpha(50),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              spacing: 4.w,
+              children: [
+                SvgPicture.asset(
+                  width: 12.w,
+                  height: 12.h,
+                  Assets.images.wallet,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.blueAccent,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                SizedBox(
+                  width: 40.w,
+                  child: Text(
+                    'Default'.extractWords(maxSize: 10),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontSize: 9.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -115,6 +115,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
       'categories': categories.map((c) => c.id).toList(),
       'wallet_id': wallet.id,
+      'party_id': party?.id,
     };
   }
 

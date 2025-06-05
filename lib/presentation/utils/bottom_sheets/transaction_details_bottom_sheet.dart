@@ -146,6 +146,7 @@ class _TransactionDetailsBottomSheetState
             ],
             DisplayPartyWidget(
               party: party,
+              maxNameLength: 20,
             ),
             SizedBox(height: 4.h),
             CategoriesWidget(
