@@ -38,9 +38,20 @@ class TransactionSyncHandler
       CategorizableType.transaction,
     );
 
+    final wallet = await (db.select(db.wallets)
+          ..where((w) => w.clientId
+              .equals(transactionCompleteModel.transaction.walletClientId)))
+        .getSingleOrNull();
+
+    if (wallet == null) {
+      throw Exception(
+          'Wallet ${transactionCompleteModel.transaction.walletClientId} not found');
+    }
+
     return TransactionCompleteDto.fromTransaction(
       transaction: transactionCompleteModel.transaction,
       categories: categories,
+      wallet: wallet,
     );
   }
 
@@ -51,7 +62,15 @@ class TransactionSyncHandler
 
   @override
   bool shouldPersistRemote(TransactionCompleteDto entity) {
-    return !entity.categories.map((c) => c.id).contains(null);
+    // Check if any of the categories is null or wallet is null
+    final hasNullCategory = entity.categories.map((c) => c.id).contains(null);
+    final hasNullWalletId = entity.wallet.id == null;
+
+    // Return false if either has null values
+    if (hasNullCategory || hasNullWalletId) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -100,6 +119,7 @@ class TransactionSyncHandler
         createdAt: Value(entity.transaction.createdAt),
         lastSyncedAt: Value(entity.transaction.lastSyncedAt),
         updatedAt: Value(entity.transaction.updatedAt),
+        walletClientId: Value(entity.wallet.clientId),
       );
 
       await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
@@ -131,6 +151,22 @@ class TransactionSyncHandler
             ),
             mode: InsertMode.insertOrReplace);
       }
+
+      // final wallet = WalletsCompanion(
+      //   id: Value(entity.wallet.id),
+      //   rev: Value(entity.wallet.rev),
+      //   name: Value(entity.wallet.name),
+      //   type: Value(entity.wallet.type),
+      //   currency: Value(entity.wallet.currency),
+      //   clientId: Value(entity.wallet.clientId),
+      //   balance: Value(entity.wallet.balance),
+      //   lastSyncedAt: Value(entity.wallet.lastSyncedAt),
+      //   updatedAt: Value(entity.wallet.updatedAt),
+      //   createdAt: Value(entity.wallet.createdAt),
+      // );
+
+      await db.wallets
+          .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
     });
   }
 
@@ -156,24 +192,42 @@ class TransactionSyncHandler
     final result = await (db.select(table)
           ..where((t) => t.clientId.equals(clientId)))
         .get();
+
+    final wallet = await db.getWalletForTransaction(clientId);
+
+    if (wallet == null) {
+      throw Exception('Wallet $clientId not found');
+    }
+
     return TransactionCompleteDto.fromTransaction(
-        transaction: result.first,
-        categories: await db.getCategoriesForTransaction(
-          result.first.clientId,
-          CategorizableType.transaction,
-        ));
+      transaction: result.first,
+      categories: await db.getCategoriesForTransaction(
+        result.first.clientId,
+        CategorizableType.transaction,
+      ),
+      wallet: wallet,
+    );
   }
 
   @override
   Future<TransactionCompleteDto?> getLocalByServerId(int serverId) async {
     final result =
         await (db.select(table)..where((t) => t.id.equals(serverId))).get();
+
+    final wallet = await db.getWalletForTransaction(result.first.clientId);
+
+    if (wallet == null) {
+      throw Exception('Wallet ${result.first.clientId} not found');
+    }
+
     return TransactionCompleteDto.fromTransaction(
-        transaction: result.first,
-        categories: await db.getCategoriesForTransaction(
-          result.first.clientId,
-          CategorizableType.transaction,
-        ));
+      transaction: result.first,
+      categories: await db.getCategoriesForTransaction(
+        result.first.clientId,
+        CategorizableType.transaction,
+      ),
+      wallet: wallet,
+    );
   }
 
   @override

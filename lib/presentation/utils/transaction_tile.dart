@@ -131,6 +131,7 @@ class _TransactionTileState extends State<TransactionTile> {
                         context,
                         transaction.amount,
                         compact: true,
+                        currency: widget.transaction.wallet.currency,
                       ),
                       style: TextStyle(
                         color: widget.accentColor,
@@ -168,7 +169,6 @@ class _TransactionTileState extends State<TransactionTile> {
                 ),
               ],
             ),
-            
           ],
         ),
         subtitle: Container(

@@ -23,6 +23,7 @@ import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -51,6 +52,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<ExchangeRateCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<WalletCubit>(),
         ),
       ],
       child: const AppView(),

@@ -25,6 +25,7 @@ class MockTransactionService {
     String description,
     String title,
     String category,
+    String walletClientId,
   ) async {
     return _simulateDelay(() async {
       final transaction = TransactionEntity(
@@ -35,6 +36,7 @@ class MockTransactionService {
         type: TransactionType.expense,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
+        walletClientId: walletClientId,
       );
       _transactions.add(transaction);
       _notifyListeners();

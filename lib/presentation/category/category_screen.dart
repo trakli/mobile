@@ -221,9 +221,7 @@ class _CategoryScreenState extends State<CategoryScreen>
             );
           },
           onDelete: () {
-            context
-                .read<CategoryCubit>()
-                .deleteCategory(category.clientId);
+            context.read<CategoryCubit>().deleteCategory(category.clientId);
           },
         );
       },

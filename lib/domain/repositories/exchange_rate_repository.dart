@@ -8,4 +8,8 @@ abstract class ExchangeRateRepository {
   Future<Either<Failure, ExchangeRateEntity>> refreshExchangeRate();
 
   Future<Either<Failure, ExchangeRateEntity>> getExchangeRate();
+
+  Future<Either<Failure, ExchangeRateEntity>> updateDefaultCurrency(
+    String currencyCode,
+  );
 }

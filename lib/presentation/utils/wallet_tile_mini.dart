@@ -2,22 +2,30 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:heroicons/heroicons.dart';
-import 'dart:math' as math;
 
 class WalletTileMini extends StatefulWidget {
-  const WalletTileMini({super.key});
+  final String name;
+  final double balance;
+  final String currency;
+
+  const WalletTileMini({
+    super.key,
+    required this.name,
+    required this.balance,
+    required this.currency,
+  });
 
   @override
   State<WalletTileMini> createState() => _WalletTileMiniState();
 }
 
 class _WalletTileMiniState extends State<WalletTileMini> {
-  Currency? currency;
+  Currency? currencyData;
 
   @override
   void initState() {
-    currency = CurrencyService().findByCode("USD");
     super.initState();
+    currencyData = CurrencyService().findByCode(widget.currency);
   }
 
   @override
@@ -44,7 +52,7 @@ class _WalletTileMiniState extends State<WalletTileMini> {
               spacing: 4.h,
               children: [
                 Text(
-                  "Orange money",
+                  widget.name,
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: const Color(0xFF061D23),
@@ -60,10 +68,10 @@ class _WalletTileMiniState extends State<WalletTileMini> {
                     text: "",
                     children: [
                       TextSpan(
-                        text: currency?.symbol ?? "",
+                        text: currencyData?.symbol ?? widget.currency,
                       ),
                       TextSpan(
-                        text: math.Random().nextInt(5000).toString(),
+                        text: widget.balance.toStringAsFixed(2),
                       ),
                     ],
                   ),

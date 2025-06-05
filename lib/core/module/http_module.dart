@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
+import 'package:trakli/core/network/interceptors/remove_null_exceptions.dart';
 import 'package:trakli/core/network/interceptors/token_interceptor.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
 import 'package:trakli/di/injection.dart';
@@ -28,7 +29,7 @@ abstract class InjectHttpClientModule {
     );
 
     dio.interceptors.addAll([
-      // RemoveNullValuesInterceptor(),
+      RemoveNullValuesInterceptor(),
       TokenInterceptor(getIt<TokenManager>()),
       LoggerInterceptor()
     ]);

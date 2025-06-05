@@ -13,14 +13,18 @@ abstract class TransactionRepository {
     List<String> categoryIds,
     TransactionType type,
     DateTime datetime,
+    String walletClientId,
   );
+
   Future<Either<Failure, Unit>> updateTransaction(
     String id,
     double? amount,
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
+    String? walletClientId,
   );
+
   Future<Either<Failure, Unit>> deleteTransaction(String id);
 
   Stream<Either<Failure, List<TransactionCompleteEntity>>>

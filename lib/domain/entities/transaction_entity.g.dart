@@ -20,6 +20,7 @@ _$TransactionEntityImpl _$$TransactionEntityImplFromJson(
           ? null
           : DateTime.parse(json['lastSyncedAt'] as String),
       rev: json['rev'] as String? ?? '1',
+      walletClientId: json['walletClientId'] as String,
     );
 
 Map<String, dynamic> _$$TransactionEntityImplToJson(
@@ -34,6 +35,7 @@ Map<String, dynamic> _$$TransactionEntityImplToJson(
       'type': _$TransactionTypeEnumMap[instance.type]!,
       'lastSyncedAt': instance.lastSyncedAt?.toIso8601String(),
       'rev': instance.rev,
+      'walletClientId': instance.walletClientId,
     };
 
 const _$TransactionTypeEnumMap = {

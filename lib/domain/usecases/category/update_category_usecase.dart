@@ -17,7 +17,6 @@ class UpdateCategoryUseCase
       params.clientId,
       name: params.name,
       slug: params.slug,
-      userId: params.userId,
       description: params.description,
     );
   }

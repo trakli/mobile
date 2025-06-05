@@ -16,6 +16,7 @@ class TransactionEntity with _$TransactionEntity {
     required TransactionType type,
     DateTime? lastSyncedAt,
     @Default('1') String rev,
+    required String walletClientId,
   }) = _TransactionEntity;
 
   factory TransactionEntity.fromJson(Map<String, dynamic> json) =>

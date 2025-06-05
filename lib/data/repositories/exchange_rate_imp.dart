@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
@@ -22,7 +23,7 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   final _exchangeRateController =
       StreamController<ExchangeRateEntity>.broadcast();
 
-  var defaultCurrencyCode = 'XAF';
+  var defaultCurrencyCode = KeyConstants.defaultCurrencyCode;
 
   ExchangeRateRepositoryImpl({
     required this.remoteDataSource,
@@ -32,14 +33,18 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
 
   @override
   Stream<ExchangeRateEntity> get listenToExchangeRate async* {
-    final exchangeRateDto =
-        await localDataSource.getExchangeRate(defaultCurrencyCode);
-    if (exchangeRateDto != null) {
-      yield ExchangeRateMapper.toDomain(exchangeRateDto);
+    yield* _getAndEmitExchangeRate();
+  }
+
+  Stream<ExchangeRateEntity> _getAndEmitExchangeRate() async* {
+    final formalModel = await onboardingLocalDataSource.getOnboardingState();
+    String currencyCode = defaultCurrencyCode;
+
+    if (formalModel != null) {
+      currencyCode = formalModel.selectedCurrency?.code ?? defaultCurrencyCode;
     }
 
-    final exchangeRate =
-        await localDataSource.getExchangeRate(defaultCurrencyCode);
+    final exchangeRate = await localDataSource.getExchangeRate(currencyCode);
 
     if (exchangeRate != null) {
       yield ExchangeRateMapper.toDomain(exchangeRate);
@@ -48,7 +53,8 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
     if ((exchangeRate == null) ||
         exchangeRate.timeNextUpdated.isBefore(DateTime.now())) {
       try {
-        final exchangeRateRemote = await remoteDataSource.getExchangeRate();
+        final exchangeRateRemote =
+            await remoteDataSource.getExchangeRate(currencyCode);
         final exchangeRateEntity =
             ExchangeRateMapper.toDomain(exchangeRateRemote);
 
@@ -69,7 +75,8 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   @override
   Future<Either<Failure, ExchangeRateEntity>> refreshExchangeRate() {
     return RepositoryErrorHandler.handleApiCall(() async {
-      final exchangeRateRemote = await remoteDataSource.getExchangeRate();
+      final exchangeRateRemote =
+          await remoteDataSource.getExchangeRate(defaultCurrencyCode);
 
       await localDataSource.saveExchangeRate(
           exchangeRateRemote.baseCode, exchangeRateRemote);
@@ -86,8 +93,38 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   @override
   Future<Either<Failure, ExchangeRateEntity>> getExchangeRate() {
     return RepositoryErrorHandler.handleApiCall(() async {
-      final exchangeRateRemote = await remoteDataSource.getExchangeRate();
+      final exchangeRateRemote =
+          await remoteDataSource.getExchangeRate(defaultCurrencyCode);
       return ExchangeRateMapper.toDomain(exchangeRateRemote);
+    });
+  }
+
+  @override
+  Future<Either<Failure, ExchangeRateEntity>> updateDefaultCurrency(
+      String currencyCode) {
+    return RepositoryErrorHandler.handleApiCall(() async {
+      // Check if we have the exchange rate for this currency
+      final existingRate = await localDataSource.getExchangeRate(currencyCode);
+
+      // If no rate exists or it's outdated, fetch new rates
+      if (existingRate == null ||
+          existingRate.timeNextUpdated.isBefore(DateTime.now())) {
+        final exchangeRateRemote =
+            await remoteDataSource.getExchangeRate(currencyCode);
+        await localDataSource.saveExchangeRate(
+          exchangeRateRemote.baseCode,
+          exchangeRateRemote,
+        );
+
+        final exchangeRateEntity =
+            ExchangeRateMapper.toDomain(exchangeRateRemote);
+        _exchangeRateController.add(exchangeRateEntity);
+        return exchangeRateEntity;
+      }
+
+      final exchangeRateEntity = ExchangeRateMapper.toDomain(existingRate);
+      _exchangeRateController.add(exchangeRateEntity);
+      return exchangeRateEntity;
     });
   }
 }

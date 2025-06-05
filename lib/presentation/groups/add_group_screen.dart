@@ -4,6 +4,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/forms/add_groups_form.dart';
+
 class AddGroupScreen extends StatelessWidget {
   const AddGroupScreen({super.key});
 
@@ -13,7 +14,7 @@ class AddGroupScreen extends StatelessWidget {
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        headerTextColor:  const Color(0xFFEBEDEC),
+        headerTextColor: const Color(0xFFEBEDEC),
         titleText: LocaleKeys.groupAddGroup.tr(),
       ),
       body: const AddGroupsForm(),

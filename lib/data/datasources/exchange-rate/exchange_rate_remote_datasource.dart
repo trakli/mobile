@@ -5,7 +5,7 @@ import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
 import 'package:trakli/data/datasources/exchange-rate/dto/exchange_rate_dto.dart';
 
 abstract class ExchangeRateRemoteDataSource {
-  Future<ExchangeRateDto> getExchangeRate();
+  Future<ExchangeRateDto> getExchangeRate(String currencyCode);
 }
 
 @Injectable(as: ExchangeRateRemoteDataSource)
@@ -27,10 +27,10 @@ class ExchangeRateRemoteDataSourceImpl implements ExchangeRateRemoteDataSource {
   }
 
   @override
-  Future<ExchangeRateDto> getExchangeRate() {
+  Future<ExchangeRateDto> getExchangeRate(String currencyCode) {
     return ErrorHandler.handleApiCall(() async {
       // XAF is used as the default currency code for the app
-      final response = await _dio.get('v6/latest/XAF');
+      final response = await _dio.get('v6/latest/$currencyCode');
       return ExchangeRateDto.fromJson(response.data);
     });
   }

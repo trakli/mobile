@@ -14,7 +14,6 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
-import 'package:trakli/presentation/utils/wallet_tile.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -73,7 +72,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const WalletTile(),
+                // const WalletTile(),
                 SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

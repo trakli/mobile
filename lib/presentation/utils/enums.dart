@@ -3,15 +3,46 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/presentation/home_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
-import 'package:trakli/presentation/wallet_screen.dart';
+import 'package:trakli/presentation/wallets/wallet_screen.dart';
 
-enum WalletType { bank, cash, creditCard, mobile }
+enum WalletType {
+  bank,
+  cash,
+  @JsonValue('credit_card')
+  creditCard,
+  mobile;
+
+  String get customName {
+    return switch (this) {
+      WalletType.bank => 'Bank',
+      WalletType.cash => 'Cash',
+      WalletType.creditCard => 'Credit Card',
+      WalletType.mobile => 'Mobile',
+    };
+  }
+
+  String get serverKey {
+    return switch (this) {
+      WalletType.bank => 'bank',
+      WalletType.cash => 'cash',
+      WalletType.creditCard => 'credit_card',
+      WalletType.mobile => 'mobile',
+    };
+  }
+}
 
 enum TransactionType {
   @JsonValue('income')
   income,
   @JsonValue('expense')
-  expense,
+  expense;
+
+  String get serverKey {
+    return switch (this) {
+      TransactionType.income => 'income',
+      TransactionType.expense => 'expense',
+    };
+  }
 }
 
 enum NavigationScreen {

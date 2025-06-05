@@ -80,7 +80,7 @@ class AddPartyForm extends StatelessWidget {
                           ),
                           onPressed: () {
                             hideKeyBoard();
-                            if(Form.of(context).validate()){
+                            if (Form.of(context).validate()) {
                               // Do something
                             }
                           },

@@ -15,6 +15,8 @@ TransactionCompleteDto _$TransactionCompleteDtoFromJson(
           .map((e) =>
               const CategoryConverter().fromJson(e as Map<String, dynamic>))
           .toList(),
+      wallet: const WalletConverter()
+          .fromJson(json['wallet'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TransactionCompleteDtoToJson(
@@ -23,4 +25,5 @@ Map<String, dynamic> _$TransactionCompleteDtoToJson(
       'transaction': const TransactionConverter().toJson(instance.transaction),
       'categories':
           instance.categories.map(const CategoryConverter().toJson).toList(),
+      'wallet': const WalletConverter().toJson(instance.wallet),
     };

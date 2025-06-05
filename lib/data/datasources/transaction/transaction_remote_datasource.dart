@@ -29,7 +29,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
-    final paginatedResponse = PaginationResponse.fromJson(
+    final paginatedResponse 
+    = PaginationResponse.fromJson(
       apiResponse.data as Map<String, dynamic>,
       (Object? json) =>
           TransactionCompleteDto.fromServerJson(json! as Map<String, dynamic>),

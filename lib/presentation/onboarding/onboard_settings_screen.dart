@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/domain/entities/onboarding_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
@@ -34,7 +35,17 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
 
   void _loadCurrencies() {
     setState(() {
-      currencies = CurrencyService().getAll();
+      const countryCode = KeyConstants.defaultCurrencyCode;
+
+      final allCurrencies = CurrencyService().getAll();
+
+      // Make XAF (Cameroon) the first currency
+      final xafCurrency =
+          allCurrencies.firstWhere((c) => c.code == countryCode);
+      currencies = [xafCurrency];
+
+      // Add all other currencies except XAF
+      currencies.addAll(allCurrencies.where((c) => c.code != countryCode));
     });
   }
 
@@ -144,101 +155,123 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   Widget get pageTwo {
     final state = context.watch<OnboardingCubit>().state;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 36.h),
-          Icon(
-            Icons.currency_exchange,
-            color: Theme.of(context).primaryColor,
-            size: 100.r,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            "Select currency",
-            style: TextStyle(
-              fontSize: 20.sp,
-              color: Colors.grey.shade600,
+    return BlocListener<OnboardingCubit, OnboardingState>(
+      listener: (BuildContext context, OnboardingState state) {
+        state.when(
+          initial: () {},
+          loading: () {
+            showLoader();
+          },
+          success: (user) {
+            hideLoader();
+          },
+          error: (failure) {
+            hideLoader();
+            showSnackBar(
+              message: failure.customMessage,
+              borderRadius: 8.r,
+            );
+          },
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 36.h),
+            Icon(
+              Icons.currency_exchange,
+              color: Theme.of(context).primaryColor,
+              size: 100.r,
             ),
-          ),
-          SizedBox(height: 16.h),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: currencies.length,
-              itemBuilder: (context, index) {
-                final currency = currencies[index];
-                return Container(
-                  margin: EdgeInsets.only(
-                    bottom: 12.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (state.entity?.selectedCurrency == currency)
-                        ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
+            SizedBox(height: 12.h),
+            Text(
+              "Select currency",
+              style: TextStyle(
+                fontSize: 20.sp,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: currencies.length,
+                itemBuilder: (context, index) {
+                  final currency = currencies[index];
+                  return Container(
+                    margin: EdgeInsets.only(
+                      bottom: 12.w,
+                    ),
+                    decoration: BoxDecoration(
                       color: (state.entity?.selectedCurrency == currency)
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey,
-                    ),
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      setState(() {
-                        // selectedCurrency = currency;
-                        context.read<OnboardingCubit>().saveOnboardingState(
-                              OnboardingEntity(
-                                selectedCurrency: currency,
-                              ),
-                            );
-                      });
-                    },
-                    leading: flagWidget(currency),
-                    title: Text(
-                      currency.name,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
+                          ? Theme.of(context)
+                              .primaryColor
+                              .withValues(alpha: 0.2)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: (state.entity?.selectedCurrency == currency)
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
                       ),
                     ),
-                    subtitle: Text(
-                      currency.code,
-                      style: TextStyle(
-                        fontSize: 12.sp,
+                    child: ListTile(
+                      onTap: () {
+                        setState(() {
+                          selectedCurrency = currency;
+                          context.read<OnboardingCubit>().saveOnboardingState(
+                                OnboardingEntity(
+                                  selectedCurrency: currency,
+                                ),
+                              );
+                        });
+                      },
+                      leading: flagWidget(currency),
+                      title: Text(
+                        currency.name,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    trailing: Text(
-                      currency.symbol,
-                      style: TextStyle(
-                        fontSize: 16.sp,
+                      subtitle: Text(
+                        currency.code,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                        ),
                       ),
+                      trailing: Text(
+                        currency.symbol,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                      // trailing: ,
                     ),
-                    // trailing: ,
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          SizedBox(height: 80.h),
-          SizedBox(
-            height: 52.h,
-            width: double.infinity,
-            child: PrimaryButton(
-              onPress: () {
-                AppNavigator.removeAllPreviousAndPush(
-                  context,
-                  MainNavigationScreen(),
-                );
-              },
-              buttonText: "Done",
-            ),
-          )
-        ],
+            SizedBox(height: 80.h),
+            SizedBox(
+              height: 52.h,
+              width: double.infinity,
+              child: PrimaryButton(
+                onPress: () {
+                  AppNavigator.removeAllPreviousAndPush(
+                    context,
+                    MainNavigationScreen(),
+                  );
+                },
+                buttonText: "Done",
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

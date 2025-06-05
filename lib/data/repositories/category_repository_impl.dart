@@ -50,13 +50,12 @@ class CategoryRepositoryImpl
 
   @override
   Future<Either<Failure, Unit>> updateCategory(String clientId,
-      {String? name, String? slug, int? userId, String? description}) async {
+      {String? name, String? slug, String? description}) async {
     try {
       final category = await localDataSource.updateCategory(
         clientId,
         name: name,
         slug: slug,
-        userId: userId,
         description: description,
       );
       unawaited(put(category));
