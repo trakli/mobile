@@ -87,6 +87,10 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
           ..where((p) => p.clientId.equals(clientId)))
         .getSingle();
 
+    await (database.delete(database.parties)
+          ..where((p) => p.clientId.equals(clientId)))
+        .go();
+
     return party;
   }
 

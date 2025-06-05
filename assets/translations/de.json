@@ -126,11 +126,11 @@
   "selectCurrency": "Währung auswählen",
   "defaultWalletName": "Standard",
   "defaultWalletDescription": "Standard-Brieftasche automatisch erstellt",
-  "partyEditParty": "Partei bearbeiten",
-  "partyName": "Name der Partei",
-  "partyNameRequired": "Parteiname ist erforderlich",
-  "partyDescription": "Beschreibung der Partei",
-  "partyUpdate": "Partei aktualisieren",
-  "partyAdd": "Partei hinzufügen",
-  "partyNoParties": "Keine Parteien gefunden"
+  "partyEditParty": "Geschäftspartner bearbeiten",
+  "partyName": "Name des Geschäftspartners",
+  "partyNameRequired": "Name des Geschäftspartners ist erforderlich",
+  "partyDescription": "Beschreibung des Geschäftspartners",
+  "partyUpdate": "Geschäftspartner aktualisieren",
+  "partyAdd": "Geschäftspartner hinzufügen",
+  "partyNoParties": "Keine Geschäftspartner gefunden"
 }

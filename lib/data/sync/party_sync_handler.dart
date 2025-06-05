@@ -75,9 +75,7 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Party> list) async {
-    for (var entity in list) {
-      await upsertLocal(entity);
-    }
+    await table.insertAll(list, mode: InsertMode.insertOrReplace);
   }
 
   @override
@@ -100,9 +98,10 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
 
   @override
   Future<Party?> getLocalByServerId(int serverId) async {
-    final result =
-        await (db.select(table)..where((t) => t.id.equals(serverId))).get();
-    return result.first;
+    final result = await (db.select(table)..where((t) => t.id.equals(serverId)))
+        .getSingleOrNull();
+
+    return result;
   }
 
   @override
