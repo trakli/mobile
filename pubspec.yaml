@@ -95,6 +95,14 @@ dev_dependencies:
   freezed: ^2.5.8
   json_serializable: ^6.9.5
   injectable_generator: ^2.7.0
+  lint_staged: ^0.5.1
+  husky: ^0.1.7
+  commitlint_cli: ^0.8.1
+
+lint_staged:
+  "lib/**.dart": dart fix --apply && dart format --fix && dart analyze --fatal-infos --fatal-warnings
+  "!lib/**.g.dart": ""
+  "!lib/**.freezed.dart": ""
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
