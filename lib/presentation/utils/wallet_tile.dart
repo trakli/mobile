@@ -9,6 +9,9 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallet_transfer_screen.dart';
 import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -170,31 +173,20 @@ class WalletTile extends StatelessWidget {
                           ),
                           PopupMenuItem(
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Delete Wallet'),
-                                  content: Text(
-                                      'Are you sure you want to delete ${wallet.name}?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          AppNavigator.pop(context),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        context
-                                            .read<WalletCubit>()
-                                            .deleteWallet(wallet.clientId);
-                                        AppNavigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        'Delete',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
+                              showCustomDialog(
+                                widget: PopUpDialog(
+                                  dialogType: DialogType.negative,
+                                  title: 'Delete Wallet',
+                                  subTitle:
+                                      'Are you sure you want to delete ${wallet.name}?',
+                                  mainAction: () {
+                                    context
+                                        .read<WalletCubit>()
+                                        .deleteWallet(wallet.clientId);
+                                    AppNavigator.pop(context);
+                                  },
+                                  mainActionText: "Delete",
+                                  secondaryActionText: "Cancel",
                                 ),
                               );
                             },

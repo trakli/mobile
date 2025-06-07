@@ -154,15 +154,6 @@ class WalletCubit extends Cubit<WalletState> {
   Future<void> deleteWallet(String clientId) async {
     emit(state.copyWith(isDeleting: true, failure: const Failure.none()));
 
-    // Optimistically update the UI
-    final updatedWallets =
-        state.wallets.where((wallet) => wallet.clientId != clientId).toList();
-
-    emit(state.copyWith(
-      wallets: updatedWallets,
-      isDeleting: true,
-    ));
-
     final result = await deleteWalletUseCase(clientId);
     result.fold(
       (failure) => emit(state.copyWith(
