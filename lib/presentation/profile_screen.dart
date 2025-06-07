@@ -1,3 +1,4 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,11 +6,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/account_info_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
+import 'package:trakli/presentation/utils/action_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/benefit_tile.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/premium_tile.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -49,7 +58,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 16.h),
+            SizedBox(height: 8.h),
             CircleAvatar(
               radius: 60.r,
               child: Stack(
@@ -85,164 +94,138 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 8.h),
             Text(
-              user?.fullName ?? 'John Doe',
+              user?.fullName ?? 'Anonymous',
               style: TextStyle(
-                fontSize: 24.sp,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              user?.email ?? 'you@example.com',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[400],
+            if (user != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 8.w,
+                children: [
+                  CountryFlag.fromCountryCode(
+                    shape: const Circle(),
+                    "cm",
+                    width: 24.w,
+                  ),
+                  Text(
+                    user.email,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[400],
+                    ),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 16.h),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 12.h,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      width: 0.5,
-                      color: transactionTileBorderColor,
+            SizedBox(height: 12.h),
+            if (user != null)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 12.h,
+                children: [
+                  const PremiumTile(),
+                  ActionTile(
+                    title: "Account Info",
+                    iconPath: Assets.images.user,
+                    actionColor: appPrimaryColor,
+                    onTap: () {
+                      AppNavigator.push(context, const AccountInfoScreen());
+                    },
+                  ),
+                  ActionTile(
+                    title: LocaleKeys.phoneNumber.tr(),
+                    subTitle: user.phone ?? "Not set",
+                    iconPath: Assets.images.call,
+                    actionColor: appPrimaryColor,
+                  ),
+                  ActionTile(
+                    title: "Log Out",
+                    iconPath: Assets.images.logout,
+                    actionColor: Colors.red,
+                    onTap: () {
+                      showCustomDialog(
+                        widget: PopUpDialog(
+                          title: 'Log Out',
+                          subTitle: 'Are you sure you want to logout?',
+                          dialogType: DialogType.negative,
+                          mainAction: () {
+                            context.read<AuthCubit>().logout();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              )
+            else
+              Column(
+                spacing: 24.h,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: neutralN500,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12.h,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            color: appOrange,
+                          ),
+                        ),
+                        Text(
+                          loremIpsum,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: neutralN700,
+                          ),
+                        ),
+                        Text(
+                          "Benefits having an account?",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                            color: neutralN700,
+                          ),
+                        ),
+                        const BenefitTile(),
+                        const BenefitTile(),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    spacing: 16.w,
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color: Theme.of(context)
-                              .primaryColor
-                              .withValues(alpha: 0.2),
-                        ),
-                        child: const Icon(Icons.person),
+                  SizedBox(
+                    height: 52.h,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        AppNavigator.removeAllPreviousAndPush(
+                          context,
+                          const OnboardingScreen(),
+                        );
+                      },
+                      child: const Text(
+                        "Create an account now",
                       ),
-                      const Text("Account info"),
-                      const Spacer(),
-                      const Icon(Icons.keyboard_arrow_right_outlined),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(8.r),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      width: 0.5,
-                      color: transactionTileBorderColor,
                     ),
                   ),
-                  child: Row(
-                    spacing: 16.w,
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color: Theme.of(context)
-                              .primaryColor
-                              .withValues(alpha: 0.2),
-                        ),
-                        child: const Icon(Icons.phone),
-                      ),
-                      Column(
-                        children: [
-                          Text(LocaleKeys.phoneNumber.tr()),
-                          Text(user?.phone ?? 'No phone number'),
-                        ],
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.keyboard_arrow_right_outlined),
-                    ],
-                  ),
-                ),
-                (user != null)
-                    ? GestureDetector(
-                        onTap: () {
-                          context.read<AuthCubit>().logout();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(
-                              width: 0.5,
-                              color: transactionTileBorderColor,
-                            ),
-                          ),
-                          child: Row(
-                            spacing: 16.w,
-                            children: [
-                              Container(
-                                width: 40.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  color: Colors.red.withValues(alpha: 0.2),
-                                ),
-                                child: const Icon(Icons.logout),
-                              ),
-                              const Text("Log out"),
-                              const Spacer(),
-                              const Icon(Icons.keyboard_arrow_right_outlined),
-                            ],
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          AppNavigator.removeAllPreviousAndPush(
-                            context,
-                            const OnboardingScreen(),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(
-                              width: 0.5,
-                              color: transactionTileBorderColor,
-                            ),
-                          ),
-                          child: Row(
-                            spacing: 16.w,
-                            children: [
-                              Container(
-                                width: 40.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  color: Colors.red.withValues(alpha: 0.2),
-                                ),
-                                child: const Icon(Icons.logout),
-                              ),
-                              const Text("Sign up"),
-                              const Spacer(),
-                              const Icon(Icons.keyboard_arrow_right_outlined),
-                            ],
-                          ),
-                        ),
-                      ),
-              ],
-            ),
+                ],
+              )
           ],
         ),
       ),

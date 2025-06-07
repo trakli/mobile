@@ -72,3 +72,13 @@ enum SelectIconType {
 }
 
 enum CategorizableType { transaction }
+
+enum DialogType {
+  positive,
+  negative,
+}
+
+enum PlanType {
+  monthly,
+  yearly,
+}

@@ -9,21 +9,22 @@ import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
-import 'package:trakli/gen/assets.gen.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
-import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 
 class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
@@ -466,30 +467,28 @@ class _AddTransactionFormCompactLayoutState
                                   (element) =>
                                       element.type == widget.transactionType);
 
-                              return CustomDropdownSearch<CategoryEntity>(
+                              return CustomAutoCompleteSearch<CategoryEntity>(
                                 label: "",
                                 accentColor: widget.accentColor,
-                                selectedItem: _selectedCategory,
-                                items: (filter, infiniteScrollProps) {
-                                  return searchCategories
-                                      .map((data) => data)
-                                      .toList()
-                                      .where((CategoryEntity el) => el.name
-                                          .toLowerCase()
-                                          .contains(filter.toLowerCase()))
-                                      .toList();
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return searchCategories;
+                                  }
+                                  return searchCategories.where((category) {
+                                    return category.name.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase());
+                                  });
                                 },
-                                itemAsString: (item) => item.name.toLowerCase(),
-                                onChanged: (value) => {
-                                  debugPrint(value?.name),
+                                displayStringForOption:
+                                    (CategoryEntity option) {
+                                  return option.name.toLowerCase();
+                                },
+                                onSelected: (value) => {
+                                  debugPrint(value.name),
                                   _selectedCategory = value
                                 },
-                                compareFn: (i1, i2) => i1 == i2,
-                                filterFn: (el, filter) {
-                                  return el.name.toLowerCase().contains(
-                                        filter.toLowerCase(),
-                                      );
-                                },
+                                // selectedItem: _selectedCategory,
                               );
                             },
                           ),

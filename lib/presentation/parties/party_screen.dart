@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/presentation/parties/widgets/party_list_item.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
+import 'package:trakli/presentation/utils/party_tile.dart';
 
 class PartyScreen extends StatelessWidget {
   const PartyScreen({super.key});
@@ -65,7 +65,7 @@ class PartyScreen extends StatelessWidget {
                             SizedBox(height: 8.h),
                         itemBuilder: (context, index) {
                           final party = state.parties[index];
-                          return PartyListItem(party: party);
+                          return PartyTile(party: party);
                         },
                       ),
           ),
