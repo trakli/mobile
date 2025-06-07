@@ -15,7 +15,7 @@ migrate_working_dir/
 # IntelliJ related
 *.iml
 *.ipr
-*.iws
+*.iwss
 .idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
