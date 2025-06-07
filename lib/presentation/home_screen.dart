@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/notification_screen.dart';
@@ -11,18 +12,30 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final CarouselController _carouselController = CarouselController();
+
+  @override
+  void dispose() {
+    _carouselController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final wallet = context.watch<WalletCubit>().state.wallets;
+    final wallets = context.watch<WalletCubit>().state.wallets;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -74,9 +87,29 @@ class HomeScreen extends StatelessWidget {
               vertical: 15.h,
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (wallet.isNotEmpty) WalletTile(wallet: wallet.first),
+                if (wallets.isNotEmpty)
+                  Container(
+                    constraints: BoxConstraints(
+                      maxHeight: 200.h,
+                    ),
+                    child: CarouselView(
+                      onTap: (index) {},
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0)),
+                      itemExtent: double.infinity,
+                      shrinkExtent: 0.85.sw,
+                      controller: _carouselController,
+                      children: wallets.map<Widget>((wallet) {
+                        return WalletTile(
+                          wallet: wallet,
+                          canDelete: false,
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

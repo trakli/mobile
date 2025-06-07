@@ -159,6 +159,9 @@ class _CustomAutoCompleteSearchState<T extends Object>
     return CompositedTransformTarget(
       link: _layerLink,
       child: Material(
+        color: _focusNode.hasFocus
+            ? Colors.white
+            : Theme.of(context).scaffoldBackgroundColor,
         elevation: _focusNode.hasFocus ? 4 : 0,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(8.r),
@@ -221,16 +224,12 @@ class _CustomAutoCompleteSearchState<T extends Object>
               borderRadius: BorderRadius.circular(8.r),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(8.r),
-              ),
+              borderRadius: BorderRadius.circular(8.r),
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(8.r),
-              ),
+              borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide(
                 color: Theme.of(context).colorScheme.error,
                 width: 2.0.w,

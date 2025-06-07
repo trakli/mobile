@@ -18,10 +18,12 @@ import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletTile extends StatelessWidget {
   final WalletEntity wallet;
+  final bool canDelete;
 
   const WalletTile({
     super.key,
     required this.wallet,
+    this.canDelete = true,
   });
 
   @override
@@ -171,49 +173,50 @@ class WalletTile extends StatelessWidget {
                               ],
                             ),
                           ),
-                          PopupMenuItem(
-                            onTap: () {
-                              showCustomDialog(
-                                widget: PopUpDialog(
-                                  dialogType: DialogType.negative,
-                                  title: 'Delete Wallet',
-                                  subTitle:
-                                      'Are you sure you want to delete ${wallet.name}?',
-                                  mainAction: () {
-                                    context
-                                        .read<WalletCubit>()
-                                        .deleteWallet(wallet.clientId);
-                                    AppNavigator.pop(context);
-                                  },
-                                  mainActionText: "Delete",
-                                  secondaryActionText: "Cancel",
-                                ),
-                              );
-                            },
-                            height: 40.h,
-                            child: Row(
-                              spacing: 8.w,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.redAccent.withAlpha(50),
+                          if (canDelete)
+                            PopupMenuItem(
+                              onTap: () {
+                                showCustomDialog(
+                                  widget: PopUpDialog(
+                                    dialogType: DialogType.negative,
+                                    title: 'Delete Wallet',
+                                    subTitle:
+                                        'Are you sure you want to delete ${wallet.name}?',
+                                    mainAction: () {
+                                      context
+                                          .read<WalletCubit>()
+                                          .deleteWallet(wallet.clientId);
+                                      AppNavigator.pop(context);
+                                    },
+                                    mainActionText: "Delete",
+                                    secondaryActionText: "Cancel",
                                   ),
-                                  child: SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.trash,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.redAccent,
-                                      BlendMode.srcIn,
+                                );
+                              },
+                              height: 40.h,
+                              child: Row(
+                                spacing: 8.w,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.redAccent.withAlpha(50),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      height: 16.h,
+                                      width: 16.w,
+                                      Assets.images.trash,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.redAccent,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const Text('Delete'),
-                              ],
+                                  const Text('Delete'),
+                                ],
+                              ),
                             ),
-                          ),
                           PopupMenuItem(
                             onTap: () {},
                             height: 40.h,

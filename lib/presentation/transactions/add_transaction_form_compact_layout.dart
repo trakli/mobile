@@ -212,6 +212,12 @@ class _AddTransactionFormCompactLayoutState
                                     _selectedWallet = value;
                                   });
                                 },
+                                validator: (value) {
+                                  if (_selectedWallet == null) {
+                                    return "Wallet is required";
+                                  }
+                                  return null;
+                                },
                                 // selectedItem: _selectedCategory,
                               );
                             },

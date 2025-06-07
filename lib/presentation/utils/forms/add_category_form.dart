@@ -55,10 +55,10 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
-        vertical: 20.h,
+        vertical: 16.h,
       ),
       child: Form(
         key: _formKey,

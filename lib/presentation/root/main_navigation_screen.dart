@@ -29,6 +29,7 @@ class MainNavigationScreen extends StatelessWidget {
           return Scaffold(
             key: scaffoldKey,
             resizeToAvoidBottomInset: false,
+            extendBody: true,
             drawer: Drawer(
               shape: const RoundedRectangleBorder(),
               width: 0.8.sw,
