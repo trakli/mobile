@@ -8,7 +8,7 @@ import 'package:trakli/gen/assets.gen.dart'; // Adjust path if necessary.
 class CustomAutoCompleteSearch<T extends Object> extends StatefulWidget {
   final String label;
   final FutureOr<Iterable<T>> Function(TextEditingValue textEditingValue)
-      optionsBuilder;
+  optionsBuilder;
   final String Function(T option) displayStringForOption;
   final void Function(T selectedOption)? onSelected;
   final String? Function(String? value)? validator;
@@ -61,7 +61,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
 
   void _onChanged() async {
     final result =
-        await widget.optionsBuilder(TextEditingValue(text: _controller.text));
+    await widget.optionsBuilder(TextEditingValue(text: _controller.text));
     setState(() {
       _options = result.toList();
     });
@@ -104,7 +104,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
               constraints: BoxConstraints(
                 maxHeight: 250.h,
               ),
-              child: ListView.builder(
+              child: _options.isNotEmpty ? ListView.builder(
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 itemCount: _options.length,
@@ -120,6 +120,8 @@ class _CustomAutoCompleteSearchState<T extends Object>
                     },
                   );
                 },
+              ) : const ListTile(
+                title: Text("No data"),
               ),
             ),
           ),
@@ -167,7 +169,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 child: SvgPicture.asset(
                   Assets.images.searchSpecial,
                   colorFilter:
-                      ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+                  ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -176,7 +178,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
               child: SvgPicture.asset(
                 Assets.images.arrowDown,
                 colorFilter:
-                    ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+                ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -197,7 +199,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 top: Radius.circular(8.r),
               ),
               borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.error),
+              BorderSide(color: Theme.of(context).colorScheme.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.vertical(
