@@ -283,3 +283,25 @@ void showSnackBar({
     ),
   );
 }
+
+Widget bulletPoint(String text) {
+  return Row(
+    spacing: 4.w,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "• ",
+        style: TextStyle(fontSize: 16.sp),
+      ),
+      Expanded(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 12.5.sp,
+            color: neutralN700,
+          ),
+        ),
+      ),
+    ],
+  );
+}

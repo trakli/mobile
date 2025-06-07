@@ -8,21 +8,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/models/chart_data_model.dart';
+import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
-import 'package:trakli/gen/assets.gen.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
-import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
 import 'package:trakli/presentation/utils/dialogs/add_party_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 
 class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
@@ -59,7 +60,6 @@ class _AddTransactionFormCompactLayoutState
   Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
 
-  
   setCurrency(WalletEntity? wallet) {
     setState(() {
       currentCurrency = wallet?.currency ?? currentCurrency;
@@ -70,9 +70,7 @@ class _AddTransactionFormCompactLayoutState
   void initState() {
     super.initState();
 
-
     if (widget.transactionCompleteEntity != null) {
-
       final wallet = widget.transactionCompleteEntity?.wallet;
       setCurrency(wallet);
 
@@ -520,6 +518,93 @@ class _AddTransactionFormCompactLayoutState
               ],
             ),
             SizedBox(height: 16.h),
+            Row(
+              spacing: 8.w,
+              children: [
+                SizedBox(
+                  width: 80.w,
+                  child: Text(
+                    LocaleKeys.transactionCategory.tr(),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: IntrinsicHeight(
+                    child: Row(
+                      spacing: 16.w,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: BlocBuilder<CategoryCubit, CategoryState>(
+                            builder: (context, state) {
+                              //Category by transaction type
+                              final searchCategories = state.categories.where(
+                                  (element) =>
+                                      element.type == widget.transactionType);
+
+                              return CustomAutoCompleteSearch<CategoryEntity>(
+                                label: "",
+                                accentColor: widget.accentColor,
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return searchCategories;
+                                  }
+                                  return searchCategories.where((category) {
+                                    return category.name.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase());
+                                  });
+                                },
+                                displayStringForOption:
+                                    (CategoryEntity option) {
+                                  return option.name.toLowerCase();
+                                },
+                                onSelected: (value) => {
+                                  debugPrint(value.name),
+                                  _selectedCategory = value
+                                },
+                                // selectedItem: _selectedCategory,
+                              );
+                            },
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            AppNavigator.push(
+                              context,
+                              AddCategoryScreen(
+                                accentColor: widget.accentColor,
+                                type: widget.transactionType,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 60.w,
+                            constraints: BoxConstraints(
+                              maxHeight: 50.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDEE1E0),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                Assets.images.add,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.h),
             Text(
               LocaleKeys.transactionDescription.tr(),
               style: TextStyle(
@@ -664,7 +749,6 @@ class _AddTransactionFormCompactLayoutState
                                 categoryIds: _selectedCategory != null
                                     ? [_selectedCategory!.clientId]
                                     : [],
-                           
                               );
                         } else {
                           context.read<TransactionCubit>().addTransaction(
