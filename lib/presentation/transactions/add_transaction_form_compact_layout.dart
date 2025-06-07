@@ -19,7 +19,6 @@ import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
-import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
@@ -123,17 +122,6 @@ class _AddTransactionFormCompactLayoutState
             Row(
               spacing: 8.w,
               children: [
-                SizedBox(
-                  width: 80.w,
-                  child: Text(
-                    LocaleKeys.transactionAmount.tr(),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: IntrinsicHeight(
                     child: Row(
@@ -146,6 +134,7 @@ class _AddTransactionFormCompactLayoutState
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               hintText: "Ex: 250 000",
+                              labelText: LocaleKeys.transactionAmount.tr(),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(
@@ -192,17 +181,6 @@ class _AddTransactionFormCompactLayoutState
             Row(
               spacing: 8.w,
               children: [
-                SizedBox(
-                  width: 80.w,
-                  child: Text(
-                    LocaleKeys.wallet.tr(),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: IntrinsicHeight(
                     child: Row(
@@ -212,31 +190,35 @@ class _AddTransactionFormCompactLayoutState
                         Expanded(
                           child: BlocBuilder<WalletCubit, WalletState>(
                             builder: (context, state) {
-                              return CustomDropdownSearch<WalletEntity>(
-                                label: "",
+                              return CustomAutoCompleteSearch<WalletEntity>(
+                                label: LocaleKeys.wallet.tr(),
                                 accentColor: widget.accentColor,
-                                selectedItem: _selectedWallet,
-                                items: (filter, infiniteScrollProps) {
-                                  return state.wallets;
-                                },
-                                itemAsString: (item) => item.name,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedWallet = value;
-                                    setCurrency(_selectedWallet);
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return state.wallets;
+                                  }
+                                  return state.wallets.where((category) {
+                                    return category.name.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase());
                                   });
                                 },
-                                compareFn: (i1, i2) =>
-                                    i1.clientId == i2.clientId,
-                                filterFn: (el, filter) => el.name
-                                    .toLowerCase()
-                                    .contains(filter.toLowerCase()),
+                                displayStringForOption: (WalletEntity option) {
+                                  return option.name.toLowerCase();
+                                },
+                                onSelected: (value) {
+                                  setState(() {
+                                    setCurrency(_selectedWallet);
+                                    _selectedWallet = value;
+                                  });
+                                },
                                 validator: (value) {
-                                  if (value == null) {
-                                    return "Please select a wallet";
+                                  if (_selectedWallet == null) {
+                                    return "Wallet is required";
                                   }
                                   return null;
                                 },
+                                // selectedItem: _selectedCategory,
                               );
                             },
                           ),
@@ -271,22 +253,12 @@ class _AddTransactionFormCompactLayoutState
             Row(
               spacing: 8.w,
               children: [
-                SizedBox(
-                  width: 80.w,
-                  child: Text(
-                    "Date/time",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: TextFormField(
                     readOnly: true,
                     controller: dateController,
                     decoration: InputDecoration(
+                      labelText: "Date",
                       suffixIcon: Padding(
                         padding: const EdgeInsets.all(12),
                         child: SvgPicture.asset(
@@ -324,6 +296,7 @@ class _AddTransactionFormCompactLayoutState
                     readOnly: true,
                     controller: timeController,
                     decoration: InputDecoration(
+                      labelText: "Time",
                       suffixIcon: Padding(
                         padding: const EdgeInsets.all(12),
                         child: SvgPicture.asset(
@@ -364,17 +337,6 @@ class _AddTransactionFormCompactLayoutState
             Row(
               spacing: 8.w,
               children: [
-                SizedBox(
-                  width: 80.w,
-                  child: Text(
-                    LocaleKeys.transactionParty.tr(),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: IntrinsicHeight(
                     child: Row(
@@ -384,24 +346,29 @@ class _AddTransactionFormCompactLayoutState
                         Expanded(
                           child: BlocBuilder<PartyCubit, PartyState>(
                             builder: (context, state) {
-                              return CustomDropdownSearch<PartyEntity>(
-                                label: "",
+                              return CustomAutoCompleteSearch<PartyEntity>(
+                                label: LocaleKeys.transactionParty.tr(),
                                 accentColor: widget.accentColor,
-                                selectedItem: _selectedParty,
-                                items: (filter, infiniteScrollProps) {
-                                  return state.parties;
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return state.parties;
+                                  }
+                                  return state.parties.where((category) {
+                                    return category.name.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase());
+                                  });
                                 },
-                                itemAsString: (item) => item.name,
-                                onChanged: (value) {
+                                displayStringForOption: (PartyEntity option) {
+                                  return option.name.toLowerCase();
+                                },
+                                onSelected: (value) {
                                   setState(() {
+                                    debugPrint(value.name);
                                     _selectedParty = value;
                                   });
                                 },
-                                compareFn: (i1, i2) =>
-                                    i1.clientId == i2.clientId,
-                                filterFn: (el, filter) => el.name
-                                    .toLowerCase()
-                                    .contains(filter.toLowerCase()),
+                                // selectedItem: _selectedCategory,
                               );
                             },
                           ),
@@ -442,17 +409,6 @@ class _AddTransactionFormCompactLayoutState
             Row(
               spacing: 8.w,
               children: [
-                SizedBox(
-                  width: 80.w,
-                  child: Text(
-                    LocaleKeys.transactionCategory.tr(),
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: IntrinsicHeight(
                     child: Row(
@@ -468,7 +424,7 @@ class _AddTransactionFormCompactLayoutState
                                       element.type == widget.transactionType);
 
                               return CustomAutoCompleteSearch<CategoryEntity>(
-                                label: "",
+                                label: LocaleKeys.transactionCategory.tr(),
                                 accentColor: widget.accentColor,
                                 optionsBuilder:
                                     (TextEditingValue textEditingValue) {
@@ -484,9 +440,11 @@ class _AddTransactionFormCompactLayoutState
                                     (CategoryEntity option) {
                                   return option.name.toLowerCase();
                                 },
-                                onSelected: (value) => {
-                                  debugPrint(value.name),
-                                  _selectedCategory = value
+                                onSelected: (value) {
+                                  setState(() {
+                                    debugPrint(value.name);
+                                    _selectedCategory = value;
+                                  });
                                 },
                                 // selectedItem: _selectedCategory,
                               );
@@ -526,19 +484,11 @@ class _AddTransactionFormCompactLayoutState
               ],
             ),
             SizedBox(height: 16.h),
-            Text(
-              LocaleKeys.transactionDescription.tr(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
-              ),
-            ),
-            SizedBox(height: 8.h),
             TextFormField(
               controller: descriptionController,
               maxLines: 2,
               decoration: InputDecoration(
+                labelText: LocaleKeys.transactionDescription.tr(),
                 hintText: LocaleKeys.transactionTypeHere.tr(),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),

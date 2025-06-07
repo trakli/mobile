@@ -8,6 +8,9 @@ import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class PartyTile extends StatelessWidget {
   final PartyEntity party;
@@ -25,45 +28,21 @@ class PartyTile extends StatelessWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Delete Party',
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<PartyCubit>().deleteParty(party.clientId);
-              AppNavigator.pop(context);
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-        ],
+    showCustomDialog(
+      widget: PopUpDialog(
+        dialogType: DialogType.negative,
+        title: 'Delete Party',
+        subTitle:
+        'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
+        mainAction: () {
+          context.read<PartyCubit>().deleteParty(party.clientId);
+          AppNavigator.pop(context);
+        },
+        secondaryAction: () {
+          AppNavigator.pop(context);
+        },
+        mainActionText: "Delete",
+        secondaryActionText: "Cancel",
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,7 +7,9 @@ import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'dart:math' as math;
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class CategoryTile extends StatefulWidget {
   final Color accentColor;
@@ -38,45 +42,18 @@ class _CategoryTileState extends State<CategoryTile> {
   }
 
   void _showDeleteConfirmation() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Delete Category',
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Are you sure you want to delete "${widget.category.name}"? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              widget.onDelete?.call();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-            child: Text(
-              'Delete',
-              style: TextStyle(
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-        ],
+    showCustomDialog(
+      widget: PopUpDialog(
+        dialogType: DialogType.negative,
+        title: 'Delete Category',
+        subTitle:
+            'Are you sure you want to delete "${widget.category.name}"? This action cannot be undone.',
+        mainAction: () {
+          Navigator.pop(context);
+          widget.onDelete?.call();
+        },
+        mainActionText: "Delete",
+        secondaryActionText: "Cancel",
       ),
     );
   }

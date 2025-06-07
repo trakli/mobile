@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/gen/assets.gen.dart'; // Adjust path if necessary.
+import 'package:trakli/gen/assets.gen.dart';
 
 class CustomAutoCompleteSearch<T extends Object> extends StatefulWidget {
   final String label;
@@ -54,9 +54,17 @@ class _CustomAutoCompleteSearchState<T extends Object>
         _hideOverlay();
       }
       setState(() {});
+      initializeOptions();
     });
 
     _controller.addListener(_onChanged);
+  }
+
+  initializeOptions() async {
+    final result =
+        await widget.optionsBuilder(TextEditingValue(text: _controller.text));
+
+    _options = result.toList();
   }
 
   void _onChanged() async {
@@ -104,23 +112,33 @@ class _CustomAutoCompleteSearchState<T extends Object>
               constraints: BoxConstraints(
                 maxHeight: 250.h,
               ),
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemCount: _options.length,
-                itemBuilder: (context, index) {
-                  final T option = _options[index];
-                  return ListTile(
-                    title: Text(widget.displayStringForOption(option)),
-                    onTap: () {
-                      _controller.text = widget.displayStringForOption(option);
-                      widget.onSelected?.call(option);
-                      _hideOverlay();
-                      _focusNode.unfocus();
-                    },
-                  );
-                },
-              ),
+              child: _options.isNotEmpty
+                  ? Builder(builder: (context) {
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: _options.length,
+                        itemBuilder: (context, index) {
+                          final T option = _options[index];
+                          return ListTile(
+                            title: Text(widget.displayStringForOption(option)),
+                            onTap: () {
+                              _controller.text =
+                                  widget.displayStringForOption(option);
+                              widget.onSelected?.call(option);
+                              _hideOverlay();
+                              _focusNode.unfocus();
+                            },
+                          );
+                        },
+                      );
+                    })
+                  : ListTile(
+                      onTap: () {
+                        _focusNode.unfocus();
+                      },
+                      title: const Text("No data"),
+                    ),
             ),
           ),
         ),
@@ -141,6 +159,9 @@ class _CustomAutoCompleteSearchState<T extends Object>
     return CompositedTransformTarget(
       link: _layerLink,
       child: Material(
+        color: _focusNode.hasFocus
+            ? Colors.white
+            : Theme.of(context).scaffoldBackgroundColor,
         elevation: _focusNode.hasFocus ? 4 : 0,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(8.r),
@@ -163,7 +184,10 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 });
               },
               icon: Padding(
-                padding: EdgeInsets.all(8.sp),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 8.h,
+                ),
                 child: SvgPicture.asset(
                   Assets.images.searchSpecial,
                   colorFilter:
@@ -171,12 +195,25 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 ),
               ),
             ),
-            suffixIcon: Padding(
-              padding: EdgeInsets.all(8.sp),
-              child: SvgPicture.asset(
-                Assets.images.arrowDown,
-                colorFilter:
-                    ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+            suffixIcon: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                if (_focusNode.hasFocus) {
+                  _focusNode.unfocus();
+                } else {
+                  _focusNode.requestFocus();
+                }
+              },
+              icon: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 8.h,
+                ),
+                child: SvgPicture.asset(
+                  Assets.images.arrowDown,
+                  colorFilter:
+                      ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+                ),
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -193,16 +230,12 @@ class _CustomAutoCompleteSearchState<T extends Object>
               borderRadius: BorderRadius.circular(8.r),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(8.r),
-              ),
+              borderRadius: BorderRadius.circular(8.r),
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(8.r),
-              ),
+              borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide(
                 color: Theme.of(context).colorScheme.error,
                 width: 2.0.w,
