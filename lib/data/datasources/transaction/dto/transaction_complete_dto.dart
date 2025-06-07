@@ -51,6 +51,26 @@ class WalletConverter implements JsonConverter<Wallet, Map<String, dynamic>> {
   }
 }
 
+class PartyConverter implements JsonConverter<Party?, Map<String, dynamic>?> {
+  const PartyConverter();
+
+  @override
+  Party? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return Party.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(Party? party) {
+    if (party == null) {
+      return null;
+    }
+    return party.toJson();
+  }
+}
+
 @freezed
 @JsonSerializable(explicitToJson: true)
 class TransactionCompleteDto with _$TransactionCompleteDto {
@@ -60,17 +80,20 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     @TransactionConverter() required Transaction transaction,
     @CategoryConverter() @Default([]) List<Category> categories,
     @WalletConverter() required Wallet wallet,
+    @PartyConverter() Party? party,
   }) = _TransactionCompleteDto;
 
   factory TransactionCompleteDto.fromTransaction({
     @TransactionConverter() required Transaction transaction,
     @CategoryConverter() @Default([]) List<Category>? categories,
     @WalletConverter() required Wallet wallet,
+    @PartyConverter() Party? party,
   }) {
     return TransactionCompleteDto(
       transaction: transaction,
       categories: categories ?? [],
       wallet: wallet,
+      party: party,
     );
   }
 
@@ -92,6 +115,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
       'categories': categories.map((c) => c.id).toList(),
       'wallet_id': wallet.id,
+      'party_id': party?.id,
     };
   }
 
@@ -103,8 +127,11 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
         .toList();
 
     final wallet =
-        WalletDto.fromJson(json['wallet'] as Map<String, dynamic>)
-        .toModel();
+        WalletDto.fromJson(json['wallet'] as Map<String, dynamic>).toModel();
+
+    final party = json['party'] != null
+        ? Party.fromJson(json['party'] as Map<String, dynamic>)
+        : null;
 
     final transaction = Transaction(
       amount: transactionDto.amount,
@@ -118,12 +145,14 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       id: transactionDto.id,
       userId: transactionDto.userId,
       walletId: wallet.id,
+      partyClientId: party?.clientId,
     );
 
     return TransactionCompleteDto(
       transaction: transaction,
       categories: categories,
       wallet: wallet,
+      party: party,
     );
   }
 }

@@ -14,12 +14,16 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
+import 'package:trakli/presentation/utils/wallet_tile.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final wallet = context.watch<WalletCubit>().state.wallets;
+
     return Scaffold(
       appBar: CustomAppBar(
         title: SvgPicture.asset(
@@ -72,7 +76,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // const WalletTile(),
+                if (wallet.isNotEmpty) WalletTile(wallet: wallet.first),
                 SizedBox(height: 16.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -120,5 +120,17 @@
   "unauthorizedErrorDesc": "Ocurrió un error de autorización. Por favor, vuelve a intentarlo más tarde.",
   "unknownErrorDesc": "Ocurrió un error desconocido. Por favor, vuelve a intentarlo más tarde.",
   "cancel": "Cancelar",
-  "delete": "Eliminar"
+  "delete": "Eliminar",
+  "next": "Siguiente",
+  "done": "Listo",
+  "selectCurrency": "Seleccionar moneda",
+  "defaultWalletName": "Predeterminado",
+  "defaultWalletDescription": "Billetera predeterminada creada automáticamente",
+  "partyEditParty": "Editar parte",
+  "partyName": "Nombre de la parte",
+  "partyNameRequired": "El nombre de la parte es requerido",
+  "partyDescription": "Descripción de la parte",
+  "partyUpdate": "Actualizar parte",
+  "partyAdd": "Agregar parte",
+  "partyNoParties": "No se encontraron partes"
 }

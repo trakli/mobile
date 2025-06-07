@@ -27,4 +27,6 @@ abstract class WalletRepository {
   Future<Either<Failure, Unit>> deleteWallet(String clientId);
 
   Stream<Either<Failure, List<WalletEntity>>> listenToWallets();
+
+  Future<Either<Failure, bool>> hasAnyWallet();
 }
