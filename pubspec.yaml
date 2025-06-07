@@ -100,7 +100,7 @@ dev_dependencies:
   build_runner: ^2.4.15
 
 lint_staged:
-  "lib/**.dart": dart fix --apply && dart format --fix && dart analyze --fatal-infos --fatal-warnings
+  "lib/**.dart": dart fix --apply && dart format  && dart analyze --fatal-infos --fatal-warnings
   "!lib/**.g.dart": ""
   "!lib/**.freezed.dart": ""
 
