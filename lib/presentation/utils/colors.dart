@@ -27,6 +27,7 @@ Color neutralN300 = const Color(0xFF576760);
 Color neutralN900 = const Color(0xFF061D23);
 Color neutralN40 = const Color(0xFFDFE1E4);
 Color neutralN700 = const Color(0xFF1D3229);
+Color neutralN500 = const Color(0xFF3B4E45);
 
 Color neutralM900 = const Color(0xFF020931);
 Color neutralM700 = const Color(0xFF1E2448);

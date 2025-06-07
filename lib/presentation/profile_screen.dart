@@ -169,34 +169,61 @@ class ProfileScreen extends StatelessWidget {
               )
             else
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12.h,
+                spacing: 24.h,
                 children: [
-                  Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w700,
-                      color: appOrange,
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: neutralN500,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 12.h,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            color: appOrange,
+                          ),
+                        ),
+                        Text(
+                          loremIpsum,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: neutralN700,
+                          ),
+                        ),
+                        Text(
+                          "Benefits having an account?",
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                            color: neutralN700,
+                          ),
+                        ),
+                        const BenefitTile(),
+                        const BenefitTile(),
+                      ],
                     ),
                   ),
-                  Text(
-                    loremIpsum,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: neutralN700,
+                  SizedBox(
+                    height: 52.h,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: const Text(
+                        "Create an account now",
+                      ),
                     ),
                   ),
-                  Text(
-                    "Benefits having an account?",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: neutralN700,
-                    ),
-                  ),
-                 const BenefitTile(),
-                 const BenefitTile(),
                 ],
               )
           ],
