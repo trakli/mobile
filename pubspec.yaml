@@ -56,10 +56,8 @@ dependencies:
   dio: ^5.8.0+1
   http: ^1.3.0
   json_annotation: ^4.9.0
-  drift: ^2.26.0
-  drift_flutter: ^0.2.4
   drift_db_viewer: ^2.1.0
-  path_provider: ^2.1.2
+  path_provider: ^2.1.5
   drift_sync_core:
     path: drift_sync_core/
   freezed_annotation: ^2.4.4
@@ -76,6 +74,8 @@ dependencies:
   bloc: ^9.0.0
   internet_connection_checker_plus: ^2.2.0
   intl: ^0.19.0
+  drift: ^2.26.1
+  drift_flutter: ^0.2.4
   # logging: ^1.3.0
 
 dev_dependencies:
@@ -90,11 +90,19 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
-  drift_dev: ^2.26.0
-  build_runner: ^2.4.15
   freezed: ^2.5.8
   json_serializable: ^6.9.5
   injectable_generator: ^2.7.0
+  lint_staged: ^0.5.1
+  husky: ^0.1.7
+  commitlint_cli: ^0.8.1
+  drift_dev: ^2.26.1
+  build_runner: ^2.4.15
+
+lint_staged:
+  "lib/**.dart": dart fix --apply && dart format --fix && dart analyze --fatal-infos --fatal-warnings
+  "!lib/**.g.dart": ""
+  "!lib/**.freezed.dart": ""
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
