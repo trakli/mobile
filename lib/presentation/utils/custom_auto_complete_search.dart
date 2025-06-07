@@ -53,6 +53,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
       } else {
         _hideOverlay();
       }
+      setState(() {});
     });
 
     _controller.addListener(_onChanged);
@@ -95,7 +96,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
           offset: Offset(0, size.height),
           child: Material(
             color: Colors.white,
-            elevation: 0,
+            elevation: 4,
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(8.r),
             ),
@@ -139,67 +140,73 @@ class _CustomAutoCompleteSearchState<T extends Object>
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: TextFormField(
-        readOnly: readOnly,
-        controller: _controller,
-        focusNode: _focusNode,
-        validator: widget.validator,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          contentPadding: EdgeInsets.only(top: 16.h),
-          prefixIcon: IconButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              setState(() {
-                readOnly = !readOnly;
-              });
-            },
-            icon: Padding(
+      child: Material(
+        elevation: _focusNode.hasFocus ? 4 : 0,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(8.r),
+          bottom: Radius.circular(_focusNode.hasFocus ? 0 : 8.r),
+        ),
+        child: TextFormField(
+          readOnly: readOnly,
+          controller: _controller,
+          focusNode: _focusNode,
+          validator: widget.validator,
+          decoration: InputDecoration(
+            fillColor: _focusNode.hasFocus ? Colors.white : null,
+            labelText: widget.label,
+            contentPadding: EdgeInsets.only(top: 16.h),
+            prefixIcon: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                setState(() {
+                  readOnly = !readOnly;
+                });
+              },
+              icon: Padding(
+                padding: EdgeInsets.all(8.sp),
+                child: SvgPicture.asset(
+                  Assets.images.searchSpecial,
+                  colorFilter:
+                      ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+                ),
+              ),
+            ),
+            suffixIcon: Padding(
               padding: EdgeInsets.all(8.sp),
               child: SvgPicture.asset(
-                Assets.images.searchSpecial,
+                Assets.images.arrowDown,
                 colorFilter:
                     ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
               ),
             ),
-          ),
-          suffixIcon: Padding(
-            padding: EdgeInsets.all(8.sp),
-            child: SvgPicture.asset(
-              Assets.images.arrowDown,
-              colorFilter:
-                  ColorFilter.mode(widget.accentColor, BlendMode.srcIn),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(8.r),
+              ),
+              borderSide: BorderSide.none,
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(8.r),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+              borderSide: BorderSide.none,
             ),
-            borderSide: BorderSide(
-              color: widget.accentColor,
-              width: 2.0,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
             ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
-            borderSide: const BorderSide(color: Colors.grey),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(8.r),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(8.r),
+              ),
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.error),
             ),
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(8.r),
-            ),
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.error,
-              width: 2.0.w,
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(8.r),
+              ),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.error,
+                width: 2.0.w,
+              ),
             ),
           ),
         ),
