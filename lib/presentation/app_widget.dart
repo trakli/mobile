@@ -13,15 +13,15 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
-import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
-import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
+import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -217,6 +217,9 @@ class AppView extends StatelessWidget {
               borderSide: const BorderSide(
                 color: Colors.transparent,
               ),
+            ),
+            floatingLabelStyle: TextStyle(
+              color: appPrimaryColor,
             ),
           ),
           iconButtonTheme: IconButtonThemeData(
