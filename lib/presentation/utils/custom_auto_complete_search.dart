@@ -184,7 +184,10 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 });
               },
               icon: Padding(
-                padding: EdgeInsets.all(8.sp),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 8.h,
+                ),
                 child: SvgPicture.asset(
                   Assets.images.searchSpecial,
                   colorFilter:
@@ -202,7 +205,10 @@ class _CustomAutoCompleteSearchState<T extends Object>
                 }
               },
               icon: Padding(
-                padding: EdgeInsets.all(8.sp),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 8.h,
+                ),
                 child: SvgPicture.asset(
                   Assets.images.arrowDown,
                   colorFilter:
