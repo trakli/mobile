@@ -28,6 +28,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor ?? const Color(0xFFEBEDEC),
       automaticallyImplyLeading: false,
       centerTitle: true,
+      leadingWidth: 62.w,
       leading: Row(
         children: [
           SizedBox(width: 16.w),
