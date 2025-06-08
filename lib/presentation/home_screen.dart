@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,11 +26,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final CarouselController _carouselController = CarouselController();
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _carouselController.dispose();
     super.dispose();
   }
 
@@ -79,7 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          final transactions = state.transactions;
+          final transactions = state.transactions.where((transaction) {
+            return transaction.wallet.id == wallets[currentIndex].id;
+          }).toList();
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -91,24 +98,25 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (wallets.isNotEmpty)
-                  Container(
-                    constraints: BoxConstraints(
-                      maxHeight: 200.h,
+                  CarouselSlider.builder(
+                    options: CarouselOptions(
+                      height: 190.h,
+                      viewportFraction: 1,
+                      enlargeCenterPage: true,
+                      enlargeFactor: 0.2,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
                     ),
-                    child: CarouselView(
-                      onTap: (index) {},
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0)),
-                      itemExtent: double.infinity,
-                      shrinkExtent: 0.85.sw,
-                      controller: _carouselController,
-                      children: wallets.map<Widget>((wallet) {
-                        return WalletTile(
-                          wallet: wallet,
-                          canDelete: false,
-                        );
-                      }).toList(),
-                    ),
+                    itemCount: wallets.length,
+                    itemBuilder: (context, index, pageViewIndex) {
+                      return WalletTile(
+                        wallet: wallets[index],
+                        canDelete: false,
+                      );
+                    },
                   ),
                 SizedBox(height: 16.h),
                 Row(
