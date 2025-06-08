@@ -43,6 +43,7 @@ class _TransactionDetailsBottomSheetState
     final transaction = widget.transaction.transaction;
     final category = widget.transaction.categories;
     final party = widget.transaction.party;
+    final wallet = widget.transaction.wallet;
 
     return SizedBox(
       width: double.infinity,
@@ -138,20 +139,29 @@ class _TransactionDetailsBottomSheetState
                 transaction.description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 12.h),
             ],
             DisplayPartyWidget(
               party: party,
+              walletEntity: wallet,
               maxNameLength: 20,
+              fromTextSize: 16.sp,
+              labelSize: 12.sp,
+              toTextSize: 14.sp,
+              toIconSize: 14.w,
+              maxToWidth: 0.2.sw,
             ),
             SizedBox(height: 4.h),
             CategoriesWidget(
               categories: category,
               accentColor: widget.accentColor,
+              placeholderSize: 16.sp,
+              emojiSize: 16.sp,
+              iconSize: 16.sp,
             ),
             SizedBox(height: 16.h),
             Row(

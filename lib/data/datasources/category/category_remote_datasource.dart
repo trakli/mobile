@@ -4,7 +4,6 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
-// import 'package:trakli/domain/models/category.dart';
 
 abstract class CategoryRemoteDataSource {
   Future<List<Category>> getAllCategories();
@@ -53,6 +52,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'type': category.type.name,
       'name': category.name,
       'description': category.description,
+      'media': category.media?.toJson(),
       'created_at': formatServerIsoDateTimeString(category.createdAt)
     };
 
@@ -75,6 +75,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         'type': category.type.serverKey,
         'name': category.name,
         'description': category.description,
+        'media': category.media?.toJson(),
       },
     );
 

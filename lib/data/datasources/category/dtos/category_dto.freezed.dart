@@ -37,6 +37,7 @@ mixin _$CategoryDto {
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState => throw _privateConstructorUsedError;
+  Media? get media => throw _privateConstructorUsedError;
 
   /// Serializes this CategoryDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -66,7 +67,8 @@ abstract class $CategoryDtoCopyWith<$Res> {
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
-      @JsonKey(name: 'sync_state') SyncStateDto syncState});
+      @JsonKey(name: 'sync_state') SyncStateDto syncState,
+      Media? media});
 
   $SyncStateDtoCopyWith<$Res> get syncState;
 }
@@ -97,6 +99,7 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? syncState = null,
+    Object? media = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -143,6 +146,10 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
               as SyncStateDto,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ) as $Val);
   }
 
@@ -177,7 +184,8 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
-      @JsonKey(name: 'sync_state') SyncStateDto syncState});
+      @JsonKey(name: 'sync_state') SyncStateDto syncState,
+      Media? media});
 
   @override
   $SyncStateDtoCopyWith<$Res> get syncState;
@@ -207,6 +215,7 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? syncState = null,
+    Object? media = freezed,
   }) {
     return _then(_$CategoryDtoImpl(
       clientId: null == clientId
@@ -253,6 +262,10 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
               as SyncStateDto,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ));
   }
 }
@@ -274,7 +287,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
       required this.updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       this.lastSyncedAt,
-      @JsonKey(name: 'sync_state') required this.syncState});
+      @JsonKey(name: 'sync_state') required this.syncState,
+      this.media});
 
   factory _$CategoryDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategoryDtoImplFromJson(json);
@@ -307,10 +321,12 @@ class _$CategoryDtoImpl implements _CategoryDto {
   @override
   @JsonKey(name: 'sync_state')
   final SyncStateDto syncState;
+  @override
+  final Media? media;
 
   @override
   String toString() {
-    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState)';
+    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState, media: $media)';
   }
 
   @override
@@ -334,7 +350,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
             (identical(other.syncState, syncState) ||
-                other.syncState == syncState));
+                other.syncState == syncState) &&
+            (identical(other.media, media) || other.media == media));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -351,7 +368,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
       userId,
       updatedAt,
       lastSyncedAt,
-      syncState);
+      syncState,
+      media);
 
   /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
@@ -371,21 +389,21 @@ class _$CategoryDtoImpl implements _CategoryDto {
 
 abstract class _CategoryDto implements CategoryDto {
   const factory _CategoryDto(
-          {@JsonKey(name: 'client_generated_id') required final String clientId,
-          required final TransactionType type,
-          required final String name,
-          final String? description,
-          @JsonKey(name: 'created_at', fromJson: DateTime.parse)
-          required final DateTime createdAt,
-          final int? id,
-          required final String slug,
-          @JsonKey(name: 'user_id') required final int userId,
-          @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
-          required final DateTime updatedAt,
-          @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
-          final DateTime? lastSyncedAt,
-          @JsonKey(name: 'sync_state') required final SyncStateDto syncState}) =
-      _$CategoryDtoImpl;
+      {@JsonKey(name: 'client_generated_id') required final String clientId,
+      required final TransactionType type,
+      required final String name,
+      final String? description,
+      @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+      required final DateTime createdAt,
+      final int? id,
+      required final String slug,
+      @JsonKey(name: 'user_id') required final int userId,
+      @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+      required final DateTime updatedAt,
+      @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+      final DateTime? lastSyncedAt,
+      @JsonKey(name: 'sync_state') required final SyncStateDto syncState,
+      final Media? media}) = _$CategoryDtoImpl;
 
   factory _CategoryDto.fromJson(Map<String, dynamic> json) =
       _$CategoryDtoImpl.fromJson;
@@ -418,6 +436,8 @@ abstract class _CategoryDto implements CategoryDto {
   @override
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState;
+  @override
+  Media? get media;
 
   /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.

@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/repositories/category_repository.dart';
 
 @injectable
@@ -18,6 +19,7 @@ class UpdateCategoryUseCase
       name: params.name,
       slug: params.slug,
       description: params.description,
+      media: params.media,
     );
   }
 }
@@ -28,6 +30,7 @@ class UpdateCategoryUseCaseParams {
   final String? slug;
   final int? userId;
   final String? description;
+  final MediaEntity? media;
 
   UpdateCategoryUseCaseParams({
     required this.clientId,
@@ -35,5 +38,6 @@ class UpdateCategoryUseCaseParams {
     this.slug,
     this.userId,
     this.description,
+    this.media,
   });
 }

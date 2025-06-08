@@ -3,26 +3,38 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
 class DisplayPartyWidget extends StatelessWidget {
   final PartyEntity? party;
+  final WalletEntity walletEntity;
   final int maxNameLength;
+  final EdgeInsets? padding;
+  final double? fromTextSize;
+  final double? toTextSize;
+  final double? maxToWidth;
+  final double? toIconSize;
+  final double? labelSize;
 
   const DisplayPartyWidget({
     super.key,
     required this.party,
     this.maxNameLength = 10,
+    this.padding,
+    this.fromTextSize,
+    this.toTextSize,
+    this.labelSize,
+    this.toIconSize,
+    this.maxToWidth,
+    required this.walletEntity,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 2.h,
-        horizontal: 6.w,
-      ),
+      padding: padding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -33,7 +45,7 @@ class DisplayPartyWidget extends StatelessWidget {
             "From",
             style: TextStyle(
               color: const Color(0xFF576760),
-              fontSize: 9.sp,
+              fontSize: labelSize ?? 9.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -56,7 +68,7 @@ class DisplayPartyWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: transactionTileTextColor,
-                      fontSize: 12.sp,
+                      fontSize: fromTextSize ?? 12.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -85,22 +97,22 @@ class DisplayPartyWidget extends StatelessWidget {
               spacing: 4.w,
               children: [
                 SvgPicture.asset(
-                  width: 12.w,
-                  height: 12.h,
+                  width: toIconSize ?? 12.w,
+                  height: toIconSize ?? 12.h,
                   Assets.images.wallet,
                   colorFilter: const ColorFilter.mode(
                     Colors.blueAccent,
                     BlendMode.srcIn,
                   ),
                 ),
-                SizedBox(
-                  width: 40.w,
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxToWidth ?? 0.2.sw),
                   child: Text(
-                    'Default'.extractWords(maxSize: 10),
+                    (walletEntity.name).extractWords(maxSize: 10),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.blueAccent,
-                      fontSize: 9.sp,
+                      fontSize: toTextSize ?? 9.sp,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

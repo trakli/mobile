@@ -2140,6 +2140,11 @@ class $CategoriesTable extends Categories
               type: DriftSqlType.string, requiredDuringInsert: true)
           .withConverter<TransactionType>($CategoriesTable.$convertertype);
   @override
+  late final GeneratedColumnWithTypeConverter<Media?, String> media =
+      GeneratedColumn<String>('media', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Media?>($CategoriesTable.$convertermedian);
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         userId,
@@ -2151,7 +2156,8 @@ class $CategoriesTable extends Categories
         name,
         slug,
         description,
-        type
+        type,
+        media
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2186,6 +2192,9 @@ class $CategoriesTable extends Categories
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       type: $CategoriesTable.$convertertype.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!),
+      media: $CategoriesTable.$convertermedian.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}media'])),
     );
   }
 
@@ -2196,6 +2205,10 @@ class $CategoriesTable extends Categories
 
   static JsonTypeConverter2<TransactionType, String, String> $convertertype =
       const EnumNameConverter<TransactionType>(TransactionType.values);
+  static JsonTypeConverter2<Media, String, Map<String, Object?>>
+      $convertermedia = const MediaConverter();
+  static JsonTypeConverter2<Media?, String?, Map<String, Object?>?>
+      $convertermedian = JsonTypeConverter2.asNullable($convertermedia);
 }
 
 class Category extends DataClass implements Insertable<Category> {
@@ -2210,6 +2223,7 @@ class Category extends DataClass implements Insertable<Category> {
   final String slug;
   final String? description;
   final TransactionType type;
+  final Media? media;
   const Category(
       {this.id,
       this.userId,
@@ -2221,7 +2235,8 @@ class Category extends DataClass implements Insertable<Category> {
       required this.name,
       required this.slug,
       this.description,
-      required this.type});
+      required this.type,
+      this.media});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2249,6 +2264,10 @@ class Category extends DataClass implements Insertable<Category> {
       map['type'] =
           Variable<String>($CategoriesTable.$convertertype.toSql(type));
     }
+    if (!nullToAbsent || media != null) {
+      map['media'] =
+          Variable<String>($CategoriesTable.$convertermedian.toSql(media));
+    }
     return map;
   }
 
@@ -2270,6 +2289,8 @@ class Category extends DataClass implements Insertable<Category> {
           ? const Value.absent()
           : Value(description),
       type: Value(type),
+      media:
+          media == null && nullToAbsent ? const Value.absent() : Value(media),
     );
   }
 
@@ -2289,6 +2310,8 @@ class Category extends DataClass implements Insertable<Category> {
       description: serializer.fromJson<String?>(json['description']),
       type: $CategoriesTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
+      media: $CategoriesTable.$convertermedian
+          .fromJson(serializer.fromJson<Map<String, Object?>?>(json['media'])),
     );
   }
   @override
@@ -2307,6 +2330,8 @@ class Category extends DataClass implements Insertable<Category> {
       'description': serializer.toJson<String?>(description),
       'type': serializer
           .toJson<String>($CategoriesTable.$convertertype.toJson(type)),
+      'media': serializer.toJson<Map<String, Object?>?>(
+          $CategoriesTable.$convertermedian.toJson(media)),
     };
   }
 
@@ -2321,7 +2346,8 @@ class Category extends DataClass implements Insertable<Category> {
           String? name,
           String? slug,
           Value<String?> description = const Value.absent(),
-          TransactionType? type}) =>
+          TransactionType? type,
+          Value<Media?> media = const Value.absent()}) =>
       Category(
         id: id.present ? id.value : this.id,
         userId: userId.present ? userId.value : this.userId,
@@ -2335,6 +2361,7 @@ class Category extends DataClass implements Insertable<Category> {
         slug: slug ?? this.slug,
         description: description.present ? description.value : this.description,
         type: type ?? this.type,
+        media: media.present ? media.value : this.media,
       );
   Category copyWithCompanion(CategoriesCompanion data) {
     return Category(
@@ -2352,6 +2379,7 @@ class Category extends DataClass implements Insertable<Category> {
       description:
           data.description.present ? data.description.value : this.description,
       type: data.type.present ? data.type.value : this.type,
+      media: data.media.present ? data.media.value : this.media,
     );
   }
 
@@ -2368,14 +2396,15 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('name: $name, ')
           ..write('slug: $slug, ')
           ..write('description: $description, ')
-          ..write('type: $type')
+          ..write('type: $type, ')
+          ..write('media: $media')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, lastSyncedAt, name, slug, description, type);
+      updatedAt, lastSyncedAt, name, slug, description, type, media);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2390,7 +2419,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.name == this.name &&
           other.slug == this.slug &&
           other.description == this.description &&
-          other.type == this.type);
+          other.type == this.type &&
+          other.media == this.media);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
@@ -2405,6 +2435,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String> slug;
   final Value<String?> description;
   final Value<TransactionType> type;
+  final Value<Media?> media;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
@@ -2418,6 +2449,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.slug = const Value.absent(),
     this.description = const Value.absent(),
     this.type = const Value.absent(),
+    this.media = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -2432,6 +2464,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     required String slug,
     this.description = const Value.absent(),
     required TransactionType type,
+    this.media = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name),
@@ -2449,6 +2482,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<String>? slug,
     Expression<String>? description,
     Expression<String>? type,
+    Expression<String>? media,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2463,6 +2497,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (slug != null) 'slug': slug,
       if (description != null) 'description': description,
       if (type != null) 'type': type,
+      if (media != null) 'media': media,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2479,6 +2514,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       Value<String>? slug,
       Value<String?>? description,
       Value<TransactionType>? type,
+      Value<Media?>? media,
       Value<int>? rowid}) {
     return CategoriesCompanion(
       id: id ?? this.id,
@@ -2492,6 +2528,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       slug: slug ?? this.slug,
       description: description ?? this.description,
       type: type ?? this.type,
+      media: media ?? this.media,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2533,6 +2570,10 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       map['type'] =
           Variable<String>($CategoriesTable.$convertertype.toSql(type.value));
     }
+    if (media.present) {
+      map['media'] = Variable<String>(
+          $CategoriesTable.$convertermedian.toSql(media.value));
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2553,6 +2594,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('slug: $slug, ')
           ..write('description: $description, ')
           ..write('type: $type, ')
+          ..write('media: $media, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5470,6 +5512,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String slug,
   Value<String?> description,
   required TransactionType type,
+  Value<Media?> media,
   Value<int> rowid,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
@@ -5484,6 +5527,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> slug,
   Value<String?> description,
   Value<TransactionType> type,
+  Value<Media?> media,
   Value<int> rowid,
 });
 
@@ -5552,6 +5596,11 @@ class $$CategoriesTableFilterComposer
           column: $table.type,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
+  ColumnWithTypeConverterFilters<Media?, Media, String> get media =>
+      $composableBuilder(
+          column: $table.media,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
   Expression<bool> categorizablesRefs(
       Expression<bool> Function($$CategorizablesTableFilterComposer f) f) {
     final $$CategorizablesTableFilterComposer composer = $composerBuilder(
@@ -5616,6 +5665,9 @@ class $$CategoriesTableOrderingComposer
 
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get media => $composableBuilder(
+      column: $table.media, builder: (column) => ColumnOrderings(column));
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -5659,6 +5711,9 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<TransactionType, String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Media?, String> get media =>
+      $composableBuilder(column: $table.media, builder: (column) => column);
 
   Expression<T> categorizablesRefs<T extends Object>(
       Expression<T> Function($$CategorizablesTableAnnotationComposer a) f) {
@@ -5716,6 +5771,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             Value<String> slug = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<TransactionType> type = const Value.absent(),
+            Value<Media?> media = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               CategoriesCompanion(
@@ -5730,6 +5786,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             slug: slug,
             description: description,
             type: type,
+            media: media,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -5744,6 +5801,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             required String slug,
             Value<String?> description = const Value.absent(),
             required TransactionType type,
+            Value<Media?> media = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               CategoriesCompanion.insert(
@@ -5758,6 +5816,7 @@ class $$CategoriesTableTableManager extends RootTableManager<
             slug: slug,
             description: description,
             type: type,
+            media: media,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

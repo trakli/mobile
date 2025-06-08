@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 part 'category_entity.freezed.dart';
@@ -16,5 +17,6 @@ class CategoryEntity with _$CategoryEntity {
     int? userId,
     DateTime? updatedAt,
     DateTime? lastSyncedAt,
+    MediaEntity? media,
   }) = _CategoryEntity;
 }
