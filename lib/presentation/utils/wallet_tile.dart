@@ -47,10 +47,11 @@ class WalletTile extends StatelessWidget {
             padding: EdgeInsets.only(
               left: 16.w,
               right: 16.w,
-              bottom: 12.w,
+              bottom: 12.h,
             ),
             child: Column(
-              spacing: 32.h,
+              spacing: 28.h,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,

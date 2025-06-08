@@ -1,8 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart'
+    show TransactionCompleteEntity;
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/history_screen.dart';
@@ -25,11 +29,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final CarouselController _carouselController = CarouselController();
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
-    _carouselController.dispose();
     super.dispose();
   }
 
@@ -79,7 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          final transactions = state.transactions;
+          final transactions =
+              wallets.isNotEmpty && currentIndex < wallets.length
+                  ? state.transactions.where((transaction) {
+                      return transaction.wallet.id == wallets[currentIndex].id;
+                    }).toList()
+                  : <TransactionCompleteEntity>[];
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -90,27 +103,41 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (wallets.isNotEmpty)
-                  Container(
-                    constraints: BoxConstraints(
-                      maxHeight: 200.h,
+                if (wallets.isNotEmpty) ...[
+                  CarouselSlider.builder(
+                    options: CarouselOptions(
+                      height: 190.h,
+                      viewportFraction: 1,
+                      enlargeCenterPage: true,
+                      enlargeFactor: 0.2,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          currentIndex = index;
+                        });
+                      },
                     ),
-                    child: CarouselView(
-                      onTap: (index) {},
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0)),
-                      itemExtent: double.infinity,
-                      shrinkExtent: 0.85.sw,
-                      controller: _carouselController,
-                      children: wallets.map<Widget>((wallet) {
-                        return WalletTile(
-                          wallet: wallet,
-                          canDelete: false,
-                        );
-                      }).toList(),
+                    itemCount: wallets.length,
+                    itemBuilder: (context, index, pageViewIndex) {
+                      return WalletTile(
+                        wallet: wallets[index],
+                        canDelete: false,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12.h),
+                  Align(
+                    child: AnimatedSmoothIndicator(
+                      activeIndex: currentIndex,
+                      count: wallets.length,
+                      effect: ExpandingDotsEffect(
+                        activeDotColor: Theme.of(context).primaryColor,
+                        dotWidth: 8.r,
+                        dotHeight: 8.r,
+                      ),
                     ),
                   ),
-                SizedBox(height: 16.h),
+                ],
+                SizedBox(height: 8.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

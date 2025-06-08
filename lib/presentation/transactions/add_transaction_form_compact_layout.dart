@@ -208,8 +208,8 @@ class _AddTransactionFormCompactLayoutState
                                 },
                                 onSelected: (value) {
                                   setState(() {
-                                    setCurrency(_selectedWallet);
                                     _selectedWallet = value;
+                                    setCurrency(value);
                                   });
                                 },
                                 validator: (value) {
