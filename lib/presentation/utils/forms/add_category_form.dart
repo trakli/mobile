@@ -1,15 +1,16 @@
+import 'dart:ui' as ui;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'dart:ui' as ui;
 
 class AddCategoryForm extends StatefulWidget {
   final Color accentColor;
@@ -66,7 +67,8 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              textDirection: ui.TextDirection.rtl,
               spacing: 8.w,
               children: [
                 GestureDetector(
@@ -83,27 +85,14 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                       color: widget.accentColor.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: SvgPicture.asset(
-                            Assets.images.camera,
-                            colorFilter: ColorFilter.mode(
-                              Theme.of(context).primaryColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        Assets.images.galleryAdd,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).primaryColor,
+                          BlendMode.srcIn,
                         ),
-                        Positioned(
-                          right: 10.w,
-                          bottom: 10.h,
-                          child: Icon(
-                            selectedIcon ?? Icons.category,
-                            color: widget.accentColor,
-                            size: 20.r,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -112,6 +101,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                     controller: _nameController,
                     decoration: const InputDecoration(
                       hintText: "Category name",
+                      labelText: "Category name",
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -124,20 +114,13 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
               ],
             ),
             SizedBox(height: 20.h),
-            Text(
-              "Description",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
-              ),
-            ),
             SizedBox(height: 8.h),
             TextFormField(
               controller: _descriptionController,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: LocaleKeys.typeHere.tr(),
+                labelText: "Description",
               ),
             ),
             SizedBox(height: 40.h),

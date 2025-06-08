@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (wallets.isNotEmpty) ...[
                   CarouselSlider.builder(
                     options: CarouselOptions(
+                      enableInfiniteScroll: false,
                       height: 190.h,
                       viewportFraction: 1,
                       enlargeCenterPage: true,
