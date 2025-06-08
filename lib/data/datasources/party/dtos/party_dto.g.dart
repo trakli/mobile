@@ -15,6 +15,9 @@ _$PartyDtoImpl _$$PartyDtoImplFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       userId: (json['userId'] as num).toInt(),
+      media: json['media'] == null
+          ? null
+          : Media.fromJson(json['media'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$PartyDtoImplToJson(_$PartyDtoImpl instance) =>
@@ -26,4 +29,5 @@ Map<String, dynamic> _$$PartyDtoImplToJson(_$PartyDtoImpl instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'userId': instance.userId,
+      'media': instance.media?.toJson(),
     };

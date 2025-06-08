@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -13,6 +14,7 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class AddPartyForm extends StatefulWidget {
   final PartyEntity? party;
@@ -32,7 +34,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  late IconData? selectedIcon;
+  MediaEntity? mediaEntity;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
     if (widget.party != null) {
       _nameController.text = widget.party!.name;
       _descriptionController.text = widget.party!.description ?? '';
+      mediaEntity = widget.party?.media;
     }
     selectedIcon = Icons.add;
   }
@@ -63,11 +66,13 @@ class _AddPartyFormState extends State<AddPartyForm> {
             widget.party!.clientId,
             name: name,
             description: description.isEmpty ? null : description,
+            media: mediaEntity,
           );
     } else {
       context.read<PartyCubit>().addParty(
             name,
             description: description.isEmpty ? null : description,
+            media: mediaEntity,
           );
     }
   }
@@ -113,7 +118,16 @@ class _AddPartyFormState extends State<AddPartyForm> {
                           onTap: () {
                             showCustomBottomSheet(
                               context,
-                              widget: const SelectIconBottomSheet(),
+                              widget: SelectIconBottomSheet(
+                                onSelect: (mediaType, image) {
+                                  setState(() {
+                                    mediaEntity = MediaEntity(
+                                      image: image,
+                                      mediaType: mediaType,
+                                    );
+                                  });
+                                },
+                              ),
                             );
                           },
                           child: Container(
@@ -123,14 +137,10 @@ class _AddPartyFormState extends State<AddPartyForm> {
                               color: appPrimaryColor.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                Assets.images.galleryAdd,
-                                colorFilter: ColorFilter.mode(
-                                  Theme.of(context).primaryColor,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
+                            child: ImageWidget(
+                              mediaEntity: mediaEntity,
+                              accentColor: Theme.of(context).primaryColor,
+                              selectedIcon: Icons.add,
                             ),
                           ),
                         ),

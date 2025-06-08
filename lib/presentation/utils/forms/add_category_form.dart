@@ -104,7 +104,6 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                     ),
                     child: ImageWidget(
                       mediaEntity: mediaEntity,
-                      selectedIcon: selectedIcon,
                       accentColor: widget.accentColor,
                     ),
                   ),

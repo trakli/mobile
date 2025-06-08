@@ -74,10 +74,10 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   Future<void> upsertLocal(Category entity) async {
     final row = await (db.select(table)
           ..where((t) => t.clientId.equals(entity.clientId)))
-        .getSingle();
+        .getSingleOrNull();
 
     final category = CategoriesCompanion(
-      id: Value(entity.id ?? row.id),
+      id: Value(entity.id ?? row?.id),
       name: Value(entity.name),
       type: Value(entity.type),
       description: Value(entity.description),
@@ -86,7 +86,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       userId: Value(entity.userId),
       createdAt: Value(entity.createdAt),
       lastSyncedAt: Value(entity.lastSyncedAt),
-      media: Value(entity.media ?? row.media),
+      media: Value(entity.media ?? row?.media),
     );
 
     await table.insertOne(category, mode: InsertMode.insertOrReplace);
@@ -109,7 +109,9 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
     // await table.insertAll(categories, mode: InsertMode.insertOrReplace);
 
     final categoriesFuture = list.map((entity) => upsertLocal(entity));
-    await Future.wait(categoriesFuture);
+    if (list.isNotEmpty) {
+      await Future.wait(categoriesFuture);
+    }
   }
 
   @override

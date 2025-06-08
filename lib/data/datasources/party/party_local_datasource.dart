@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:uuid/uuid.dart';
+import 'package:trakli/data/models/media.dart';
 
 abstract class PartyLocalDataSource {
   Future<List<Party>> getAllParties();
@@ -10,11 +11,13 @@ abstract class PartyLocalDataSource {
   Future<Party> insertParty(
     String name, {
     String? description,
+    Media? media,
   });
   Future<Party> updateParty(
     String clientId, {
     String? name,
     String? description,
+    Media? media,
   });
   Future<Party> deleteParty(String clientId);
   Future<void> deleteAllParties();
@@ -43,6 +46,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
   Future<Party> insertParty(
     String name, {
     String? description,
+    Media? media,
   }) async {
     final now = formatServerIsoDateTime(DateTime.now());
 
@@ -53,6 +57,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
             description: Value(description),
             createdAt: Value(now),
             updatedAt: Value(now),
+            media: Value(media),
           ),
         );
 
@@ -64,6 +69,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
     String clientId, {
     String? name,
     String? description,
+    Media? media,
   }) async {
     final now = formatServerIsoDateTime(DateTime.now());
 
@@ -75,6 +81,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
         description:
             description != null ? Value(description) : const Value.absent(),
         updatedAt: Value(now),
+        media: media != null ? Value(media) : const Value.absent(),
       ),
     );
 

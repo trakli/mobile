@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/usecases/party/add_party_usecase.dart';
 import 'package:trakli/domain/usecases/party/delete_party_usecase.dart';
 import 'package:trakli/domain/usecases/party/get_parties_usecase.dart';
@@ -48,13 +49,15 @@ class PartyCubit extends Cubit<PartyState> {
     );
   }
 
-  Future<void> addParty(String name, {String? description}) async {
+  Future<void> addParty(String name,
+      {String? description, MediaEntity? media}) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
     final result = await addPartyUseCase(
       AddPartyUseCaseParams(
         name: name,
         description: description,
+        media: media,
       ),
     );
 
@@ -71,6 +74,7 @@ class PartyCubit extends Cubit<PartyState> {
     String clientId, {
     String? name,
     String? description,
+    MediaEntity? media,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
@@ -79,6 +83,7 @@ class PartyCubit extends Cubit<PartyState> {
         clientId: clientId,
         name: name,
         description: description,
+        media: media,
       ),
     );
 

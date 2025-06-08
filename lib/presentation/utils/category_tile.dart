@@ -88,18 +88,11 @@ class _CategoryTileState extends State<CategoryTile> {
                 child: ImageWidget(
                   mediaEntity: widget.category.media,
                   accentColor: widget.accentColor,
-                  selectedIcon: null,
                   iconSize: 30.sp,
                   emojiSize: 30.sp,
+                  placeholderIcon: Icons.category,
                 ),
-              )
-
-              //     Icon(
-              //   Icons.category,
-              //   size: 20.sp,
-              //   color: widget.accentColor,
-              // ),
-              ),
+              )),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

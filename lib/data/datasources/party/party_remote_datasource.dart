@@ -50,6 +50,7 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
       'client_id': party.clientId,
       'name': party.name,
       'description': party.description,
+      'media': party.media?.toJson(),
       'created_at': formatServerIsoDateTimeString(party.createdAt)
     };
 
@@ -67,6 +68,7 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
     final data = {
       'name': party.name,
       'description': party.description,
+      'media': party.media?.toJson(),
     };
 
     final response = await dio.put(

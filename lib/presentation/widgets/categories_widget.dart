@@ -41,7 +41,6 @@ class CategoriesWidget extends StatelessWidget {
                     ImageWidget(
                       mediaEntity: category.media,
                       accentColor: accentColor,
-                      selectedIcon: null,
                       iconSize: iconSize ?? 12.sp,
                       emojiSize: emojiSize ?? 12.sp,
                       placeholderSize: placeholderSize ?? 12.sp,

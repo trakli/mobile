@@ -8,8 +8,10 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/party/party_local_datasource.dart';
 import 'package:trakli/data/mappers/party_mapper.dart';
 import 'package:trakli/data/sync/party_sync_handler.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/repositories/party_repository.dart';
+import 'package:trakli/data/models/media.dart';
 
 @LazySingleton(as: PartyRepository)
 class PartyRepositoryImpl
@@ -35,11 +37,15 @@ class PartyRepositoryImpl
   Future<Either<Failure, Unit>> insertParty(
     String name, {
     String? description,
+    MediaEntity? media,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final party = await localDataSource.insertParty(
         name,
         description: description,
+        media: media != null
+            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            : null,
       );
 
       unawaited(post(party));
@@ -52,12 +58,16 @@ class PartyRepositoryImpl
     String clientId, {
     String? name,
     String? description,
+    MediaEntity? media,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final party = await localDataSource.updateParty(
         clientId,
         name: name,
         description: description,
+        media: media != null
+            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            : null,
       );
 
       unawaited(put(party));

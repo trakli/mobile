@@ -155,13 +155,13 @@ class _TransactionDetailsBottomSheetState
               toIconSize: 14.w,
               maxToWidth: 0.2.sw,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 6.h),
             CategoriesWidget(
               categories: category,
               accentColor: widget.accentColor,
-              placeholderSize: 16.sp,
-              emojiSize: 16.sp,
-              iconSize: 16.sp,
+              placeholderSize: 20.sp,
+              emojiSize: 20.sp,
+              iconSize: 20.sp,
             ),
             SizedBox(height: 16.h),
             Row(
