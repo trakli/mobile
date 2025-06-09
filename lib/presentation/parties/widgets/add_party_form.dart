@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +10,8 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class AddPartyForm extends StatefulWidget {
@@ -28,6 +32,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  late IconData? selectedIcon;
 
   @override
   void initState() {
@@ -36,6 +41,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
       _nameController.text = widget.party!.name;
       _descriptionController.text = widget.party!.description ?? '';
     }
+    selectedIcon = Icons.add;
   }
 
   @override
@@ -98,42 +104,60 @@ class _AddPartyFormState extends State<AddPartyForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Name",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        hintText: LocaleKeys.partyEnterPartyName.tr(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return LocaleKeys.partyNameRequired.tr();
-                        }
-                        return null;
-                      },
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      textDirection: ui.TextDirection.rtl,
+                      spacing: 8.w,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showCustomBottomSheet(
+                              context,
+                              widget: const SelectIconBottomSheet(),
+                            );
+                          },
+                          child: Container(
+                            height: 56.r,
+                            width: 56.r,
+                            decoration: BoxDecoration(
+                              color: appPrimaryColor.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                Assets.images.galleryAdd,
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).primaryColor,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              hintText: LocaleKeys.partyEnterPartyName.tr(),
+                              labelText: "Name",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return LocaleKeys.partyNameRequired.tr();
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 20.h),
-                    Text(
-                      "Description",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
                     TextFormField(
                       controller: _descriptionController,
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: LocaleKeys.typeHere.tr(),
+                        labelText: "Description",
                       ),
                     ),
                     SizedBox(height: 20.h),

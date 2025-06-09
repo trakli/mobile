@@ -8,7 +8,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_info_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
+import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/utils/action_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/benefit_tile.dart';
@@ -30,25 +30,6 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         titleText: LocaleKeys.profile.tr(),
-        actions: [
-          Container(
-            width: 40.w,
-            height: 40.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.r),
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-            ),
-            padding: EdgeInsets.all(8.r),
-            child: Center(
-              child: Icon(
-                Icons.edit,
-                size: 24.r,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          SizedBox(width: 16.w),
-        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
@@ -71,26 +52,27 @@ class ProfileScreen extends StatelessWidget {
                       size: 56.r,
                     ),
                   ),
-                  Positioned(
-                    right: 0.w,
-                    bottom: 2.h,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withValues(
-                              alpha: 0.2,
-                            ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: SvgPicture.asset(
-                        Assets.images.edit2,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).primaryColor,
-                          BlendMode.srcIn,
+                  if (user != null)
+                    Positioned(
+                      right: 0.w,
+                      bottom: 2.h,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor.withValues(
+                                alpha: 0.2,
+                              ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                          Assets.images.edit2,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -216,7 +198,7 @@ class ProfileScreen extends StatelessWidget {
                       onPressed: () {
                         AppNavigator.removeAllPreviousAndPush(
                           context,
-                          const OnboardingScreen(),
+                          const RegisterScreen(),
                         );
                       },
                       child: const Text(

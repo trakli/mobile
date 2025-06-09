@@ -99,6 +99,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/filter.svg
   String get filter => 'assets/images/filter.svg';
 
+  /// File path: assets/images/gallery-add.svg
+  String get galleryAdd => 'assets/images/gallery-add.svg';
+
   /// File path: assets/images/google.svg
   String get google => 'assets/images/google.svg';
 
@@ -174,60 +177,61 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
-    add,
-    appLogo,
-    appLogoGreen,
-    apple,
-    arrowCircleRight,
-    arrowDown,
-    arrowLeft,
-    arrowRight,
-    arrowSwapDown,
-    arrowSwapHorizontal,
-    arrowSwapUp,
-    arrowUpDown,
-    arrowUp,
-    bank,
-    bottomLeftCircle,
-    calendar,
-    call,
-    camera,
-    category,
-    chart,
-    checkCircle,
-    clock,
-    close,
-    documentCopy,
-    documentUpload,
-    edit2,
-    eyeSlash,
-    eye,
-    filter,
-    google,
-    home,
-    loginLogo,
-    logo,
-    logoGreen,
-    logout,
-    menu,
-    more,
-    navEllipse,
-    notificationBing,
-    people,
-    premiumPng,
-    premiumSvg,
-    refresh,
-    searchSpecial,
-    setting,
-    support,
-    topRightCircle,
-    trash,
-    user,
-    walletAdd,
-    walletMoney,
-    wallet,
-    warning,
-  ];
+        add,
+        appLogo,
+        appLogoGreen,
+        apple,
+        arrowCircleRight,
+        arrowDown,
+        arrowLeft,
+        arrowRight,
+        arrowSwapDown,
+        arrowSwapHorizontal,
+        arrowSwapUp,
+        arrowUpDown,
+        arrowUp,
+        bank,
+        bottomLeftCircle,
+        calendar,
+        call,
+        camera,
+        category,
+        chart,
+        checkCircle,
+        clock,
+        close,
+        documentCopy,
+        documentUpload,
+        edit2,
+        eyeSlash,
+        eye,
+        filter,
+        galleryAdd,
+        google,
+        home,
+        loginLogo,
+        logo,
+        logoGreen,
+        logout,
+        menu,
+        more,
+        navEllipse,
+        notificationBing,
+        people,
+        premiumPng,
+        premiumSvg,
+        refresh,
+        searchSpecial,
+        setting,
+        support,
+        topRightCircle,
+        trash,
+        user,
+        walletAdd,
+        walletMoney,
+        wallet,
+        warning
+      ];
 }
 
 class $AssetsTranslationsGen {
@@ -253,19 +257,16 @@ class $AssetsTranslationsGen {
 }
 
 class Assets {
-  const Assets._();
+  Assets._();
 
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(this._assetName);
 
   final String _assetName;
-
-  final Size? size;
-  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -285,10 +286,10 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = true,
+    bool gaplessPlayback = false,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.medium,
+    FilterQuality filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
   }) {
@@ -320,8 +321,15 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({AssetBundle? bundle, String? package}) {
-    return AssetImage(_assetName, bundle: bundle, package: package);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
   }
 
   String get path => _assetName;
