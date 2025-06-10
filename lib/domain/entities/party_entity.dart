@@ -9,7 +9,7 @@ class PartyEntity extends Equatable {
   final DateTime updatedAt;
   final int? id;
   final int? userId;
-  final MediaEntity? media;
+  final MediaEntity? icon;
 
   const PartyEntity({
     required this.clientId,
@@ -19,7 +19,7 @@ class PartyEntity extends Equatable {
     required this.updatedAt,
     this.id,
     this.userId,
-    this.media,
+    this.icon,
   });
 
   @override
@@ -31,6 +31,6 @@ class PartyEntity extends Equatable {
         updatedAt,
         id,
         userId,
-        media,
+        icon,
       ];
 }

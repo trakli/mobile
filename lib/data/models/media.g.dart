@@ -7,15 +7,17 @@ part of 'media.dart';
 // **************************************************************************
 
 Media _$MediaFromJson(Map<String, dynamic> json) => Media(
-      id: json['id'] as String?,
-      image: json['image'] as String,
-      mediaType: $enumDecode(_$MediaTypeEnumMap, json['media_type']),
+      id: (json['id'] as num?)?.toInt(),
+      content: json['content'] as String?,
+      type: $enumDecode(_$MediaTypeEnumMap, json['type']),
+      image: json['image'] as String?,
     );
 
 Map<String, dynamic> _$MediaToJson(Media instance) => <String, dynamic>{
       'id': instance.id,
+      'content': instance.content,
+      'type': _$MediaTypeEnumMap[instance.type]!,
       'image': instance.image,
-      'media_type': _$MediaTypeEnumMap[instance.mediaType]!,
     };
 
 const _$MediaTypeEnumMap = {

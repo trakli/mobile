@@ -57,7 +57,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
             description: Value(description),
             createdAt: Value(now),
             updatedAt: Value(now),
-            media: Value(media),
+            icon: Value(media),
           ),
         );
 
@@ -81,7 +81,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
         description:
             description != null ? Value(description) : const Value.absent(),
         updatedAt: Value(now),
-        media: media != null ? Value(media) : const Value.absent(),
+        icon: media != null ? Value(media) : const Value.absent(),
       ),
     );
 

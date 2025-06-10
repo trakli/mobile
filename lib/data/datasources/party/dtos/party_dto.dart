@@ -32,7 +32,7 @@ class PartyDto with _$PartyDto {
       createdAt: createdAt,
       updatedAt: updatedAt,
       userId: userId,
-      media: media,
+      icon: media,
     );
   }
 }

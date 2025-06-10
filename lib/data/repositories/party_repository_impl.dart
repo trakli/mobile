@@ -44,7 +44,7 @@ class PartyRepositoryImpl
         name,
         description: description,
         media: media != null
-            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
       );
 
@@ -66,7 +66,7 @@ class PartyRepositoryImpl
         name: name,
         description: description,
         media: media != null
-            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
       );
 

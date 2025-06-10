@@ -26,7 +26,7 @@ mixin _$CategoryEntity {
   int? get userId => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
-  MediaEntity? get media => throw _privateConstructorUsedError;
+  MediaEntity? get icon => throw _privateConstructorUsedError;
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -52,7 +52,7 @@ abstract class $CategoryEntityCopyWith<$Res> {
       int? userId,
       DateTime? updatedAt,
       DateTime? lastSyncedAt,
-      MediaEntity? media});
+      MediaEntity? icon});
 }
 
 /// @nodoc
@@ -80,7 +80,7 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
     Object? userId = freezed,
     Object? updatedAt = freezed,
     Object? lastSyncedAt = freezed,
-    Object? media = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -123,9 +123,9 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      media: freezed == media
-          ? _value.media
-          : media // ignore: cast_nullable_to_non_nullable
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
               as MediaEntity?,
     ) as $Val);
   }
@@ -150,7 +150,7 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
       int? userId,
       DateTime? updatedAt,
       DateTime? lastSyncedAt,
-      MediaEntity? media});
+      MediaEntity? icon});
 }
 
 /// @nodoc
@@ -176,7 +176,7 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
     Object? userId = freezed,
     Object? updatedAt = freezed,
     Object? lastSyncedAt = freezed,
-    Object? media = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_$CategoryEntityImpl(
       clientId: null == clientId
@@ -219,9 +219,9 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      media: freezed == media
-          ? _value.media
-          : media // ignore: cast_nullable_to_non_nullable
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
               as MediaEntity?,
     ));
   }
@@ -241,7 +241,7 @@ class _$CategoryEntityImpl implements _CategoryEntity {
       this.userId,
       this.updatedAt,
       this.lastSyncedAt,
-      this.media});
+      this.icon});
 
   @override
   final String clientId;
@@ -264,11 +264,11 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   @override
   final DateTime? lastSyncedAt;
   @override
-  final MediaEntity? media;
+  final MediaEntity? icon;
 
   @override
   String toString() {
-    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, media: $media)';
+    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, icon: $icon)';
   }
 
   @override
@@ -291,12 +291,12 @@ class _$CategoryEntityImpl implements _CategoryEntity {
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
-            (identical(other.media, media) || other.media == media));
+            (identical(other.icon, icon) || other.icon == icon));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, clientId, type, name,
-      description, createdAt, id, slug, userId, updatedAt, lastSyncedAt, media);
+      description, createdAt, id, slug, userId, updatedAt, lastSyncedAt, icon);
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -320,7 +320,7 @@ abstract class _CategoryEntity implements CategoryEntity {
       final int? userId,
       final DateTime? updatedAt,
       final DateTime? lastSyncedAt,
-      final MediaEntity? media}) = _$CategoryEntityImpl;
+      final MediaEntity? icon}) = _$CategoryEntityImpl;
 
   @override
   String get clientId;
@@ -343,7 +343,7 @@ abstract class _CategoryEntity implements CategoryEntity {
   @override
   DateTime? get lastSyncedAt;
   @override
-  MediaEntity? get media;
+  MediaEntity? get icon;
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.

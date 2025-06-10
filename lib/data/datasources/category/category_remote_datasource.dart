@@ -52,7 +52,8 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'type': category.type.name,
       'name': category.name,
       'description': category.description,
-      'media': category.media?.toJson(),
+      'icon': category.icon?.content,
+      'icon_type': category.icon?.type.name,
       'created_at': formatServerIsoDateTimeString(category.createdAt)
     };
 
@@ -75,7 +76,8 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         'type': category.type.serverKey,
         'name': category.name,
         'description': category.description,
-        'media': category.media?.toJson(),
+        'icon': category.icon?.content,
+        'icon_type': category.icon?.type.name,
       },
     );
 

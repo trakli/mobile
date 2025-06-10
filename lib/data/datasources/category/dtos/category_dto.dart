@@ -24,7 +24,7 @@ class CategoryDto with _$CategoryDto {
     @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
     DateTime? lastSyncedAt,
     @JsonKey(name: 'sync_state') required SyncStateDto syncState,
-    Media? media,
+    Media? icon,
   }) = _CategoryDto;
 
   factory CategoryDto.fromJson(Map<String, dynamic> json) =>

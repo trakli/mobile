@@ -47,7 +47,7 @@ class CategoryRepositoryImpl
         userId,
         description: description,
         media: media != null
-            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
       );
 
@@ -73,7 +73,7 @@ class CategoryRepositoryImpl
         slug: slug,
         description: description,
         media: media != null
-            ? Media.fromLocal(image: media.image, mediaType: media.mediaType)
+            ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
       );
       unawaited(put(category));

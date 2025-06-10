@@ -16,7 +16,7 @@ import 'package:trakli/presentation/utils/dialogs.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/categories_widget.dart';
-import 'package:trakli/presentation/widgets/display_party_widget.dart';
+import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
 class TransactionTile extends StatefulWidget {
   final TransactionCompleteEntity transaction;
@@ -121,7 +121,7 @@ class _TransactionTileState extends State<TransactionTile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DisplayPartyWidget(
+                PartyDisplayWidget(
                   party: widget.transaction.party,
                   walletEntity: widget.transaction.wallet,
                 ),

@@ -17,6 +17,6 @@ class CategoryEntity with _$CategoryEntity {
     int? userId,
     DateTime? updatedAt,
     DateTime? lastSyncedAt,
-    MediaEntity? media,
+    MediaEntity? icon,
   }) = _CategoryEntity;
 }

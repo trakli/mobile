@@ -54,7 +54,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
     _descriptionController =
         TextEditingController(text: widget.category?.description);
     selectedIcon = Icons.add;
-    mediaEntity = widget.category?.media;
+    mediaEntity = widget.category?.icon;
   }
 
   @override
@@ -88,8 +88,8 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                       widget: SelectIconBottomSheet(
                         onSelect: (mediaType, image) {
                           setState(() {
-                            mediaEntity =
-                                MediaEntity(image: image, mediaType: mediaType);
+                            mediaEntity = MediaEntity(
+                                content: image, mediaType: mediaType);
                           });
                         },
                       ),

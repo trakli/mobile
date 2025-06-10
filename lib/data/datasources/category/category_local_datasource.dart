@@ -55,7 +55,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
             type: type,
             userId: Value(userId),
             description: Value(description),
-            media: Value(media),
+            icon: Value(media),
             createdAt: Value(dateTime),
             updatedAt: Value(dateTime),
           ),
@@ -81,7 +81,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
         type: type != null ? Value(type) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),
-        media: media != null ? Value(media) : const Value.absent(),
+        icon: media != null ? Value(media) : const Value.absent(),
       ),
     );
     return model.first;

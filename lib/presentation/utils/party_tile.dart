@@ -8,6 +8,9 @@ import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class PartyTile extends StatelessWidget {
@@ -68,7 +71,7 @@ class PartyTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: ImageWidget(
-              mediaEntity: party.media,
+              mediaEntity: party.icon,
               accentColor: Theme.of(context).primaryColor,
               iconSize: 20.sp,
               emojiSize: 20.sp,

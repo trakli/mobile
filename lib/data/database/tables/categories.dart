@@ -9,5 +9,5 @@ class Categories extends Table with SyncTable {
   TextColumn get slug => text()();
   TextColumn get description => text().nullable()();
   TextColumn get type => textEnum<TransactionType>()();
-  TextColumn get media => text().nullable().map(const MediaConverter())();
+  TextColumn get icon => text().nullable().map(const MediaConverter())();
 }

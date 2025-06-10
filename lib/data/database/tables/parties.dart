@@ -6,5 +6,5 @@ import 'package:trakli/data/database/converters/media_converter.dart';
 class Parties extends Table with SyncTable {
   TextColumn get name => text()();
   TextColumn get description => text().nullable()();
-  TextColumn get media => text().nullable().map(const MediaConverter())();
+  TextColumn get icon => text().nullable().map(const MediaConverter())();
 }

@@ -42,7 +42,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
     if (widget.party != null) {
       _nameController.text = widget.party!.name;
       _descriptionController.text = widget.party!.description ?? '';
-      mediaEntity = widget.party?.media;
+      mediaEntity = widget.party?.icon;
     }
     selectedIcon = Icons.add;
   }
@@ -122,7 +122,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
                                 onSelect: (mediaType, image) {
                                   setState(() {
                                     mediaEntity = MediaEntity(
-                                      image: image,
+                                      content: image,
                                       mediaType: mediaType,
                                     );
                                   });

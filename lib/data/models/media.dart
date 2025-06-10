@@ -6,27 +6,39 @@ part 'media.g.dart';
 
 @JsonSerializable()
 class Media {
-  final String? id;
-  final String image;
-  @JsonKey(name: 'media_type')
-  final MediaType mediaType;
+  final int? id;
+  final String? content;
+  @JsonKey(name: 'type')
+  final MediaType type;
+  final String? image;
 
   Media({
     this.id,
-    required this.image,
-    required this.mediaType,
+    this.content,
+    required this.type,
+    this.image,
   });
 
   factory Media.fromJson(Map<String, dynamic> json) => _$MediaFromJson(json);
 
   Map<String, dynamic> toJson() => _$MediaToJson(this);
 
-  factory Media.fromLocal(
-          {required String image, required MediaType mediaType}) =>
-      Media(image: image, mediaType: mediaType);
+  factory Media.fromLocal({
+    String? content,
+    required MediaType type,
+  }) =>
+      Media(
+        content: content,
+        type: type,
+      );
 
-  factory Media.fromEntity(MediaEntity media) =>
-      Media(image: media.image, mediaType: media.mediaType);
+  factory Media.fromEntity(MediaEntity media) => Media(
+        content: media.content,
+        type: media.mediaType,
+      );
 
-  MediaEntity toEntity() => MediaEntity(image: image, mediaType: mediaType);
+  MediaEntity toEntity() => MediaEntity(
+        content: content,
+        mediaType: type,
+      );
 }

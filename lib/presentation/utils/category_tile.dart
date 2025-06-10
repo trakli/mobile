@@ -86,7 +86,7 @@ class _CategoryTileState extends State<CategoryTile> {
               ),
               child: Center(
                 child: ImageWidget(
-                  mediaEntity: widget.category.media,
+                  mediaEntity: widget.category.icon,
                   accentColor: widget.accentColor,
                   iconSize: 30.sp,
                   emojiSize: 30.sp,

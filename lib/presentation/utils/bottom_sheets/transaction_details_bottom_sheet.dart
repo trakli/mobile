@@ -11,7 +11,7 @@ import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/widgets/categories_widget.dart';
-import 'package:trakli/presentation/widgets/display_party_widget.dart';
+import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
 class TransactionDetailsBottomSheet extends StatefulWidget {
   const TransactionDetailsBottomSheet({
@@ -145,7 +145,7 @@ class _TransactionDetailsBottomSheetState
               ),
               SizedBox(height: 12.h),
             ],
-            DisplayPartyWidget(
+            PartyDisplayWidget(
               party: party,
               walletEntity: wallet,
               maxNameLength: 20,

@@ -72,12 +72,8 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
 
   @override
   Future<void> upsertLocal(Category entity) async {
-    final row = await (db.select(table)
-          ..where((t) => t.clientId.equals(entity.clientId)))
-        .getSingleOrNull();
-
     final category = CategoriesCompanion(
-      id: Value(entity.id ?? row?.id),
+      id: Value(entity.id),
       name: Value(entity.name),
       type: Value(entity.type),
       description: Value(entity.description),
@@ -86,7 +82,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       userId: Value(entity.userId),
       createdAt: Value(entity.createdAt),
       lastSyncedAt: Value(entity.lastSyncedAt),
-      media: Value(entity.media ?? row?.media),
+      icon: Value(entity.icon),
     );
 
     await table.insertOne(category, mode: InsertMode.insertOrReplace);
@@ -94,24 +90,19 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Category> list) async {
-    // final categories = list.map((entity) => CategoriesCompanion(
-    //       id: Value(entity.id),
-    //       name: Value(entity.name),
-    //       type: Value(entity.type),
-    //       description: Value(entity.description),
-    //       clientId: Value(entity.clientId),
-    //       slug: Value(entity.slug),
-    //       userId: Value(entity.userId),
-    //       createdAt: Value(entity.createdAt),
-    //       lastSyncedAt: Value(entity.lastSyncedAt),
-    //     ));
+    final categories = list.map((entity) => CategoriesCompanion(
+          id: Value(entity.id),
+          name: Value(entity.name),
+          type: Value(entity.type),
+          description: Value(entity.description),
+          clientId: Value(entity.clientId),
+          slug: Value(entity.slug),
+          userId: Value(entity.userId),
+          createdAt: Value(entity.createdAt),
+          lastSyncedAt: Value(entity.lastSyncedAt),
+        ));
 
-    // await table.insertAll(categories, mode: InsertMode.insertOrReplace);
-
-    final categoriesFuture = list.map((entity) => upsertLocal(entity));
-    if (list.isNotEmpty) {
-      await Future.wait(categoriesFuture);
-    }
+    await table.insertAll(categories, mode: InsertMode.insertOrReplace);
   }
 
   @override

@@ -3,14 +3,19 @@ import 'package:trakli/data/models/media.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 class MediaEntity extends Equatable {
-  final String image;
+  final String? content;
   final MediaType mediaType;
 
-  const MediaEntity({required this.image, required this.mediaType});
+  const MediaEntity({
+    required this.mediaType,
+    this.content,
+  });
 
-  factory MediaEntity.fromModel(Media media) =>
-      MediaEntity(image: media.image, mediaType: media.mediaType);
+  factory MediaEntity.fromModel(Media media) => MediaEntity(
+        content: media.content,
+        mediaType: media.type,
+      );
 
   @override
-  List<Object?> get props => [image, mediaType];
+  List<Object?> get props => [content, mediaType];
 }

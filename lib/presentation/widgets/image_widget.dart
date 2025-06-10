@@ -16,6 +16,7 @@ class ImageWidget extends StatelessWidget {
     this.emojiSize,
     this.placeholderSize,
     this.placeholderIcon,
+    this.placeholderImageAsset,
   });
 
   final MediaEntity? mediaEntity;
@@ -25,6 +26,7 @@ class ImageWidget extends StatelessWidget {
   final double? emojiSize;
   final double? placeholderSize;
   final IconData? placeholderIcon;
+  final String? placeholderImageAsset;
   // final AddCategoryForm widget;
 
   @override
@@ -42,7 +44,7 @@ class ImageWidget extends StatelessWidget {
                 children: [
                   Center(
                       child: SvgPicture.asset(
-                    Assets.images.camera,
+                    placeholderImageAsset ?? Assets.images.category,
                     height: placeholderSize,
                     width: placeholderSize,
                     colorFilter: ColorFilter.mode(
@@ -63,7 +65,7 @@ class ImageWidget extends StatelessWidget {
               );
       case MediaType.emoji:
         return Text(
-          mediaEntity!.image,
+          mediaEntity!.content ?? 'Ca',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: iconSize ?? 40.sp,
@@ -72,13 +74,12 @@ class ImageWidget extends StatelessWidget {
       case MediaType.icon:
         return HeroIcon(
           HeroIcons.values.firstWhere(
-            (e) => e.name == mediaEntity!.image,
+            (e) => e.name == mediaEntity!.content,
             orElse: () => HeroIcons.questionMarkCircle, // default fallback
           ),
-          // mediaEntity!.image,
           size: emojiSize ?? 40.sp,
           style: HeroIconStyle.solid,
-          color: Theme.of(context).primaryColor,
+          color: accentColor ?? Theme.of(context).primaryColor,
         );
     }
   }

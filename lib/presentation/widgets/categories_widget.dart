@@ -39,7 +39,7 @@ class CategoriesWidget extends StatelessWidget {
                   spacing: 4.w,
                   children: [
                     ImageWidget(
-                      mediaEntity: category.media,
+                      mediaEntity: category.icon,
                       accentColor: accentColor,
                       iconSize: iconSize ?? 12.sp,
                       emojiSize: emojiSize ?? 12.sp,
