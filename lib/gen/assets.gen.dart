@@ -142,6 +142,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/premium.svg
   String get premiumSvg => 'assets/images/premium.svg';
 
+  /// File path: assets/images/profile-2user.svg
+  String get profile2user => 'assets/images/profile-2user.svg';
+
   /// File path: assets/images/refresh.svg
   String get refresh => 'assets/images/refresh.svg';
 
@@ -220,6 +223,7 @@ class $AssetsImagesGen {
         people,
         premiumPng,
         premiumSvg,
+        profile2user,
         refresh,
         searchSpecial,
         setting,
