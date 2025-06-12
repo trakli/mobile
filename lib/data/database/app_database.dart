@@ -102,18 +102,6 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
     final results = await query.get();
     return results.map((row) => row.readTable(categories)).toList();
-
-    //  Future<List<Category>> getCategoriesForSource(
-    //   String sourceId, SourceType sourceType) {
-    // return (select(categories)
-    //       ..where((category) => existsQuery(
-    //             select(categorizables)
-    //               ..where((row) =>
-    //                   row.sourceId.equals(sourceId) &
-    //                   row.sourceType.equals(sourceType.name) &
-    //                   row.categoryClientId.equalsExp(categories.clientId)),
-    //           )))
-    //     .get();
   }
 
   @override
@@ -214,5 +202,18 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
     final results = await query.getSingleOrNull();
     return results?.readTable(parties);
+  }
+
+  Future<Group?> getGroupForTransaction(String clientId) async {
+    final query = select(groups).join([
+      innerJoin(
+        transactions,
+        transactions.groupClientId.equalsExp(groups.clientId),
+      )
+    ])
+      ..where(transactions.clientId.equals(clientId));
+
+    final results = await query.getSingleOrNull();
+    return results?.readTable(groups);
   }
 }

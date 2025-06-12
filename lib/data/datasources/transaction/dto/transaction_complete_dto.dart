@@ -71,6 +71,26 @@ class PartyConverter implements JsonConverter<Party?, Map<String, dynamic>?> {
   }
 }
 
+class GroupConverter implements JsonConverter<Group?, Map<String, dynamic>?> {
+  const GroupConverter();
+
+  @override
+  Group? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return Group.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(Group? group) {
+    if (group == null) {
+      return null;
+    }
+    return group.toJson();
+  }
+}
+
 @freezed
 @JsonSerializable(explicitToJson: true)
 class TransactionCompleteDto with _$TransactionCompleteDto {
@@ -81,6 +101,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     @CategoryConverter() @Default([]) List<Category> categories,
     @WalletConverter() required Wallet wallet,
     @PartyConverter() Party? party,
+    @GroupConverter() Group? group,
   }) = _TransactionCompleteDto;
 
   factory TransactionCompleteDto.fromTransaction({
@@ -88,12 +109,14 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     @CategoryConverter() @Default([]) List<Category>? categories,
     @WalletConverter() required Wallet wallet,
     @PartyConverter() Party? party,
+    @GroupConverter() Group? group,
   }) {
     return TransactionCompleteDto(
       transaction: transaction,
       categories: categories ?? [],
       wallet: wallet,
       party: party,
+      group: group,
     );
   }
 
@@ -116,6 +139,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'categories': categories.map((c) => c.id).toList(),
       'wallet_id': wallet.id,
       'party_id': party?.id,
+      'group_id': group?.id,
     };
   }
 
@@ -133,6 +157,10 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
         ? Party.fromJson(json['party'] as Map<String, dynamic>)
         : null;
 
+    final group = json['group'] != null
+        ? Group.fromJson(json['group'] as Map<String, dynamic>)
+        : null;
+
     final transaction = Transaction(
       amount: transactionDto.amount,
       clientId: transactionDto.clientGeneratedId,
@@ -146,6 +174,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       userId: transactionDto.userId,
       walletId: wallet.id,
       partyClientId: party?.clientId,
+      groupClientId: group?.clientId,
     );
 
     return TransactionCompleteDto(
@@ -153,6 +182,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       categories: categories,
       wallet: wallet,
       party: party,
+      group: group,
     );
   }
 }

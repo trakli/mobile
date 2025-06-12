@@ -24,6 +24,7 @@ class CreateTransactionUseCase
       params.datetime,
       params.walletClientId,
       partyClientId: params.partyClientId,
+      groupClientId: params.groupClientId,
     );
   }
 }
@@ -36,6 +37,7 @@ class CreateTransactionParams {
   final DateTime datetime;
   final String walletClientId;
   final String? partyClientId;
+  final String? groupClientId;
 
   CreateTransactionParams({
     required this.amount,
@@ -45,5 +47,6 @@ class CreateTransactionParams {
     required this.datetime,
     required this.walletClientId,
     this.partyClientId,
+    this.groupClientId,
   });
 }

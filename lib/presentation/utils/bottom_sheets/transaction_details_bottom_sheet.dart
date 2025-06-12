@@ -148,7 +148,7 @@ class _TransactionDetailsBottomSheetState
             PartyDisplayWidget(
               party: party,
               walletEntity: wallet,
-              maxNameLength: 20,
+              maxNameLength: 15,
               fromTextSize: 16.sp,
               labelSize: 12.sp,
               toTextSize: 14.sp,

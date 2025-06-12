@@ -61,6 +61,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required DateTime datetime,
     required String walletClientId,
     String? partyClientId,
+    String? groupClientId,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
@@ -72,6 +73,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         datetime: datetime,
         walletClientId: walletClientId,
         partyClientId: partyClientId,
+        groupClientId: groupClientId,
       ),
     );
     result.fold(
@@ -94,7 +96,9 @@ class TransactionCubit extends Cubit<TransactionState> {
     String? description,
     List<String>? categoryIds,
     DateTime? datetime,
+    String? walletClientId,
     String? partyClientId,
+    String? groupClientId,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
@@ -104,7 +108,9 @@ class TransactionCubit extends Cubit<TransactionState> {
         description: description,
         categoryIds: categoryIds,
         datetime: datetime,
+        walletClientId: walletClientId,
         partyClientId: partyClientId,
+        groupClientId: groupClientId,
       ),
     );
     result.fold(
