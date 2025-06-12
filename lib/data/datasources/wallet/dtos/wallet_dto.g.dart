@@ -26,6 +26,9 @@ _$WalletDtoImpl _$$WalletDtoImplFromJson(Map<String, dynamic> json) =>
       stats: json['stats'] == null
           ? null
           : WalletStats.fromJson(json['stats'] as Map<String, dynamic>),
+      icon: json['icon'] == null
+          ? null
+          : Media.fromJson(json['icon'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$WalletDtoImplToJson(_$WalletDtoImpl instance) =>
@@ -44,6 +47,7 @@ Map<String, dynamic> _$$WalletDtoImplToJson(_$WalletDtoImpl instance) =>
       'sync_state': instance.syncState.toJson(),
       'rev': instance.rev,
       'stats': instance.stats?.toJson(),
+      'icon': instance.icon?.toJson(),
     };
 
 const _$WalletTypeEnumMap = {

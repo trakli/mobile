@@ -8,7 +8,9 @@ import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/wallet/wallet_local_datasource.dart';
 import 'package:trakli/data/mappers/wallet_mapper.dart';
+import 'package:trakli/data/models/media.dart';
 import 'package:trakli/data/sync/wallet_sync_handler.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/repositories/wallet_repository.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -40,14 +42,22 @@ class WalletRepositoryImpl
     double balance,
     String currency, {
     String? description,
+    MediaEntity? icon,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
+      final media = icon != null
+          ? Media(
+              content: icon.content,
+              type: icon.mediaType,
+            )
+          : null;
       final wallet = await localDataSource.insertWallet(
         name,
         type,
         balance,
         currency,
         description: description,
+        icon: media,
       );
 
       unawaited(put(wallet));
@@ -63,12 +73,20 @@ class WalletRepositoryImpl
     double? balance,
     String? currency,
     String? description,
+    MediaEntity? icon,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final existingWallet = await localDataSource.getWallet(clientId);
       if (existingWallet == null) {
         throw NotFoundException('Wallet not found');
       }
+
+      final media = icon != null
+          ? Media(
+              content: icon.content,
+              type: icon.mediaType,
+            )
+          : null;
 
       final wallet = await localDataSource.updateWallet(
         clientId,
@@ -77,6 +95,7 @@ class WalletRepositoryImpl
         balance: balance,
         currency: currency,
         description: description,
+        icon: media,
       );
 
       unawaited(put(wallet));

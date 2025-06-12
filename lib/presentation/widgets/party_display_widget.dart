@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
@@ -64,7 +63,7 @@ class PartyDisplayWidget extends StatelessWidget {
               children: [
                 ImageWidget(
                   mediaEntity: party?.icon,
-                  selectedIcon: Icons.person,
+                  // selectedIcon: Icons.person,
                   placeholderIcon: Icons.person,
                   placeholderSize: toIconSize ?? 12.sp,
                   accentColor: transactionTileTextColor,
@@ -107,14 +106,13 @@ class PartyDisplayWidget extends StatelessWidget {
             child: Row(
               spacing: 4.w,
               children: [
-                SvgPicture.asset(
-                  width: toIconSize ?? 12.w,
-                  height: toIconSize ?? 12.h,
-                  Assets.images.wallet,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.blueAccent,
-                    BlendMode.srcIn,
-                  ),
+                ImageWidget(
+                  mediaEntity: walletEntity.icon,
+                  placeholderImageAsset: Assets.images.wallet,
+                  placeholderSize: toIconSize ?? 12.sp,
+                  accentColor: Colors.blueAccent,
+                  iconSize: toIconSize ?? 12.sp,
+                  emojiSize: toIconSize ?? 12.sp,
                 ),
                 ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxToWidth ?? 0.2.sw),

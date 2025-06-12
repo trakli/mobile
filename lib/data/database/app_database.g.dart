@@ -71,6 +71,11 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
               type: DriftSqlType.string, requiredDuringInsert: false)
           .withConverter<WalletStats?>($WalletsTable.$converterstatsn);
   @override
+  late final GeneratedColumnWithTypeConverter<Media?, String> icon =
+      GeneratedColumn<String>('icon', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Media?>($WalletsTable.$convertericonn);
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         userId,
@@ -84,7 +89,8 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
         balance,
         currency,
         description,
-        stats
+        stats,
+        icon
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -123,6 +129,8 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       stats: $WalletsTable.$converterstatsn.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}stats'])),
+      icon: $WalletsTable.$convertericonn.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}icon'])),
     );
   }
 
@@ -137,6 +145,10 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
       $converterstats = const WalletStatsConverter();
   static JsonTypeConverter2<WalletStats?, String?, Map<String, Object?>?>
       $converterstatsn = JsonTypeConverter2.asNullable($converterstats);
+  static JsonTypeConverter2<Media, String, Map<String, Object?>>
+      $convertericon = const MediaConverter();
+  static JsonTypeConverter2<Media?, String?, Map<String, Object?>?>
+      $convertericonn = JsonTypeConverter2.asNullable($convertericon);
 }
 
 class Wallet extends DataClass implements Insertable<Wallet> {
@@ -153,6 +165,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
   final String currency;
   final String? description;
   final WalletStats? stats;
+  final Media? icon;
   const Wallet(
       {this.id,
       this.userId,
@@ -166,7 +179,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       required this.balance,
       required this.currency,
       this.description,
-      this.stats});
+      this.stats,
+      this.icon});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -198,6 +212,9 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       map['stats'] =
           Variable<String>($WalletsTable.$converterstatsn.toSql(stats));
     }
+    if (!nullToAbsent || icon != null) {
+      map['icon'] = Variable<String>($WalletsTable.$convertericonn.toSql(icon));
+    }
     return map;
   }
 
@@ -222,6 +239,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           : Value(description),
       stats:
           stats == null && nullToAbsent ? const Value.absent() : Value(stats),
+      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
     );
   }
 
@@ -244,6 +262,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       description: serializer.fromJson<String?>(json['description']),
       stats: $WalletsTable.$converterstatsn
           .fromJson(serializer.fromJson<Map<String, Object?>?>(json['stats'])),
+      icon: $WalletsTable.$convertericonn
+          .fromJson(serializer.fromJson<Map<String, Object?>?>(json['icon'])),
     );
   }
   @override
@@ -265,6 +285,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       'description': serializer.toJson<String?>(description),
       'stats': serializer.toJson<Map<String, Object?>?>(
           $WalletsTable.$converterstatsn.toJson(stats)),
+      'icon': serializer.toJson<Map<String, Object?>?>(
+          $WalletsTable.$convertericonn.toJson(icon)),
     };
   }
 
@@ -281,7 +303,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           double? balance,
           String? currency,
           Value<String?> description = const Value.absent(),
-          Value<WalletStats?> stats = const Value.absent()}) =>
+          Value<WalletStats?> stats = const Value.absent(),
+          Value<Media?> icon = const Value.absent()}) =>
       Wallet(
         id: id.present ? id.value : this.id,
         userId: userId.present ? userId.value : this.userId,
@@ -297,6 +320,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
         currency: currency ?? this.currency,
         description: description.present ? description.value : this.description,
         stats: stats.present ? stats.value : this.stats,
+        icon: icon.present ? icon.value : this.icon,
       );
   Wallet copyWithCompanion(WalletsCompanion data) {
     return Wallet(
@@ -316,6 +340,7 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       description:
           data.description.present ? data.description.value : this.description,
       stats: data.stats.present ? data.stats.value : this.stats,
+      icon: data.icon.present ? data.icon.value : this.icon,
     );
   }
 
@@ -334,7 +359,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           ..write('balance: $balance, ')
           ..write('currency: $currency, ')
           ..write('description: $description, ')
-          ..write('stats: $stats')
+          ..write('stats: $stats, ')
+          ..write('icon: $icon')
           ..write(')'))
         .toString();
   }
@@ -353,7 +379,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       balance,
       currency,
       description,
-      stats);
+      stats,
+      icon);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -370,7 +397,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           other.balance == this.balance &&
           other.currency == this.currency &&
           other.description == this.description &&
-          other.stats == this.stats);
+          other.stats == this.stats &&
+          other.icon == this.icon);
 }
 
 class WalletsCompanion extends UpdateCompanion<Wallet> {
@@ -387,6 +415,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
   final Value<String> currency;
   final Value<String?> description;
   final Value<WalletStats?> stats;
+  final Value<Media?> icon;
   final Value<int> rowid;
   const WalletsCompanion({
     this.id = const Value.absent(),
@@ -402,6 +431,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     this.currency = const Value.absent(),
     this.description = const Value.absent(),
     this.stats = const Value.absent(),
+    this.icon = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   WalletsCompanion.insert({
@@ -418,6 +448,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     required String currency,
     this.description = const Value.absent(),
     this.stats = const Value.absent(),
+    this.icon = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name),
@@ -437,6 +468,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     Expression<String>? currency,
     Expression<String>? description,
     Expression<String>? stats,
+    Expression<String>? icon,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -453,6 +485,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       if (currency != null) 'currency': currency,
       if (description != null) 'description': description,
       if (stats != null) 'stats': stats,
+      if (icon != null) 'icon': icon,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -471,6 +504,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       Value<String>? currency,
       Value<String?>? description,
       Value<WalletStats?>? stats,
+      Value<Media?>? icon,
       Value<int>? rowid}) {
     return WalletsCompanion(
       id: id ?? this.id,
@@ -486,6 +520,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       currency: currency ?? this.currency,
       description: description ?? this.description,
       stats: stats ?? this.stats,
+      icon: icon ?? this.icon,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -534,6 +569,10 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       map['stats'] =
           Variable<String>($WalletsTable.$converterstatsn.toSql(stats.value));
     }
+    if (icon.present) {
+      map['icon'] =
+          Variable<String>($WalletsTable.$convertericonn.toSql(icon.value));
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -556,6 +595,7 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
           ..write('currency: $currency, ')
           ..write('description: $description, ')
           ..write('stats: $stats, ')
+          ..write('icon: $icon, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1056,6 +1096,12 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
       'description', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+      'icon', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('people'));
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         userId,
@@ -1065,7 +1111,8 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
         updatedAt,
         lastSyncedAt,
         name,
-        description
+        description,
+        icon
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1096,6 +1143,8 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      icon: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
     );
   }
 
@@ -1115,6 +1164,7 @@ class Group extends DataClass implements Insertable<Group> {
   final DateTime? lastSyncedAt;
   final String name;
   final String? description;
+  final String icon;
   const Group(
       {this.id,
       this.userId,
@@ -1124,7 +1174,8 @@ class Group extends DataClass implements Insertable<Group> {
       required this.updatedAt,
       this.lastSyncedAt,
       required this.name,
-      this.description});
+      this.description,
+      required this.icon});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1147,6 +1198,7 @@ class Group extends DataClass implements Insertable<Group> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
+    map['icon'] = Variable<String>(icon);
     return map;
   }
 
@@ -1166,6 +1218,7 @@ class Group extends DataClass implements Insertable<Group> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
+      icon: Value(icon),
     );
   }
 
@@ -1182,6 +1235,7 @@ class Group extends DataClass implements Insertable<Group> {
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
+      icon: serializer.fromJson<String>(json['icon']),
     );
   }
   @override
@@ -1197,6 +1251,7 @@ class Group extends DataClass implements Insertable<Group> {
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
+      'icon': serializer.toJson<String>(icon),
     };
   }
 
@@ -1209,7 +1264,8 @@ class Group extends DataClass implements Insertable<Group> {
           DateTime? updatedAt,
           Value<DateTime?> lastSyncedAt = const Value.absent(),
           String? name,
-          Value<String?> description = const Value.absent()}) =>
+          Value<String?> description = const Value.absent(),
+          String? icon}) =>
       Group(
         id: id.present ? id.value : this.id,
         userId: userId.present ? userId.value : this.userId,
@@ -1221,6 +1277,7 @@ class Group extends DataClass implements Insertable<Group> {
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
+        icon: icon ?? this.icon,
       );
   Group copyWithCompanion(GroupsCompanion data) {
     return Group(
@@ -1236,6 +1293,7 @@ class Group extends DataClass implements Insertable<Group> {
       name: data.name.present ? data.name.value : this.name,
       description:
           data.description.present ? data.description.value : this.description,
+      icon: data.icon.present ? data.icon.value : this.icon,
     );
   }
 
@@ -1250,14 +1308,15 @@ class Group extends DataClass implements Insertable<Group> {
           ..write('updatedAt: $updatedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
           ..write('name: $name, ')
-          ..write('description: $description')
+          ..write('description: $description, ')
+          ..write('icon: $icon')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, lastSyncedAt, name, description);
+      updatedAt, lastSyncedAt, name, description, icon);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1270,7 +1329,8 @@ class Group extends DataClass implements Insertable<Group> {
           other.updatedAt == this.updatedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
           other.name == this.name &&
-          other.description == this.description);
+          other.description == this.description &&
+          other.icon == this.icon);
 }
 
 class GroupsCompanion extends UpdateCompanion<Group> {
@@ -1283,6 +1343,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<DateTime?> lastSyncedAt;
   final Value<String> name;
   final Value<String?> description;
+  final Value<String> icon;
   final Value<int> rowid;
   const GroupsCompanion({
     this.id = const Value.absent(),
@@ -1294,6 +1355,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.lastSyncedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
+    this.icon = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GroupsCompanion.insert({
@@ -1306,6 +1368,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.lastSyncedAt = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
+    this.icon = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : clientId = Value(clientId),
         name = Value(name);
@@ -1319,6 +1382,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Expression<DateTime>? lastSyncedAt,
     Expression<String>? name,
     Expression<String>? description,
+    Expression<String>? icon,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1331,6 +1395,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
+      if (icon != null) 'icon': icon,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1345,6 +1410,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       Value<DateTime?>? lastSyncedAt,
       Value<String>? name,
       Value<String?>? description,
+      Value<String>? icon,
       Value<int>? rowid}) {
     return GroupsCompanion(
       id: id ?? this.id,
@@ -1356,6 +1422,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
       name: name ?? this.name,
       description: description ?? this.description,
+      icon: icon ?? this.icon,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1390,6 +1457,9 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1408,6 +1478,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
           ..write('lastSyncedAt: $lastSyncedAt, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
+          ..write('icon: $icon, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3933,6 +4004,7 @@ typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({
   required String currency,
   Value<String?> description,
   Value<WalletStats?> stats,
+  Value<Media?> icon,
   Value<int> rowid,
 });
 typedef $$WalletsTableUpdateCompanionBuilder = WalletsCompanion Function({
@@ -3949,6 +4021,7 @@ typedef $$WalletsTableUpdateCompanionBuilder = WalletsCompanion Function({
   Value<String> currency,
   Value<String?> description,
   Value<WalletStats?> stats,
+  Value<Media?> icon,
   Value<int> rowid,
 });
 
@@ -4025,6 +4098,11 @@ class $$WalletsTableFilterComposer
           column: $table.stats,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
+  ColumnWithTypeConverterFilters<Media?, Media, String> get icon =>
+      $composableBuilder(
+          column: $table.icon,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
   Expression<bool> transactionsRefs(
       Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
     final $$TransactionsTableFilterComposer composer = $composerBuilder(
@@ -4095,6 +4173,9 @@ class $$WalletsTableOrderingComposer
 
   ColumnOrderings<String> get stats => $composableBuilder(
       column: $table.stats, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnOrderings(column));
 }
 
 class $$WalletsTableAnnotationComposer
@@ -4144,6 +4225,9 @@ class $$WalletsTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<WalletStats?, String> get stats =>
       $composableBuilder(column: $table.stats, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Media?, String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
 
   Expression<T> transactionsRefs<T extends Object>(
       Expression<T> Function($$TransactionsTableAnnotationComposer a) f) {
@@ -4203,6 +4287,7 @@ class $$WalletsTableTableManager extends RootTableManager<
             Value<String> currency = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<WalletStats?> stats = const Value.absent(),
+            Value<Media?> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               WalletsCompanion(
@@ -4219,6 +4304,7 @@ class $$WalletsTableTableManager extends RootTableManager<
             currency: currency,
             description: description,
             stats: stats,
+            icon: icon,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -4235,6 +4321,7 @@ class $$WalletsTableTableManager extends RootTableManager<
             required String currency,
             Value<String?> description = const Value.absent(),
             Value<WalletStats?> stats = const Value.absent(),
+            Value<Media?> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               WalletsCompanion.insert(
@@ -4251,6 +4338,7 @@ class $$WalletsTableTableManager extends RootTableManager<
             currency: currency,
             description: description,
             stats: stats,
+            icon: icon,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -4636,6 +4724,7 @@ typedef $$GroupsTableCreateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime?> lastSyncedAt,
   required String name,
   Value<String?> description,
+  Value<String> icon,
   Value<int> rowid,
 });
 typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
@@ -4648,6 +4737,7 @@ typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime?> lastSyncedAt,
   Value<String> name,
   Value<String?> description,
+  Value<String> icon,
   Value<int> rowid,
 });
 
@@ -4708,6 +4798,9 @@ class $$GroupsTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnFilters(column));
+
   Expression<bool> transactionsRefs(
       Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
     final $$TransactionsTableFilterComposer composer = $composerBuilder(
@@ -4766,6 +4859,9 @@ class $$GroupsTableOrderingComposer
 
   ColumnOrderings<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnOrderings(column));
 }
 
 class $$GroupsTableAnnotationComposer
@@ -4803,6 +4899,9 @@ class $$GroupsTableAnnotationComposer
 
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
 
   Expression<T> transactionsRefs<T extends Object>(
       Expression<T> Function($$TransactionsTableAnnotationComposer a) f) {
@@ -4858,6 +4957,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime?> lastSyncedAt = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
+            Value<String> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               GroupsCompanion(
@@ -4870,6 +4970,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             lastSyncedAt: lastSyncedAt,
             name: name,
             description: description,
+            icon: icon,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -4882,6 +4983,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime?> lastSyncedAt = const Value.absent(),
             required String name,
             Value<String?> description = const Value.absent(),
+            Value<String> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               GroupsCompanion.insert(
@@ -4894,6 +4996,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             lastSyncedAt: lastSyncedAt,
             name: name,
             description: description,
+            icon: icon,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

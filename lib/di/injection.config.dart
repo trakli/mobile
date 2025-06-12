@@ -245,6 +245,11 @@ _i174.GetIt $initGetIt(
       () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.factory<_i575.GetOnboardingState>(
       () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.lazySingleton<_i368.WalletRepository>(() => _i305.WalletRepositoryImpl(
+        db: gh<_i704.AppDatabase>(),
+        localDataSource: gh<_i849.WalletLocalDataSource>(),
+        syncHandler: gh<_i849.WalletSyncHandler>(),
+      ));
   gh.factory<_i56.DeletePartyUseCase>(
       () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i714.ListenToPartiesUseCase>(
@@ -275,11 +280,6 @@ _i174.GetIt $initGetIt(
             localDataSource: gh<_i662.TransactionLocalDataSource>(),
             db: gh<_i704.AppDatabase>(),
           ));
-  gh.lazySingleton<_i368.WalletRepository>(() => _i305.WalletRepositoryImpl(
-        syncHandler: gh<_i849.WalletSyncHandler>(),
-        localDataSource: gh<_i849.WalletLocalDataSource>(),
-        db: gh<_i704.AppDatabase>(),
-      ));
   gh.factory<_i947.GetAllTransactionsUseCase>(
       () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i973.ListenToTransactionsUseCase>(() =>

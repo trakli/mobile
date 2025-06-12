@@ -27,6 +27,7 @@ mixin _$WalletEntity {
   int? get userId => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   WalletStatsEntity? get stats => throw _privateConstructorUsedError;
+  MediaEntity? get icon => throw _privateConstructorUsedError;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -52,7 +53,8 @@ abstract class $WalletEntityCopyWith<$Res> {
       int? id,
       int? userId,
       DateTime updatedAt,
-      WalletStatsEntity? stats});
+      WalletStatsEntity? stats,
+      MediaEntity? icon});
 
   $WalletStatsEntityCopyWith<$Res>? get stats;
 }
@@ -83,6 +85,7 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? stats = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -129,6 +132,10 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as WalletStatsEntity?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as MediaEntity?,
     ) as $Val);
   }
 
@@ -166,7 +173,8 @@ abstract class _$$WalletEntityImplCopyWith<$Res>
       int? id,
       int? userId,
       DateTime updatedAt,
-      WalletStatsEntity? stats});
+      WalletStatsEntity? stats,
+      MediaEntity? icon});
 
   @override
   $WalletStatsEntityCopyWith<$Res>? get stats;
@@ -196,6 +204,7 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? stats = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_$WalletEntityImpl(
       clientId: null == clientId
@@ -242,6 +251,10 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as WalletStatsEntity?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as MediaEntity?,
     ));
   }
 }
@@ -260,7 +273,8 @@ class _$WalletEntityImpl extends _WalletEntity {
       this.id,
       this.userId,
       required this.updatedAt,
-      this.stats})
+      this.stats,
+      this.icon})
       : super._();
 
   @override
@@ -285,10 +299,12 @@ class _$WalletEntityImpl extends _WalletEntity {
   final DateTime updatedAt;
   @override
   final WalletStatsEntity? stats;
+  @override
+  final MediaEntity? icon;
 
   @override
   String toString() {
-    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, stats: $stats)';
+    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, stats: $stats, icon: $icon)';
   }
 
   @override
@@ -311,7 +327,8 @@ class _$WalletEntityImpl extends _WalletEntity {
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
-            (identical(other.stats, stats) || other.stats == stats));
+            (identical(other.stats, stats) || other.stats == stats) &&
+            (identical(other.icon, icon) || other.icon == icon));
   }
 
   @override
@@ -327,7 +344,8 @@ class _$WalletEntityImpl extends _WalletEntity {
       id,
       userId,
       updatedAt,
-      stats);
+      stats,
+      icon);
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -350,7 +368,8 @@ abstract class _WalletEntity extends WalletEntity {
       final int? id,
       final int? userId,
       required final DateTime updatedAt,
-      final WalletStatsEntity? stats}) = _$WalletEntityImpl;
+      final WalletStatsEntity? stats,
+      final MediaEntity? icon}) = _$WalletEntityImpl;
   const _WalletEntity._() : super._();
 
   @override
@@ -375,6 +394,8 @@ abstract class _WalletEntity extends WalletEntity {
   DateTime get updatedAt;
   @override
   WalletStatsEntity? get stats;
+  @override
+  MediaEntity? get icon;
 
   /// Create a copy of WalletEntity
   /// with the given fields replaced by the non-null parameter values.

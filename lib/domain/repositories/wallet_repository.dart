@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'dart:async';
@@ -13,6 +14,7 @@ abstract class WalletRepository {
     double balance,
     String currency, {
     String? description,
+    MediaEntity? icon,
   });
 
   Future<Either<Failure, Unit>> updateWallet(
@@ -22,6 +24,7 @@ abstract class WalletRepository {
     double? balance,
     String? currency,
     String? description,
+    MediaEntity? icon,
   });
 
   Future<Either<Failure, Unit>> deleteWallet(String clientId);

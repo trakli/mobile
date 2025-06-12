@@ -140,7 +140,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
                             child: ImageWidget(
                               mediaEntity: mediaEntity,
                               accentColor: Theme.of(context).primaryColor,
-                              selectedIcon: Icons.add,
+                              //selectedIcon: Icons.add,
                             ),
                           ),
                         ),

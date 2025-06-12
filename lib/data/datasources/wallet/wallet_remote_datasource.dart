@@ -55,7 +55,9 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       'description': wallet.description,
       'balance': wallet.balance,
       'currency': wallet.currency,
-      'created_at': formatServerIsoDateTimeString(wallet.createdAt)
+      'created_at': formatServerIsoDateTimeString(wallet.createdAt),
+      'icon': wallet.icon?.content,
+      'icon_type': wallet.icon?.type.name,
     };
 
     final response = await dio.post(
@@ -77,6 +79,8 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       'balance': wallet.balance,
       'currency': wallet.currency,
       if (wallet.description != null) 'description': wallet.description,
+      'icon': wallet.icon?.content,
+      'icon_type': wallet.icon?.type.name,
     };
 
     final response = await dio.put(
