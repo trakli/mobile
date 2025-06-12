@@ -132,5 +132,6 @@
   "partyDescription": "Descrizione della parte",
   "partyUpdate": "Aggiorna parte",
   "partyAdd": "Aggiungi parte",
-  "partyNoParties": "Nessuna parte trovata"
+  "partyNoParties": "Nessuna parte trovata",
+  "groupUpdate": "Aggiorna gruppo"
 }

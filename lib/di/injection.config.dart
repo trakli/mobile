@@ -117,6 +117,7 @@ import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/exchange_rate/cubit/exchange_rate_cubit.dart' as _i311;
+import '../presentation/groups/cubit/group_cubit.dart' as _i676;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
 import '../presentation/parties/cubit/party_cubit.dart' as _i841;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
@@ -365,8 +366,6 @@ _i174.GetIt $initGetIt(
         dio: gh<_i361.Dio>(),
         networkInfo: gh<_i6.NetworkInfo>(),
       ));
-  gh.factory<_i146.ListenToGroupsUseCase>(
-      () => _i146.ListenToGroupsUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i982.GetGroupsUseCase>(
@@ -377,6 +376,10 @@ _i174.GetIt $initGetIt(
       () => _i820.UpdateGroupUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i759.DeleteGroupUseCase>(
       () => _i759.DeleteGroupUseCase(gh<_i957.GroupRepository>()));
+  gh.factory<_i146.ListenToGroupsUseCase>(
+      () => _i146.ListenToGroupsUseCase(gh<_i957.GroupRepository>()));
+  gh.factory<_i676.GroupCubit>(
+      () => _i676.GroupCubit(gh<_i957.GroupRepository>()));
   gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
         getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
         addWalletUseCase: gh<_i80.AddWalletUseCase>(),
