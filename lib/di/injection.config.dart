@@ -316,13 +316,6 @@ _i174.GetIt $initGetIt(
         gh<_i575.GetOnboardingState>(),
         gh<_i243.SaveOnboardingState>(),
       ));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
-      () => syncModule.provideSyncTypeHandlers(
-            gh<_i893.TransactionSyncHandler>(),
-            gh<_i463.CategorySyncHandler>(),
-            gh<_i849.WalletSyncHandler>(),
-            gh<_i280.PartySyncHandler>(),
-          ));
   gh.factory<_i62.DeleteWalletUseCase>(
       () => _i62.DeleteWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i418.UpdateWalletUseCase>(
@@ -331,6 +324,14 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
+      () => syncModule.provideSyncTypeHandlers(
+            gh<_i893.TransactionSyncHandler>(),
+            gh<_i463.CategorySyncHandler>(),
+            gh<_i849.WalletSyncHandler>(),
+            gh<_i280.PartySyncHandler>(),
+            gh<_i235.GroupSyncHandler>(),
+          ));
   gh.factory<_i669.CreateTransactionUseCase>(
       () => _i669.CreateTransactionUseCase(
             gh<_i118.TransactionRepository>(),

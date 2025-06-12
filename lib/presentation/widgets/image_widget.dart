@@ -52,15 +52,16 @@ class ImageWidget extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   )),
-                  Positioned(
-                    right: 10.w,
-                    bottom: 10.h,
-                    child: Icon(
-                      selectedIcon ?? Icons.category,
-                      color: accentColor,
-                      size: 20.r,
+                  if (placeholderImageAsset == null)
+                    Positioned(
+                      right: 10.w,
+                      bottom: 10.h,
+                      child: Icon(
+                        selectedIcon ?? Icons.category,
+                        color: accentColor,
+                        size: 20.r,
+                      ),
                     ),
-                  ),
                 ],
               );
       case MediaType.emoji:

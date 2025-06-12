@@ -50,6 +50,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       'description': group.description,
       'icon': group.icon?.content,
       'icon_type': group.icon?.type.name,
+      'client_id': group.clientId,
       'created_at': formatServerIsoDateTimeString(DateTime.now()),
     });
     final apiResponse = ApiResponse.fromJson(response.data);

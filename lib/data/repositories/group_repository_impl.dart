@@ -58,7 +58,7 @@ class GroupRepositoryImpl
           icon: media,
         );
 
-        unawaited(put(group));
+        unawaited(post(group));
         return unit;
       },
     );

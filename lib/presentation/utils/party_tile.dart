@@ -77,12 +77,6 @@ class PartyTile extends StatelessWidget {
               emojiSize: 20.sp,
               placeholderIcon: Icons.groups_outlined,
             ),
-
-            // Icon(
-            //   Icons.groups_outlined,
-            //   size: 20.sp,
-            //   color: Theme.of(context).primaryColor,
-            // ),
           ),
           Expanded(
             child: Column(
