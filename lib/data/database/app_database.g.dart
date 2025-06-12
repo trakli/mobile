@@ -1096,11 +1096,10 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
       'description', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
-  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
-      'icon', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant('people'));
+  late final GeneratedColumnWithTypeConverter<Media?, String> icon =
+      GeneratedColumn<String>('icon', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<Media?>($GroupsTable.$convertericonn);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1143,8 +1142,8 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
-      icon: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
+      icon: $GroupsTable.$convertericonn.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}icon'])),
     );
   }
 
@@ -1152,6 +1151,11 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
   $GroupsTable createAlias(String alias) {
     return $GroupsTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<Media, String, Map<String, Object?>>
+      $convertericon = const MediaConverter();
+  static JsonTypeConverter2<Media?, String?, Map<String, Object?>?>
+      $convertericonn = JsonTypeConverter2.asNullable($convertericon);
 }
 
 class Group extends DataClass implements Insertable<Group> {
@@ -1164,7 +1168,7 @@ class Group extends DataClass implements Insertable<Group> {
   final DateTime? lastSyncedAt;
   final String name;
   final String? description;
-  final String icon;
+  final Media? icon;
   const Group(
       {this.id,
       this.userId,
@@ -1175,7 +1179,7 @@ class Group extends DataClass implements Insertable<Group> {
       this.lastSyncedAt,
       required this.name,
       this.description,
-      required this.icon});
+      this.icon});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1198,7 +1202,9 @@ class Group extends DataClass implements Insertable<Group> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['icon'] = Variable<String>(icon);
+    if (!nullToAbsent || icon != null) {
+      map['icon'] = Variable<String>($GroupsTable.$convertericonn.toSql(icon));
+    }
     return map;
   }
 
@@ -1218,7 +1224,7 @@ class Group extends DataClass implements Insertable<Group> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      icon: Value(icon),
+      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
     );
   }
 
@@ -1235,7 +1241,8 @@ class Group extends DataClass implements Insertable<Group> {
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
-      icon: serializer.fromJson<String>(json['icon']),
+      icon: $GroupsTable.$convertericonn
+          .fromJson(serializer.fromJson<Map<String, Object?>?>(json['icon'])),
     );
   }
   @override
@@ -1251,7 +1258,8 @@ class Group extends DataClass implements Insertable<Group> {
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
-      'icon': serializer.toJson<String>(icon),
+      'icon': serializer.toJson<Map<String, Object?>?>(
+          $GroupsTable.$convertericonn.toJson(icon)),
     };
   }
 
@@ -1265,7 +1273,7 @@ class Group extends DataClass implements Insertable<Group> {
           Value<DateTime?> lastSyncedAt = const Value.absent(),
           String? name,
           Value<String?> description = const Value.absent(),
-          String? icon}) =>
+          Value<Media?> icon = const Value.absent()}) =>
       Group(
         id: id.present ? id.value : this.id,
         userId: userId.present ? userId.value : this.userId,
@@ -1277,7 +1285,7 @@ class Group extends DataClass implements Insertable<Group> {
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
-        icon: icon ?? this.icon,
+        icon: icon.present ? icon.value : this.icon,
       );
   Group copyWithCompanion(GroupsCompanion data) {
     return Group(
@@ -1343,7 +1351,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<DateTime?> lastSyncedAt;
   final Value<String> name;
   final Value<String?> description;
-  final Value<String> icon;
+  final Value<Media?> icon;
   final Value<int> rowid;
   const GroupsCompanion({
     this.id = const Value.absent(),
@@ -1410,7 +1418,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       Value<DateTime?>? lastSyncedAt,
       Value<String>? name,
       Value<String?>? description,
-      Value<String>? icon,
+      Value<Media?>? icon,
       Value<int>? rowid}) {
     return GroupsCompanion(
       id: id ?? this.id,
@@ -1458,7 +1466,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       map['description'] = Variable<String>(description.value);
     }
     if (icon.present) {
-      map['icon'] = Variable<String>(icon.value);
+      map['icon'] =
+          Variable<String>($GroupsTable.$convertericonn.toSql(icon.value));
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -4724,7 +4733,7 @@ typedef $$GroupsTableCreateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime?> lastSyncedAt,
   required String name,
   Value<String?> description,
-  Value<String> icon,
+  Value<Media?> icon,
   Value<int> rowid,
 });
 typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
@@ -4737,7 +4746,7 @@ typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime?> lastSyncedAt,
   Value<String> name,
   Value<String?> description,
-  Value<String> icon,
+  Value<Media?> icon,
   Value<int> rowid,
 });
 
@@ -4798,8 +4807,10 @@ class $$GroupsTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get icon => $composableBuilder(
-      column: $table.icon, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<Media?, Media, String> get icon =>
+      $composableBuilder(
+          column: $table.icon,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   Expression<bool> transactionsRefs(
       Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
@@ -4900,7 +4911,7 @@ class $$GroupsTableAnnotationComposer
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<String> get icon =>
+  GeneratedColumnWithTypeConverter<Media?, String> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);
 
   Expression<T> transactionsRefs<T extends Object>(
@@ -4957,7 +4968,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime?> lastSyncedAt = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            Value<String> icon = const Value.absent(),
+            Value<Media?> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               GroupsCompanion(
@@ -4983,7 +4994,7 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime?> lastSyncedAt = const Value.absent(),
             required String name,
             Value<String?> description = const Value.absent(),
-            Value<String> icon = const Value.absent(),
+            Value<Media?> icon = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               GroupsCompanion.insert(

@@ -72,6 +72,9 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
     String? description,
     Media? media,
   }) async {
+    final now = DateTime.now();
+    DateTime dateTime = formatServerIsoDateTime(now);
+
     final model = await (database.update(database.categories)
           ..where((c) => c.clientId.equals(clientId)))
         .writeReturning(
@@ -82,6 +85,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
         description:
             description != null ? Value(description) : const Value.absent(),
         icon: media != null ? Value(media) : const Value.absent(),
+        updatedAt: Value(dateTime),
       ),
     );
     return model.first;

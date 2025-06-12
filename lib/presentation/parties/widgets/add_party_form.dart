@@ -44,7 +44,6 @@ class _AddPartyFormState extends State<AddPartyForm> {
       _descriptionController.text = widget.party!.description ?? '';
       mediaEntity = widget.party?.icon;
     }
-    selectedIcon = Icons.add;
   }
 
   @override
@@ -140,7 +139,6 @@ class _AddPartyFormState extends State<AddPartyForm> {
                             child: ImageWidget(
                               mediaEntity: mediaEntity,
                               accentColor: Theme.of(context).primaryColor,
-                              //selectedIcon: Icons.add,
                             ),
                           ),
                         ),

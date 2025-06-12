@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
@@ -11,9 +10,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'dart:ui' as ui;
 
 import 'package:trakli/presentation/widgets/image_widget.dart';
 
