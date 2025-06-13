@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/presentation/groups/add_group_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/pick_group_tile.dart';
 
 class PickGroupBottomSheet extends StatefulWidget {
   const PickGroupBottomSheet({super.key});
@@ -17,7 +19,8 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.only(
         left: 16.w,
         right: 16.w,
@@ -57,45 +60,41 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 16.h),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
+          SearchBar(
+            leading: SvgPicture.asset(
+              Assets.images.searchSpecial,
+              width: 24.sp,
+              colorFilter: const ColorFilter.mode(
+                Colors.grey,
+                BlendMode.srcIn,
+              ),
             ),
-            decoration: BoxDecoration(
-              color: neutralN20,
-              borderRadius: BorderRadius.circular(8.r),
+            hintText: "Search",
+            onChanged: (value) {},
+          ),
+          SizedBox(height: 16.h),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 0.4.sh,
             ),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  width: 16.w,
-                  height: 16.h,
-                  Assets.images.profile2user,
-                  colorFilter: ColorFilter.mode(
-                    appOrange,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  "General",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Spacer(),
-                Radio(
-                  activeColor: appPrimaryColor,
-                  value: 1,
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const BouncingScrollPhysics(),
+              itemCount: 3,
+              itemBuilder: (context, index) {
+                return PickGroupTile(
+                  value: index,
                   groupValue: val,
                   onChanged: (value) {
                     setState(() {
                       val = value;
                     });
                   },
-                ),
-              ],
+                );
+              },
+              separatorBuilder: (context, index) {
+                return SizedBox(height: 8.h);
+              },
             ),
           ),
           SizedBox(height: 16.h),
@@ -103,7 +102,9 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             width: double.infinity,
             child: ElevatedButton.icon(
               iconAlignment: IconAlignment.end,
-              onPressed: () {},
+              onPressed: () {
+                AppNavigator.push(context, const AddGroupScreen());
+              },
               label: const Text("Add group"),
               icon: const Icon(Icons.add),
             ),

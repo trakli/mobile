@@ -260,6 +260,13 @@ class AppView extends StatelessWidget {
               ),
             ),
           ),
+          searchBarTheme: SearchBarThemeData(
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+          ),
         ),
         builder: (context, child) {
           return BlocListener<AuthCubit, AuthState>(

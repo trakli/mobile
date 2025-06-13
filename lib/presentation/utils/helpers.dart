@@ -151,11 +151,12 @@ Future<T?> showCustomBottomSheet<T>(
   context, {
   required Widget widget,
   Color color = Colors.white,
+  double maxHeightRation = 1,
 }) async {
   return showModalBottomSheet<T>(
     context: context,
     backgroundColor: color,
-    scrollControlDisabledMaxHeightRatio: 1,
+    scrollControlDisabledMaxHeightRatio: maxHeightRation,
     builder: (context) {
       return widget;
     },
