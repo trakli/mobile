@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/models/media.dart';
 
 part 'party_dto.freezed.dart';
 part 'party_dto.g.dart';
@@ -14,6 +15,7 @@ class PartyDto with _$PartyDto {
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
     required int userId,
+    Media? media,
   }) = _PartyDto;
 
   factory PartyDto.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +32,7 @@ class PartyDto with _$PartyDto {
       createdAt: createdAt,
       updatedAt: updatedAt,
       userId: userId,
+      icon: media,
     );
   }
 }

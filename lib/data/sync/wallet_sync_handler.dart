@@ -96,6 +96,7 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
       updatedAt: Value(entity.updatedAt),
       lastSyncedAt: Value(entity.lastSyncedAt),
       stats: Value(entity.stats),
+      icon: Value(entity.icon),
     );
     await table.insertOne(companion, mode: InsertMode.insertOrReplace);
   }
@@ -116,6 +117,7 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
           currency: Value(entity.currency),
           description: Value(entity.description),
           stats: Value(entity.stats),
+          icon: Value(entity.icon),
         ));
     await table.insertAll(companions, mode: InsertMode.insertOrReplace);
   }

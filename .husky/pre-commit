@@ -3,6 +3,19 @@
 
 VERBOSE=true dart run lint_staged
 
+echo "Running Flutter analysis..."
+flutter analyze
+
+# Store the exit code of flutter analyze
+ANALYZE_EXIT_CODE=$?
+
+# If flutter analyze failed, prevent the commit
+if [ $ANALYZE_EXIT_CODE -ne 0 ]; then
+    echo "❌ Flutter analysis failed. Please fix the issues before committing."
+    exit 1
+fi
+
+echo "✅ Flutter analysis passed!"
 
 #!/bin/bash
 if ! command -v action-validator >/dev/null; then

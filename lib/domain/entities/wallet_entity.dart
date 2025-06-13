@@ -2,6 +2,7 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/wallet_stats_entity.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 
 part 'wallet_entity.freezed.dart';
 
@@ -19,6 +20,7 @@ class WalletEntity with _$WalletEntity {
     int? userId,
     required DateTime updatedAt,
     WalletStatsEntity? stats,
+    MediaEntity? icon,
   }) = _WalletEntity;
 
   const WalletEntity._();

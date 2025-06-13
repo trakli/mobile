@@ -82,3 +82,5 @@ enum PlanType {
   monthly,
   yearly,
 }
+
+enum MediaType { emoji, image, icon }

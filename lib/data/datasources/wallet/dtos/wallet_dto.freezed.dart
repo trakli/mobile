@@ -43,6 +43,8 @@ mixin _$WalletDto {
   String? get rev => throw _privateConstructorUsedError;
   @JsonKey(name: 'stats')
   WalletStats? get stats => throw _privateConstructorUsedError;
+  @JsonKey(name: 'icon')
+  Media? get icon => throw _privateConstructorUsedError;
 
   /// Serializes this WalletDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -74,7 +76,8 @@ abstract class $WalletDtoCopyWith<$Res> {
       DateTime? lastSyncedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       String? rev,
-      @JsonKey(name: 'stats') WalletStats? stats});
+      @JsonKey(name: 'stats') WalletStats? stats,
+      @JsonKey(name: 'icon') Media? icon});
 
   $SyncStateDtoCopyWith<$Res> get syncState;
 }
@@ -108,6 +111,7 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
     Object? syncState = null,
     Object? rev = freezed,
     Object? stats = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_value.copyWith(
       clientId: null == clientId
@@ -166,6 +170,10 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as WalletStats?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ) as $Val);
   }
 
@@ -203,7 +211,8 @@ abstract class _$$WalletDtoImplCopyWith<$Res>
       DateTime? lastSyncedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       String? rev,
-      @JsonKey(name: 'stats') WalletStats? stats});
+      @JsonKey(name: 'stats') WalletStats? stats,
+      @JsonKey(name: 'icon') Media? icon});
 
   @override
   $SyncStateDtoCopyWith<$Res> get syncState;
@@ -236,6 +245,7 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
     Object? syncState = null,
     Object? rev = freezed,
     Object? stats = freezed,
+    Object? icon = freezed,
   }) {
     return _then(_$WalletDtoImpl(
       clientId: null == clientId
@@ -294,6 +304,10 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
           ? _value.stats
           : stats // ignore: cast_nullable_to_non_nullable
               as WalletStats?,
+      icon: freezed == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ));
   }
 }
@@ -318,7 +332,8 @@ class _$WalletDtoImpl extends _WalletDto {
       this.lastSyncedAt,
       @JsonKey(name: 'sync_state') required this.syncState,
       this.rev,
-      @JsonKey(name: 'stats') this.stats})
+      @JsonKey(name: 'stats') this.stats,
+      @JsonKey(name: 'icon') this.icon})
       : super._();
 
   factory _$WalletDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -361,10 +376,13 @@ class _$WalletDtoImpl extends _WalletDto {
   @override
   @JsonKey(name: 'stats')
   final WalletStats? stats;
+  @override
+  @JsonKey(name: 'icon')
+  final Media? icon;
 
   @override
   String toString() {
-    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState, rev: $rev, stats: $stats)';
+    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState, rev: $rev, stats: $stats, icon: $icon)';
   }
 
   @override
@@ -392,7 +410,8 @@ class _$WalletDtoImpl extends _WalletDto {
             (identical(other.syncState, syncState) ||
                 other.syncState == syncState) &&
             (identical(other.rev, rev) || other.rev == rev) &&
-            (identical(other.stats, stats) || other.stats == stats));
+            (identical(other.stats, stats) || other.stats == stats) &&
+            (identical(other.icon, icon) || other.icon == icon));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -412,7 +431,8 @@ class _$WalletDtoImpl extends _WalletDto {
       lastSyncedAt,
       syncState,
       rev,
-      stats);
+      stats,
+      icon);
 
   /// Create a copy of WalletDto
   /// with the given fields replaced by the non-null parameter values.
@@ -448,7 +468,8 @@ abstract class _WalletDto extends WalletDto {
       final DateTime? lastSyncedAt,
       @JsonKey(name: 'sync_state') required final SyncStateDto syncState,
       final String? rev,
-      @JsonKey(name: 'stats') final WalletStats? stats}) = _$WalletDtoImpl;
+      @JsonKey(name: 'stats') final WalletStats? stats,
+      @JsonKey(name: 'icon') final Media? icon}) = _$WalletDtoImpl;
   const _WalletDto._() : super._();
 
   factory _WalletDto.fromJson(Map<String, dynamic> json) =
@@ -491,6 +512,9 @@ abstract class _WalletDto extends WalletDto {
   @override
   @JsonKey(name: 'stats')
   WalletStats? get stats;
+  @override
+  @JsonKey(name: 'icon')
+  Media? get icon;
 
   /// Create a copy of WalletDto
   /// with the given fields replaced by the non-null parameter values.

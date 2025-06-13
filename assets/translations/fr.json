@@ -132,5 +132,6 @@
   "partyDescription": "Description du tiers",
   "partyUpdate": "Mettre à jour le tiers",
   "partyAdd": "Ajouter un tiers",
-  "partyNoParties": "Aucun tiers trouvé"
+  "partyNoParties": "Aucun tiers trouvé",
+  "groupUpdate": "Mettre à jour le groupe"
 }

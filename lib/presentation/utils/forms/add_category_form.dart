@@ -3,22 +3,27 @@ import 'dart:ui' as ui;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class AddCategoryForm extends StatefulWidget {
   final Color accentColor;
   final CategoryEntity? category;
   final TransactionType type;
   final Function(
-          String name, String description, TransactionType type, IconData? icon)
-      onSubmit;
+      {required String name,
+      required String description,
+      required TransactionType type,
+      IconData? icon,
+      MediaEntity? mediaEntity}) onSubmit;
 
   const AddCategoryForm({
     super.key,
@@ -37,6 +42,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
   late IconData? selectedIcon;
+  MediaEntity? mediaEntity;
 
   @override
   void initState() {
@@ -45,6 +51,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
     _descriptionController =
         TextEditingController(text: widget.category?.description);
     selectedIcon = Icons.add;
+    mediaEntity = widget.category?.icon;
   }
 
   @override
@@ -75,7 +82,14 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                   onTap: () {
                     showCustomBottomSheet(
                       context,
-                      widget: const SelectIconBottomSheet(),
+                      widget: SelectIconBottomSheet(
+                        onSelect: (mediaType, image) {
+                          setState(() {
+                            mediaEntity = MediaEntity(
+                                content: image, mediaType: mediaType);
+                          });
+                        },
+                      ),
                     );
                   },
                   child: Container(
@@ -85,14 +99,9 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                       color: widget.accentColor.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        Assets.images.galleryAdd,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).primaryColor,
-                          BlendMode.srcIn,
-                        ),
-                      ),
+                    child: ImageWidget(
+                      mediaEntity: mediaEntity,
+                      accentColor: widget.accentColor,
                     ),
                   ),
                 ),
@@ -133,10 +142,10 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                     hideKeyBoard();
                     if (_formKey.currentState!.validate()) {
                       widget.onSubmit(
-                        _nameController.text,
-                        _descriptionController.text,
-                        widget.type,
-                        selectedIcon,
+                        name: _nameController.text,
+                        description: _descriptionController.text,
+                        type: widget.type,
+                        mediaEntity: mediaEntity,
                       );
                     }
                   },

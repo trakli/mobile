@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/wallet/add_wallet_usecase.dart';
@@ -65,6 +66,7 @@ class WalletCubit extends Cubit<WalletState> {
     required WalletType type,
     required String name,
     String? description,
+    MediaEntity? icon,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
@@ -74,6 +76,7 @@ class WalletCubit extends Cubit<WalletState> {
         name: name,
         type: type,
         description: description,
+        icon: icon,
       ),
     );
 
@@ -95,6 +98,7 @@ class WalletCubit extends Cubit<WalletState> {
     required double balance,
     required String currency,
     String? description,
+    MediaEntity? icon,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await addWalletUseCase(
@@ -104,6 +108,7 @@ class WalletCubit extends Cubit<WalletState> {
         balance: balance,
         currency: currency,
         description: description,
+        icon: icon,
       ),
     );
     result.fold(
@@ -127,6 +132,7 @@ class WalletCubit extends Cubit<WalletState> {
     double? balance,
     String? currency,
     String? description,
+    MediaEntity? icon,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateWalletUseCase(
@@ -137,6 +143,7 @@ class WalletCubit extends Cubit<WalletState> {
         balance: balance,
         currency: currency,
         description: description,
+        icon: icon,
       ),
     );
     result.fold(

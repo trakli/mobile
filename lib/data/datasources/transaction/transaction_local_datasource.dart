@@ -17,6 +17,7 @@ abstract class TransactionLocalDataSource {
     DateTime datetime,
     String walletClientId, {
     String? partyClientId,
+    String? groupClientId,
   });
   Future<TransactionCompleteDto> updateTransaction(
     String id,
@@ -26,6 +27,7 @@ abstract class TransactionLocalDataSource {
     DateTime? datetime,
     String? walletClientId, {
     String? partyClientId,
+    String? groupClientId,
   });
 
   Future<TransactionCompleteDto> deleteTransaction(String id);
@@ -48,6 +50,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       final category = row.readTableOrNull(database.categories);
       final wallet = row.readTableOrNull(database.wallets);
       final party = row.readTableOrNull(database.parties);
+      final group = row.readTableOrNull(database.groups);
 
       if (wallet == null) {
         throw Exception('Transaction wallet not found');
@@ -61,6 +64,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
                 categories: [],
                 wallet: wallet,
                 party: party,
+                group: group,
               ));
 
       // Add the category if it exists (leftOuterJoin may return null)
@@ -76,6 +80,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             categories: currentCategories,
             wallet: wallet,
             party: party,
+            group: group,
           );
         }
       }
@@ -179,6 +184,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.parties.clientId
             .equalsExp(database.transactions.partyClientId),
       ),
+      leftOuterJoin(
+        database.groups,
+        database.groups.clientId.equalsExp(database.transactions.groupClientId),
+      ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
@@ -195,6 +204,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     DateTime datetime,
     String walletClientId, {
     String? partyClientId,
+    String? groupClientId,
   }) async {
     for (var categoryId in categoryIds) {
       final categoryModel = await (database.select(database.categories)
@@ -225,6 +235,17 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
     }
 
+    Group? group;
+    if (groupClientId != null) {
+      group = await (database.select(database.groups)
+            ..where((g) => g.clientId.equals(groupClientId)))
+          .getSingleOrNull();
+
+      if (group == null) {
+        throw Exception('Group $groupClientId not found');
+      }
+    }
+
     final now = formatServerIsoDateTime(DateTime.now());
     final utcDatetime = formatServerIsoDateTime(datetime);
 
@@ -238,6 +259,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             createdAt: Value(now),
             walletClientId: walletClientId,
             partyClientId: Value(partyClientId),
+            groupClientId: Value(groupClientId),
           ),
         );
 
@@ -274,6 +296,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       categories: categories,
       wallet: updatedWallet,
       party: party,
+      group: group,
     );
   }
 
@@ -286,6 +309,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     DateTime? datetime,
     String? walletClientId, {
     String? partyClientId,
+    String? groupClientId,
   }) async {
     return database.transaction(() async {
       final originalTransaction = await (database.select(database.transactions)
@@ -337,6 +361,17 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         }
       }
 
+      Group? group;
+      if (groupClientId != null) {
+        group = await (database.select(database.groups)
+              ..where((g) => g.clientId.equals(groupClientId)))
+            .getSingleOrNull();
+
+        if (group == null) {
+          throw Exception('Group $groupClientId not found');
+        }
+      }
+
       final model = await (database.update(database.transactions)
             ..where((t) => t.clientId.equals(id)))
           .writeReturning(
@@ -350,8 +385,12 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           walletClientId: walletClientId != null
               ? Value(walletClientId)
               : const Value.absent(),
-          partyClientId: Value(
-              partyClientId), // This will set null if partyClientId is null
+          partyClientId: partyClientId != null
+              ? Value(partyClientId)
+              : const Value.absent(),
+          groupClientId: groupClientId != null
+              ? Value(groupClientId)
+              : const Value.absent(),
         ),
       );
 
@@ -374,6 +413,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           categories: categories,
           wallet: wallet,
           party: party,
+          group: group,
         );
       }
 
@@ -413,6 +453,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         categories: finalCategories,
         wallet: wallet,
         party: party,
+        group: group,
       );
     });
   }
@@ -440,6 +481,14 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             .getSingleOrNull();
       }
 
+      Group? group;
+      final groupClientId = transaction.groupClientId;
+      if (groupClientId != null) {
+        group = await (database.select(database.groups)
+              ..where((g) => g.clientId.equals(groupClientId)))
+            .getSingleOrNull();
+      }
+
       await _updateWalletBalanceAndStats(
         wallet: wallet,
         transaction: transaction,
@@ -452,6 +501,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         transaction: transaction,
         wallet: wallet,
         party: party,
+        group: group,
       );
     });
   }
@@ -480,6 +530,10 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.parties,
         database.parties.clientId
             .equalsExp(database.transactions.partyClientId),
+      ),
+      leftOuterJoin(
+        database.groups,
+        database.groups.clientId.equalsExp(database.transactions.groupClientId),
       ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);

@@ -30,6 +30,7 @@ mixin _$PartyDto {
   @JsonKey(name: 'updated_at')
   DateTime get updatedAt => throw _privateConstructorUsedError;
   int get userId => throw _privateConstructorUsedError;
+  Media? get media => throw _privateConstructorUsedError;
 
   /// Serializes this PartyDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +54,8 @@ abstract class $PartyDtoCopyWith<$Res> {
       @JsonKey(name: 'client_generated_id') String clientId,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
-      int userId});
+      int userId,
+      Media? media});
 }
 
 /// @nodoc
@@ -78,6 +80,7 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? userId = null,
+    Object? media = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -108,6 +111,10 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as int,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ) as $Val);
   }
 }
@@ -127,7 +134,8 @@ abstract class _$$PartyDtoImplCopyWith<$Res>
       @JsonKey(name: 'client_generated_id') String clientId,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
-      int userId});
+      int userId,
+      Media? media});
 }
 
 /// @nodoc
@@ -150,6 +158,7 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? userId = null,
+    Object? media = freezed,
   }) {
     return _then(_$PartyDtoImpl(
       id: null == id
@@ -180,6 +189,10 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as int,
+      media: freezed == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as Media?,
     ));
   }
 }
@@ -194,7 +207,8 @@ class _$PartyDtoImpl extends _PartyDto {
       @JsonKey(name: 'client_generated_id') required this.clientId,
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'updated_at') required this.updatedAt,
-      required this.userId})
+      required this.userId,
+      this.media})
       : super._();
 
   factory _$PartyDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -217,10 +231,12 @@ class _$PartyDtoImpl extends _PartyDto {
   final DateTime updatedAt;
   @override
   final int userId;
+  @override
+  final Media? media;
 
   @override
   String toString() {
-    return 'PartyDto(id: $id, name: $name, description: $description, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, userId: $userId)';
+    return 'PartyDto(id: $id, name: $name, description: $description, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, userId: $userId, media: $media)';
   }
 
   @override
@@ -238,13 +254,14 @@ class _$PartyDtoImpl extends _PartyDto {
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
-            (identical(other.userId, userId) || other.userId == userId));
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.media, media) || other.media == media));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, description, clientId,
-      createdAt, updatedAt, userId);
+      createdAt, updatedAt, userId, media);
 
   /// Create a copy of PartyDto
   /// with the given fields replaced by the non-null parameter values.
@@ -270,7 +287,8 @@ abstract class _PartyDto extends PartyDto {
       @JsonKey(name: 'client_generated_id') required final String clientId,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       @JsonKey(name: 'updated_at') required final DateTime updatedAt,
-      required final int userId}) = _$PartyDtoImpl;
+      required final int userId,
+      final Media? media}) = _$PartyDtoImpl;
   const _PartyDto._() : super._();
 
   factory _PartyDto.fromJson(Map<String, dynamic> json) =
@@ -293,6 +311,8 @@ abstract class _PartyDto extends PartyDto {
   DateTime get updatedAt;
   @override
   int get userId;
+  @override
+  Media? get media;
 
   /// Create a copy of PartyDto
   /// with the given fields replaced by the non-null parameter values.

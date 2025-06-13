@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class AddWalletForm extends StatefulWidget {
   final WalletEntity? wallet;
@@ -32,7 +35,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
   final _descriptionController = TextEditingController();
   late WalletType _selectedType;
   Currency? currency;
-  // Currency? defaultCurrency;
+  MediaEntity? mediaEntity;
 
   @override
   void initState() {
@@ -44,8 +47,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
       _nameController.text = widget.wallet!.name;
       _balanceController.text = widget.wallet!.balance.toString();
       _descriptionController.text = widget.wallet!.description ?? '';
-      // Set the currency if it exists in the wallet
       currency = widget.wallet!.currency ?? currency;
+      mediaEntity = widget.wallet?.icon;
     }
   }
 
@@ -71,6 +74,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
+          icon: mediaEntity,
         );
       } else {
         if (currency == null) {
@@ -90,6 +94,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
+          icon: mediaEntity,
         );
       }
       AppNavigator.pop(context);
@@ -108,26 +113,53 @@ class _AddWalletFormState extends State<AddWalletForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Name",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                hintText: "Enter name",
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Name is required";
-                }
-                return null;
-              },
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 8.w,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showCustomBottomSheet(
+                      context,
+                      widget: SelectIconBottomSheet(
+                        onSelect: (mediaType, image) {
+                          setState(() {
+                            mediaEntity = MediaEntity(
+                                content: image, mediaType: mediaType);
+                          });
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 56.r,
+                    width: 56.r,
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: ImageWidget(
+                      mediaEntity: mediaEntity,
+                      accentColor: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter name",
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Name is required";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 20.h),
             Text(

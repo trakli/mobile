@@ -11,6 +11,8 @@ import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
+import 'package:trakli/presentation/widgets/image_widget.dart';
+
 class CategoryTile extends StatefulWidget {
   final Color accentColor;
   final CategoryEntity category;
@@ -75,17 +77,22 @@ class _CategoryTileState extends State<CategoryTile> {
         spacing: 16.w,
         children: [
           Container(
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(
-              color: widget.accentColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Icon(
-              Icons.category,
-              size: 20.sp,
-              color: widget.accentColor,
-            ),
-          ),
+              // padding: EdgeInsets.all(2.r),
+              width: 50.w,
+              height: 50.h,
+              decoration: BoxDecoration(
+                color: widget.accentColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Center(
+                child: ImageWidget(
+                  mediaEntity: widget.category.icon,
+                  accentColor: widget.accentColor,
+                  iconSize: 30.sp,
+                  emojiSize: 30.sp,
+                  placeholderIcon: Icons.category,
+                ),
+              )),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

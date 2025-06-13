@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
@@ -438,7 +439,7 @@ class _AddTransactionFormCompactLayoutState
                                 },
                                 displayStringForOption:
                                     (CategoryEntity option) {
-                                  return option.name.toLowerCase();
+                                  return option.name.capitalizeFirst();
                                 },
                                 onSelected: (value) {
                                   setState(() {

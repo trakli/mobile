@@ -20,6 +20,9 @@ _$CategoryDtoImpl _$$CategoryDtoImplFromJson(Map<String, dynamic> json) =>
       lastSyncedAt: DateTime.parse(json['last_synced_at'] as String),
       syncState:
           SyncStateDto.fromJson(json['sync_state'] as Map<String, dynamic>),
+      icon: json['icon'] == null
+          ? null
+          : Media.fromJson(json['icon'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$CategoryDtoImplToJson(_$CategoryDtoImpl instance) =>
@@ -35,6 +38,7 @@ Map<String, dynamic> _$$CategoryDtoImplToJson(_$CategoryDtoImpl instance) =>
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_synced_at': instance.lastSyncedAt?.toIso8601String(),
       'sync_state': instance.syncState.toJson(),
+      'icon': instance.icon?.toJson(),
     };
 
 const _$TransactionTypeEnumMap = {

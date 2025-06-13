@@ -54,11 +54,18 @@ class TransactionSyncHandler
           transactionCompleteModel.transaction.clientId);
     }
 
+    Group? group;
+    if (transactionCompleteModel.transaction.groupClientId != null) {
+      group = await db.getGroupForTransaction(
+          transactionCompleteModel.transaction.clientId);
+    }
+
     return TransactionCompleteDto.fromTransaction(
       transaction: transactionCompleteModel.transaction,
       categories: categories,
       wallet: wallet,
       party: party,
+      group: group,
     );
   }
 
@@ -129,6 +136,7 @@ class TransactionSyncHandler
         updatedAt: Value(entity.transaction.updatedAt),
         walletClientId: Value(entity.wallet.clientId),
         partyClientId: Value(entity.party?.clientId),
+        groupClientId: Value(entity.group?.clientId),
       );
 
       await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
@@ -167,6 +175,11 @@ class TransactionSyncHandler
       if (entity.party != null) {
         await db.parties
             .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
+      }
+
+      if (entity.group != null) {
+        await db.groups
+            .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
       }
     });
   }

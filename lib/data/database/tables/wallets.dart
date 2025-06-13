@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
+import 'package:trakli/data/database/converters/media_converter.dart';
 
 @DataClassName('Wallet')
 class Wallets extends Table with SyncTable {
@@ -11,4 +12,5 @@ class Wallets extends Table with SyncTable {
   TextColumn get currency => text()();
   TextColumn get description => text().nullable()();
   TextColumn get stats => text().map(const WalletStatsConverter()).nullable()();
+  TextColumn get icon => text().map(const MediaConverter()).nullable()();
 }

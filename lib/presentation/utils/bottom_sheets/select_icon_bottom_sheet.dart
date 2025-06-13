@@ -16,7 +16,12 @@ import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class SelectIconBottomSheet extends StatefulWidget {
-  const SelectIconBottomSheet({super.key});
+  const SelectIconBottomSheet({
+    super.key,
+    this.onSelect,
+  });
+
+  final void Function(MediaType mediaType, String image)? onSelect;
 
   @override
   State<SelectIconBottomSheet> createState() => _SelectIconBottomSheetState();
@@ -360,6 +365,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
         SizedBox(height: 16.h),
         EmojiPicker(
           onEmojiSelected: (Category? category, Emoji emoji) {
+            widget.onSelect?.call(MediaType.emoji, emoji.emoji);
             AppNavigator.pop(context, emoji);
           },
           config: Config(
@@ -499,11 +505,17 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                   borderRadius: BorderRadius.circular(8.r),
                   color: Theme.of(context).primaryColor.withAlpha(50),
                 ),
-                child: HeroIcon(
-                  icon,
-                  size: 28.sp,
-                  style: HeroIconStyle.solid,
-                  color: Theme.of(context).primaryColor,
+                child: GestureDetector(
+                  onTap: () {
+                    widget.onSelect?.call(MediaType.icon, icon.name);
+                    AppNavigator.pop(context);
+                  },
+                  child: HeroIcon(
+                    icon,
+                    size: 28.sp,
+                    style: HeroIconStyle.solid,
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
               );
             },

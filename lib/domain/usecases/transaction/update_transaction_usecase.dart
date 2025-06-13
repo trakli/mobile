@@ -21,6 +21,7 @@ class UpdateTransactionUseCase
       params.datetime,
       params.walletClientId,
       partyClientId: params.partyClientId,
+      groupClientId: params.groupClientId,
     );
   }
 }
@@ -33,6 +34,7 @@ class UpdateTransactionParams {
   final DateTime? datetime;
   final String? walletClientId;
   final String? partyClientId;
+  final String? groupClientId;
 
   UpdateTransactionParams({
     required this.id,
@@ -42,5 +44,6 @@ class UpdateTransactionParams {
     this.datetime,
     this.walletClientId,
     this.partyClientId,
+    this.groupClientId,
   });
 }
