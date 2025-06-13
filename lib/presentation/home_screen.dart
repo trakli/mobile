@@ -86,7 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(appPrimaryColor),
+              ),
+            );
           }
           final transactions =
               wallets.isNotEmpty && currentIndex < wallets.length

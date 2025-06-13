@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,7 +7,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/pages/register_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
@@ -131,6 +135,33 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       buttonTextColor: Colors.white,
                     );
                   }),
+                ),
+                SizedBox(height: 16.h),
+                Align(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Don't have account? ",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: neutralN700,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: LocaleKeys.register.tr(),
+                          style: TextStyle(
+                            color: appPrimaryColor,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              AppNavigator.pushReplacement(
+                                context,
+                                const RegisterScreen(),
+                              );
+                            },
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

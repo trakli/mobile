@@ -34,4 +34,20 @@ class AppNavigator {
       (route) => false,
     );
   }
+
+  static void removeAllPreviousAndPushThenPush(
+    BuildContext context,
+    Widget screenOne,
+    Widget screenTwo,
+  ) {
+    final navigator = Navigator.of(context);
+    navigator.push(
+      MaterialPageRoute(builder: (_) => screenOne),
+    );
+    Future.delayed(Duration.zero, () {
+      navigator.push(
+        MaterialPageRoute(builder: (_) => screenTwo),
+      );
+    });
+  }
 }
