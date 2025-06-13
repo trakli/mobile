@@ -27,7 +27,6 @@ class ImageWidget extends StatelessWidget {
   final double? placeholderSize;
   final IconData? placeholderIcon;
   final String? placeholderImageAsset;
-  // final AddCategoryForm widget;
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +51,16 @@ class ImageWidget extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   )),
-                  if (placeholderImageAsset == null)
-                    Positioned(
-                      right: 10.w,
-                      bottom: 10.h,
-                      child: Icon(
-                        selectedIcon ?? Icons.category,
-                        color: accentColor,
-                        size: 20.r,
-                      ),
-                    ),
+                  // if (placeholderImageAsset == null)
+                  // Positioned(
+                  //   right: 10.w,
+                  //   bottom: 10.h,
+                  //   child: Icon(
+                  //     selectedIcon ?? Icons.category,
+                  //     color: accentColor,
+                  //     size: 20.r,
+                  //   ),
+                  // ),
                 ],
               );
       case MediaType.emoji:

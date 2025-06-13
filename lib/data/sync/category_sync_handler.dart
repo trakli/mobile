@@ -100,6 +100,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
           userId: Value(entity.userId),
           createdAt: Value(entity.createdAt),
           lastSyncedAt: Value(entity.lastSyncedAt),
+          icon: Value(entity.icon),
         ));
 
     await table.insertAll(categories, mode: InsertMode.insertOrReplace);
