@@ -29,9 +29,9 @@ class PickGroupTile<T> extends StatelessWidget {
       child: Row(
         children: [
           SvgPicture.asset(
+            Assets.images.profile2user,
             width: 16.w,
             height: 16.h,
-            Assets.images.profile2user,
             colorFilter: ColorFilter.mode(
               appOrange,
               BlendMode.srcIn,

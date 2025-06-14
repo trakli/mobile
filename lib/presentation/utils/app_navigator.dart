@@ -41,8 +41,9 @@ class AppNavigator {
     Widget screenTwo,
   ) {
     final navigator = Navigator.of(context);
-    navigator.push(
+    navigator.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => screenOne),
+      (_) => false,
     );
     Future.delayed(Duration.zero, () {
       navigator.push(

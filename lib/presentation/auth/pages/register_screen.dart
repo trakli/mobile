@@ -29,6 +29,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late final TapGestureRecognizer _recognizerTap;
+
+  @override
+  void initState() {
+    _recognizerTap = TapGestureRecognizer()
+      ..onTap = () {
+        AppNavigator.pushReplacement(
+          context,
+          const LoginWithEmailScreen(),
+        );
+      };
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -209,13 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(
                             color: appPrimaryColor,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              AppNavigator.pushReplacement(
-                                context,
-                                const LoginWithEmailScreen(),
-                              );
-                            },
+                          recognizer: _recognizerTap,
                         )
                       ],
                     ),

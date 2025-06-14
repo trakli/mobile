@@ -25,11 +25,25 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late final TapGestureRecognizer _recognizerTap;
+
+  @override
+  void initState() {
+    _recognizerTap = TapGestureRecognizer()
+      ..onTap = () {
+        AppNavigator.pushReplacement(
+          context,
+          const RegisterScreen(),
+        );
+      };
+    super.initState();
+  }
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    _recognizerTap.dispose();
     super.dispose();
   }
 
@@ -151,13 +165,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                           style: TextStyle(
                             color: appPrimaryColor,
                           ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              AppNavigator.pushReplacement(
-                                context,
-                                const RegisterScreen(),
-                              );
-                            },
+                          recognizer: _recognizerTap,
                         )
                       ],
                     ),
