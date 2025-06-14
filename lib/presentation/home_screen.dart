@@ -13,6 +13,7 @@ import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/notification_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -85,7 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(appPrimaryColor),
+              ),
+            );
           }
           final transactions =
               wallets.isNotEmpty && currentIndex < wallets.length
@@ -138,16 +143,58 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ],
+                Text(
+                  LocaleKeys.transactions.tr(),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
+                ),
                 SizedBox(height: 8.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      LocaleKeys.transactions.tr(),
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).primaryColorDark,
+                    InkWell(
+                      onTap: () {
+                        showCustomBottomSheet(
+                          context,
+                          widget: const PickGroupBottomSheet(),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: appOrange.withAlpha(40),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.all(8.r),
+                        child: Row(
+                          spacing: 8.w,
+                          children: [
+                            SvgPicture.asset(
+                              width: 16.w,
+                              height: 16.h,
+                              Assets.images.profile2user,
+                              colorFilter: ColorFilter.mode(
+                                appOrange,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            Text(
+                              "Family",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SvgPicture.asset(
+                              width: 16.w,
+                              height: 16.h,
+                              Assets.images.arrowRight,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     InkWell(

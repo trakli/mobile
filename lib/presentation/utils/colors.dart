@@ -26,6 +26,7 @@ Color backButtonColor = const Color(0xFFE8E9F1);
 Color neutralN300 = const Color(0xFF576760);
 Color neutralN900 = const Color(0xFF061D23);
 Color neutralN40 = const Color(0xFFDFE1E4);
+Color neutralN20 = const Color(0xFFF5F6F5);
 Color neutralN700 = const Color(0xFF1D3229);
 Color neutralN500 = const Color(0xFF3B4E45);
 

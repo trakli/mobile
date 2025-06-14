@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
+import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
@@ -26,6 +29,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late final TapGestureRecognizer _recognizerTap;
+
+  @override
+  void initState() {
+    _recognizerTap = TapGestureRecognizer()
+      ..onTap = () {
+        AppNavigator.pushReplacement(
+          context,
+          const LoginWithEmailScreen(),
+        );
+      };
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -190,6 +206,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       buttonTextColor: Colors.white,
                     );
                   }),
+                ),
+                SizedBox(height: 16.h),
+                Align(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Already have account? ",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: neutralN700,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: LocaleKeys.login.tr(),
+                          style: TextStyle(
+                            color: appPrimaryColor,
+                          ),
+                          recognizer: _recognizerTap,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),

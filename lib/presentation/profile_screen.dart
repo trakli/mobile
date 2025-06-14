@@ -8,6 +8,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_info_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/auth/pages/login_screen.dart';
 import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/utils/action_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -196,8 +197,9 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        AppNavigator.removeAllPreviousAndPush(
+                        AppNavigator.removeAllPreviousAndPushThenPush(
                           context,
+                          const LoginScreen(),
                           const RegisterScreen(),
                         );
                       },
