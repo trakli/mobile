@@ -10,7 +10,6 @@ class ImageWidget extends StatelessWidget {
   const ImageWidget({
     super.key,
     required this.mediaEntity,
-    this.selectedIcon,
     this.accentColor,
     this.iconSize,
     this.emojiSize,
@@ -20,7 +19,6 @@ class ImageWidget extends StatelessWidget {
   });
 
   final MediaEntity? mediaEntity;
-  final IconData? selectedIcon;
   final Color? accentColor;
   final double? iconSize;
   final double? emojiSize;
@@ -68,7 +66,7 @@ class ImageWidget extends StatelessWidget {
           mediaEntity!.content ?? 'Ca',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: iconSize ?? 40.sp,
+            fontSize: emojiSize ?? 40.sp,
           ),
         );
       case MediaType.icon:
@@ -77,7 +75,7 @@ class ImageWidget extends StatelessWidget {
             (e) => e.name == mediaEntity!.content,
             orElse: () => HeroIcons.questionMarkCircle, // default fallback
           ),
-          size: emojiSize ?? 40.sp,
+          size: iconSize ?? 40.sp,
           style: HeroIconStyle.solid,
           color: accentColor ?? Theme.of(context).primaryColor,
         );

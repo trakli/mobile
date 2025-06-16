@@ -108,7 +108,7 @@ class GroupRepositoryImpl
         }
 
         await localDataSource.deleteGroup(clientId);
-        unawaited(syncHandler.deleteRemote(group));
+        unawaited(delete(group));
         return unit;
       },
     );

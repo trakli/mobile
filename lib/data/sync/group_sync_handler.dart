@@ -46,7 +46,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
 
   @override
   Future<Group?> restGetRemote(int id) async {
-    return await remoteDataSource.getGroup(id.toString());
+    return await remoteDataSource.getGroup(id);
   }
 
   @override
@@ -61,7 +61,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
   @override
   Future<void> restDeleteRemote(Group entity) async {
     if (entity.id != null) {
-      await remoteDataSource.deleteGroup(entity.clientId);
+      await remoteDataSource.deleteGroup(entity.id!);
     }
   }
 

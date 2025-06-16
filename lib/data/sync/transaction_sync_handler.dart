@@ -80,9 +80,13 @@ class TransactionSyncHandler
     final hasNullCategory = entity.categories.map((c) => c.id).contains(null);
     final hasNullWalletId = entity.wallet.id == null;
     final hasNullPartyId = entity.party != null && entity.party!.id == null;
+    final hasNullGroupId = entity.group != null && entity.group!.id == null;
 
     // Return false if either has null values
-    if (hasNullCategory || hasNullWalletId || hasNullPartyId) {
+    if (hasNullCategory ||
+        hasNullWalletId ||
+        hasNullPartyId ||
+        hasNullGroupId) {
       return false;
     }
     return true;
@@ -218,6 +222,11 @@ class TransactionSyncHandler
       party = await db.getPartyForTransaction(clientId);
     }
 
+    Group? group;
+    if (result.first.groupClientId != null) {
+      group = await db.getGroupForTransaction(clientId);
+    }
+
     return TransactionCompleteDto.fromTransaction(
       transaction: result.first,
       categories: await db.getCategoriesForTransaction(
@@ -226,6 +235,7 @@ class TransactionSyncHandler
       ),
       wallet: wallet,
       party: party,
+      group: group,
     );
   }
 
@@ -249,6 +259,11 @@ class TransactionSyncHandler
       party = await db.getPartyForTransaction(result.first.clientId);
     }
 
+    Group? group;
+    if (result.first.groupClientId != null) {
+      group = await db.getGroupForTransaction(result.first.clientId);
+    }
+
     return TransactionCompleteDto.fromTransaction(
       transaction: result.first,
       categories: await db.getCategoriesForTransaction(
@@ -257,6 +272,7 @@ class TransactionSyncHandler
       ),
       wallet: wallet,
       party: party,
+      group: group,
     );
   }
 

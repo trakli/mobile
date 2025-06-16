@@ -45,7 +45,7 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
     Media? icon,
   }) async {
     final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    final dateTime = formatServerIsoDateTime(now);
 
     final companion = GroupsCompanion.insert(
       clientId: const Uuid().v4(),
