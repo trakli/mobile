@@ -50,8 +50,10 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
       'client_id': party.clientId,
       'name': party.name,
       'description': party.description,
-      'icon': party.icon?.content,
-      'icon_type': party.icon?.type.name,
+      if (party.icon != null) ...{
+        'icon': party.icon?.content,
+        'icon_type': party.icon?.type.name,
+      },
       'created_at': formatServerIsoDateTimeString(party.createdAt)
     };
 
@@ -69,8 +71,10 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
     final data = {
       'name': party.name,
       'description': party.description,
-      'icon': party.icon?.content,
-      'icon_type': party.icon?.type.name,
+      if (party.icon != null) ...{
+        'icon': party.icon?.content,
+        'icon_type': party.icon?.type.name,
+      },
     };
 
     final response = await dio.put(
