@@ -82,22 +82,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Row(
                     spacing: 4.w,
                     children: [
-                      if (!showSearch)
-                        ...[
-                          _filterType(
-                            label: "Date",
-                            iconPath: Assets.images.calendar,
-                          ),
-                          _filterType(
-                            label: "Category",
-                            iconPath: Assets.images.tag2,
-                          ),
-                          _filterType(
-                            label: "Wallets",
-                            iconPath: Assets.images.wallet,
-                          ),
-                        ]
-                      else
+                      if (!showSearch) ...[
+                        _filterType(
+                          label: "Date",
+                          iconPath: Assets.images.calendar,
+                        ),
+                        _filterType(
+                          label: "Category",
+                          iconPath: Assets.images.tag2,
+                        ),
+                        _filterType(
+                          label: "Wallets",
+                          iconPath: Assets.images.wallet,
+                        ),
+                      ] else
                         Expanded(
                           child: TextFormField(
                             decoration: InputDecoration(
@@ -157,6 +155,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       PopupMenuButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: appPrimaryColor,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                          ),
                         ),
                         position: PopupMenuPosition.under,
                         icon: Row(
@@ -327,8 +328,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Expanded(
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 8.w,
-          vertical: 8.h,
+          vertical: 12.h,
         ),
         decoration: BoxDecoration(
           color: appPrimaryColor.withAlpha(20),
@@ -341,6 +341,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: Row(
           spacing: 4.w,
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
               iconPath,
