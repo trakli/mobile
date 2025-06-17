@@ -5,6 +5,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:uuid/uuid.dart';
+import 'package:trakli/data/models/media.dart';
 
 abstract class WalletLocalDataSource {
   Future<List<Wallet>> getAllWallets();
@@ -15,6 +16,7 @@ abstract class WalletLocalDataSource {
     double balance,
     String currency, {
     String? description,
+    Media? icon,
   });
   Future<Wallet> updateWallet(
     String clientId, {
@@ -23,6 +25,7 @@ abstract class WalletLocalDataSource {
     double? balance,
     String? currency,
     String? description,
+    Media? icon,
   });
   Future<void> deleteWallet(String clientId);
   Future<void> deleteAllWallets();
@@ -56,6 +59,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     double balance,
     String currency, {
     String? description,
+    Media? icon,
   }) async {
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
@@ -69,6 +73,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
       description: Value(description),
       createdAt: Value(dateTime),
       updatedAt: Value(dateTime),
+      icon: Value(icon),
     );
 
     final model =
@@ -84,6 +89,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     double? balance,
     String? currency,
     String? description,
+    Media? icon,
   }) async {
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
@@ -96,6 +102,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
       description:
           description != null ? Value(description) : const Value.absent(),
       updatedAt: Value(dateTime),
+      icon: icon != null ? Value(icon) : const Value.absent(),
     );
 
     final model = await (database.update(database.wallets)

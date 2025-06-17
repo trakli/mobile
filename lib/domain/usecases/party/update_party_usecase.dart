@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/repositories/party_repository.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 
 @injectable
 class UpdatePartyUseCase implements UseCase<Unit, UpdatePartyUseCaseParams> {
@@ -16,6 +17,7 @@ class UpdatePartyUseCase implements UseCase<Unit, UpdatePartyUseCaseParams> {
       params.clientId,
       name: params.name,
       description: params.description,
+      media: params.media,
     );
   }
 }
@@ -24,10 +26,12 @@ class UpdatePartyUseCaseParams {
   final String clientId;
   final String? name;
   final String? description;
+  final MediaEntity? media;
 
   UpdatePartyUseCaseParams({
     required this.clientId,
     this.name,
     this.description,
+    this.media,
   });
 }

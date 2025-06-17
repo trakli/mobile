@@ -1,43 +1,132 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class PartyDisplayWidget extends StatelessWidget {
-  final PartyEntity party;
-  final Color accentColor;
+  final PartyEntity? party;
+  final WalletEntity walletEntity;
+  final int maxNameLength;
+  final EdgeInsets? padding;
+  final double? fromTextSize;
+  final double? toTextSize;
+  final double? maxToWidth;
+  final double? toIconSize;
+  final double? labelSize;
 
   const PartyDisplayWidget({
     super.key,
     required this.party,
-    required this.accentColor,
+    this.maxNameLength = 10,
+    this.padding,
+    this.fromTextSize,
+    this.toTextSize,
+    this.labelSize,
+    this.toIconSize,
+    this.maxToWidth,
+    required this.walletEntity,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 12.h,
-      ),
+      padding: padding,
       decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.person,
-            size: 20.r,
-            color: accentColor,
-          ),
-          SizedBox(width: 8.w),
           Text(
-            party.name,
+            "From",
             style: TextStyle(
+              color: const Color(0xFF576760),
+              fontSize: labelSize ?? 9.sp,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 4.h,
+              horizontal: 8.w,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F6F7),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              spacing: 4.w,
+              children: [
+                ImageWidget(
+                  mediaEntity: party?.icon,
+                  // selectedIcon: Icons.person,
+                  placeholderIcon: Icons.person,
+                  placeholderSize: toIconSize ?? 12.sp,
+                  accentColor: transactionTileTextColor,
+                  iconSize: toIconSize ?? 12.sp,
+                  emojiSize: toIconSize ?? 12.sp,
+                ),
+                SizedBox(
+                  // width: 50.w,
+                  child: Text(
+                    (party?.name ?? 'Unknown')
+                        .extractWords(maxSize: maxNameLength),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: transactionTileTextColor,
+                      fontSize: fromTextSize ?? 12.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            "-",
+            style: TextStyle(
+              color: transactionTileTextColor,
               fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: accentColor,
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 4.h,
+              horizontal: 8.w,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent.withAlpha(50),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              spacing: 4.w,
+              children: [
+                ImageWidget(
+                  mediaEntity: walletEntity.icon,
+                  placeholderImageAsset: Assets.images.wallet,
+                  placeholderSize: toIconSize ?? 12.sp,
+                  accentColor: Colors.blueAccent,
+                  iconSize: toIconSize ?? 12.sp,
+                  emojiSize: toIconSize ?? 12.sp,
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxToWidth ?? 0.2.sw),
+                  child: Text(
+                    (walletEntity.name).extractWords(maxSize: 10),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontSize: toTextSize ?? 9.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

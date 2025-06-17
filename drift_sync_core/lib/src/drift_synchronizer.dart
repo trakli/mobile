@@ -91,7 +91,6 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     }
   }
 
-
   void cancel() {
     _updateState(state.cancel());
   }
@@ -321,6 +320,9 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       );
     } on CancelException catch (_) {
       _logger.finest('user cancelled sync');
+      rethrow;
+    } catch (e) {
+      _logger.severe('exception on fullResync: $e');
       rethrow;
     }
   }

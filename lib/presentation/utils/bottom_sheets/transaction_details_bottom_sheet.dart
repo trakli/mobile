@@ -11,7 +11,7 @@ import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/widgets/categories_widget.dart';
-import 'package:trakli/presentation/widgets/display_party_widget.dart';
+import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
 class TransactionDetailsBottomSheet extends StatefulWidget {
   const TransactionDetailsBottomSheet({
@@ -43,6 +43,7 @@ class _TransactionDetailsBottomSheetState
     final transaction = widget.transaction.transaction;
     final category = widget.transaction.categories;
     final party = widget.transaction.party;
+    final wallet = widget.transaction.wallet;
 
     return SizedBox(
       width: double.infinity,
@@ -138,20 +139,29 @@ class _TransactionDetailsBottomSheetState
                 transaction.description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 12.h),
             ],
-            DisplayPartyWidget(
+            PartyDisplayWidget(
               party: party,
-              maxNameLength: 20,
+              walletEntity: wallet,
+              maxNameLength: 15,
+              fromTextSize: 16.sp,
+              labelSize: 12.sp,
+              toTextSize: 14.sp,
+              toIconSize: 14.w,
+              maxToWidth: 0.2.sw,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 6.h),
             CategoriesWidget(
               categories: category,
               accentColor: widget.accentColor,
+              placeholderSize: 20.sp,
+              emojiSize: 20.sp,
+              iconSize: 20.sp,
             ),
             SizedBox(height: 16.h),
             Row(

@@ -1,6 +1,7 @@
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/data/mappers/wallet_stats_mapper.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 
 class WalletMapper {
   static WalletEntity toDomain(Wallet wallet) {
@@ -16,6 +17,7 @@ class WalletMapper {
       userId: wallet.userId,
       updatedAt: wallet.updatedAt,
       stats: WalletStatsMapper.toDomainNullable(wallet.stats),
+      icon: wallet.icon != null ? MediaEntity.fromModel(wallet.icon!) : null,
     );
   }
 

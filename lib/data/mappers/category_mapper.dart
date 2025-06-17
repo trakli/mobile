@@ -14,6 +14,7 @@ class CategoryMapper {
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
       lastSyncedAt: c.lastSyncedAt,
+      icon: c.icon?.toEntity(),
     );
   }
 

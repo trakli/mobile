@@ -11,6 +11,7 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class PartyTile extends StatelessWidget {
   final PartyEntity party;
@@ -33,7 +34,7 @@ class PartyTile extends StatelessWidget {
         dialogType: DialogType.negative,
         title: 'Delete Party',
         subTitle:
-        'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
+            'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
         mainAction: () {
           context.read<PartyCubit>().deleteParty(party.clientId);
           AppNavigator.pop(context);
@@ -69,10 +70,12 @@ class PartyTile extends StatelessWidget {
               color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: Icon(
-              Icons.groups_outlined,
-              size: 20.sp,
-              color: Theme.of(context).primaryColor,
+            child: ImageWidget(
+              mediaEntity: party.icon,
+              accentColor: Theme.of(context).primaryColor,
+              iconSize: 20.sp,
+              emojiSize: 20.sp,
+              placeholderIcon: Icons.groups_outlined,
             ),
           ),
           Expanded(

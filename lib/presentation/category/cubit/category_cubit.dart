@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/category/add_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/delete_category_usecase.dart';
@@ -53,6 +54,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     required TransactionType type,
     required int userId,
     String? description,
+    MediaEntity? media,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await _addCategoryUseCase(
@@ -62,6 +64,7 @@ class CategoryCubit extends Cubit<CategoryState> {
         type: type,
         userId: userId,
         description: description,
+        media: media,
       ),
     );
     result.fold(
@@ -86,6 +89,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     String? slug,
     int? userId,
     String? description,
+    MediaEntity? media,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await _updateCategoryUseCase(
@@ -95,6 +99,7 @@ class CategoryCubit extends Cubit<CategoryState> {
         slug: slug,
         userId: userId,
         description: description,
+        media: media,
       ),
     );
     result.fold(

@@ -16,7 +16,7 @@ import 'package:trakli/presentation/utils/dialogs.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/categories_widget.dart';
-import 'package:trakli/presentation/widgets/display_party_widget.dart';
+import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
 class TransactionTile extends StatefulWidget {
   final TransactionCompleteEntity transaction;
@@ -115,14 +115,15 @@ class _TransactionTileState extends State<TransactionTile> {
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 4.h,
+          spacing: 2.h,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DisplayPartyWidget(
+                PartyDisplayWidget(
                   party: widget.transaction.party,
+                  walletEntity: widget.transaction.wallet,
                 ),
                 Column(
                   children: [
@@ -135,7 +136,7 @@ class _TransactionTileState extends State<TransactionTile> {
                       ),
                       style: TextStyle(
                         color: widget.accentColor,
-                        fontSize: 12.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -156,7 +157,7 @@ class _TransactionTileState extends State<TransactionTile> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: transactionTileTextColor,
-                      fontSize: 9.sp,
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -180,128 +181,6 @@ class _TransactionTileState extends State<TransactionTile> {
             accentColor: widget.accentColor,
           ),
         ),
-        // trailing: Container(
-        //   width: 25.w,
-        //   height: 25.h,
-        //   decoration: BoxDecoration(
-        //     borderRadius: BorderRadius.circular(4.r),
-        //     color: const Color(0xFFEBEDEC),
-        //   ),
-        //   child: PopupMenuButton<String>(
-        //     padding: EdgeInsets.zero,
-        //     icon: Transform.rotate(
-        //       angle: 90 * pi / 180,
-        //       child: SvgPicture.asset(
-        //         height: 20.h,
-        //         width: 20.w,
-        //         Assets.images.more,
-        //         colorFilter: const ColorFilter.mode(
-        //           Color(0xFF1D3229),
-        //           BlendMode.srcIn,
-        //         ),
-        //       ),
-        //     ),
-        //     itemBuilder: (BuildContext context) => [
-        //       PopupMenuItem(
-        //         onTap: _handleViewDetails,
-        //         height: 40.h,
-        //         child: Row(
-        //           spacing: 8.w,
-        //           children: [
-        //             Container(
-        //               padding: const EdgeInsets.all(6),
-        //               decoration: BoxDecoration(
-        //                 shape: BoxShape.circle,
-        //                 color: const Color(0xFF1D3229).withAlpha(50),
-        //               ),
-        //               child: Center(
-        //                 child: Icon(
-        //                   Icons.visibility,
-        //                   size: 16.r,
-        //                   color: const Color(0xFF1D3229),
-        //                 ),
-        //               ),
-
-        //               // SvgPicture.asset(
-        //               //   height: 16.h,
-        //               //   width: 16.w,
-        //               //   Assets.images.documentCopy,
-        //               //   colorFilter: const ColorFilter.mode(
-        //               //     Colors.grey,
-        //               //     BlendMode.srcIn,
-        //               //   ),
-        //               // ),
-        //             ),
-        //             const Text('View'),
-        //           ],
-        //         ),
-        //       ),
-        //       PopupMenuItem(
-        //         onTap: _handleEdit,
-        //         height: 40.h,
-        //         child: Row(
-        //           spacing: 8.w,
-        //           children: [
-        //             Container(
-        //               padding: const EdgeInsets.all(6),
-        //               decoration: BoxDecoration(
-        //                 shape: BoxShape.circle,
-        //                 color: Theme.of(context).primaryColor.withAlpha(50),
-        //               ),
-        //               child: SvgPicture.asset(
-        //                 height: 16.h,
-        //                 width: 16.w,
-        //                 Assets.images.edit2,
-        //                 colorFilter: ColorFilter.mode(
-        //                   Theme.of(context).primaryColor,
-        //                   BlendMode.srcIn,
-        //                 ),
-        //               ),
-        //             ),
-        //             const Text('Edit'),
-        //           ],
-        //         ),
-        //       ),
-        //       PopupMenuItem(
-        //         onTap: _handleDelete,
-        //         height: 40.h,
-        //         child: Row(
-        //           spacing: 8.w,
-        //           children: [
-        //             Container(
-        //               padding: const EdgeInsets.all(6),
-        //               decoration: BoxDecoration(
-        //                 shape: BoxShape.circle,
-        //                 color: Colors.redAccent.withAlpha(50),
-        //               ),
-        //               child: SvgPicture.asset(
-        //                 height: 16.h,
-        //                 width: 16.w,
-        //                 Assets.images.trash,
-        //                 colorFilter: const ColorFilter.mode(
-        //                   Colors.redAccent,
-        //                   BlendMode.srcIn,
-        //                 ),
-        //               ),
-        //             ),
-        //             const Text('Delete'),
-        //           ],
-        //         ),
-        //       ),
-        //     ],
-        //     onSelected: (String value) {
-        //       // Handle menu item selection
-        //       switch (value) {
-        //         case 'edit':
-        //           // Handle edit action
-        //           break;
-        //         case 'delete':
-        //           // Handle delete action
-        //           break;
-        //       }
-        //     },
-        //   ),
-        // ),
       ),
     );
   }

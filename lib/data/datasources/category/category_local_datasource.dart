@@ -4,6 +4,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:uuid/uuid.dart';
+import 'package:trakli/data/models/media.dart';
 
 abstract class CategoryLocalDataSource {
   Future<List<Category>> getAllCategories();
@@ -13,6 +14,7 @@ abstract class CategoryLocalDataSource {
     TransactionType type,
     int userId, {
     String? description,
+    Media? media,
   });
   Future<Category> updateCategory(
     String clientId, {
@@ -20,6 +22,7 @@ abstract class CategoryLocalDataSource {
     String? slug,
     TransactionType? type,
     String? description,
+    Media? media,
   });
   Future<Category> deleteCategory(String clientId);
   Stream<List<Category>> listenToCategories();
@@ -40,7 +43,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
   @override
   Future<Category> insertCategory(
       String name, String slug, TransactionType type, int userId,
-      {String? description}) async {
+      {String? description, Media? media}) async {
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
 
@@ -52,6 +55,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
             type: type,
             userId: Value(userId),
             description: Value(description),
+            icon: Value(media),
             createdAt: Value(dateTime),
             updatedAt: Value(dateTime),
           ),
@@ -60,11 +64,17 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
   }
 
   @override
-  Future<Category> updateCategory(String clientId,
-      {String? name,
-      String? slug,
-      TransactionType? type,
-      String? description}) async {
+  Future<Category> updateCategory(
+    String clientId, {
+    String? name,
+    String? slug,
+    TransactionType? type,
+    String? description,
+    Media? media,
+  }) async {
+    final now = DateTime.now();
+    DateTime dateTime = formatServerIsoDateTime(now);
+
     final model = await (database.update(database.categories)
           ..where((c) => c.clientId.equals(clientId)))
         .writeReturning(
@@ -74,6 +84,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
         type: type != null ? Value(type) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),
+        icon: media != null ? Value(media) : const Value.absent(),
+        updatedAt: Value(dateTime),
       ),
     );
     return model.first;
