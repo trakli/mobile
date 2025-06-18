@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:popover/popover.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -14,6 +13,7 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -337,31 +337,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           return InkWell(
             key: key,
             onTap: () {
-              showPopover(
-                context: context,
-                backgroundColor: Colors.white,
-                transitionDuration: const Duration(milliseconds: 150),
-                bodyBuilder: (context) => Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "$label Filter",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(height: 8.h),
-                      const Text("Options go here"),
-                    ],
-                  ),
-                ),
-                direction: PopoverDirection.bottom,
-                barrierColor: Colors.black.withAlpha(80),
-                width: 220,
-                height: 120,
-                arrowHeight: 10,
-                arrowWidth: 20,
-              );
+              showCustomPopOver(context, label: label);
             },
             child: Container(
               padding: EdgeInsets.symmetric(
