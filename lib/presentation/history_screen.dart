@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:popover/popover.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -80,28 +81,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 SizedBox(
                   // height: 36.h,
                   child: Row(
-                    spacing: 4.w,
+                    spacing: 6.w,
                     children: [
-                      if (!showSearch) ...[
-                        _filterType(
-                          label: "Date",
-                          iconPath: Assets.images.calendar,
-                        ),
-                        _filterType(
-                          label: "Category",
-                          iconPath: Assets.images.tag2,
-                        ),
-                        _filterType(
-                          label: "Wallets",
-                          iconPath: Assets.images.wallet,
-                        ),
-                      ] else
+                      if (showSearch)
                         Expanded(
                           child: TextFormField(
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              hintText: LocaleKeys.transactionFilterBy.tr(),
+                              hintText: 'Search...',
                               suffixIcon: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: SvgPicture.asset(
@@ -128,7 +116,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                             ),
                           ),
+                        )
+                      else ...[
+                        _filterType(
+                          label: "Date",
+                          iconPath: Assets.images.calendar,
                         ),
+                        _filterType(
+                          label: "Category",
+                          iconPath: Assets.images.tag2,
+                        ),
+                        _filterType(
+                          label: "Wallets",
+                          iconPath: Assets.images.wallet,
+                        ),
+                      ],
                       IconButton(
                         padding: EdgeInsets.zero,
                         style: IconButton.styleFrom(
@@ -143,9 +145,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           });
                         },
                         icon: SvgPicture.asset(
-                          Assets.images.searchNormal,
-                          width: 12.w,
-                          height: 12.h,
+                          showSearch == true
+                              ? Assets.images.close
+                              : Assets.images.searchNormal,
+                          width: 16.w,
+                          height: 16.h,
                           colorFilter: const ColorFilter.mode(
                             Colors.white,
                             BlendMode.srcIn,
@@ -325,38 +329,74 @@ class _HistoryScreenState extends State<HistoryScreen> {
     required String label,
     required String iconPath,
   }) {
+    final GlobalKey key = GlobalKey();
+
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 12.h,
-        ),
-        decoration: BoxDecoration(
-          color: appPrimaryColor.withAlpha(20),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: appPrimaryColor,
-            width: 1.5.w,
-          ),
-        ),
-        child: Row(
-          spacing: 4.w,
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              iconPath,
-              width: 12.w,
-              height: 12.h,
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: neutralN900,
+      child: Builder(
+        builder: (context) {
+          return InkWell(
+            key: key,
+            onTap: () {
+              showPopover(
+                context: context,
+                backgroundColor: Colors.white,
+                transitionDuration: const Duration(milliseconds: 150),
+                bodyBuilder: (context) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "$label Filter",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 8.h),
+                      const Text("Options go here"),
+                    ],
+                  ),
+                ),
+                direction: PopoverDirection.bottom,
+                barrierColor: Colors.black.withAlpha(80),
+                width: 220,
+                height: 120,
+                arrowHeight: 10,
+                arrowWidth: 20,
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 12.h,
               ),
-            )
-          ],
-        ),
+              decoration: BoxDecoration(
+                color: appPrimaryColor.withAlpha(20),
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(
+                  color: appPrimaryColor,
+                  width: 1.5.w,
+                ),
+              ),
+              child: Row(
+                spacing: 4.w,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    iconPath,
+                    width: 12.w,
+                    height: 12.h,
+                  ),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: neutralN900,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
