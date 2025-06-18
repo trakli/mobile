@@ -90,6 +90,12 @@ class $AssetsImagesGen {
   /// File path: assets/images/edit-2.svg
   String get edit2 => 'assets/images/edit-2.svg';
 
+  /// File path: assets/images/excel-type.svg
+  String get excelType => 'assets/images/excel-type.svg';
+
+  /// File path: assets/images/export.svg
+  String get export => 'assets/images/export.svg';
+
   /// File path: assets/images/eye-slash.svg
   String get eyeSlash => 'assets/images/eye-slash.svg';
 
@@ -132,6 +138,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/notification-bing.svg
   String get notificationBing => 'assets/images/notification-bing.svg';
 
+  /// File path: assets/images/pdf-type.svg
+  String get pdfType => 'assets/images/pdf-type.svg';
+
   /// File path: assets/images/people.svg
   String get people => 'assets/images/people.svg';
 
@@ -148,6 +157,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/refresh.svg
   String get refresh => 'assets/images/refresh.svg';
 
+  /// File path: assets/images/search-normal.svg
+  String get searchNormal => 'assets/images/search-normal.svg';
+
   /// File path: assets/images/search-special.svg
   String get searchSpecial => 'assets/images/search-special.svg';
 
@@ -156,6 +168,9 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/support.svg
   String get support => 'assets/images/support.svg';
+
+  /// File path: assets/images/tag-2.svg
+  String get tag2 => 'assets/images/tag-2.svg';
 
   /// File path: assets/images/top_right_circle.svg
   String get topRightCircle => 'assets/images/top_right_circle.svg';
@@ -206,6 +221,8 @@ class $AssetsImagesGen {
         documentCopy,
         documentUpload,
         edit2,
+        excelType,
+        export,
         eyeSlash,
         eye,
         filter,
@@ -220,14 +237,17 @@ class $AssetsImagesGen {
         more,
         navEllipse,
         notificationBing,
+        pdfType,
         people,
         premiumPng,
         premiumSvg,
         profile2user,
         refresh,
+        searchNormal,
         searchSpecial,
         setting,
         support,
+        tag2,
         topRightCircle,
         trash,
         user,

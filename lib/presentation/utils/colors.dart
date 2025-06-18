@@ -29,6 +29,7 @@ Color neutralN40 = const Color(0xFFDFE1E4);
 Color neutralN20 = const Color(0xFFF5F6F5);
 Color neutralN700 = const Color(0xFF1D3229);
 Color neutralN500 = const Color(0xFF3B4E45);
+Color neutralN600 = const Color(0xFF2F4239);
 
 Color neutralM900 = const Color(0xFF020931);
 Color neutralM700 = const Color(0xFF1E2448);
@@ -36,3 +37,4 @@ Color neutralM700 = const Color(0xFF1E2448);
 Color appYellow = const Color(0xFFF2C429);
 Color appGrey = const Color(0xFFB7B7B7);
 Color appOrange = const Color(0xFFFF9500);
+Color appBlue = const Color(0xFF2D9CDB);
