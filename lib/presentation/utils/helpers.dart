@@ -150,35 +150,21 @@ extension StringExtensions on String {
 
 Future<T?> showCustomPopOver<T>(
   context, {
-  required String label,
+  required Widget widget,
 }) async {
   return showPopover<T>(
     context: context,
     backgroundColor: Colors.white,
     transitionDuration: const Duration(milliseconds: 150),
-    bodyBuilder: (context) => Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "$label Filter",
-            style: const TextStyle(fontSize: 16),
-          ),
-          SizedBox(height: 8.h),
-          const Text("Options go here"),
-        ],
-      ),
-    ),
+    bodyBuilder: (context) => widget,
     direction: PopoverDirection.bottom,
     barrierColor: Colors.black.withAlpha(80),
-    width: 220,
-    height: 120,
-    arrowHeight: 10,
-    arrowWidth: 20,
+    width: 0.6.sw,
+    constraints: BoxConstraints(
+      maxHeight: 0.6.sh,
+    ),
+    arrowHeight: 10.h,
+    arrowWidth: 20.w,
   );
 }
 

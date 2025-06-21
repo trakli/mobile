@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/presentation/home_screen.dart';
+import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
 import 'package:trakli/presentation/wallets/wallet_screen.dart';
@@ -54,7 +54,7 @@ enum NavigationScreen {
   Widget get screen {
     switch (this) {
       case NavigationScreen.home:
-        return const HomeScreen();
+        return const HistoryScreen();
       case NavigationScreen.statistics:
         return const StatisticsScreen();
       case NavigationScreen.wallet:
@@ -84,3 +84,17 @@ enum PlanType {
 }
 
 enum MediaType { emoji, image, icon }
+
+enum FilterType {
+  date,
+  category,
+  wallet;
+
+  String get filterName {
+    return switch (this) {
+      FilterType.date => 'Date',
+      FilterType.category => 'Categories',
+      FilterType.wallet => 'Wallets',
+    };
+  }
+}

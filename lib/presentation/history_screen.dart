@@ -14,6 +14,8 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/popovers/category_list_popover.dart';
+import 'package:trakli/presentation/utils/popovers/wallet_list_popover.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -61,13 +63,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       body: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-              ),
-            );
-          }
+          // if (state.isLoading) {
+          //   return Center(
+          //     child: CircularProgressIndicator.adaptive(
+          //       valueColor: AlwaysStoppedAnimation(appPrimaryColor),
+          //     ),
+          //   );
+          // }
 
           final transactions = state.transactions;
 
@@ -78,142 +80,153 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
             child: Column(
               children: [
-                SizedBox(
-                  // height: 36.h,
-                  child: Row(
-                    spacing: 6.w,
-                    children: [
-                      if (showSearch)
-                        Expanded(
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: 'Search...',
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: SvgPicture.asset(
-                                  Assets.images.filter,
-                                ),
+                Row(
+                  spacing: 6.w,
+                  children: [
+                    if (showSearch)
+                      Expanded(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Search...',
+                            suffixIcon: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: SvgPicture.asset(
+                                Assets.images.filter,
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Colors.transparent,
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
-                        )
-                      else ...[
-                        _filterType(
-                          label: "Date",
-                          iconPath: Assets.images.calendar,
                         ),
-                        _filterType(
-                          label: "Category",
-                          iconPath: Assets.images.tag2,
-                        ),
-                        _filterType(
-                          label: "Wallets",
-                          iconPath: Assets.images.wallet,
-                        ),
-                      ],
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        style: IconButton.styleFrom(
-                          backgroundColor: neutralN600,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            showSearch = !showSearch;
-                          });
-                        },
-                        icon: SvgPicture.asset(
-                          showSearch == true
-                              ? Assets.images.close
-                              : Assets.images.searchNormal,
-                          width: 16.w,
-                          height: 16.h,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
+                      )
+                    else ...[
+                      _filterType(
+                        iconPath: Assets.images.calendar,
+                        filterType: FilterType.date,
                       ),
-                      PopupMenuButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: appPrimaryColor,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                          ),
-                        ),
-                        position: PopupMenuPosition.under,
-                        icon: Row(
-                          spacing: 4.w,
-                          children: [
-                            Text(
-                              "Export",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SvgPicture.asset(
-                              Assets.images.export,
-                            ),
-                          ],
-                        ),
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              onTap: () {},
-                              child: Row(
-                                spacing: 8.w,
-                                children: [
-                                  SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.pdfType,
-                                  ),
-                                  const Text('To PDF'),
-                                ],
-                              ),
-                            ),
-                            PopupMenuItem(
-                              onTap: () {},
-                              child: Row(
-                                spacing: 8.w,
-                                children: [
-                                  SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.excelType,
-                                  ),
-                                  const Text('To Excel'),
-                                ],
-                              ),
-                            ),
-                          ];
-                        },
+                      _filterType(
+                        iconPath: Assets.images.tag2,
+                        filterType: FilterType.category,
+                      ),
+                      _filterType(
+                        iconPath: Assets.images.wallet,
+                        filterType: FilterType.wallet,
                       ),
                     ],
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      style: IconButton.styleFrom(
+                        backgroundColor: neutralN600,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          showSearch = !showSearch;
+                        });
+                      },
+                      icon: SvgPicture.asset(
+                        showSearch == true
+                            ? Assets.images.close
+                            : Assets.images.searchNormal,
+                        width: 16.w,
+                        height: 16.h,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                    PopupMenuButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: appPrimaryColor,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                        ),
+                      ),
+                      position: PopupMenuPosition.under,
+                      icon: Row(
+                        spacing: 4.w,
+                        children: [
+                          Text(
+                            "Export",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SvgPicture.asset(
+                            Assets.images.export,
+                          ),
+                        ],
+                      ),
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            onTap: () {},
+                            child: Row(
+                              spacing: 8.w,
+                              children: [
+                                SvgPicture.asset(
+                                  height: 16.h,
+                                  width: 16.w,
+                                  Assets.images.pdfType,
+                                ),
+                                const Text('To PDF'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () {},
+                            child: Row(
+                              spacing: 8.w,
+                              children: [
+                                SvgPicture.asset(
+                                  height: 16.h,
+                                  width: 16.w,
+                                  Assets.images.excelType,
+                                ),
+                                const Text('To Excel'),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                SizedBox(
+                  height: 30.h,
+                  child: ListView.separated(
+                    itemCount: 6,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return _selectedItem();
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(width: 6.w);
+                    },
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -326,8 +339,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _filterType({
-    required String label,
     required String iconPath,
+    required FilterType filterType,
   }) {
     final GlobalKey key = GlobalKey();
 
@@ -337,7 +350,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
           return InkWell(
             key: key,
             onTap: () {
-              showCustomPopOver(context, label: label);
+              showCustomPopOver(
+                context,
+                widget: filterType == FilterType.wallet
+                    ? WalletListPopover(
+                        label: filterType.name,
+                      )
+                    : filterType == FilterType.category
+                        ? CategoryListPopover(label: filterType.name)
+                        : SizedBox(height: 100.h),
+              );
             },
             child: Container(
               padding: EdgeInsets.symmetric(
@@ -362,7 +384,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     height: 12.h,
                   ),
                   Text(
-                    label,
+                    filterType.name,
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: neutralN900,
@@ -373,6 +395,46 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _selectedItem() {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 8.w,
+        vertical: 4.h,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        spacing: 4.w,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            width: 16.w,
+            height: 16.h,
+            Assets.images.tag2,
+          ),
+          Text(
+            "Family",
+            style: TextStyle(
+              fontSize: 10.sp,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: SvgPicture.asset(
+              Assets.images.close,
+              colorFilter: const ColorFilter.mode(
+                Colors.redAccent,
+                BlendMode.srcIn,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
