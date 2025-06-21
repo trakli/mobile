@@ -354,10 +354,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 context,
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
-                        label: filterType.name,
+                        label: filterType.filterName,
                       )
                     : filterType == FilterType.category
-                        ? CategoryListPopover(label: filterType.name)
+                        ? CategoryListPopover(label: filterType.filterName)
                         : SizedBox(height: 100.h),
               );
             },
@@ -384,7 +384,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     height: 12.h,
                   ),
                   Text(
-                    filterType.name,
+                    filterType.filterName,
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: neutralN900,
