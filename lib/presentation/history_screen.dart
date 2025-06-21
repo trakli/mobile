@@ -63,13 +63,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       body: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
-          // if (state.isLoading) {
-          //   return Center(
-          //     child: CircularProgressIndicator.adaptive(
-          //       valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-          //     ),
-          //   );
-          // }
+          if (state.isLoading) {
+            return Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation(appPrimaryColor),
+              ),
+            );
+          }
 
           final transactions = state.transactions;
 
