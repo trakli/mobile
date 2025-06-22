@@ -15,6 +15,7 @@ import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/category_list_popover.dart';
+import 'package:trakli/presentation/utils/popovers/date_list_popover.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_list_popover.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
 
@@ -352,13 +353,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
             onTap: () {
               showCustomPopOver(
                 context,
+                maxWidth: filterType == FilterType.date ? 0.45.sw : null,
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
                         label: filterType.filterName,
                       )
                     : filterType == FilterType.category
                         ? CategoryListPopover(label: filterType.filterName)
-                        : SizedBox(height: 100.h),
+                        : DateListPopover(label: filterType.filterName),
               );
             },
             child: Container(

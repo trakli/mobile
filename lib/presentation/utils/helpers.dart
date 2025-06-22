@@ -151,6 +151,7 @@ extension StringExtensions on String {
 Future<T?> showCustomPopOver<T>(
   context, {
   required Widget widget,
+  double? maxWidth,
 }) async {
   return showPopover<T>(
     context: context,
@@ -161,7 +162,7 @@ Future<T?> showCustomPopOver<T>(
     barrierColor: Colors.black.withAlpha(80),
     constraints: BoxConstraints(
       maxHeight: 0.6.sh,
-      maxWidth: 0.4.sw,
+      maxWidth: maxWidth ?? 0.4.sw,
     ),
     arrowHeight: 10.h,
     arrowWidth: 20.w,
