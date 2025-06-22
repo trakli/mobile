@@ -215,7 +215,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 4.h),
                 SizedBox(
                   height: 30.h,
                   child: ListView.separated(
@@ -370,7 +370,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
                   color: appPrimaryColor,
-                  width: 1.5.w,
+                  width: 0.5.w,
                 ),
               ),
               child: Row(

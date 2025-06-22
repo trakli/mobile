@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/presentation/history_screen.dart';
+import 'package:trakli/presentation/home_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
 import 'package:trakli/presentation/wallets/wallet_screen.dart';
@@ -54,7 +54,7 @@ enum NavigationScreen {
   Widget get screen {
     switch (this) {
       case NavigationScreen.home:
-        return const HistoryScreen();
+        return const HomeScreen();
       case NavigationScreen.statistics:
         return const StatisticsScreen();
       case NavigationScreen.wallet:

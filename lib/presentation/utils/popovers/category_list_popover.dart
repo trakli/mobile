@@ -5,6 +5,7 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class CategoryListPopover extends StatelessWidget {
   final String label;
@@ -37,11 +38,12 @@ class CategoryListPopover extends StatelessWidget {
         }
         return SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-            vertical: 16.h,
+            vertical: 8.h,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 8.h),
               Text(
                 label,
                 style: TextStyle(
@@ -65,11 +67,21 @@ class CategoryListPopover extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final category = state.categories[index];
                         return ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                          ),
                           onTap: () {
                             AppNavigator.pop(context);
                           },
                           title: Text(
                             category.name,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: ImageWidget(
+                            mediaEntity: category.icon,
+                            iconSize: 24.sp,
+                            emojiSize: 24.sp,
+                            placeholderIcon: Icons.category,
                           ),
                         );
                       },

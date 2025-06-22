@@ -159,9 +159,9 @@ Future<T?> showCustomPopOver<T>(
     bodyBuilder: (context) => widget,
     direction: PopoverDirection.bottom,
     barrierColor: Colors.black.withAlpha(80),
-    width: 0.6.sw,
     constraints: BoxConstraints(
       maxHeight: 0.6.sh,
+      maxWidth: 0.4.sw,
     ),
     arrowHeight: 10.h,
     arrowWidth: 20.w,

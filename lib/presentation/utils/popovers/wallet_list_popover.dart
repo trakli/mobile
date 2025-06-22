@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -37,11 +39,12 @@ class WalletListPopover extends StatelessWidget {
         }
         return SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-            vertical: 16.h,
+            vertical: 8.h,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 8.h),
               Text(
                 label,
                 style: TextStyle(
@@ -65,11 +68,16 @@ class WalletListPopover extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final wallet = state.wallets[index];
                         return ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                           onTap: () {
                             AppNavigator.pop(context);
                           },
                           title: Text(
                             wallet.name,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: SvgPicture.asset(
+                            Assets.images.arrowRight,
                           ),
                         );
                       },
