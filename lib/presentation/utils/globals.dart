@@ -244,3 +244,12 @@ final List<HeroIcons> heroIconsCategories = [
 
 const String loremIpsum =
     "Lorem ipsum dolor sit amet consectetur. Aliquam integer at sed a at leo vulputate at. Etiam blandit proin amet.";
+
+List<String> dateOptions = [
+  "This week",
+  "This month",
+  "Last 3 months",
+  "Last 6 months",
+  "This year",
+  "Custom"
+];

@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:popover/popover.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -145,6 +146,27 @@ Widget flagWidget(Currency currency) {
 
 extension StringExtensions on String {
   String get imagePath => 'lib/src/res/$this';
+}
+
+Future<T?> showCustomPopOver<T>(
+  context, {
+  required Widget widget,
+  double? maxWidth,
+}) async {
+  return showPopover<T>(
+    context: context,
+    backgroundColor: Colors.white,
+    transitionDuration: const Duration(milliseconds: 150),
+    bodyBuilder: (context) => widget,
+    direction: PopoverDirection.bottom,
+    barrierColor: Colors.black.withAlpha(80),
+    constraints: BoxConstraints(
+      maxHeight: 0.6.sh,
+      maxWidth: maxWidth ?? 0.4.sw,
+    ),
+    arrowHeight: 10.h,
+    arrowWidth: 20.w,
+  );
 }
 
 Future<T?> showCustomBottomSheet<T>(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -59,41 +58,38 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
           }
         },
         child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.r),
-            child: AddCategoryForm(
-              category: widget.category,
-              type: widget.type,
-              accentColor: widget.accentColor ?? const Color(0xFFEB5757),
-              onSubmit: ({
-                required description,
-                icon,
-                mediaEntity,
-                required name,
-                required type,
-              }) {
-                hideKeyBoard();
-                if (widget.category != null) {
-                  context.read<CategoryCubit>().updateCategory(
-                        clientId: widget.category!.clientId,
-                        name: name,
-                        slug: _generateSlug(name),
-                        userId: widget.category!.userId,
-                        description: description,
-                        media: mediaEntity,
-                      );
-                } else {
-                  context.read<CategoryCubit>().addCategory(
-                        name: name,
-                        slug: _generateSlug(name),
-                        type: widget.type,
-                        userId: 1,
-                        description: description,
-                        media: mediaEntity,
-                      );
-                }
-              },
-            ),
+          child: AddCategoryForm(
+            category: widget.category,
+            type: widget.type,
+            accentColor: widget.accentColor ?? const Color(0xFFEB5757),
+            onSubmit: ({
+              required description,
+              icon,
+              mediaEntity,
+              required name,
+              required type,
+            }) {
+              hideKeyBoard();
+              if (widget.category != null) {
+                context.read<CategoryCubit>().updateCategory(
+                      clientId: widget.category!.clientId,
+                      name: name,
+                      slug: _generateSlug(name),
+                      userId: widget.category!.userId,
+                      description: description,
+                      media: mediaEntity,
+                    );
+              } else {
+                context.read<CategoryCubit>().addCategory(
+                      name: name,
+                      slug: _generateSlug(name),
+                      type: widget.type,
+                      userId: 1,
+                      description: description,
+                      media: mediaEntity,
+                    );
+              }
+            },
           ),
         ),
       ),

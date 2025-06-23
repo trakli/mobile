@@ -84,3 +84,17 @@ enum PlanType {
 }
 
 enum MediaType { emoji, image, icon }
+
+enum FilterType {
+  date,
+  category,
+  wallet;
+
+  String get filterName {
+    return switch (this) {
+      FilterType.date => 'Date',
+      FilterType.category => 'Categories',
+      FilterType.wallet => 'Wallets',
+    };
+  }
+}
