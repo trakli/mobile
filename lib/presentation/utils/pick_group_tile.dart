@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 
 class PickGroupTile<T> extends StatelessWidget {
   final T value;
@@ -18,6 +19,12 @@ class PickGroupTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? groupName;
+    String? groupDescription;
+    if (value is GroupEntity) {
+      groupName = (value as GroupEntity).name;
+      groupDescription = (value as GroupEntity).description;
+    }
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -38,15 +45,29 @@ class PickGroupTile<T> extends StatelessWidget {
             ),
           ),
           SizedBox(width: 8.w),
-          Text(
-            "General",
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  groupName ?? "General",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (groupDescription != null && groupDescription.isNotEmpty)
+                  Text(
+                    groupDescription,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+              ],
             ),
           ),
-          const Spacer(),
-          Radio(
+          Radio<T>(
             activeColor: appPrimaryColor,
             value: value,
             groupValue: groupValue,

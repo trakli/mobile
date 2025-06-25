@@ -62,7 +62,7 @@ class AppWidget extends StatelessWidget {
           create: (_) => getIt<PartyCubit>(),
         ),
         BlocProvider(
-          create: (_) => getIt<GroupCubit>(),
+          create: (_) => getIt<GroupCubit>()..listenToGroups(),
         ),
       ],
       child: const AppView(),

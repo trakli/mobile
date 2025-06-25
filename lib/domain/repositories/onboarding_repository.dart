@@ -7,4 +7,6 @@ abstract class OnboardingRepository {
   Future<Either<Failure, Unit>> saveOnboardingState(OnboardingEntity entity);
   Future<Either<Failure, OnboardingEntity?>> getOnboardingState();
   Future<Either<Failure, Unit>> resetOnboarding();
+  // Future<Either<Failure, Unit>> setOnboarding();
+  Stream<OnboardingEntity?> get onboardingState;
 }

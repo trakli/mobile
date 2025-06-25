@@ -22,6 +22,7 @@ OnboardingEntity _$OnboardingEntityFromJson(Map<String, dynamic> json) {
 mixin _$OnboardingEntity {
   @CurrencyConverter()
   Currency? get selectedCurrency => throw _privateConstructorUsedError;
+  String? get defaultGroup => throw _privateConstructorUsedError;
 
   /// Serializes this OnboardingEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +40,8 @@ abstract class $OnboardingEntityCopyWith<$Res> {
           OnboardingEntity value, $Res Function(OnboardingEntity) then) =
       _$OnboardingEntityCopyWithImpl<$Res, OnboardingEntity>;
   @useResult
-  $Res call({@CurrencyConverter() Currency? selectedCurrency});
+  $Res call(
+      {@CurrencyConverter() Currency? selectedCurrency, String? defaultGroup});
 }
 
 /// @nodoc
@@ -58,12 +60,17 @@ class _$OnboardingEntityCopyWithImpl<$Res, $Val extends OnboardingEntity>
   @override
   $Res call({
     Object? selectedCurrency = freezed,
+    Object? defaultGroup = freezed,
   }) {
     return _then(_value.copyWith(
       selectedCurrency: freezed == selectedCurrency
           ? _value.selectedCurrency
           : selectedCurrency // ignore: cast_nullable_to_non_nullable
               as Currency?,
+      defaultGroup: freezed == defaultGroup
+          ? _value.defaultGroup
+          : defaultGroup // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -76,7 +83,8 @@ abstract class _$$OnboardingEntityImplCopyWith<$Res>
       __$$OnboardingEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@CurrencyConverter() Currency? selectedCurrency});
+  $Res call(
+      {@CurrencyConverter() Currency? selectedCurrency, String? defaultGroup});
 }
 
 /// @nodoc
@@ -93,12 +101,17 @@ class __$$OnboardingEntityImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? selectedCurrency = freezed,
+    Object? defaultGroup = freezed,
   }) {
     return _then(_$OnboardingEntityImpl(
       selectedCurrency: freezed == selectedCurrency
           ? _value.selectedCurrency
           : selectedCurrency // ignore: cast_nullable_to_non_nullable
               as Currency?,
+      defaultGroup: freezed == defaultGroup
+          ? _value.defaultGroup
+          : defaultGroup // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -106,7 +119,8 @@ class __$$OnboardingEntityImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$OnboardingEntityImpl extends _OnboardingEntity {
-  const _$OnboardingEntityImpl({@CurrencyConverter() this.selectedCurrency})
+  const _$OnboardingEntityImpl(
+      {@CurrencyConverter() this.selectedCurrency, this.defaultGroup})
       : super._();
 
   factory _$OnboardingEntityImpl.fromJson(Map<String, dynamic> json) =>
@@ -115,10 +129,12 @@ class _$OnboardingEntityImpl extends _OnboardingEntity {
   @override
   @CurrencyConverter()
   final Currency? selectedCurrency;
+  @override
+  final String? defaultGroup;
 
   @override
   String toString() {
-    return 'OnboardingEntity(selectedCurrency: $selectedCurrency)';
+    return 'OnboardingEntity(selectedCurrency: $selectedCurrency, defaultGroup: $defaultGroup)';
   }
 
   @override
@@ -127,12 +143,14 @@ class _$OnboardingEntityImpl extends _OnboardingEntity {
         (other.runtimeType == runtimeType &&
             other is _$OnboardingEntityImpl &&
             (identical(other.selectedCurrency, selectedCurrency) ||
-                other.selectedCurrency == selectedCurrency));
+                other.selectedCurrency == selectedCurrency) &&
+            (identical(other.defaultGroup, defaultGroup) ||
+                other.defaultGroup == defaultGroup));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, selectedCurrency);
+  int get hashCode => Object.hash(runtimeType, selectedCurrency, defaultGroup);
 
   /// Create a copy of OnboardingEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -153,8 +171,8 @@ class _$OnboardingEntityImpl extends _OnboardingEntity {
 
 abstract class _OnboardingEntity extends OnboardingEntity {
   const factory _OnboardingEntity(
-          {@CurrencyConverter() final Currency? selectedCurrency}) =
-      _$OnboardingEntityImpl;
+      {@CurrencyConverter() final Currency? selectedCurrency,
+      final String? defaultGroup}) = _$OnboardingEntityImpl;
   const _OnboardingEntity._() : super._();
 
   factory _OnboardingEntity.fromJson(Map<String, dynamic> json) =
@@ -163,6 +181,8 @@ abstract class _OnboardingEntity extends OnboardingEntity {
   @override
   @CurrencyConverter()
   Currency? get selectedCurrency;
+  @override
+  String? get defaultGroup;
 
   /// Create a copy of OnboardingEntity
   /// with the given fields replaced by the non-null parameter values.

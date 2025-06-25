@@ -5,12 +5,14 @@ class OnboardingMapper {
   static OnboardingEntity toEntity(OnboardingModel model) {
     return OnboardingEntity(
       selectedCurrency: model.selectedCurrency,
+      defaultGroup: model.defaultGroup,
     );
   }
 
   static OnboardingModel toModel(OnboardingEntity entity) {
     return OnboardingModel(
       selectedCurrency: entity.selectedCurrency,
+      defaultGroup: entity.defaultGroup,
     );
   }
 }

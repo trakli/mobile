@@ -133,5 +133,6 @@
   "partyUpdate": "Mettre à jour le tiers",
   "partyAdd": "Ajouter un tiers",
   "partyNoParties": "Aucun tiers trouvé",
-  "groupUpdate": "Mettre à jour le groupe"
+  "groupUpdate": "Mettre à jour le groupe",
+  "defaultGroupName": "Default group"
 }

@@ -133,5 +133,6 @@
   "partyUpdate": "Actualizar parte",
   "partyAdd": "Agregar parte",
   "partyNoParties": "No se encontraron partes",
-  "groupUpdate": "Actualizar grupo"
+  "groupUpdate": "Actualizar grupo",
+  "defaultGroupName": "Default group"
 }

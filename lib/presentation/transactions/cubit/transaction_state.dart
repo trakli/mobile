@@ -8,6 +8,7 @@ class TransactionState with _$TransactionState {
     required bool isSaving,
     required bool isDeleting,
     required Failure failure,
+    GroupEntity? selectedGroup,
   }) = _TransactionState;
 
   factory TransactionState.initial() => const TransactionState(

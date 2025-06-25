@@ -1,16 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart'
     show TransactionCompleteEntity;
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/notification_screen.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
@@ -31,6 +35,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
+  // GroupEntity? group;
 
   @override
   void initState() {
@@ -45,6 +50,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final wallets = context.watch<WalletCubit>().state.wallets;
+
+    final groups = context.watch<GroupCubit>().state.groups;
+    final defaultGroupId =
+        context.watch<OnboardingCubit>().state.entity?.defaultGroup;
+
+    final defaultGroup =
+        groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
+
+    final selectedGroup =
+        context.watch<TransactionCubit>().state.selectedGroup ?? defaultGroup;
+
+    final transactionGroup =
+        context.watch<TransactionCubit>().state.selectedGroup;
+
+    if (transactionGroup == null && selectedGroup != null) {
+      context.watch<TransactionCubit>().setCurrentGroup(selectedGroup);
+    }
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -95,7 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
           final transactions =
               wallets.isNotEmpty && currentIndex < wallets.length
                   ? state.transactions.where((transaction) {
-                      return transaction.wallet.id == wallets[currentIndex].id;
+                      return (transaction.wallet.clientId ==
+                              wallets[currentIndex].clientId) &&
+                          ((transaction.group?.clientId ==
+                                  selectedGroup?.clientId) ||
+                              (transaction.group?.clientId == null &&
+                                  (selectedGroup?.clientId ==
+                                      defaultGroup?.clientId)));
                     }).toList()
                   : <TransactionCompleteEntity>[];
 
@@ -156,11 +184,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: () {
-                        showCustomBottomSheet(
+                      onTap: () async {
+                        final groupEntity =
+                            await showCustomBottomSheet<GroupEntity>(
                           context,
-                          widget: const PickGroupBottomSheet(),
+                          widget: PickGroupBottomSheet(
+                            group: selectedGroup,
+                          ),
                         );
+
+                        if (mounted && groupEntity != null) {
+                          setState(() {
+                            // group = groupEntity;
+
+                            context
+                                .read<TransactionCubit>()
+                                .setCurrentGroup(groupEntity);
+                          });
+                        }
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -181,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Text(
-                              "Family",
+                              selectedGroup?.name ?? 'Group',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.black,

@@ -84,10 +84,13 @@ import '../domain/usecases/category/update_category_usecase.dart' as _i986;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/group/add_group_usecase.dart' as _i353;
 import '../domain/usecases/group/delete_group_usecase.dart' as _i759;
+import '../domain/usecases/group/ensure_default_group_exists_usecase.dart'
+    as _i98;
 import '../domain/usecases/group/get_groups_usecase.dart' as _i982;
 import '../domain/usecases/group/listen_to_groups_usecase.dart' as _i146;
 import '../domain/usecases/group/update_group_usecase.dart' as _i820;
 import '../domain/usecases/onboarding/get_onboarding_state.dart' as _i575;
+import '../domain/usecases/onboarding/listen_onboarding_usecase.dart' as _i332;
 import '../domain/usecases/onboarding/save_onboarding_state.dart' as _i243;
 import '../domain/usecases/party/add_party_usecase.dart' as _i84;
 import '../domain/usecases/party/delete_party_usecase.dart' as _i56;
@@ -264,6 +267,8 @@ _i174.GetIt $initGetIt(
       () => _i243.SaveOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.factory<_i575.GetOnboardingState>(
       () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
+  gh.factory<_i332.GetOnboardingStateStream>(
+      () => _i332.GetOnboardingStateStream(gh<_i867.OnboardingRepository>()));
   gh.factory<_i56.DeletePartyUseCase>(
       () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i714.ListenToPartiesUseCase>(
@@ -312,10 +317,6 @@ _i174.GetIt $initGetIt(
       () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i163.DeleteTransactionUseCase>(
       () => _i163.DeleteTransactionUseCase(gh<_i118.TransactionRepository>()));
-  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
-        gh<_i575.GetOnboardingState>(),
-        gh<_i243.SaveOnboardingState>(),
-      ));
   gh.factory<_i62.DeleteWalletUseCase>(
       () => _i62.DeleteWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i418.UpdateWalletUseCase>(
@@ -367,6 +368,16 @@ _i174.GetIt $initGetIt(
         dio: gh<_i361.Dio>(),
         networkInfo: gh<_i6.NetworkInfo>(),
       ));
+  gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
+        gh<_i575.GetOnboardingState>(),
+        gh<_i243.SaveOnboardingState>(),
+        gh<_i332.GetOnboardingStateStream>(),
+      ));
+  gh.factory<_i98.EnsureDefaultWalletExistsUseCase>(
+      () => _i98.EnsureDefaultWalletExistsUseCase(
+            gh<_i957.GroupRepository>(),
+            gh<_i867.OnboardingRepository>(),
+          ));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i982.GetGroupsUseCase>(
@@ -379,8 +390,6 @@ _i174.GetIt $initGetIt(
       () => _i759.DeleteGroupUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i146.ListenToGroupsUseCase>(
       () => _i146.ListenToGroupsUseCase(gh<_i957.GroupRepository>()));
-  gh.factory<_i676.GroupCubit>(
-      () => _i676.GroupCubit(gh<_i957.GroupRepository>()));
   gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
         getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
         addWalletUseCase: gh<_i80.AddWalletUseCase>(),
@@ -389,6 +398,14 @@ _i174.GetIt $initGetIt(
         listenToWalletsUseCase: gh<_i82.ListenToWalletsUseCase>(),
         ensureDefaultWalletExistsUseCase:
             gh<_i225.EnsureDefaultWalletExistsUseCase>(),
+      ));
+  gh.factory<_i676.GroupCubit>(() => _i676.GroupCubit(
+        gh<_i982.GetGroupsUseCase>(),
+        gh<_i353.AddGroupUseCase>(),
+        gh<_i820.UpdateGroupUseCase>(),
+        gh<_i759.DeleteGroupUseCase>(),
+        gh<_i146.ListenToGroupsUseCase>(),
+        gh<_i98.EnsureDefaultWalletExistsUseCase>(),
       ));
   return getIt;
 }
