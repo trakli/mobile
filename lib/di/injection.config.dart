@@ -124,6 +124,7 @@ import '../presentation/groups/cubit/group_cubit.dart' as _i676;
 import '../presentation/onboarding/cubit/onboarding_cubit.dart' as _i171;
 import '../presentation/parties/cubit/party_cubit.dart' as _i841;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
+import '../presentation/utils/sync_cubit.dart' as _i1041;
 import '../presentation/wallets/cubit/wallet_cubit.dart' as _i1068;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -139,6 +140,7 @@ _i174.GetIt $initGetIt(
   );
   final injectHttpClientModule = _$InjectHttpClientModule();
   final syncModule = _$SyncModule();
+  gh.factory<_i1041.SyncCubit>(() => _i1041.SyncCubit());
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
   gh.factory<_i632.ExchangeRateRemoteDataSource>(

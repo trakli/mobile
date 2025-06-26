@@ -46,6 +46,7 @@ abstract class $TransactionStateCopyWith<$Res> {
       GroupEntity? selectedGroup});
 
   $FailureCopyWith<$Res> get failure;
+  $GroupEntityCopyWith<$Res>? get selectedGroup;
 }
 
 /// @nodoc
@@ -107,6 +108,20 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
       return _then(_value.copyWith(failure: value) as $Val);
     });
   }
+
+  /// Create a copy of TransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GroupEntityCopyWith<$Res>? get selectedGroup {
+    if (_value.selectedGroup == null) {
+      return null;
+    }
+
+    return $GroupEntityCopyWith<$Res>(_value.selectedGroup!, (value) {
+      return _then(_value.copyWith(selectedGroup: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -127,6 +142,8 @@ abstract class _$$TransactionStateImplCopyWith<$Res>
 
   @override
   $FailureCopyWith<$Res> get failure;
+  @override
+  $GroupEntityCopyWith<$Res>? get selectedGroup;
 }
 
 /// @nodoc
@@ -228,8 +245,8 @@ class _$TransactionStateImpl implements _TransactionState {
             (identical(other.isDeleting, isDeleting) ||
                 other.isDeleting == isDeleting) &&
             (identical(other.failure, failure) || other.failure == failure) &&
-            const DeepCollectionEquality()
-                .equals(other.selectedGroup, selectedGroup));
+            (identical(other.selectedGroup, selectedGroup) ||
+                other.selectedGroup == selectedGroup));
   }
 
   @override
@@ -240,7 +257,7 @@ class _$TransactionStateImpl implements _TransactionState {
       isSaving,
       isDeleting,
       failure,
-      const DeepCollectionEquality().hash(selectedGroup));
+      selectedGroup);
 
   /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.

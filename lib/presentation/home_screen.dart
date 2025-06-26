@@ -59,7 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 
     final selectedGroup =
-        context.watch<TransactionCubit>().state.selectedGroup ?? defaultGroup;
+        context.watch<TransactionCubit>().state.selectedGroup ??
+            defaultGroup ??
+            groups.firstOrNull;
 
     final transactionGroup =
         context.watch<TransactionCubit>().state.selectedGroup;
