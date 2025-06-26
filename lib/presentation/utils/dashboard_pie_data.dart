@@ -2,24 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:trakli/models/chart_data_model.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
-class DashboardPieData extends StatefulWidget {
-  const DashboardPieData({super.key});
-
-  @override
-  State<DashboardPieData> createState() => _DashboardPieDataState();
-}
-
-class _DashboardPieDataState extends State<DashboardPieData> {
-  DateFormat format = DateFormat('MMMM');
-  final pieData = StatisticsProvider().getPieData;
+class DashboardPieData extends StatelessWidget {
+  final List<PieCategoryData> pieData;
+  const DashboardPieData({super.key, required this.pieData});
 
   @override
   Widget build(BuildContext context) {
+    DateFormat format = DateFormat('MMMM');
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -58,11 +50,11 @@ class _DashboardPieDataState extends State<DashboardPieData> {
                 overflowMode: LegendItemOverflowMode.wrap,
               ),
               series: <CircularSeries>[
-                PieSeries<ChartData, String>(
+                PieSeries<PieCategoryData, String>(
                   dataSource: pieData,
-                  pointColorMapper: (ChartData data, _) => data.color,
-                  xValueMapper: (ChartData data, _) => data.property,
-                  yValueMapper: (ChartData data, _) => data.value,
+                  pointColorMapper: (PieCategoryData data, _) => data.color,
+                  xValueMapper: (PieCategoryData data, _) => data.category,
+                  yValueMapper: (PieCategoryData data, _) => data.value,
                   dataLabelSettings: DataLabelSettings(
                     isVisible: true,
                     labelPosition: ChartDataLabelPosition.outside,
@@ -79,7 +71,13 @@ class _DashboardPieDataState extends State<DashboardPieData> {
           ),
         ),
         Text(
-          LocaleKeys.trendingByMonth.tr(args: [5.2.toString()]),
+          LocaleKeys.trendingByMonth.tr(
+            args: [
+              pieData
+                  .fold<double>(0, (sum, item) => sum + item.value)
+                  .toStringAsFixed(1)
+            ],
+          ),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14.sp,
@@ -88,4 +86,11 @@ class _DashboardPieDataState extends State<DashboardPieData> {
       ],
     );
   }
+}
+
+class PieCategoryData {
+  final String category;
+  final double value;
+  final Color color;
+  PieCategoryData(this.category, this.value, this.color);
 }

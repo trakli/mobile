@@ -10,8 +10,14 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/dashboard_expenses.dart';
 import 'package:trakli/presentation/utils/dashboard_pie_data.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/graph_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -26,210 +32,396 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   PageController pageController = PageController();
   DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
+  DateTime? _startDate;
+  DateTime? _endDate;
+
   @override
   void initState() {
-    // TODO: implement initState
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
+    final now = DateTime.now();
+    _endDate = now;
+    _startDate = DateTime(now.year, now.month, 1);
     super.initState();
+  }
+
+  void _pickDateRange() async {
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      initialDateRange: _startDate != null && _endDate != null
+          ? DateTimeRange(start: _startDate!, end: _endDate!)
+          : null,
+    );
+    if (picked != null) {
+      setState(() {
+        _startDate = picked.start;
+        _endDate = picked.end;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        titleText: LocaleKeys.statistics.tr(),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 16.h),
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: 16.w,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: 16.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: statFilterColor,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          padding: EdgeInsets.all(8.r),
-                          child: Row(
-                            spacing: 8.w,
-                            children: [
-                              Text(
-                                "All wallets",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
-                              ),
-                              SvgPicture.asset(
-                                Assets.images.arrowDown,
-                                width: 16.w,
-                              ),
-                            ],
-                          ),
+    return BlocBuilder<TransactionCubit, TransactionState>(
+      builder: (context, state) {
+        // Aggregate transactions
+        final allTransactions = state.transactions;
+        final transactions = (_startDate != null && _endDate != null)
+            ? allTransactions.where((tx) {
+                final date = tx.transaction.datetime;
+                return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+              }).toList()
+            : allTransactions;
+
+        final Map<String, double> incomeByCategory = {};
+        final Map<String, double> expenseByCategory = {};
+        final Map<String, CategoryEntity> categoryMap = {};
+        for (final tx in transactions) {
+          for (final cat in tx.categories) {
+            categoryMap[cat.clientId] = cat;
+            if (tx.transaction.type == TransactionType.income) {
+              incomeByCategory[cat.clientId] =
+                  (incomeByCategory[cat.clientId] ?? 0) + tx.transaction.amount;
+            } else if (tx.transaction.type == TransactionType.expense) {
+              expenseByCategory[cat.clientId] =
+                  (expenseByCategory[cat.clientId] ?? 0) +
+                      tx.transaction.amount;
+            }
+          }
+        }
+        // Build category lists
+        final incomeListData = incomeByCategory.entries
+            .map((e) => MapEntry(categoryMap[e.key]!, e.value))
+            .toList();
+        final expenseListData = expenseByCategory.entries
+            .map((e) => MapEntry(categoryMap[e.key]!, e.value))
+            .toList();
+        return Scaffold(
+          appBar: CustomAppBar(
+            titleText: LocaleKeys.statistics.tr(),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: 16.h),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
                         ),
-                        const Spacer(),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: statFilterColor,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          padding: EdgeInsets.all(8.r),
-                          child: Row(
-                            spacing: 8.w,
-                            children: [
-                              Text(
-                                dateFormat.format(DateTime.now()),
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: statFilterColor,
+                                borderRadius: BorderRadius.circular(8.r),
                               ),
-                              SvgPicture.asset(
-                                Assets.images.arrowDown,
-                                width: 16.w,
+                              padding: EdgeInsets.all(8.r),
+                              child: Row(
+                                spacing: 8.w,
+                                children: [
+                                  Text(
+                                    "All wallets",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                  ),
+                                  SvgPicture.asset(
+                                    Assets.images.arrowDown,
+                                    width: 16.w,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: statFilterColor,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              padding: EdgeInsets.all(8.r),
+                              child: Row(
+                                spacing: 8.w,
+                                children: [
+                                  GestureDetector(
+                                    onTap: _pickDateRange,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          _startDate != null && _endDate != null
+                                              ? '${dateFormat.format(_startDate!)} - ${dateFormat.format(_endDate!)}'
+                                              : dateFormat
+                                                  .format(DateTime.now()),
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        SvgPicture.asset(
+                                          Assets.images.arrowDown,
+                                          width: 16.w,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      SizedBox(height: 8.h),
+                      SizedBox(
+                        height: 0.38.sh,
+                        child: PageView(
+                          controller: pageController,
+                          children: [
+                            statOne(),
+                            statTwo(),
+                            statThree(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                SmoothPageIndicator(
+                  controller: pageController,
+                  count: 3,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: Theme.of(context).primaryColor,
+                    dotWidth: 8.sp,
+                    dotHeight: 8.sp,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    // vertical:
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
                     ),
                   ),
-                  SizedBox(height: 8.h),
-                  SizedBox(
-                    height: 0.38.sh,
-                    child: PageView(
-                      controller: pageController,
-                      children: [
-                        statOne,
-                        statTwo,
-                        statThree,
-                      ],
+                  child: TabBar(
+                    controller: tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorColor: Colors.transparent,
+                    dividerHeight: 0,
+                    indicator: BoxDecoration(
+                      color: (tabController.index == 0)
+                          ? Theme.of(context).primaryColor
+                          : const Color(0xFFEB5757),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
+                    unselectedLabelStyle: TextStyle(
+                      fontSize: 16.sp,
+                      color: const Color(0xFF1D3229),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    tabs: [
+                      Tab(
+                        text: LocaleKeys.transactionIncome.tr(),
+                      ),
+                      Tab(
+                        text: LocaleKeys.transactionExpense.tr(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 12.h),
+                if (tabController.index == 0)
+                  incomeListWidget(incomeListData)
+                else
+                  expenseListWidget(expenseListData),
+                SizedBox(height: 24.h),
+              ],
             ),
-            SizedBox(height: 12.h),
-            SmoothPageIndicator(
-              controller: pageController,
-              count: 3,
-              effect: ExpandingDotsEffect(
-                activeDotColor: Theme.of(context).primaryColor,
-                dotWidth: 8.sp,
-                dotHeight: 8.sp,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                // vertical:
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                ),
-              ),
-              child: TabBar(
-                controller: tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorColor: Colors.transparent,
-                dividerHeight: 0,
-                indicator: BoxDecoration(
-                  color: (tabController.index == 0)
-                      ? Theme.of(context).primaryColor
-                      : const Color(0xFFEB5757),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                unselectedLabelStyle: TextStyle(
-                  fontSize: 16.sp,
-                  color: const Color(0xFF1D3229),
-                ),
-                labelStyle: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                tabs: [
-                  Tab(
-                    text: LocaleKeys.transactionIncome.tr(),
-                  ),
-                  Tab(
-                    text: LocaleKeys.transactionExpense.tr(),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 12.h),
-            if (tabController.index == 0) incomeList else expenseList,
-            SizedBox(height: 24.h),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget get statOne {
+  Widget statOne() {
+    // Aggregate by date (e.g., by day)
+    final allTransactions = context.read<TransactionCubit>().state.transactions;
+    final transactions = (_startDate != null && _endDate != null)
+        ? allTransactions.where((tx) {
+            final date = tx.transaction.datetime;
+            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+          }).toList()
+        : allTransactions;
+    final Map<String, double> incomeByDate = {};
+    final Map<String, double> expenseByDate = {};
+    for (final tx in transactions) {
+      final dateKey = DateFormat('MM/dd').format(tx.transaction.datetime);
+      if (tx.transaction.type == TransactionType.income) {
+        incomeByDate[dateKey] =
+            (incomeByDate[dateKey] ?? 0) + tx.transaction.amount;
+      } else if (tx.transaction.type == TransactionType.expense) {
+        expenseByDate[dateKey] =
+            (expenseByDate[dateKey] ?? 0) + tx.transaction.amount;
+      }
+    }
+    final allDatesSet = <String>{...incomeByDate.keys, ...expenseByDate.keys};
+    final allDates = allDatesSet.toList();
+    allDates.sort((a, b) => a.compareTo(b));
+    final chartData = allDates
+        .map((date) => ChartStatistics(
+              date,
+              incomeByDate[date] ?? 0,
+              expenseByDate[date] ?? 0,
+            ))
+        .toList();
+    final totalIncome = incomeByDate.values.fold(0.0, (a, b) => a + b);
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
       ),
-      child: const GraphWidget(),
+      child: GraphWidget(
+        chartData: chartData,
+        totalIncome: totalIncome,
+      ),
     );
   }
 
-  Widget get statTwo {
+  Widget statTwo() {
+    final onboardingState = context.watch<OnboardingCubit>().state;
+    final currencySymbol =
+        onboardingState.entity?.selectedCurrency?.symbol ?? 'XAF';
+    final allTransactions = context.read<TransactionCubit>().state.transactions;
+    final transactions = (_startDate != null && _endDate != null)
+        ? allTransactions.where((tx) {
+            final date = tx.transaction.datetime;
+            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+          }).toList()
+        : allTransactions;
+    double totalIncome = 0;
+    double totalExpense = 0;
+    for (final tx in transactions) {
+      if (tx.transaction.type == TransactionType.income) {
+        totalIncome += tx.transaction.amount;
+      } else if (tx.transaction.type == TransactionType.expense) {
+        totalExpense += tx.transaction.amount;
+      }
+    }
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
       ),
-      child: const DashboardExpenses(),
+      child: DashboardExpenses(
+        totalIncome: totalIncome,
+        totalExpense: totalExpense,
+        currencySymbol: currencySymbol,
+      ),
     );
   }
 
-  Widget get statThree {
+  Widget statThree() {
+    final allTransactions = context.read<TransactionCubit>().state.transactions;
+    final transactions = (_startDate != null && _endDate != null)
+        ? allTransactions.where((tx) {
+            final date = tx.transaction.datetime;
+            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+          }).toList()
+        : allTransactions;
+    final partiesState = context.watch<PartyCubit>().state;
+    final parties = partiesState.parties;
+    // Use stable color palette from StatisticsProvider
+    final colorList = StatisticsProvider().pieDataColors;
+    final Map<String, int> partyTransactionCount = {};
+    for (final tx in transactions) {
+      final party = tx.party;
+      if (party != null) {
+        partyTransactionCount[party.clientId] =
+            (partyTransactionCount[party.clientId] ?? 0) + 1;
+      }
+    }
+    final pieData = parties.asMap().entries.map((entry) {
+      final idx = entry.key;
+      final party = entry.value;
+      final count = partyTransactionCount[party.clientId] ?? 0;
+      // Cycle through colorList if there are more parties than colors
+      Color color = colorList[(idx) % colorList.length];
+      return PieCategoryData(
+        party.name,
+        count.toDouble(),
+        color,
+      );
+    }).toList();
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
       ),
-      child: const DashboardPieData(),
+      child: DashboardPieData(
+        pieData: pieData.where((data) => data.value > 0).toList(),
+      ),
     );
   }
 
-  Widget get incomeList {
+  Widget incomeListWidget(
+      List<MapEntry<CategoryEntity, double>> incomeListData) {
+    final allTransactions = context.read<TransactionCubit>().state.transactions;
+    final transactions = (_startDate != null && _endDate != null)
+        ? allTransactions.where((tx) {
+            final date = tx.transaction.datetime;
+            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+          }).toList()
+        : allTransactions;
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       shrinkWrap: true,
-      itemCount: incomeTransactions.length,
+      itemCount: incomeListData.length,
       itemBuilder: (context, index) {
-        final item = incomeTransactions[index];
+        final entry = incomeListData[index];
+        final category = entry.key;
+        // Count transactions and unique wallets for this category
+        final categoryTransactions = transactions
+            .where((tx) =>
+                tx.categories.any((cat) => cat.clientId == category.clientId) &&
+                tx.transaction.type == TransactionType.income)
+            .toList();
+        final transactionCount = categoryTransactions.length;
+        final walletCount = categoryTransactions
+            .map((tx) => tx.transaction.walletClientId)
+            .toSet()
+            .length;
         return CategoryTile(
           accentColor: Theme.of(context).primaryColor,
-          category: item,
+          category: category,
           showStat: true,
           showValue: true,
+          amount: entry.value,
+          transactionCount: transactionCount,
+          walletCount: walletCount,
         );
       },
       separatorBuilder: (context, index) {
@@ -238,18 +430,41 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget get expenseList {
+  Widget expenseListWidget(
+      List<MapEntry<CategoryEntity, double>> expenseListData) {
+    final allTransactions = context.read<TransactionCubit>().state.transactions;
+    final transactions = (_startDate != null && _endDate != null)
+        ? allTransactions.where((tx) {
+            final date = tx.transaction.datetime;
+            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+          }).toList()
+        : allTransactions;
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       shrinkWrap: true,
-      itemCount: expenseTransactions.length,
+      itemCount: expenseListData.length,
       itemBuilder: (context, index) {
-        final item = expenseTransactions[index];
+        final entry = expenseListData[index];
+        final category = entry.key;
+        // Count transactions and unique wallets for this category
+        final categoryTransactions = transactions
+            .where((tx) =>
+                tx.categories.any((cat) => cat.clientId == category.clientId) &&
+                tx.transaction.type == TransactionType.expense)
+            .toList();
+        final transactionCount = categoryTransactions.length;
+        final walletCount = categoryTransactions
+            .map((tx) => tx.transaction.walletClientId)
+            .toSet()
+            .length;
         return CategoryTile(
-          category: item,
+          category: category,
           showStat: true,
           showValue: true,
+          amount: entry.value,
+          transactionCount: transactionCount,
+          walletCount: walletCount,
         );
       },
       separatorBuilder: (context, index) {

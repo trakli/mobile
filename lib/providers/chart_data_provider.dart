@@ -93,4 +93,27 @@ class StatisticsProvider {
       ),
     ),
   ];
+
+  List<Color> pieDataColors = [
+    const Color.fromARGB(255, 244, 67, 54), // Red
+    const Color.fromARGB(255, 33, 150, 243), // Blue
+    const Color.fromARGB(255, 76, 175, 80), // Green
+    const Color.fromARGB(255, 255, 235, 59), // Yellow
+    const Color.fromARGB(255, 156, 39, 176), // Purple
+    const Color.fromARGB(255, 255, 152, 0), // Orange
+    const Color.fromARGB(255, 0, 188, 212), // Cyan
+    const Color.fromARGB(255, 121, 85, 72), // Brown
+    const Color.fromARGB(255, 205, 220, 57), // Lime
+    const Color.fromARGB(255, 63, 81, 181), // Indigo
+    const Color.fromARGB(255, 233, 30, 99), // Pink
+    const Color.fromARGB(255, 0, 150, 136), // Teal
+    const Color.fromARGB(255, 139, 195, 74), // Light Green
+    const Color.fromARGB(255, 255, 87, 34), // Deep Orange
+    const Color.fromARGB(255, 103, 58, 183), // Deep Purple
+    const Color.fromARGB(255, 255, 193, 7), // Amber
+    const Color.fromARGB(255, 96, 125, 139), // Blue Grey
+    const Color.fromARGB(255, 0, 255, 255), // Aqua
+    const Color.fromARGB(255, 255, 0, 255), // Magenta
+    const Color.fromARGB(255, 0, 255, 0), // Bright Green
+  ];
 }
