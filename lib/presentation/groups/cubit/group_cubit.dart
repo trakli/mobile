@@ -35,10 +35,10 @@ class GroupCubit extends Cubit<GroupState> {
     this._listenToGroupsUseCase,
     this._ensureDefaultWalletExistsUseCase,
   ) : super(const GroupState()) {
-    // _listenToGroups();
+    _listenToGroups();
   }
 
-  void listenToGroups() {
+  void _listenToGroups() {
     _subscription?.cancel();
     _subscription = _listenToGroupsUseCase(NoParams()).listen(
       (result) => result.fold(

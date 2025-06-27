@@ -330,14 +330,6 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   }
 
   Widget statOne({required List<TransactionCompleteEntity> transactions}) {
-    // Aggregate by date (e.g., by day)
-    // final allTransactions = context.read<TransactionCubit>().state.transactions;
-    // final transactions = (_startDate != null && _endDate != null)
-    //     ? allTransactions.where((tx) {
-    //         final date = tx.transaction.datetime;
-    //         return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-    //       }).toList()
-    //     : allTransactions;
     final Map<String, double> incomeByDate = {};
     final Map<String, double> expenseByDate = {};
     for (final tx in transactions) {
@@ -376,13 +368,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     final onboardingState = context.watch<OnboardingCubit>().state;
     final currencySymbol =
         onboardingState.entity?.selectedCurrency?.symbol ?? 'XAF';
-    // final allTransactions = context.read<TransactionCubit>().state.transactions;
-    // final transactions = (_startDate != null && _endDate != null)
-    //     ? allTransactions.where((tx) {
-    //         final date = tx.transaction.datetime;
-    //         return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-    //       }).toList()
-    //     : allTransactions;
+
     double totalIncome = 0;
     double totalExpense = 0;
     for (final tx in transactions) {

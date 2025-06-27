@@ -30,6 +30,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final groups = context.watch<GroupCubit>().state.groups;
+
     if (selectedGroup == null && groups.isNotEmpty) {
       selectedGroup = groups.first;
     }
