@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/core/extensions/string_extension.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
@@ -18,6 +20,8 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -34,6 +38,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   DateTime? _startDate;
   DateTime? _endDate;
+  String? _selectedWalletClientId;
+  WalletEntity? _selectedWallet;
 
   @override
   void initState() {
@@ -42,7 +48,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       setState(() {});
     });
     final now = DateTime.now();
-    _endDate = now;
+    _endDate = DateTime(now.year, now.month, now.day);
     _startDate = DateTime(now.year, now.month, 1);
     super.initState();
   }
@@ -64,18 +70,67 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     }
   }
 
+  void _pickWallet(List<WalletEntity> wallets) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  'All wallets',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+                leading: const Icon(Icons.account_balance_wallet),
+                selected: _selectedWalletClientId == null,
+                onTap: () {
+                  setState(() {
+                    _selectedWalletClientId = null;
+                    _selectedWallet = null;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ...wallets.map((wallet) => ListTile(
+                    title: Text(wallet.name, style: TextStyle(fontSize: 14.sp)),
+                    leading: const Icon(Icons.account_balance_wallet_outlined),
+                    selected: _selectedWalletClientId == wallet.clientId,
+                    onTap: () {
+                      setState(() {
+                        _selectedWalletClientId = wallet.clientId;
+                        _selectedWallet = wallet;
+                      });
+                      Navigator.pop(context);
+                    },
+                  )),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TransactionCubit, TransactionState>(
       builder: (context, state) {
         // Aggregate transactions
         final allTransactions = state.transactions;
+        final wallets = context.watch<WalletCubit>().state.wallets;
+        final filteredByWallet = _selectedWalletClientId == null
+            ? allTransactions
+            : allTransactions
+                .where((tx) =>
+                    tx.transaction.walletClientId == _selectedWalletClientId)
+                .toList();
         final transactions = (_startDate != null && _endDate != null)
-            ? allTransactions.where((tx) {
+            ? filteredByWallet.where((tx) {
                 final date = tx.transaction.datetime;
                 return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
               }).toList()
-            : allTransactions;
+            : filteredByWallet;
 
         final Map<String, double> incomeByCategory = {};
         final Map<String, double> expenseByCategory = {};
@@ -131,21 +186,26 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               padding: EdgeInsets.all(8.r),
-                              child: Row(
-                                spacing: 8.w,
-                                children: [
-                                  Text(
-                                    "All wallets",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Theme.of(context).primaryColorDark,
+                              child: GestureDetector(
+                                onTap: () => _pickWallet(wallets),
+                                child: Row(
+                                  spacing: 8.w,
+                                  children: [
+                                    Text(
+                                      (_selectedWallet?.name ?? 'All wallets')
+                                          .extractWords(maxSize: 15),
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                      ),
                                     ),
-                                  ),
-                                  SvgPicture.asset(
-                                    Assets.images.arrowDown,
-                                    width: 16.w,
-                                  ),
-                                ],
+                                    SvgPicture.asset(
+                                      Assets.images.arrowDown,
+                                      width: 16.w,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const Spacer(),
@@ -168,7 +228,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                               : dateFormat
                                                   .format(DateTime.now()),
                                           style: TextStyle(
-                                            fontSize: 14.sp,
+                                            fontSize: 10.sp,
                                             color: Theme.of(context)
                                                 .primaryColorDark,
                                           ),
@@ -193,9 +253,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                         child: PageView(
                           controller: pageController,
                           children: [
-                            statOne(),
-                            statTwo(),
-                            statThree(),
+                            statOne(transactions: transactions),
+                            statTwo(transactions: transactions),
+                            statThree(transactions: transactions),
                           ],
                         ),
                       ),
@@ -269,15 +329,15 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget statOne() {
+  Widget statOne({required List<TransactionCompleteEntity> transactions}) {
     // Aggregate by date (e.g., by day)
-    final allTransactions = context.read<TransactionCubit>().state.transactions;
-    final transactions = (_startDate != null && _endDate != null)
-        ? allTransactions.where((tx) {
-            final date = tx.transaction.datetime;
-            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-          }).toList()
-        : allTransactions;
+    // final allTransactions = context.read<TransactionCubit>().state.transactions;
+    // final transactions = (_startDate != null && _endDate != null)
+    //     ? allTransactions.where((tx) {
+    //         final date = tx.transaction.datetime;
+    //         return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+    //       }).toList()
+    //     : allTransactions;
     final Map<String, double> incomeByDate = {};
     final Map<String, double> expenseByDate = {};
     for (final tx in transactions) {
@@ -312,17 +372,17 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget statTwo() {
+  Widget statTwo({required List<TransactionCompleteEntity> transactions}) {
     final onboardingState = context.watch<OnboardingCubit>().state;
     final currencySymbol =
         onboardingState.entity?.selectedCurrency?.symbol ?? 'XAF';
-    final allTransactions = context.read<TransactionCubit>().state.transactions;
-    final transactions = (_startDate != null && _endDate != null)
-        ? allTransactions.where((tx) {
-            final date = tx.transaction.datetime;
-            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-          }).toList()
-        : allTransactions;
+    // final allTransactions = context.read<TransactionCubit>().state.transactions;
+    // final transactions = (_startDate != null && _endDate != null)
+    //     ? allTransactions.where((tx) {
+    //         final date = tx.transaction.datetime;
+    //         return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
+    //       }).toList()
+    //     : allTransactions;
     double totalIncome = 0;
     double totalExpense = 0;
     for (final tx in transactions) {
@@ -344,14 +404,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget statThree() {
-    final allTransactions = context.read<TransactionCubit>().state.transactions;
-    final transactions = (_startDate != null && _endDate != null)
-        ? allTransactions.where((tx) {
-            final date = tx.transaction.datetime;
-            return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-          }).toList()
-        : allTransactions;
+  Widget statThree({required List<TransactionCompleteEntity> transactions}) {
     final partiesState = context.watch<PartyCubit>().state;
     final parties = partiesState.parties;
     // Use stable color palette from StatisticsProvider
@@ -382,6 +435,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       ),
       child: DashboardPieData(
         pieData: pieData.where((data) => data.value > 0).toList(),
+        startDate: _startDate,
+        endDate: _endDate,
       ),
     );
   }
