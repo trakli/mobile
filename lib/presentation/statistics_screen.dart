@@ -53,6 +53,30 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     super.initState();
   }
 
+  List<TransactionCompleteEntity> _filterTransactions(
+    List<TransactionCompleteEntity> transactions, {
+    String? walletClientId,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    var filtered = transactions;
+
+    if (walletClientId != null) {
+      filtered = filtered
+          .where((tx) => tx.transaction.walletClientId == walletClientId)
+          .toList();
+    }
+
+    if (startDate != null && endDate != null) {
+      filtered = filtered.where((tx) {
+        final date = tx.transaction.datetime;
+        return !date.isBefore(startDate) && !date.isAfter(endDate);
+      }).toList();
+    }
+
+    return filtered;
+  }
+
   void _pickDateRange() async {
     final picked = await showDateRangePicker(
       context: context,
@@ -119,18 +143,13 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         // Aggregate transactions
         final allTransactions = state.transactions;
         final wallets = context.watch<WalletCubit>().state.wallets;
-        final filteredByWallet = _selectedWalletClientId == null
-            ? allTransactions
-            : allTransactions
-                .where((tx) =>
-                    tx.transaction.walletClientId == _selectedWalletClientId)
-                .toList();
-        final transactions = (_startDate != null && _endDate != null)
-            ? filteredByWallet.where((tx) {
-                final date = tx.transaction.datetime;
-                return !date.isBefore(_startDate!) && !date.isAfter(_endDate!);
-              }).toList()
-            : filteredByWallet;
+
+        final transactions = _filterTransactions(
+          allTransactions,
+          walletClientId: _selectedWalletClientId,
+          startDate: _startDate,
+          endDate: _endDate,
+        );
 
         final Map<String, double> incomeByCategory = {};
         final Map<String, double> expenseByCategory = {};

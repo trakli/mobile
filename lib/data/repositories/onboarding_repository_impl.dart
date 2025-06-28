@@ -21,9 +21,6 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     this._exchangeRateRepository,
   );
 
-  // Stream<OnboardingEntity?> get onboardingStateStream =>
-  //     _onboardingStateController.stream;
-
   @override
   Future<Either<Failure, Unit>> saveOnboardingState(
       OnboardingEntity entity) async {
@@ -37,7 +34,10 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         await _exchangeRateRepository.updateDefaultCurrency(code);
       }
 
-      _onboardingStateController.add(entity);
+      if (!_onboardingStateController.isClosed) {
+        _onboardingStateController.add(entity);
+      }
+
       return unit;
     });
   }
