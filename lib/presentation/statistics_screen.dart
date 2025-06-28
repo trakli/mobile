@@ -96,6 +96,11 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                   surface: Colors.white,
                   onSurface: neutralN900,
                 ),
+            datePickerTheme: DatePickerThemeData(
+              rangePickerBackgroundColor: const Color(0xFFD9D9D9),
+              rangeSelectionBackgroundColor:
+                  appPrimaryColor.withValues(alpha: 0.1),
+            ),
             dialogTheme: const DialogThemeData(
               backgroundColor: Color(0xFFD9D9D9),
             ),
