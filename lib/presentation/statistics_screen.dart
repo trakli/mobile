@@ -22,6 +22,7 @@ import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/presentation/utils/wallet_mini_tile.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -82,9 +83,26 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      barrierColor: const Color(0xFFD9D9D9),
       initialDateRange: _startDate != null && _endDate != null
           ? DateTimeRange(start: _startDate!, end: _endDate!)
           : null,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: appPrimaryColor,
+                  onPrimary: Colors.white,
+                  surface: Colors.white,
+                  onSurface: neutralN900,
+                ),
+            dialogTheme: const DialogThemeData(
+              backgroundColor: Color(0xFFD9D9D9),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -98,37 +116,93 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return SafeArea(
+        return SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                title: Text(
-                  'All wallets',
-                  style: TextStyle(fontSize: 14.sp),
+              SizedBox(height: 8.h),
+              Align(
+                child: Container(
+                  width: 90.w,
+                  height: 6.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD9D9D9),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-                leading: const Icon(Icons.account_balance_wallet),
-                selected: _selectedWalletClientId == null,
-                onTap: () {
-                  setState(() {
-                    _selectedWalletClientId = null;
-                    _selectedWallet = null;
-                  });
-                  Navigator.pop(context);
-                },
               ),
-              ...wallets.map((wallet) => ListTile(
-                    title: Text(wallet.name, style: TextStyle(fontSize: 14.sp)),
-                    leading: const Icon(Icons.account_balance_wallet_outlined),
-                    selected: _selectedWalletClientId == wallet.clientId,
-                    onTap: () {
-                      setState(() {
-                        _selectedWalletClientId = wallet.clientId;
-                        _selectedWallet = wallet;
-                      });
-                      Navigator.pop(context);
-                    },
-                  )),
+              SizedBox(height: 16.h),
+              Text(
+                "Pick wallet",
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "Select a wallet to filter your statistics. Choose 'All wallets' to view statistics across all your wallets.",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: neutralN900,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: 0.4.sh,
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: wallets.length + 1, // +1 for "All wallets" option
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      // "All wallets" option
+                      return WalletMiniTile<String?>(
+                        value: null,
+                        groupValue: _selectedWalletClientId,
+                        isAllWallets: true,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedWalletClientId = null;
+                            _selectedWallet = null;
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    } else {
+                      // Individual wallet options
+                      final wallet = wallets[index - 1];
+                      return WalletMiniTile<String?>(
+                        value: wallet.clientId,
+                        groupValue: _selectedWalletClientId,
+                        wallet: wallet,
+                        isAllWallets: false,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedWalletClientId = wallet.clientId;
+                            _selectedWallet = wallet;
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 8.h);
+                  },
+                ),
+              ),
+              SizedBox(height: 20.h),
             ],
           ),
         );
