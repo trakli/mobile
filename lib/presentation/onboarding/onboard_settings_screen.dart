@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/constants/key_constants.dart';
-import 'package:trakli/domain/entities/onboarding_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -244,11 +244,9 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                       onTap: () {
                         setState(() {
                           selectedCurrency = currency;
-                          context.read<OnboardingCubit>().saveOnboardingState(
-                                OnboardingEntity(
-                                  selectedCurrency: currency,
-                                ),
-                              );
+                          context
+                              .read<OnboardingCubit>()
+                              .selectCurrency(currency);
                         });
                       },
                       leading: flagWidget(currency),
@@ -289,8 +287,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                       .entity
                       ?.selectedCurrency;
                   if (currency != null) {
+                    context.read<GroupCubit>().ensureDefaultGroup(
+                          name: LocaleKeys.defaultGroupName.tr(),
+                        );
                     // Create default wallet with selected currency
-                    await context.read<WalletCubit>().ensureDefaultWallet(
+                    context.read<WalletCubit>().ensureDefaultWallet(
                           currencyCode: currency.code,
                           name: LocaleKeys.defaultWalletName.tr(),
                           type: WalletType.cash,

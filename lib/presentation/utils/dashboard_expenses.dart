@@ -1,25 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
-import 'package:trakli/models/chart_data_model.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
-class DashboardExpenses extends StatefulWidget {
-  const DashboardExpenses({super.key});
+class DashboardExpenses extends StatelessWidget {
+  final double totalIncome;
+  final double totalExpense;
+  final String currencySymbol;
 
-  @override
-  State<DashboardExpenses> createState() => _DashboardExpensesState();
-}
-
-class _DashboardExpensesState extends State<DashboardExpenses> {
-  DateFormat format = DateFormat('MMMM');
-  final summaryData = StatisticsProvider().getSummaryData();
+  const DashboardExpenses({
+    super.key,
+    required this.totalIncome,
+    required this.totalExpense,
+    required this.currencySymbol,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +42,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                     TextSpan(
                       text: CurrencyFormater.formatAmountWithSymbol(
                         context,
-                        138000,
+                        totalIncome,
                       ),
                       style: TextStyle(
                         fontSize: 12.sp,
@@ -76,7 +73,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                     TextSpan(
                       text: CurrencyFormater.formatAmountWithSymbol(
                         context,
-                        24478,
+                        totalExpense,
                       ),
                       style: TextStyle(
                         fontSize: 12.sp,
@@ -93,11 +90,15 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
           child: SfCircularChart(
             margin: EdgeInsets.zero,
             series: <CircularSeries>[
-              DoughnutSeries<ChartData, String>(
-                dataSource: summaryData,
-                pointColorMapper: (ChartData data, _) => data.color,
-                xValueMapper: (ChartData data, _) => data.property,
-                yValueMapper: (ChartData data, _) => data.value,
+              DoughnutSeries<_SummaryData, String>(
+                dataSource: [
+                  _SummaryData('Total Expense', totalExpense, expenseRedText),
+                  _SummaryData('Total Income', totalIncome,
+                      Theme.of(context).primaryColor),
+                ],
+                pointColorMapper: (data, _) => data.color,
+                xValueMapper: (data, _) => data.label,
+                yValueMapper: (data, _) => data.value,
                 dataLabelSettings: const DataLabelSettings(
                   isVisible: false,
                 ),
@@ -119,7 +120,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                         Text(
                           CurrencyFormater.formatAmount(
                             context,
-                            138000,
+                            totalIncome,
                             compact: true,
                           ),
                           style: TextStyle(
@@ -129,11 +130,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                           ),
                         ),
                         Text(
-                          context
-                                  .watch<OnboardingCubit>()
-                                  .state
-                                  .currencySymbol ??
-                              "XAF",
+                          currencySymbol,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -149,7 +146,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                         Text(
                           CurrencyFormater.formatAmount(
                             context,
-                            24478,
+                            totalExpense,
                             compact: true,
                           ),
                           style: TextStyle(
@@ -159,11 +156,7 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
                           ),
                         ),
                         Text(
-                          context
-                                  .watch<OnboardingCubit>()
-                                  .state
-                                  .currencySymbol ??
-                              "XAF",
+                          currencySymbol,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -189,4 +182,11 @@ class _DashboardExpensesState extends State<DashboardExpenses> {
       ],
     );
   }
+}
+
+class _SummaryData {
+  final String label;
+  final double value;
+  final Color color;
+  _SummaryData(this.label, this.value, this.color);
 }

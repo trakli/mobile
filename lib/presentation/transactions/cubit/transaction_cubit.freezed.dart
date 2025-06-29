@@ -22,6 +22,7 @@ mixin _$TransactionState {
   bool get isSaving => throw _privateConstructorUsedError;
   bool get isDeleting => throw _privateConstructorUsedError;
   Failure get failure => throw _privateConstructorUsedError;
+  GroupEntity? get selectedGroup => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
@@ -41,9 +42,11 @@ abstract class $TransactionStateCopyWith<$Res> {
       bool isLoading,
       bool isSaving,
       bool isDeleting,
-      Failure failure});
+      Failure failure,
+      GroupEntity? selectedGroup});
 
   $FailureCopyWith<$Res> get failure;
+  $GroupEntityCopyWith<$Res>? get selectedGroup;
 }
 
 /// @nodoc
@@ -66,6 +69,7 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
+    Object? selectedGroup = freezed,
   }) {
     return _then(_value.copyWith(
       transactions: null == transactions
@@ -88,6 +92,10 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
               as Failure,
+      selectedGroup: freezed == selectedGroup
+          ? _value.selectedGroup
+          : selectedGroup // ignore: cast_nullable_to_non_nullable
+              as GroupEntity?,
     ) as $Val);
   }
 
@@ -98,6 +106,20 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
   $FailureCopyWith<$Res> get failure {
     return $FailureCopyWith<$Res>(_value.failure, (value) {
       return _then(_value.copyWith(failure: value) as $Val);
+    });
+  }
+
+  /// Create a copy of TransactionState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GroupEntityCopyWith<$Res>? get selectedGroup {
+    if (_value.selectedGroup == null) {
+      return null;
+    }
+
+    return $GroupEntityCopyWith<$Res>(_value.selectedGroup!, (value) {
+      return _then(_value.copyWith(selectedGroup: value) as $Val);
     });
   }
 }
@@ -115,10 +137,13 @@ abstract class _$$TransactionStateImplCopyWith<$Res>
       bool isLoading,
       bool isSaving,
       bool isDeleting,
-      Failure failure});
+      Failure failure,
+      GroupEntity? selectedGroup});
 
   @override
   $FailureCopyWith<$Res> get failure;
+  @override
+  $GroupEntityCopyWith<$Res>? get selectedGroup;
 }
 
 /// @nodoc
@@ -139,6 +164,7 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
+    Object? selectedGroup = freezed,
   }) {
     return _then(_$TransactionStateImpl(
       transactions: null == transactions
@@ -161,6 +187,10 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
               as Failure,
+      selectedGroup: freezed == selectedGroup
+          ? _value.selectedGroup
+          : selectedGroup // ignore: cast_nullable_to_non_nullable
+              as GroupEntity?,
     ));
   }
 }
@@ -173,7 +203,8 @@ class _$TransactionStateImpl implements _TransactionState {
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
-      required this.failure})
+      required this.failure,
+      this.selectedGroup})
       : _transactions = transactions;
 
   final List<TransactionCompleteEntity> _transactions;
@@ -192,10 +223,12 @@ class _$TransactionStateImpl implements _TransactionState {
   final bool isDeleting;
   @override
   final Failure failure;
+  @override
+  final GroupEntity? selectedGroup;
 
   @override
   String toString() {
-    return 'TransactionState(transactions: $transactions, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure)';
+    return 'TransactionState(transactions: $transactions, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure, selectedGroup: $selectedGroup)';
   }
 
   @override
@@ -211,7 +244,9 @@ class _$TransactionStateImpl implements _TransactionState {
                 other.isSaving == isSaving) &&
             (identical(other.isDeleting, isDeleting) ||
                 other.isDeleting == isDeleting) &&
-            (identical(other.failure, failure) || other.failure == failure));
+            (identical(other.failure, failure) || other.failure == failure) &&
+            (identical(other.selectedGroup, selectedGroup) ||
+                other.selectedGroup == selectedGroup));
   }
 
   @override
@@ -221,7 +256,8 @@ class _$TransactionStateImpl implements _TransactionState {
       isLoading,
       isSaving,
       isDeleting,
-      failure);
+      failure,
+      selectedGroup);
 
   /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.
@@ -239,7 +275,8 @@ abstract class _TransactionState implements TransactionState {
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
-      required final Failure failure}) = _$TransactionStateImpl;
+      required final Failure failure,
+      final GroupEntity? selectedGroup}) = _$TransactionStateImpl;
 
   @override
   List<TransactionCompleteEntity> get transactions;
@@ -251,6 +288,8 @@ abstract class _TransactionState implements TransactionState {
   bool get isDeleting;
   @override
   Failure get failure;
+  @override
+  GroupEntity? get selectedGroup;
 
   /// Create a copy of TransactionState
   /// with the given fields replaced by the non-null parameter values.

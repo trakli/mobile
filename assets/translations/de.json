@@ -133,5 +133,6 @@
   "partyUpdate": "Geschäftspartner aktualisieren",
   "partyAdd": "Geschäftspartner hinzufügen",
   "partyNoParties": "Keine Geschäftspartner gefunden",
-  "groupUpdate": "Gruppe aktualisieren"
+  "groupUpdate": "Gruppe aktualisieren",
+  "defaultGroupName": "Default group"
 }

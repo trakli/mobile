@@ -15,4 +15,14 @@ class LocalStorage {
     final formDisplay = prefs.getString("formDisplay");
     return formDisplay;
   }
+
+  Future<void> updateGroupSetting(String key, String value) async {
+    final prefs = await _sharedPreferences();
+    await prefs.setString('group_setting_$key', value);
+  }
+
+  Future<String?> getGroupSetting(String key) async {
+    final prefs = await _sharedPreferences();
+    return prefs.getString('group_setting_$key');
+  }
 }

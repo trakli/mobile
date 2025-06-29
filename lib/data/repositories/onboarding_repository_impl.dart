@@ -7,11 +7,14 @@ import 'package:trakli/data/mappers/onboarding_mapper.dart';
 import 'package:trakli/domain/entities/onboarding_entity.dart';
 import 'package:trakli/domain/repositories/exchange_rate_repository.dart';
 import 'package:trakli/domain/repositories/onboarding_repository.dart';
+import 'dart:async';
 
 @Singleton(as: OnboardingRepository)
 class OnboardingRepositoryImpl implements OnboardingRepository {
   final OnboardingLocalDataSource _localDataSource;
   final ExchangeRateRepository _exchangeRateRepository;
+  final _onboardingStateController =
+      StreamController<OnboardingEntity?>.broadcast();
 
   OnboardingRepositoryImpl(
     this._localDataSource,
@@ -31,6 +34,10 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         await _exchangeRateRepository.updateDefaultCurrency(code);
       }
 
+      if (!_onboardingStateController.isClosed) {
+        _onboardingStateController.add(entity);
+      }
+
       return unit;
     });
   }
@@ -39,7 +46,9 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   Future<Either<Failure, OnboardingEntity?>> getOnboardingState() async {
     return RepositoryErrorHandler.handleApiCall(() async {
       final model = await _localDataSource.getOnboardingState();
-      return model != null ? OnboardingMapper.toEntity(model) : null;
+      final entity = model != null ? OnboardingMapper.toEntity(model) : null;
+      _onboardingStateController.add(entity);
+      return entity;
     });
   }
 
@@ -47,7 +56,24 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   Future<Either<Failure, Unit>> resetOnboarding() async {
     return RepositoryErrorHandler.handleApiCall(() async {
       await _localDataSource.resetOnboarding();
+      _onboardingStateController.add(null);
       return unit;
     });
+  }
+
+  void dispose() {
+    _onboardingStateController.close();
+  }
+
+  @override
+  Stream<OnboardingEntity?> get onboardingState async* {
+    final model = await _localDataSource.getOnboardingState();
+    final entity = model != null ? OnboardingMapper.toEntity(model) : null;
+
+    if (entity != null) {
+      yield entity;
+    }
+
+    yield* _onboardingStateController.stream;
   }
 }

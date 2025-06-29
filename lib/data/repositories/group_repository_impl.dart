@@ -38,12 +38,12 @@ class GroupRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> insertGroup({
+  Future<Either<Failure, GroupEntity>> insertGroup({
     required String name,
     String? description,
     MediaEntity? icon,
   }) async {
-    return await RepositoryErrorHandler.handleApiCall<Unit>(
+    return await RepositoryErrorHandler.handleApiCall<GroupEntity>(
       () async {
         final media = icon != null
             ? Media(
@@ -59,7 +59,7 @@ class GroupRepositoryImpl
         );
 
         unawaited(post(group));
-        return unit;
+        return GroupMapper.toDomain(group);
       },
     );
   }
@@ -119,5 +119,13 @@ class GroupRepositoryImpl
     return localDataSource.listenToGroups().map(
           (groups) => right(groups.map(GroupMapper.toDomain).toList()),
         );
+  }
+
+  @override
+  Future<Either<Failure, bool>> hasAnyWallet() {
+    return RepositoryErrorHandler.handleApiCall(() async {
+      final groups = await localDataSource.getAllGroups();
+      return groups.isNotEmpty;
+    });
   }
 }

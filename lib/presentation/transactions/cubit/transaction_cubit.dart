@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
@@ -36,6 +37,12 @@ class TransactionCubit extends Cubit<TransactionState> {
     return super.close();
   }
 
+  Future<void> setCurrentGroup(GroupEntity groupEntity) async {
+    emit(
+      state.copyWith(selectedGroup: groupEntity),
+    );
+  }
+
   Future<void> loadTransactions() async {
     emit(state.copyWith(isLoading: true, failure: const Failure.none()));
 
@@ -61,7 +68,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required DateTime datetime,
     required String walletClientId,
     String? partyClientId,
-    String? groupClientId,
+    // String? groupClientId,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
@@ -73,7 +80,7 @@ class TransactionCubit extends Cubit<TransactionState> {
         datetime: datetime,
         walletClientId: walletClientId,
         partyClientId: partyClientId,
-        groupClientId: groupClientId,
+        groupClientId: state.selectedGroup?.clientId,
       ),
     );
     result.fold(

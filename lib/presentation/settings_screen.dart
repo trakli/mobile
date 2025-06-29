@@ -7,8 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
@@ -16,6 +19,9 @@ import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.d
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
+import 'package:collection/collection.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -27,6 +33,12 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final groups = context.watch<GroupCubit>().state.groups;
+    final defaultGroupId =
+        context.watch<OnboardingCubit>().state.entity?.defaultGroup;
+    final group =
+        groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
+
     return Scaffold(
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -188,6 +200,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 size: 16.sp,
               ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                padding: EdgeInsets.all(8.h),
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+                child: SvgPicture.asset(
+                  Assets.images.people,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).primaryColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+              title: const Text('Switch Default Group'),
+              subtitle: Text(
+                group?.name ?? "",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              onTap: groups.length > 1
+                  ? () async {
+                      final pickedGroup =
+                          await showCustomBottomSheet<GroupEntity>(
+                        context,
+                        widget: PickGroupBottomSheet(
+                          group: group,
+                        ),
+                      );
+                      if (pickedGroup != null) {
+                        if (context.mounted) {
+                          context
+                              .read<OnboardingCubit>()
+                              .setDefaultGroup(pickedGroup.clientId);
+                        }
+                      }
+                    }
+                  : null,
+              trailing: groups.length > 1
+                  ? Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16.sp,
+                    )
+                  : null,
             ),
           ],
         ),

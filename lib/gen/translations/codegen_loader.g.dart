@@ -138,5 +138,6 @@ abstract class  LocaleKeys {
   static const partyAdd = 'partyAdd';
   static const partyNoParties = 'partyNoParties';
   static const groupUpdate = 'groupUpdate';
+  static const defaultGroupName = 'defaultGroupName';
 
 }

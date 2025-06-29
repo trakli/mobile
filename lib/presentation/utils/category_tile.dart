@@ -18,6 +18,9 @@ class CategoryTile extends StatefulWidget {
   final CategoryEntity category;
   final bool showStat;
   final bool showValue;
+  final double? amount;
+  final int transactionCount;
+  final int walletCount;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
@@ -27,6 +30,9 @@ class CategoryTile extends StatefulWidget {
     this.accentColor = const Color(0xFFEB5757),
     this.showStat = false,
     this.showValue = false,
+    this.amount,
+    this.transactionCount = 0,
+    this.walletCount = 0,
     this.onEdit,
     this.onDelete,
   });
@@ -116,7 +122,7 @@ class _CategoryTileState extends State<CategoryTile> {
                         SizedBox(height: 4.h),
                         Text(
                           widget.showStat
-                              ? "0 transactions in 2 wallets"
+                              ? "${widget.transactionCount} transactions in ${widget.walletCount} wallets"
                               : widget.category.description ?? "No description",
                           style: TextStyle(
                             fontSize: 12.sp,
@@ -218,7 +224,7 @@ class _CategoryTileState extends State<CategoryTile> {
                             TextSpan(
                               text: CurrencyFormater.formatAmountWithSymbol(
                                 context,
-                                randomValue.toDouble(),
+                                widget.amount ?? randomValue.toDouble(),
                               ),
                             ),
                           ],

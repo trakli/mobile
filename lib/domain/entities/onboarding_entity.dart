@@ -23,6 +23,7 @@ class CurrencyConverter
 class OnboardingEntity with _$OnboardingEntity {
   const factory OnboardingEntity({
     @CurrencyConverter() Currency? selectedCurrency,
+    String? defaultGroup,
   }) = _OnboardingEntity;
 
   const OnboardingEntity._();

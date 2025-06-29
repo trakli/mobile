@@ -6,21 +6,36 @@ import 'package:trakli/presentation/groups/add_group_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/pick_group_tile.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 
 class PickGroupBottomSheet extends StatefulWidget {
-  const PickGroupBottomSheet({super.key});
+  final GroupEntity? group;
+  const PickGroupBottomSheet({super.key, this.group});
 
   @override
   State<PickGroupBottomSheet> createState() => _PickGroupBottomSheetState();
 }
 
 class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
-  int? val = 1;
+  GroupEntity? selectedGroup;
+
+  @override
+  void initState() {
+    selectedGroup = widget.group;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final groups = context.watch<GroupCubit>().state.groups;
+
+    if (selectedGroup == null && groups.isNotEmpty) {
+      selectedGroup = groups.first;
+    }
     return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
+      // physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.only(
         left: 16.w,
         right: 16.w,
@@ -80,14 +95,15 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             child: ListView.separated(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              itemCount: 3,
+              itemCount: groups.length,
               itemBuilder: (context, index) {
-                return PickGroupTile(
-                  value: index,
-                  groupValue: val,
+                final group = groups[index];
+                return PickGroupTile<GroupEntity?>(
+                  value: group,
+                  groupValue: selectedGroup,
                   onChanged: (value) {
                     setState(() {
-                      val = value;
+                      selectedGroup = value;
                     });
                   },
                 );
@@ -118,7 +134,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
                   height: 52.h,
                   child: ElevatedButton(
                     onPressed: () {
-                      AppNavigator.pop(context);
+                      Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: neutralN40,
@@ -132,7 +148,12 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
                 child: SizedBox(
                   height: 52.h,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: selectedGroup == null
+                        ? null
+                        : () {
+                            final group = selectedGroup!;
+                            Navigator.of(context).pop<GroupEntity>(group);
+                          },
                     child: const Text("Confirm"),
                   ),
                 ),

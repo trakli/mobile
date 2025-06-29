@@ -16,6 +16,7 @@ import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:trakli/presentation/linear_indicator.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
@@ -26,6 +27,7 @@ import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/presentation/utils/sync_cubit.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -63,6 +65,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<GroupCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<SyncCubit>(),
         ),
       ],
       child: const AppView(),
@@ -273,65 +278,80 @@ class AppView extends StatelessWidget {
           ),
         ),
         builder: (context, child) {
-          return BlocListener<AuthCubit, AuthState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                authenticated: (user) async {
-                  getIt<SynchAppDatabase>().init();
+          return Stack(
+            children: [
+              BlocListener<AuthCubit, AuthState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    authenticated: (user) async {
+                      getIt<SynchAppDatabase>().init();
 
-                  final entityResult =
-                      await getIt<OnboardingRepository>().getOnboardingState();
+                      final entityResult = await getIt<OnboardingRepository>()
+                          .getOnboardingState();
 
-                  final entity = entityResult.fold(
-                    (failure) => null,
-                    (entity) => entity,
+                      final entity = entityResult.fold(
+                        (failure) => null,
+                        (entity) => entity,
+                      );
+
+                      if (entity?.isOnboardingComplete == true) {
+                        navigatorKey.currentState?.pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => MainNavigationScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        navigatorKey.currentState?.pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const OnboardSettingsScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    },
+                    unauthenticated: () async {
+                      final entityResult = await getIt<OnboardingRepository>()
+                          .getOnboardingState();
+
+                      final entity = entityResult.fold(
+                        (failure) => null,
+                        (entity) => entity,
+                      );
+
+                      if (entity?.isOnboardingComplete == true) {
+                        navigatorKey.currentState?.pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => MainNavigationScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        navigatorKey.currentState?.pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const OnboardingScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    },
+                    orElse: () {},
                   );
-
-                  if (entity?.isOnboardingComplete == true) {
-                    navigatorKey.currentState?.pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => MainNavigationScreen(),
-                      ),
-                      (route) => false,
-                    );
-                  } else {
-                    navigatorKey.currentState?.pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const OnboardSettingsScreen(),
-                      ),
-                      (route) => false,
-                    );
-                  }
                 },
-                unauthenticated: () async {
-                  final entityResult =
-                      await getIt<OnboardingRepository>().getOnboardingState();
-
-                  final entity = entityResult.fold(
-                    (failure) => null,
-                    (entity) => entity,
-                  );
-
-                  if (entity?.isOnboardingComplete == true) {
-                    navigatorKey.currentState?.pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => MainNavigationScreen(),
-                      ),
-                      (route) => false,
-                    );
-                  } else {
-                    navigatorKey.currentState?.pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const OnboardingScreen(),
-                      ),
-                      (route) => false,
-                    );
-                  }
-                },
-                orElse: () {},
-              );
-            },
-            child: child,
+                child: child,
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: BlocBuilder<SyncCubit, bool>(
+                  builder: (context, isSyncing) {
+                    if (!isSyncing) return const SizedBox.shrink();
+                    return const SyncIndicatorOverlay();
+                  },
+                ),
+              ),
+            ],
           );
         },
         onGenerateRoute: (_) => SplashScreen.route(),

@@ -11,6 +11,7 @@ _$OnboardingModelImpl _$$OnboardingModelImplFromJson(
     _$OnboardingModelImpl(
       selectedCurrency: _$JsonConverterFromJson<Map<String, dynamic>, Currency>(
           json['selectedCurrency'], const CurrencyConverter().fromJson),
+      defaultGroup: json['defaultGroup'] as String?,
     );
 
 Map<String, dynamic> _$$OnboardingModelImplToJson(
@@ -18,6 +19,7 @@ Map<String, dynamic> _$$OnboardingModelImplToJson(
     <String, dynamic>{
       'selectedCurrency': _$JsonConverterToJson<Map<String, dynamic>, Currency>(
           instance.selectedCurrency, const CurrencyConverter().toJson),
+      'defaultGroup': instance.defaultGroup,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

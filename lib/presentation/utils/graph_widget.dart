@@ -2,19 +2,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 
 class GraphWidget extends StatelessWidget {
-  const GraphWidget({super.key});
+  final List<ChartStatistics> chartData;
+  final double totalIncome;
+  const GraphWidget(
+      {super.key, required this.chartData, required this.totalIncome});
 
   @override
   Widget build(BuildContext context) {
-    final List<ChartStatistics> chartData = StatisticsProvider().getChartData();
     return SfCartesianChart(
       title: ChartTitle(
-        text: CurrencyFormater.formatAmountWithSymbol(context, 138000),
+        text: CurrencyFormater.formatAmountWithSymbol(context, totalIncome),
         alignment: ChartAlignment.near,
         textStyle: TextStyle(
           fontSize: 20.sp,

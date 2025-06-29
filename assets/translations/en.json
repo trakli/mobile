@@ -133,5 +133,6 @@
   "selectCurrency": "Select currency",
   "defaultWalletName": "Default",
   "defaultWalletDescription": "Default wallet created automatically",
-  "groupUpdate": "Update group"
+  "groupUpdate": "Update group",
+  "defaultGroupName": "Default group"
 }

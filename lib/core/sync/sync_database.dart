@@ -20,6 +20,15 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
     // _networkInfo = networkInfo;
   }
 
+  final _syncStateController = StreamController<SyncState>.broadcast();
+  Stream<SyncState> get syncStateStream => _syncStateController.stream;
+
+  @override
+  Future<void> Function(SyncState previous, SyncState current)?
+      get onStateChanged => (previous, current) async {
+            _syncStateController.add(current);
+          };
+
   void init() {
     _performSync();
     initializeNetworkSync(_performSync);
@@ -41,6 +50,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   Future<void> dispose() async {
     await disposeNetworkSync();
     await super.dispose();
+    await _syncStateController.close();
   }
 
   @override

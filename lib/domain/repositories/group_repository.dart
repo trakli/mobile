@@ -7,7 +7,7 @@ import 'dart:async';
 abstract class GroupRepository {
   Future<Either<Failure, List<GroupEntity>>> getAllGroups();
 
-  Future<Either<Failure, Unit>> insertGroup({
+  Future<Either<Failure, GroupEntity>> insertGroup({
     required String name,
     String? description,
     MediaEntity? icon,
@@ -23,4 +23,6 @@ abstract class GroupRepository {
   Future<Either<Failure, Unit>> deleteGroup(String clientId);
 
   Stream<Either<Failure, List<GroupEntity>>> listenToGroups();
+
+  Future<Either<Failure, bool>> hasAnyWallet();
 }
