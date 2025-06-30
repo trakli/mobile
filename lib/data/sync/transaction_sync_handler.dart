@@ -11,6 +11,8 @@ import 'package:trakli/presentation/utils/enums.dart';
 class TransactionSyncHandler
     extends SyncTypeHandler<TransactionCompleteDto, String, int>
     with RestSyncTypeHandler<TransactionCompleteDto, String, int> {
+  static const String entity = 'transaction';
+
   TransactionSyncHandler(
     this.db,
     this.remoteDataSource,
@@ -22,7 +24,7 @@ class TransactionSyncHandler
   TableInfo<Transactions, Transaction> get table => db.transactions;
 
   @override
-  String get entityType => 'transaction';
+  String get entityType => TransactionSyncHandler.entity;
 
   @override
   String getRev(TransactionCompleteDto entity) => entity.transaction.rev ?? '1';

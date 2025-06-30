@@ -138,10 +138,12 @@ _i174.GetIt $initGetIt(
     environment,
     environmentFilter,
   );
-  final injectHttpClientModule = _$InjectHttpClientModule();
   final syncModule = _$SyncModule();
+  final injectHttpClientModule = _$InjectHttpClientModule();
   gh.factory<_i1041.SyncCubit>(() => _i1041.SyncCubit());
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
+  gh.lazySingleton<_i877.SyncDependencyManagerBase>(
+      () => syncModule.provideSyncDependencyManager());
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
   gh.factory<_i632.ExchangeRateRemoteDataSource>(
       () => _i632.ExchangeRateRemoteDataSourceImpl());
@@ -300,6 +302,14 @@ _i174.GetIt $initGetIt(
         localDataSource: gh<_i873.GroupLocalDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
+      () => syncModule.provideSyncTypeHandlers(
+            gh<_i463.CategorySyncHandler>(),
+            gh<_i849.WalletSyncHandler>(),
+            gh<_i280.PartySyncHandler>(),
+            gh<_i235.GroupSyncHandler>(),
+            gh<_i893.TransactionSyncHandler>(),
+          ));
   gh.lazySingleton<_i118.TransactionRepository>(
       () => _i114.TransactionRepositoryImpl(
             syncHandler: gh<_i893.TransactionSyncHandler>(),
@@ -327,14 +337,14 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
-      () => syncModule.provideSyncTypeHandlers(
-            gh<_i893.TransactionSyncHandler>(),
-            gh<_i463.CategorySyncHandler>(),
-            gh<_i849.WalletSyncHandler>(),
-            gh<_i280.PartySyncHandler>(),
-            gh<_i235.GroupSyncHandler>(),
-          ));
+  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
+        appDatabase: gh<_i704.AppDatabase>(),
+        typeHandlers:
+            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
+        dependencyManager: gh<_i877.SyncDependencyManagerBase>(),
+        dio: gh<_i361.Dio>(),
+        networkInfo: gh<_i6.NetworkInfo>(),
+      ));
   gh.factory<_i669.CreateTransactionUseCase>(
       () => _i669.CreateTransactionUseCase(
             gh<_i118.TransactionRepository>(),
@@ -363,13 +373,6 @@ _i174.GetIt $initGetIt(
         deletePartyUseCase: gh<_i56.DeletePartyUseCase>(),
         listenToPartiesUseCase: gh<_i714.ListenToPartiesUseCase>(),
       ));
-  gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
-        appDatabase: gh<_i704.AppDatabase>(),
-        typeHandlers:
-            gh<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(),
-        dio: gh<_i361.Dio>(),
-        networkInfo: gh<_i6.NetworkInfo>(),
-      ));
   gh.factory<_i171.OnboardingCubit>(() => _i171.OnboardingCubit(
         gh<_i575.GetOnboardingState>(),
         gh<_i243.SaveOnboardingState>(),
@@ -384,14 +387,14 @@ _i174.GetIt $initGetIt(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i982.GetGroupsUseCase>(
       () => _i982.GetGroupsUseCase(gh<_i957.GroupRepository>()));
-  gh.factory<_i353.AddGroupUseCase>(
-      () => _i353.AddGroupUseCase(gh<_i957.GroupRepository>()));
-  gh.factory<_i820.UpdateGroupUseCase>(
-      () => _i820.UpdateGroupUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i759.DeleteGroupUseCase>(
       () => _i759.DeleteGroupUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i146.ListenToGroupsUseCase>(
       () => _i146.ListenToGroupsUseCase(gh<_i957.GroupRepository>()));
+  gh.factory<_i353.AddGroupUseCase>(
+      () => _i353.AddGroupUseCase(gh<_i957.GroupRepository>()));
+  gh.factory<_i820.UpdateGroupUseCase>(
+      () => _i820.UpdateGroupUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
         getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
         addWalletUseCase: gh<_i80.AddWalletUseCase>(),
@@ -412,6 +415,6 @@ _i174.GetIt $initGetIt(
   return getIt;
 }
 
-class _$InjectHttpClientModule extends _i488.InjectHttpClientModule {}
-
 class _$SyncModule extends _i680.SyncModule {}
+
+class _$InjectHttpClientModule extends _i488.InjectHttpClientModule {}

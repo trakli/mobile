@@ -8,6 +8,8 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 class PartySyncHandler extends SyncTypeHandler<Party, String, int>
     with RestSyncTypeHandler<Party, String, int> {
+  static const String entity = 'party';
+
   PartySyncHandler(
     this.db,
     this.remoteDataSource,
@@ -19,7 +21,7 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
   TableInfo<Parties, Party> get table => db.parties;
 
   @override
-  String get entityType => 'party';
+  String get entityType => PartySyncHandler.entity;
 
   @override
   String getRev(Party entity) => entity.rev ?? '1';
