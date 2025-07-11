@@ -205,7 +205,7 @@ class _AddTransactionFormCompactLayoutState
                                   });
                                 },
                                 displayStringForOption: (WalletEntity option) {
-                                  return option.name.toLowerCase();
+                                  return option.name.capitalizeFirst();
                                 },
                                 onSelected: (value) {
                                   setState(() {
@@ -361,7 +361,7 @@ class _AddTransactionFormCompactLayoutState
                                   });
                                 },
                                 displayStringForOption: (PartyEntity option) {
-                                  return option.name.toLowerCase();
+                                  return option.name.capitalizeFirst();
                                 },
                                 onSelected: (value) {
                                   setState(() {
