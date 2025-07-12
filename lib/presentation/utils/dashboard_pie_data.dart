@@ -37,7 +37,7 @@ class DashboardPieData extends StatelessWidget {
     String toDateText;
 
     if (isCurrentMonth) {
-      fromDateText = 'This month';
+      fromDateText = LocaleKeys.thisMonth.tr();
       toDateText = '';
     } else {
       fromDateText = formatWithYear.format(startDate ?? DateTime.now());
@@ -52,7 +52,7 @@ class DashboardPieData extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
-          "Parties",
+          LocaleKeys.parties.tr(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16.sp,
@@ -60,7 +60,7 @@ class DashboardPieData extends StatelessWidget {
         ),
         Text(
           isCurrentMonth
-              ? 'This month'
+              ? LocaleKeys.thisMonth.tr()
               : LocaleKeys.fromDateToDate.tr(
                   args: [
                     fromDateText,
@@ -86,7 +86,7 @@ class DashboardPieData extends StatelessWidget {
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    'No transaction data available',
+                    LocaleKeys.noTransactionData.tr(),
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Colors.grey[600],
@@ -95,7 +95,7 @@ class DashboardPieData extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    'Add transactions with parties to see the chart',
+                    LocaleKeys.addTransactionsToSeeChart.tr(),
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: Colors.grey[500],

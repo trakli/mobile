@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WalletMiniTile<T> extends StatelessWidget {
   final T value;
@@ -9,6 +11,7 @@ class WalletMiniTile<T> extends StatelessWidget {
   final ValueChanged<T?>? onChanged;
   final WalletEntity? wallet;
   final bool isAllWallets;
+  final String? walletNameOverride;
 
   const WalletMiniTile({
     super.key,
@@ -17,11 +20,12 @@ class WalletMiniTile<T> extends StatelessWidget {
     this.onChanged,
     this.wallet,
     this.isAllWallets = false,
+    this.walletNameOverride,
   });
 
   @override
   Widget build(BuildContext context) {
-    String walletName = 'All wallets';
+    String walletName = walletNameOverride ?? LocaleKeys.allWallets.tr();
     if (!isAllWallets && wallet != null) {
       walletName = wallet!.name;
     }

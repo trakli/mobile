@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/presentation/utils/wallet_tile_mini.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class SelectWalletBottomSheet extends StatelessWidget {
   final List<WalletEntity> wallets;
@@ -39,7 +41,7 @@ class SelectWalletBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            "Select wallet",
+            LocaleKeys.selectWallet.tr(),
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.w700,

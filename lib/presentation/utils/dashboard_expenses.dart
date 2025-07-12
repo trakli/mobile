@@ -37,7 +37,7 @@ class DashboardExpenses extends StatelessWidget {
                     fontSize: 12.sp,
                     color: textColor,
                   ),
-                  text: "Total Income: ",
+                  text: LocaleKeys.totalIncome.tr(),
                   children: [
                     TextSpan(
                       text: CurrencyFormater.formatAmountWithSymbol(
@@ -68,7 +68,7 @@ class DashboardExpenses extends StatelessWidget {
                     fontSize: 12.sp,
                     color: textColor,
                   ),
-                  text: "Total Expense: ",
+                  text: LocaleKeys.totalExpense.tr(),
                   children: [
                     TextSpan(
                       text: CurrencyFormater.formatAmountWithSymbol(
@@ -92,8 +92,9 @@ class DashboardExpenses extends StatelessWidget {
             series: <CircularSeries>[
               DoughnutSeries<_SummaryData, String>(
                 dataSource: [
-                  _SummaryData('Total Expense', totalExpense, expenseRedText),
-                  _SummaryData('Total Income', totalIncome,
+                  _SummaryData(LocaleKeys.totalExpense.tr(), totalExpense,
+                      expenseRedText),
+                  _SummaryData(LocaleKeys.totalIncome.tr(), totalIncome,
                       Theme.of(context).primaryColor),
                 ],
                 pointColorMapper: (data, _) => data.color,

@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
@@ -36,7 +38,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         leading: const CustomBackButton(),
-        titleText: widget.category != null ? 'Edit Category' : 'Add Category',
+        titleText: widget.category != null
+            ? LocaleKeys.editCategory.tr()
+            : LocaleKeys.addCategory.tr(),
         backgroundColor: appPrimaryColor,
         headerTextColor: Colors.white,
       ),

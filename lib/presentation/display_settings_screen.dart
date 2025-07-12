@@ -8,6 +8,8 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class DisplaySettingsScreen extends StatefulWidget {
   const DisplaySettingsScreen({super.key});
@@ -39,7 +41,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        titleText: "Display Settings",
+        titleText: LocaleKeys.displaySettings.tr(),
         headerTextColor: const Color(0xFFEBEDEC),
         actions: [
           SizedBox(width: 16.w),
@@ -69,9 +71,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   color: Colors.white,
                 ),
               ),
-              title: const Text(
-                "Transaction form display mode",
-              ),
+              title: Text(LocaleKeys.transactionFormDisplayMode.tr()),
               subtitle: (formDisplay != null)
                   ? Text(
                       getFormDisplayText(
@@ -105,9 +105,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   color: Colors.white,
                 ),
               ),
-              title: const Text(
-                "Theme Mode",
-              ),
+              title: Text(LocaleKeys.themeMode.tr()),
               subtitle: Text(
                 ThemeMode.system.toString().split('.').last,
                 style: TextStyle(
@@ -133,7 +131,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: CupertinoActionSheet(
-            title: const Text("Select Form Display Mode"),
+            title: Text(LocaleKeys.selectFormDisplayMode.tr()),
             actions: List.generate(
               supportedFormDisplays.length,
               (index) => CupertinoActionSheetAction(
@@ -172,7 +170,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: CupertinoActionSheet(
-            title: const Text("Select Theme Mode"),
+            title: Text(LocaleKeys.selectThemeMode.tr()),
             actions: [
               CupertinoActionSheetAction(
                 onPressed: () {
@@ -180,7 +178,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  "Light",
+                  LocaleKeys.light.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.black,
@@ -193,7 +191,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  "Dark",
+                  LocaleKeys.dark.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.black,
@@ -206,7 +204,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  "System",
+                  LocaleKeys.system.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.black,

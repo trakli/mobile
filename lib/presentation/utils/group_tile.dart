@@ -11,6 +11,8 @@ import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class GroupTile extends StatelessWidget {
   final GroupEntity group;
@@ -31,9 +33,9 @@ class GroupTile extends StatelessWidget {
     showCustomDialog(
       widget: PopUpDialog(
         dialogType: DialogType.negative,
-        title: 'Delete Group',
+        title: LocaleKeys.deleteGroup.tr(),
         subTitle:
-            'Are you sure you want to delete "${group.name}"? This action cannot be undone.',
+            LocaleKeys.deleteGroupConfirm.tr(namedArgs: {'name': group.name}),
         mainAction: () {
           context.read<GroupCubit>().deleteGroup(group.clientId);
           AppNavigator.pop(context);
@@ -41,8 +43,8 @@ class GroupTile extends StatelessWidget {
         secondaryAction: () {
           AppNavigator.pop(context);
         },
-        mainActionText: "Delete",
-        secondaryActionText: "Cancel",
+        mainActionText: LocaleKeys.delete.tr(),
+        secondaryActionText: LocaleKeys.cancel.tr(),
       ),
     );
   }
@@ -146,7 +148,7 @@ class GroupTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Edit'),
+                        Text(LocaleKeys.edit.tr()),
                       ],
                     ),
                   ),
@@ -172,7 +174,7 @@ class GroupTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Delete'),
+                        Text(LocaleKeys.delete.tr()),
                       ],
                     ),
                   ),

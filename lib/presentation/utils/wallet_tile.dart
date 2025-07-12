@@ -139,7 +139,7 @@ class WalletTile extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const Text('Edit'),
+                                Text(LocaleKeys.edit.tr()),
                               ],
                             ),
                           ),
@@ -170,7 +170,7 @@ class WalletTile extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const Text('Wallet transfer'),
+                                Text(LocaleKeys.walletTransfer.tr()),
                               ],
                             ),
                           ),
@@ -180,17 +180,17 @@ class WalletTile extends StatelessWidget {
                                 showCustomDialog(
                                   widget: PopUpDialog(
                                     dialogType: DialogType.negative,
-                                    title: 'Delete Wallet',
-                                    subTitle:
-                                        'Are you sure you want to delete ${wallet.name}?',
+                                    title: LocaleKeys.deleteWallet.tr(),
+                                    subTitle: LocaleKeys.deleteWalletConfirm
+                                        .tr(namedArgs: {'name': wallet.name}),
                                     mainAction: () {
                                       context
                                           .read<WalletCubit>()
                                           .deleteWallet(wallet.clientId);
                                       AppNavigator.pop(context);
                                     },
-                                    mainActionText: "Delete",
-                                    secondaryActionText: "Cancel",
+                                    mainActionText: LocaleKeys.delete.tr(),
+                                    secondaryActionText: LocaleKeys.cancel.tr(),
                                   ),
                                 );
                               },
@@ -214,7 +214,7 @@ class WalletTile extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Text('Delete'),
+                                  Text(LocaleKeys.delete.tr()),
                                 ],
                               ),
                             ),
@@ -240,7 +240,7 @@ class WalletTile extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const Text('Duplicate'),
+                                Text(LocaleKeys.duplicate.tr()),
                               ],
                             ),
                           ),

@@ -49,7 +49,7 @@ class CustomDrawer extends StatelessWidget {
                   BlendMode.srcIn,
                 ),
               ),
-              title: const Text("Categories"),
+              title: Text(LocaleKeys.categories.tr()),
             ),
             ListTile(
               onTap: () {
@@ -75,7 +75,7 @@ class CustomDrawer extends StatelessWidget {
                   BlendMode.srcIn,
                 ),
               ),
-              title: const Text("Savings"),
+              title: Text(LocaleKeys.savings.tr()),
             ),
             ListTile(
               onTap: () {
@@ -153,7 +153,7 @@ class CustomDrawer extends StatelessWidget {
                   );
                 },
                 leading: const Icon(Icons.storage),
-                title: const Text("Database Viewer"),
+                title: Text(LocaleKeys.databaseViewer.tr()),
               ),
             ],
             Padding(

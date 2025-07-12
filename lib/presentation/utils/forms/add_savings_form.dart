@@ -71,11 +71,11 @@ class _AddSavingsFormState extends State<AddSavingsForm> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: LocaleKeys.typeHere.tr(),
-                      labelText: "Name",
+                      labelText: LocaleKeys.name.tr(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Name is required";
+                        return LocaleKeys.nameIsRequired.tr();
                       }
                       return null;
                     },
@@ -85,7 +85,7 @@ class _AddSavingsFormState extends State<AddSavingsForm> {
             ),
             SizedBox(height: 20.h),
             Text(
-              "Description",
+              LocaleKeys.description.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
@@ -115,8 +115,8 @@ class _AddSavingsFormState extends State<AddSavingsForm> {
                     spacing: 8.w,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Create saving",
+                      Text(
+                        LocaleKeys.createSaving.tr(),
                       ),
                       SvgPicture.asset(
                         Assets.images.add,

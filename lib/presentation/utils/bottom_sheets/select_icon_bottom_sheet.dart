@@ -14,6 +14,8 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class SelectIconBottomSheet extends StatefulWidget {
   const SelectIconBottomSheet({
@@ -73,7 +75,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Select icon",
+          LocaleKeys.selectIcon.tr(),
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.w700,
@@ -114,7 +116,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                       ),
                     ),
                     Text(
-                      "Select a photo",
+                      LocaleKeys.selectPhoto.tr(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -153,7 +155,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                       ),
                     ),
                     Text(
-                      "Use an emoji",
+                      LocaleKeys.useEmoji.tr(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -185,7 +187,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                       size: 32.r,
                     ),
                     Text(
-                      "Select icon",
+                      LocaleKeys.selectIcon.tr(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -234,7 +236,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               ),
             ),
             Text(
-              "Select photo",
+              LocaleKeys.selectPhoto.tr(),
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w700,
@@ -275,7 +277,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                   ),
                 ),
                 Text(
-                  "Camera",
+                  LocaleKeys.camera.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),
@@ -307,7 +309,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                   ),
                 ),
                 Text(
-                  "Gallery",
+                  LocaleKeys.gallery.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),
@@ -353,7 +355,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               ),
             ),
             Text(
-              "Select emoji",
+              LocaleKeys.selectEmoji.tr(),
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w700,
@@ -416,7 +418,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                     onTap: showSearchView,
                     onChanged: (val) {},
                     decoration: InputDecoration(
-                      hintText: "Search emoji",
+                      hintText: LocaleKeys.searchEmoji.tr(),
                       fillColor: Colors.white,
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -435,7 +437,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
             ),
             searchViewConfig: SearchViewConfig(
               backgroundColor: emojiBackgroundColor,
-              hintText: "Search emoji",
+              hintText: LocaleKeys.searchEmoji.tr(),
             ),
           ),
         ),
@@ -475,7 +477,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               ),
             ),
             Text(
-              "Select icon",
+              LocaleKeys.selectIcon.tr(),
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w700,

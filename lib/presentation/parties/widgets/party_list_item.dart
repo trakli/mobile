@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PartyListItem extends StatelessWidget {
   final PartyEntity party;
@@ -28,20 +30,21 @@ class PartyListItem extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Delete Party',
+          LocaleKeys.partyDeleteParty.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
-          'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
+          LocaleKeys.partyDeletePartyConfirm
+              .tr(namedArgs: {'name': party.name}),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Cancel',
+              LocaleKeys.cancel.tr(),
               style: TextStyle(
                 fontSize: 14.sp,
               ),
@@ -56,7 +59,7 @@ class PartyListItem extends StatelessWidget {
               foregroundColor: Colors.red,
             ),
             child: Text(
-              'Delete',
+              LocaleKeys.delete.tr(),
               style: TextStyle(
                 fontSize: 14.sp,
               ),
@@ -151,7 +154,7 @@ class PartyListItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Edit'),
+                        Text(LocaleKeys.edit.tr()),
                       ],
                     ),
                   ),
@@ -177,7 +180,7 @@ class PartyListItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Delete'),
+                        Text(LocaleKeys.delete.tr()),
                       ],
                     ),
                   ),

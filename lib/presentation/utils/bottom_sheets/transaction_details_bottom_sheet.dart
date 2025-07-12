@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -174,7 +175,7 @@ class _TransactionDetailsBottomSheetState
                       Navigator.of(context).pop();
                       widget.onEdit();
                     },
-                    buttonText: "Edit",
+                    buttonText: LocaleKeys.edit.tr(),
                     backgroundColor: Theme.of(context).primaryColor,
                     iconPath: Assets.images.edit2,
                     iconColor: Colors.white,
@@ -187,7 +188,7 @@ class _TransactionDetailsBottomSheetState
                       Navigator.of(context).pop();
                       widget.onDelete();
                     },
-                    buttonText: "Delete",
+                    buttonText: LocaleKeys.delete.tr(),
                     backgroundColor: expenseRed,
                     iconPath: Assets.images.trash,
                     iconColor: const Color(0xFFEB5757),

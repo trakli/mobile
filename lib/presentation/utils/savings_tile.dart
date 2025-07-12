@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class SavingsTile extends StatelessWidget {
   const SavingsTile({super.key});
@@ -45,7 +47,7 @@ class SavingsTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Office Elements",
+                      LocaleKeys.officeElements.tr(),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color(0xFF061D23),
@@ -60,7 +62,7 @@ class SavingsTile extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  "Here you store your office Elements",
+                  LocaleKeys.officeElementsDesc.tr(),
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: const Color(0xFF576760),

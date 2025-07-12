@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Text(
-                              selectedGroup?.name ?? 'Group',
+                              selectedGroup?.name ?? LocaleKeys.group.tr(),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.black,
@@ -278,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 0.25.sh,
                         child: Center(
                           child: Text(
-                            'No transactions found',
+                            LocaleKeys.noTransactionsFound.tr(),
                             style:
                                 TextStyle(fontSize: 16.sp, color: Colors.grey),
                           ),

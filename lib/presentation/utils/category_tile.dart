@@ -1,8 +1,10 @@
 import 'dart:math' as math;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -10,7 +12,6 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-
 import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class CategoryTile extends StatefulWidget {
@@ -53,15 +54,15 @@ class _CategoryTileState extends State<CategoryTile> {
     showCustomDialog(
       widget: PopUpDialog(
         dialogType: DialogType.negative,
-        title: 'Delete Category',
-        subTitle:
-            'Are you sure you want to delete "${widget.category.name}"? This action cannot be undone.',
+        title: LocaleKeys.deleteCategory.tr(),
+        subTitle: LocaleKeys.deleteCategoryConfirm
+            .tr(namedArgs: {'name': widget.category.name}),
         mainAction: () {
           Navigator.pop(context);
           widget.onDelete?.call();
         },
-        mainActionText: "Delete",
-        secondaryActionText: "Cancel",
+        mainActionText: LocaleKeys.delete.tr(),
+        secondaryActionText: LocaleKeys.cancel.tr(),
       ),
     );
   }
@@ -122,8 +123,9 @@ class _CategoryTileState extends State<CategoryTile> {
                         SizedBox(height: 4.h),
                         Text(
                           widget.showStat
-                              ? "${widget.transactionCount} transactions in ${widget.walletCount} wallets"
-                              : widget.category.description ?? "No description",
+                              ? "${widget.transactionCount} ${LocaleKeys.transactionsIn.tr()} ${widget.walletCount} ${LocaleKeys.wallets.tr()}"
+                              : widget.category.description ??
+                                  LocaleKeys.noDescription.tr(),
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: const Color(0xFF576760),
@@ -176,7 +178,7 @@ class _CategoryTileState extends State<CategoryTile> {
                                           ),
                                         ),
                                       ),
-                                      const Text('Edit'),
+                                      Text(LocaleKeys.edit.tr()),
                                     ],
                                   ),
                                 ),
@@ -203,7 +205,7 @@ class _CategoryTileState extends State<CategoryTile> {
                                           ),
                                         ),
                                       ),
-                                      const Text('Delete'),
+                                      Text(LocaleKeys.delete.tr()),
                                     ],
                                   ),
                                 ),

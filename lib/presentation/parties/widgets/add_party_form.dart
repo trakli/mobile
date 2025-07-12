@@ -147,7 +147,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
                             controller: _nameController,
                             decoration: InputDecoration(
                               hintText: LocaleKeys.partyEnterPartyName.tr(),
-                              labelText: "Name",
+                              labelText: LocaleKeys.name.tr(),
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
@@ -165,7 +165,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: LocaleKeys.typeHere.tr(),
-                        labelText: "Description",
+                        labelText: LocaleKeys.description.tr(),
                       ),
                     ),
                     SizedBox(height: 20.h),

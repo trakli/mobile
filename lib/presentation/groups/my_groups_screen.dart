@@ -67,7 +67,7 @@ class MyGroupsScreen extends StatelessWidget {
             if (state.groups.isEmpty) {
               return Center(
                 child: Text(
-                  'No groups found',
+                  LocaleKeys.noGroupsFound.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.grey[600],

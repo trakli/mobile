@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +6,7 @@ import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PopUpDialog extends StatelessWidget {
   final DialogType dialogType;
@@ -101,7 +103,8 @@ class PopUpDialog extends StatelessWidget {
                         backgroundColor: neutralN40,
                         foregroundColor: neutralN900,
                       ),
-                      child: Text(secondaryActionText ?? "Cancel"),
+                      child:
+                          Text(secondaryActionText ?? LocaleKeys.cancel.tr()),
                     ),
                   ),
                 ),
@@ -116,7 +119,7 @@ class PopUpDialog extends StatelessWidget {
                                 : appDangerColor),
                       ),
                       onPressed: mainAction ?? () {},
-                      child: Text(mainActionText ?? "Confirm"),
+                      child: Text(mainActionText ?? LocaleKeys.confirm.tr()),
                     ),
                   ),
                 ),

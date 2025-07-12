@@ -6,6 +6,8 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PartyDisplayWidget extends StatelessWidget {
   final PartyEntity? party;
@@ -42,7 +44,7 @@ class PartyDisplayWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "From",
+            LocaleKeys.from.tr(),
             style: TextStyle(
               color: const Color(0xFF576760),
               fontSize: labelSize ?? 9.sp,
@@ -73,7 +75,7 @@ class PartyDisplayWidget extends StatelessWidget {
                 SizedBox(
                   // width: 50.w,
                   child: Text(
-                    (party?.name ?? 'Unknown')
+                    (party?.name ?? LocaleKeys.unknown.tr())
                         .extractWords(maxSize: maxNameLength),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

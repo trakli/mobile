@@ -31,7 +31,7 @@ class AddTransactionScreen extends StatefulWidget {
 class _AddTransactionScreenState extends State<AddTransactionScreen>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
-  String? formDisplay = 'full';
+  String? formDisplay = LocaleKeys.full.tr();
 
   @override
   void initState() {

@@ -90,7 +90,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
-                            hintText: 'Search...',
+                            hintText: LocaleKeys.searchHint.tr(),
                             suffixIcon: Padding(
                               padding: const EdgeInsets.all(12),
                               child: SvgPicture.asset(
@@ -169,7 +169,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         spacing: 4.w,
                         children: [
                           Text(
-                            "Export",
+                            LocaleKeys.export.tr(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10.sp,
@@ -193,7 +193,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   width: 16.w,
                                   Assets.images.pdfType,
                                 ),
-                                const Text('To PDF'),
+                                Text(LocaleKeys.toPdf.tr()),
                               ],
                             ),
                           ),
@@ -207,7 +207,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   width: 16.w,
                                   Assets.images.excelType,
                                 ),
-                                const Text('To Excel'),
+                                Text(LocaleKeys.toExcel.tr()),
                               ],
                             ),
                           ),
@@ -236,7 +236,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         height: 0.25.sh,
                         child: Center(
                           child: Text(
-                            'No transactions found',
+                            LocaleKeys.noTransactionsFound.tr(),
                             style:
                                 TextStyle(fontSize: 16.sp, color: Colors.grey),
                           ),
@@ -272,7 +272,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: _bottomTile(
                 context,
                 accentColor: appPrimaryColor,
-                mainText: "Total income",
+                mainText: LocaleKeys.totalIncome.tr(),
                 amount: 20111,
               ),
             ),
@@ -421,7 +421,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Assets.images.tag2,
           ),
           Text(
-            "Family",
+            LocaleKeys.family.tr(),
             style: TextStyle(
               fontSize: 10.sp,
             ),

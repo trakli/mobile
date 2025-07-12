@@ -26,7 +26,7 @@ Future<File?> pickFile() async {
       final fileSize = result.files.single.size;
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (fileSize > maxSize) {
-        throw Exception('File size exceeds 5MB limit');
+        throw Exception(LocaleKeys.fileSizeExceedsLimit.tr());
       }
       File file = File(result.files.single.path!);
       return file;
@@ -43,7 +43,7 @@ Future<void> openUrl({required String url}) async {
     Uri.parse(url),
     mode: LaunchMode.externalApplication,
   )) {
-    throw Exception('Could not launch URL');
+    throw Exception(LocaleKeys.couldNotLaunchUrl.tr());
   }
 }
 
@@ -111,9 +111,9 @@ String getLanguageFromCode(Locale locale) {
 String getFormDisplayText(String displayMode) {
   switch (displayMode) {
     case "full":
-      return "Full";
+      return LocaleKeys.full.tr();
     case "compact":
-      return "Compact";
+      return LocaleKeys.compact.tr();
     default:
       return "";
   }
@@ -210,7 +210,7 @@ Future<File?> pickImageApp({
       sourcePath: pickedFile.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Cropper',
+          toolbarTitle: LocaleKeys.cropper.tr(),
           toolbarColor: appPrimaryColor,
           activeControlsWidgetColor: appPrimaryColor,
           toolbarWidgetColor: Colors.white,
@@ -224,7 +224,7 @@ Future<File?> pickImageApp({
           ],
         ),
         IOSUiSettings(
-          title: 'Cropper',
+          title: LocaleKeys.cropper.tr(),
           aspectRatioPresets: [
             CropAspectRatioPreset.original,
             CropAspectRatioPreset.square,
@@ -246,15 +246,7 @@ class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
   (int, int)? get data => (2, 3);
 
   @override
-  String get name => '2x3 (customized)';
-}
-
-String formatCurrency(double amount) {
-  final format = NumberFormat.currency(
-    symbol: '',
-    decimalDigits: 0,
-  );
-  return '${format.format(amount)} XAF';
+  String get name => LocaleKeys.cropAspectRatioCustom.tr();
 }
 
 void showSnackBar({

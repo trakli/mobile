@@ -125,7 +125,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       controller: amountController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: "Ex: 250 000",
+                        hintText: LocaleKeys.exampleAmount.tr(),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
@@ -135,14 +135,14 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Amount is required";
+                          return LocaleKeys.amountIsRequired.tr();
                         }
                         final number = double.tryParse(value);
                         if (number == null) {
-                          return "Must be a number";
+                          return LocaleKeys.mustBeNumber.tr();
                         }
                         if (number == 0) {
-                          return "Amount must not be 0";
+                          return LocaleKeys.amountMustNotBeZero.tr();
                         }
                         return null;
                       },
@@ -224,7 +224,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                         );
                       },
                       decoration: InputDecoration(
-                        hintText: "Select wallet",
+                        hintText: LocaleKeys.selectWallet.tr(),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
@@ -244,7 +244,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Wallet is required";
+                          return LocaleKeys.walletIsRequired.tr();
                         }
                         return null;
                       },
@@ -516,7 +516,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                         );
                       },
                       decoration: InputDecoration(
-                        hintText: "Select category",
+                        hintText: LocaleKeys.selectCategory.tr(),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(
@@ -536,7 +536,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Category is required";
+                          return LocaleKeys.categoryIsRequired.tr();
                         }
                         return null;
                       },
@@ -634,7 +634,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                             ),
                           ),
                           Text(
-                            "Snap a picture",
+                            LocaleKeys.snapPicture.tr(),
                             style: TextStyle(
                               fontSize: 12.sp,
                             ),
@@ -675,7 +675,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Upload attachment",
+                                  LocaleKeys.uploadAttachment.tr(),
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                   ),
@@ -728,7 +728,7 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           if (selectedWallet == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please select a wallet'),
+                                content: Text(LocaleKeys.pleaseSelectWallet),
                               ),
                             );
                             return;

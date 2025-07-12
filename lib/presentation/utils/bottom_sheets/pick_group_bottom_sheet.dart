@@ -9,6 +9,8 @@ import 'package:trakli/presentation/utils/pick_group_tile.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PickGroupBottomSheet extends StatefulWidget {
   final GroupEntity? group;
@@ -58,7 +60,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
           ),
           SizedBox(height: 16.h),
           Text(
-            "Pick group",
+            LocaleKeys.pickGroup.tr(),
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.w700,
@@ -67,7 +69,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
           ),
           SizedBox(height: 16.h),
           Text(
-            "Separate your income and expenses with groups for things that should really not be mixed. For example business and personal.",
+            LocaleKeys.pickGroupDesc.tr(),
             style: TextStyle(
               fontSize: 14.sp,
               color: neutralN900,
@@ -84,7 +86,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
                 BlendMode.srcIn,
               ),
             ),
-            hintText: "Search",
+            hintText: LocaleKeys.search.tr(),
             onChanged: (value) {},
           ),
           SizedBox(height: 16.h),
@@ -121,7 +123,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               onPressed: () {
                 AppNavigator.push(context, const AddGroupScreen());
               },
-              label: const Text("Add group"),
+              label: Text(LocaleKeys.addGroup.tr()),
               icon: const Icon(Icons.add),
             ),
           ),
@@ -140,7 +142,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
                       backgroundColor: neutralN40,
                       foregroundColor: neutralN900,
                     ),
-                    child: const Text("Cancel"),
+                    child: Text(LocaleKeys.cancel.tr()),
                   ),
                 ),
               ),
@@ -154,7 +156,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
                             final group = selectedGroup!;
                             Navigator.of(context).pop<GroupEntity>(group);
                           },
-                    child: const Text("Confirm"),
+                    child: Text(LocaleKeys.confirm.tr()),
                   ),
                 ),
               ),

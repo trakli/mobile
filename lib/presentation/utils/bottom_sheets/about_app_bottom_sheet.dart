@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class AboutAppBottomSheet extends StatelessWidget {
   const AboutAppBottomSheet({super.key});
@@ -23,7 +25,7 @@ class AboutAppBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: 16.h),
           Text(
-            'Trakli is a personal income tracking application. The application allows users to manage and categorize their income and expenses under various groups.',
+            LocaleKeys.aboutAppDescription.tr(),
             style: TextStyle(
               fontSize: 14.sp,
             ),
@@ -37,9 +39,9 @@ class AboutAppBottomSheet extends StatelessWidget {
                 onPressed: () {
                   openUrl(url: "https://trakli.app/privacy");
                 },
-                child: const Text(
-                  'Privacy policy',
-                  style: TextStyle(
+                child: Text(
+                  LocaleKeys.privacyPolicy.tr(),
+                  style: const TextStyle(
                     color: Colors.blue,
                   ),
                 ),
@@ -52,9 +54,9 @@ class AboutAppBottomSheet extends StatelessWidget {
                 onPressed: () {
                   openUrl(url: "https://trakli.app/terms");
                 },
-                child: const Text(
-                  'Terms & conditions',
-                  style: TextStyle(
+                child: Text(
+                  LocaleKeys.termsAndConditions.tr(),
+                  style: const TextStyle(
                     color: Colors.blue,
                   ),
                 ),

@@ -6,6 +6,8 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class SubscriptionTile extends StatelessWidget {
   final bool isSelected;
@@ -55,7 +57,9 @@ class SubscriptionTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
-                    planType == PlanType.monthly ? "Monthly" : "Yearly",
+                    planType == PlanType.monthly
+                        ? LocaleKeys.monthly.tr()
+                        : LocaleKeys.yearly.tr(),
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: neutralM900,
@@ -74,7 +78,7 @@ class SubscriptionTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
-                      "Recommended",
+                      LocaleKeys.recommended.tr(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.white,
@@ -91,12 +95,14 @@ class SubscriptionTile extends StatelessWidget {
               ],
             ),
             Text(
-              "${CurrencyFormater.formatAmountWithSymbol(
-                context,
-                planType == PlanType.monthly ? 4000 : 10000,
-                currentDecimalDigits: 0,
-                compact: true,
-              )}/Month",
+              LocaleKeys.pricePerMonth.tr(args: [
+                CurrencyFormater.formatAmountWithSymbol(
+                  context,
+                  planType == PlanType.monthly ? 4000 : 10000,
+                  currentDecimalDigits: 0,
+                  compact: true,
+                )
+              ]),
               style: TextStyle(
                 fontSize: 18.sp,
                 color: neutralM900,
@@ -104,7 +110,7 @@ class SubscriptionTile extends StatelessWidget {
               ),
             ),
             Text(
-              "Lorem ipsum dolor sit amet consectetur.",
+              LocaleKeys.loremIpsum.tr(),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: neutralM700,

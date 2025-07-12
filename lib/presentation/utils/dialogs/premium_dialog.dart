@@ -5,6 +5,8 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/subscription_tile.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PremiumDialog extends StatefulWidget {
   const PremiumDialog({super.key});
@@ -37,7 +39,7 @@ class _PremiumDialogState extends State<PremiumDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Upgrade to premium",
+              LocaleKeys.upgradeToPremium.tr(),
               style: TextStyle(
                 fontSize: 24.sp,
                 color: neutralN700,
@@ -84,7 +86,7 @@ class _PremiumDialogState extends State<PremiumDialog> {
                         backgroundColor: neutralN40,
                         foregroundColor: neutralN900,
                       ),
-                      child: const Text("Cancel"),
+                      child: Text(LocaleKeys.cancel.tr()),
                     ),
                   ),
                 ),
@@ -96,7 +98,7 @@ class _PremiumDialogState extends State<PremiumDialog> {
                         backgroundColor: appPrimaryColor,
                       ),
                       onPressed: () {},
-                      child: const Text("Confirm"),
+                      child: Text(LocaleKeys.confirm.tr()),
                     ),
                   ),
                 ),

@@ -61,7 +61,7 @@ class _ProfileFormState extends State<ProfileForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Name is required";
+                return LocaleKeys.nameIsRequired.tr();
               }
               return null;
             },
@@ -90,7 +90,7 @@ class _ProfileFormState extends State<ProfileForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Name is required";
+                return LocaleKeys.nameIsRequired.tr();
               }
               return null;
             },
@@ -109,7 +109,7 @@ class _ProfileFormState extends State<ProfileForm> {
             controller: phoneNameController,
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
-              hintText: "653353424",
+              hintText: LocaleKeys.phoneNumberHint.tr(),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
@@ -119,14 +119,14 @@ class _ProfileFormState extends State<ProfileForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "Phone is required";
+                return LocaleKeys.phoneIsRequired.tr();
               }
               return null;
             },
           ),
           SizedBox(height: 12.h),
           Text(
-            "Country",
+            LocaleKeys.country.tr(),
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
@@ -137,7 +137,7 @@ class _ProfileFormState extends State<ProfileForm> {
           TextFormField(
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
-              hintText: "Country",
+              hintText: LocaleKeys.country.tr(),
               prefixIcon: Padding(
                 padding: EdgeInsets.all(12.sp),
                 child: CountryFlag.fromCountryCode(
@@ -162,7 +162,7 @@ class _ProfileFormState extends State<ProfileForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {}
               },
-              child: const Text("Save"),
+              child: Text(LocaleKeys.save.tr()),
             ),
           ),
         ],
