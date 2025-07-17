@@ -144,7 +144,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               ),
               SizedBox(height: 16.h),
               Text(
-                "Pick wallet",
+                LocaleKeys.pickWallet.tr(),
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.w700,
@@ -153,7 +153,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               ),
               SizedBox(height: 16.h),
               Text(
-                "Select a wallet to filter your statistics. Choose 'All wallets' to view statistics across all your wallets.",
+                LocaleKeys.selectWalletInfoDesc.tr(),
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: neutralN900,
@@ -183,6 +183,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           });
                           Navigator.pop(context);
                         },
+                        walletNameOverride: LocaleKeys.allWallets.tr(),
                       );
                     } else {
                       // Individual wallet options

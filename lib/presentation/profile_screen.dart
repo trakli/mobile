@@ -79,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              user?.fullName ?? 'Anonymous',
+              user?.fullName ?? LocaleKeys.anonymous.tr(),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   const PremiumTile(),
                   ActionTile(
-                    title: "Account Info",
+                    title: LocaleKeys.accountInfo.tr(),
                     iconPath: Assets.images.user,
                     actionColor: appPrimaryColor,
                     onTap: () {
@@ -122,19 +122,19 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   ActionTile(
                     title: LocaleKeys.phoneNumber.tr(),
-                    subTitle: user.phone ?? "Not set",
+                    subTitle: user.phone ?? LocaleKeys.notSet.tr(),
                     iconPath: Assets.images.call,
                     actionColor: appPrimaryColor,
                   ),
                   ActionTile(
-                    title: "Log Out",
+                    title: LocaleKeys.logOut.tr(),
                     iconPath: Assets.images.logout,
                     actionColor: Colors.red,
                     onTap: () {
                       showCustomDialog(
                         widget: PopUpDialog(
-                          title: 'Log Out',
-                          subTitle: 'Are you sure you want to logout?',
+                          title: LocaleKeys.logOut.tr(),
+                          subTitle: LocaleKeys.logoutConfirm.tr(),
                           dialogType: DialogType.negative,
                           mainAction: () {
                             context.read<AuthCubit>().logout();
@@ -165,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
                       spacing: 12.h,
                       children: [
                         Text(
-                          "Don't have an account?",
+                          LocaleKeys.dontHaveAccount.tr(),
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
@@ -180,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "Benefits having an account?",
+                          LocaleKeys.benefitsAccount.tr(),
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
@@ -203,8 +203,8 @@ class ProfileScreen extends StatelessWidget {
                           const RegisterScreen(),
                         );
                       },
-                      child: const Text(
-                        "Create an account now",
+                      child: Text(
+                        LocaleKeys.createAccountNow.tr(),
                       ),
                     ),
                   ),

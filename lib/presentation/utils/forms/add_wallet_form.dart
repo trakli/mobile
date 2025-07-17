@@ -79,8 +79,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
       } else {
         if (currency == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please select a currency'),
+            SnackBar(
+              content: Text(LocaleKeys.pleaseSelectCurrency.tr()),
             ),
           );
           return;
@@ -148,12 +148,12 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 Expanded(
                   child: TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      hintText: "Enter name",
+                    decoration: InputDecoration(
+                      hintText: LocaleKeys.enterName.tr(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Name is required";
+                        return LocaleKeys.nameIsRequired.tr();
                       }
                       return null;
                     },
@@ -163,7 +163,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 20.h),
             Text(
-              "Balance",
+              LocaleKeys.balance.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
@@ -180,19 +180,19 @@ class _AddWalletFormState extends State<AddWalletForm> {
                     child: TextFormField(
                       controller: _balanceController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: "Ex: 250 000",
+                      decoration: InputDecoration(
+                        hintText: LocaleKeys.exampleAmount.tr(),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Amount is required";
+                          return LocaleKeys.amountIsRequired.tr();
                         }
                         final number = double.tryParse(value);
                         if (number == null) {
-                          return "Must be a number";
+                          return LocaleKeys.mustBeNumber.tr();
                         }
                         if (number == 0) {
-                          return "Amount must not be 0";
+                          return LocaleKeys.amountMustNotBeZero.tr();
                         }
                         return null;
                       },
@@ -240,7 +240,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 20.h),
             Text(
-              "Type",
+              LocaleKeys.type.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
@@ -250,8 +250,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
             SizedBox(height: 8.h),
             DropdownButtonFormField<WalletType>(
               value: _selectedType,
-              decoration: const InputDecoration(
-                hintText: "Select wallet type",
+              decoration: InputDecoration(
+                hintText: LocaleKeys.selectWalletType.tr(),
               ),
               items: WalletType.values.map((type) {
                 return DropdownMenuItem(
@@ -269,7 +269,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 20.h),
             Text(
-              "Description",
+              LocaleKeys.description.tr(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
@@ -309,8 +309,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(widget.wallet != null
-                          ? "Update wallet"
-                          : "Create wallet"),
+                          ? LocaleKeys.updateWallet.tr()
+                          : LocaleKeys.createWallet.tr()),
                       SvgPicture.asset(
                         widget.wallet != null
                             ? Assets.images.edit2

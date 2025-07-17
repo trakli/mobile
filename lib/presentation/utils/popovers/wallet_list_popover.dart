@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/assets.gen.dart' show Assets;
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WalletListPopover extends StatelessWidget {
   final String label;
@@ -54,7 +56,7 @@ class WalletListPopover extends StatelessWidget {
               state.wallets.isEmpty
                   ? Center(
                       child: Text(
-                        'No wallets yet',
+                        LocaleKeys.noWalletsYet.tr(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: Colors.grey,
@@ -68,7 +70,8 @@ class WalletListPopover extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final wallet = state.wallets[index];
                         return ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12.w),
                           onTap: () {
                             AppNavigator.pop(context);
                           },

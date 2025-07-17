@@ -108,13 +108,13 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                 Expanded(
                   child: TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      hintText: "Category name",
-                      labelText: "Category name",
+                    decoration: InputDecoration(
+                      hintText: LocaleKeys.categoryName.tr(),
+                      labelText: LocaleKeys.categoryName.tr(),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Name is required";
+                        return LocaleKeys.nameIsRequired.tr();
                       }
                       return null;
                     },
@@ -129,7 +129,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: LocaleKeys.typeHere.tr(),
-                labelText: "Description",
+                labelText: LocaleKeys.description.tr(),
               ),
             ),
             SizedBox(height: 40.h),
@@ -150,8 +150,8 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                     }
                   },
                   buttonText: widget.category != null
-                      ? "Update category"
-                      : "Create category",
+                      ? LocaleKeys.updateCategory.tr()
+                      : LocaleKeys.createCategory.tr(),
                   backgroundColor: widget.accentColor,
                   iconPath: widget.category != null
                       ? Assets.images.edit2

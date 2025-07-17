@@ -46,7 +46,7 @@ class _CategoryScreenState extends State<CategoryScreen>
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        titleText: "Categories",
+        titleText: LocaleKeys.categories.tr(),
         headerTextColor: const Color(0xFFEBEDEC),
         actions: [
           InkWell(
@@ -191,7 +191,7 @@ class _CategoryScreenState extends State<CategoryScreen>
     if (categories.isEmpty) {
       return Center(
         child: Text(
-          'No categories found',
+          LocaleKeys.noCategoriesFound.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             color: Colors.grey,

@@ -7,10 +7,14 @@ import 'package:meta/meta.dart';
 final _logger = Logger('dbsync:Synchronizer');
 
 abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
-  DriftSynchronizer({required this.appDatabase, required this.typeHandlers})
-      : _typeHandlers = <String, SyncTypeHandler>{
+  DriftSynchronizer({
+    required this.appDatabase,
+    required this.typeHandlers,
+    required SyncDependencyManagerBase dependencyManager,
+  })  : _typeHandlers = <String, SyncTypeHandler>{
           for (final th in typeHandlers) th.entityType: th,
-        };
+        },
+        _dependencyManager = dependencyManager;
 
   SyncState _state = const SyncState.initial();
   SyncState get state => _state;
@@ -18,6 +22,9 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   final Set<SyncTypeHandler> typeHandlers;
   final Map<String, SyncTypeHandler> _typeHandlers;
   final TAppDatabase appDatabase;
+
+  @protected
+  final SyncDependencyManagerBase _dependencyManager;
 
   /// Gets the Id of the latest available change from the server.
   @protected
@@ -264,18 +271,30 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     sw.start();
     _logger.finest('Entered fullResync');
     try {
+      _dependencyManager.resetSyncState();
       // First, fetch all remote data outside the transaction
       final Map<SyncTypeHandler, List<dynamic>> remoteData = {};
-      for (final handler in _typeHandlers.values) {
+      // Process handlers in dependency order
+      for (final handler in typeHandlers) {
         if (_state.cancelRequested) {
           _logger.finest('... cancel requested. Will leave.');
           throw const CancelException();
         }
-        _logger.info('started handler for ${handler.entityType}');
-
-        final list = await handler.getAllRemote();
-        remoteData[handler] = list;
-        _logger.info('got all ${sw.elapsedMilliseconds}');
+        if (!_dependencyManager.canSync(handler)) continue;
+        _logger.info(
+            'started handler for \u001b[1m${handler.entityType}\u001b[0m');
+        try {
+          final list = await handler.getAllRemote();
+          remoteData[handler] = list;
+          _dependencyManager.markSuccessfullySynced(handler);
+          _logger.info('got all \u001b[1m${sw.elapsedMilliseconds}\u001b[0m');
+        } on UnavailableException {
+          rethrow;
+        } catch (e, stack) {
+          _logger.severe('Error syncing handler ${handler.entityType}: $e');
+          _logger.severe(stack);
+          // Do not mark as successfully synced, and continue to next handler
+        }
       }
 
       // Now perform database operations in a single transaction
@@ -289,7 +308,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         // Clear ALL local records for ALL handlers
         for (final handler in _typeHandlers.values) {
           _logger.finest(
-            '... will clear local records for handler ${handler.toString()}',
+            '... will clear local records for handler \u001b[1m${handler.toString()}\u001b[0m',
           );
           await handler.deleteAllLocal();
         }

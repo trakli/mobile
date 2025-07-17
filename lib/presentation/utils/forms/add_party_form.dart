@@ -31,7 +31,7 @@ class AddPartyForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Name",
+                    LocaleKeys.name.tr(),
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
@@ -45,14 +45,14 @@ class AddPartyForm extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Name is required";
+                        return LocaleKeys.nameIsRequired.tr();
                       }
                       return null;
                     },
                   ),
                   SizedBox(height: 20.h),
                   Text(
-                    "Description",
+                    LocaleKeys.description.tr(),
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,

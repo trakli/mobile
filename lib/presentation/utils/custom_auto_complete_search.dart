@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class CustomAutoCompleteSearch<T extends Object> extends StatefulWidget {
   final String label;
@@ -137,7 +139,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
                       onTap: () {
                         _focusNode.unfocus();
                       },
-                      title: const Text("No data"),
+                      title: Text(LocaleKeys.noData.tr()),
                     ),
             ),
           ),

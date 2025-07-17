@@ -153,7 +153,7 @@ class _TransactionTileState extends State<TransactionTile> {
                   child: Text(
                     transaction.description.isNotEmpty
                         ? transaction.description
-                        : 'No description',
+                        : LocaleKeys.noDescription.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: transactionTileTextColor,

@@ -7,6 +7,8 @@ import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PickGroupTile<T> extends StatelessWidget {
   final T value;
@@ -58,7 +60,7 @@ class PickGroupTile<T> extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  ('${(groupName ?? "General").extractWords(maxSize: 15)} ${isDefaultGroup ? '(Default)' : ''}')
+                  ('${(groupName ?? LocaleKeys.general.tr()).extractWords(maxSize: 15)} ${isDefaultGroup ? '(${LocaleKeys.defaultName.tr()})' : ''}')
                       .trim(),
                   style: TextStyle(
                     fontSize: 16.sp,

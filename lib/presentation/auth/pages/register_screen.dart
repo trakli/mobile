@@ -211,7 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Align(
                   child: RichText(
                     text: TextSpan(
-                      text: "Already have account? ",
+                      text: LocaleKeys.alreadyHaveAccount.tr(),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: neutralN700,

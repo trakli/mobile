@@ -154,7 +154,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 Align(
                   child: RichText(
                     text: TextSpan(
-                      text: "Don't have account? ",
+                      text: LocaleKeys.dontHaveAccount.tr(),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: neutralN700,

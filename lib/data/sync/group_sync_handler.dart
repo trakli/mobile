@@ -8,6 +8,8 @@ import 'package:trakli/data/datasources/group/group_remote_datasource.dart';
 @lazySingleton
 class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
     with RestSyncTypeHandler<Group, String, int> {
+  static const String entity = 'group';
+
   GroupSyncHandler(
     this.db,
     this.remoteDataSource,
@@ -19,7 +21,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
   TableInfo<Groups, Group> get table => db.groups;
 
   @override
-  String get entityType => 'group';
+  String get entityType => GroupSyncHandler.entity;
 
   @override
   String getRev(Group entity) => entity.rev ?? '1';

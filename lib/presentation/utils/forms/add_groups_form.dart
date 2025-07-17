@@ -119,7 +119,7 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Name is required";
+                            return LocaleKeys.nameIsRequired.tr();
                           }
                           return null;
                         },

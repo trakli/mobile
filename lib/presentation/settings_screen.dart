@@ -73,9 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              title: const Text(
-                "Display",
-              ),
+              title: Text(LocaleKeys.display.tr()),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
@@ -117,9 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  title: const Text(
-                    "Default currency",
-                  ),
+                  title: Text(LocaleKeys.defaultCurrency.tr()),
                   subtitle: state.entity?.selectedCurrency != null
                       ? Text(
                           state.entity?.selectedCurrency?.code ?? "",
@@ -193,9 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              title: const Text(
-                "About",
-              ),
+              title: Text(LocaleKeys.about.tr()),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
@@ -219,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
-              title: const Text('Switch Default Group'),
+              title: Text(LocaleKeys.switchDefaultGroup.tr()),
               subtitle: Text(
                 group?.name ?? "",
                 style: TextStyle(

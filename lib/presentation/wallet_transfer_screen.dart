@@ -8,6 +8,8 @@ import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'dart:ui' as ui;
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class WalletTransferScreen extends StatefulWidget {
   const WalletTransferScreen({super.key});
@@ -35,7 +37,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        titleText: 'Wallet transfer',
+        titleText: LocaleKeys.walletTransfer.tr(),
         headerTextColor: const Color(0xFFEBEDEC),
         actions: [
           SizedBox(width: 16.w),
@@ -57,7 +59,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Source wallet",
+                        LocaleKeys.sourceWallet.tr(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w700,
@@ -86,13 +88,13 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                                 vertical: 8.h,
                               ),
                               title: Text(
-                                'Orange money',
+                                LocaleKeys.orangeMoney.tr(),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                 ),
                               ),
                               subtitle: Text(
-                                '300,000 XAF',
+                                LocaleKeys.orangeMoneyAmount.tr(),
                                 style: TextStyle(
                                   fontSize: 24.sp,
                                   fontWeight: FontWeight.w700,
@@ -118,7 +120,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        "Destination wallet",
+                        LocaleKeys.destinationWallet.tr(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w700,
@@ -147,13 +149,13 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                                 vertical: 8.h,
                               ),
                               title: Text(
-                                'Bank account UBA',
+                                LocaleKeys.bankAccountUba.tr(),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                 ),
                               ),
                               subtitle: Text(
-                                '400,000 XAF',
+                                LocaleKeys.bankAccountUbaAmount.tr(),
                                 style: TextStyle(
                                   fontSize: 24.sp,
                                   fontWeight: FontWeight.w700,
@@ -199,7 +201,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
               ),
               SizedBox(height: 16.h),
               Text(
-                "Amount",
+                LocaleKeys.amount.tr(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -216,20 +218,19 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         controller: _amountController,
-                        decoration: const InputDecoration(
-                          hintText: "Ex: 250 000",
+                        decoration: InputDecoration(
+                          hintText: LocaleKeys.amountHint.tr(),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            // return LocaleKeys.transactionAmountError.tr();
-                            return "Amount is required";
+                            return LocaleKeys.amountRequired.tr();
                           }
                           final number = double.tryParse(value);
                           if (number == null) {
-                            return "Must be a number";
+                            return LocaleKeys.mustBeNumber.tr();
                           }
                           if (number == 0) {
-                            return "Amount must not be 0";
+                            return LocaleKeys.amountNotZero.tr();
                           }
                           return null;
                         },
@@ -273,7 +274,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
               ),
               SizedBox(height: 16.h),
               Text(
-                "Exchange rate",
+                LocaleKeys.exchangeRate.tr(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -284,20 +285,19 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: _exchangeRateController,
-                decoration: const InputDecoration(
-                  hintText: "Ex: 25%",
+                decoration: InputDecoration(
+                  hintText: LocaleKeys.exchangeRateHint.tr(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    // return LocaleKeys.transactionAmountError.tr();
-                    return "Value is required";
+                    return LocaleKeys.valueRequired.tr();
                   }
                   final number = double.tryParse(value);
                   if (number == null) {
-                    return "Must be a number";
+                    return LocaleKeys.mustBeNumber.tr();
                   }
                   if (number == 0) {
-                    return "Amount must not be 0";
+                    return LocaleKeys.amountNotZero.tr();
                   }
                   return null;
                 },
@@ -313,7 +313,7 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                       // Do something
                     }
                   },
-                  buttonText: "Transfer money",
+                  buttonText: LocaleKeys.transferMoney.tr(),
                   backgroundColor: Theme.of(context).primaryColor,
                   iconPath: Assets.images.arrowSwapHorizontal,
                   iconColor: Colors.white,

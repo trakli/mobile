@@ -13,3 +13,5 @@ export 'src/sync_entity_repository.dart';
 export 'src/adapters/rest/rest_sync_type_handler.dart';
 
 export 'src/schema/schema.dart';
+
+export 'src/sync_dependency_manager.dart';

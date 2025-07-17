@@ -103,7 +103,7 @@ class WalletScreen extends StatelessWidget {
                         child: state.wallets.isEmpty
                             ? Center(
                                 child: Text(
-                                  'No wallets yet',
+                                  LocaleKeys.noWalletsYet.tr(),
                                   style: TextStyle(
                                     fontSize: 16.sp,
                                     color: Colors.grey,

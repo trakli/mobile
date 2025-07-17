@@ -9,6 +9,8 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/forms/profile_form.dart';
 import 'package:trakli/presentation/utils/info_tile.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   const AccountInfoScreen({super.key});
@@ -25,7 +27,7 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
     return Scaffold(
       appBar: CustomAppBar(
         backgroundColor: appPrimaryColor,
-        titleText: "Account Info",
+        titleText: LocaleKeys.accountInfo.tr(),
         headerTextColor: Colors.white,
         leading: const CustomBackButton(),
       ),
@@ -46,7 +48,9 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
                   });
                 },
                 label: Text(
-                  isEditing ? "Cancel" : "Edit Infos",
+                  isEditing
+                      ? LocaleKeys.cancel.tr()
+                      : LocaleKeys.editInfos.tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: isEditing ? Colors.red : appPrimaryColor,
@@ -83,21 +87,21 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
       spacing: 12.h,
       children: [
         InfoTile(
-          title: "First Name",
+          title: LocaleKeys.firstName.tr(),
           subTitle: user?.firstName ?? "",
         ),
         InfoTile(
-          title: "Last Name",
+          title: LocaleKeys.lastName.tr(),
           subTitle: user?.lastName ?? "",
         ),
-        const InfoTile(
-          title: "Country",
-          subTitle: "Cameroon",
+        InfoTile(
+          title: LocaleKeys.country.tr(),
+          subTitle: LocaleKeys.cameroon.tr(),
           countryCode: "cm",
         ),
         InfoTile(
-          title: "Phone Number",
-          subTitle: user?.phone ?? "Not set",
+          title: LocaleKeys.phoneNumber.tr(),
+          subTitle: user?.phone ?? LocaleKeys.notSet.tr(),
         ),
       ],
     );

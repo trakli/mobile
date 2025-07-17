@@ -8,6 +8,8 @@ import 'package:trakli/data/datasources/category/category_remote_datasource.dart
 @lazySingleton
 class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
     with RestSyncTypeHandler<Category, String, int> {
+  static const String entity = 'category';
+
   CategorySyncHandler(
     this.db,
     this.remoteDataSource,
@@ -19,7 +21,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   TableInfo<Categories, Category> get table => db.categories;
 
   @override
-  String get entityType => 'category';
+  String get entityType => CategorySyncHandler.entity;
 
   @override
   String getRev(Category entity) => entity.rev ?? '1';

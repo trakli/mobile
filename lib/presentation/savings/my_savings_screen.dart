@@ -19,7 +19,7 @@ class MySavingsScreen extends StatelessWidget {
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: const CustomBackButton(),
-        titleText: "Savings",
+        titleText: LocaleKeys.savings.tr(),
         headerTextColor: const Color(0xFFEBEDEC),
         actions: [
           InkWell(

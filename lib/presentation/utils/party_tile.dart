@@ -12,6 +12,8 @@ import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PartyTile extends StatelessWidget {
   final PartyEntity party;
@@ -32,9 +34,9 @@ class PartyTile extends StatelessWidget {
     showCustomDialog(
       widget: PopUpDialog(
         dialogType: DialogType.negative,
-        title: 'Delete Party',
+        title: LocaleKeys.deleteParty.tr(),
         subTitle:
-            'Are you sure you want to delete "${party.name}"? This action cannot be undone.',
+            LocaleKeys.deletePartyConfirm.tr(namedArgs: {'name': party.name}),
         mainAction: () {
           context.read<PartyCubit>().deleteParty(party.clientId);
           AppNavigator.pop(context);
@@ -42,8 +44,8 @@ class PartyTile extends StatelessWidget {
         secondaryAction: () {
           AppNavigator.pop(context);
         },
-        mainActionText: "Delete",
-        secondaryActionText: "Cancel",
+        mainActionText: LocaleKeys.delete.tr(),
+        secondaryActionText: LocaleKeys.cancel.tr(),
       ),
     );
   }
@@ -146,7 +148,7 @@ class PartyTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Edit'),
+                        Text(LocaleKeys.edit.tr()),
                       ],
                     ),
                   ),
@@ -172,7 +174,7 @@ class PartyTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Text('Delete'),
+                        Text(LocaleKeys.delete.tr()),
                       ],
                     ),
                   ),

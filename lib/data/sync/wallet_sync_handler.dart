@@ -17,8 +17,10 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
 
   $WalletsTable get table => db.wallets;
 
+  static const String entity = 'wallet';
+
   @override
-  String get entityType => 'wallet';
+  String get entityType => WalletSyncHandler.entity;
 
   @override
   Future<List<Wallet>> restGetAllRemote() async {

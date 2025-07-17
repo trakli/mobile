@@ -134,7 +134,7 @@ class _AddTransactionFormCompactLayoutState
                             controller: amountController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              hintText: "Ex: 250 000",
+                              hintText: LocaleKeys.exampleAmount.tr(),
                               labelText: LocaleKeys.transactionAmount.tr(),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -145,15 +145,14 @@ class _AddTransactionFormCompactLayoutState
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                // return LocaleKeys.transactionAmountError.tr();
-                                return "Amount is required";
+                                return LocaleKeys.amountIsRequired.tr();
                               }
                               final number = double.tryParse(value);
                               if (number == null) {
-                                return "Must be a number";
+                                return LocaleKeys.mustBeNumber.tr();
                               }
                               if (number == 0) {
-                                return "Amount must not be 0";
+                                return LocaleKeys.amountMustNotBeZero.tr();
                               }
                               return null;
                             },
@@ -205,7 +204,7 @@ class _AddTransactionFormCompactLayoutState
                                   });
                                 },
                                 displayStringForOption: (WalletEntity option) {
-                                  return option.name.toLowerCase();
+                                  return option.name.capitalizeFirst();
                                 },
                                 onSelected: (value) {
                                   setState(() {
@@ -215,7 +214,7 @@ class _AddTransactionFormCompactLayoutState
                                 },
                                 validator: (value) {
                                   if (_selectedWallet == null) {
-                                    return "Wallet is required";
+                                    return LocaleKeys.walletIsRequired.tr();
                                   }
                                   return null;
                                 },
@@ -259,7 +258,7 @@ class _AddTransactionFormCompactLayoutState
                     readOnly: true,
                     controller: dateController,
                     decoration: InputDecoration(
-                      labelText: "Date",
+                      labelText: LocaleKeys.date.tr(),
                       suffixIcon: Padding(
                         padding: const EdgeInsets.all(12),
                         child: SvgPicture.asset(
@@ -297,7 +296,7 @@ class _AddTransactionFormCompactLayoutState
                     readOnly: true,
                     controller: timeController,
                     decoration: InputDecoration(
-                      labelText: "Time",
+                      labelText: LocaleKeys.time.tr(),
                       suffixIcon: Padding(
                         padding: const EdgeInsets.all(12),
                         child: SvgPicture.asset(
@@ -361,7 +360,7 @@ class _AddTransactionFormCompactLayoutState
                                   });
                                 },
                                 displayStringForOption: (PartyEntity option) {
-                                  return option.name.toLowerCase();
+                                  return option.name.capitalizeFirst();
                                 },
                                 onSelected: (value) {
                                   setState(() {
@@ -377,12 +376,6 @@ class _AddTransactionFormCompactLayoutState
                         GestureDetector(
                           onTap: () async {
                             AppNavigator.push(context, const AddPartyScreen());
-                            // await showDialog(
-                            //   context: context,
-                            //   builder: (context) {
-                            //     return const AddPartyDialog();
-                            //   },
-                            // );
                           },
                           child: Container(
                             width: 60.w,
@@ -532,7 +525,7 @@ class _AddTransactionFormCompactLayoutState
                             ),
                           ),
                           Text(
-                            "Snap a picture",
+                            LocaleKeys.snapPicture.tr(),
                             style: TextStyle(
                               fontSize: 12.sp,
                             ),
@@ -573,7 +566,7 @@ class _AddTransactionFormCompactLayoutState
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Upload attachment",
+                                  LocaleKeys.uploadAttachment.tr(),
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                   ),
@@ -647,8 +640,8 @@ class _AddTransactionFormCompactLayoutState
                           widget.transactionCompleteEntity != null
                               ? (widget.transactionType ==
                                       TransactionType.income
-                                  ? "Update income"
-                                  : "Update expenses")
+                                  ? LocaleKeys.updateIncome.tr()
+                                  : LocaleKeys.updateExpenses.tr())
                               : widget.transactionType == TransactionType.income
                                   ? LocaleKeys.transactionRecordIncome.tr()
                                   : LocaleKeys.transactionRecordExpenses.tr(),
