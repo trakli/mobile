@@ -9,6 +9,9 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   // Get the server ID (int) from an entity
   int? getServerId(TEntity entity);
 
+  // Get the server ID (int) from an entity
+  DateTime? getlastSyncedAt(TEntity entity);
+
   // Get the revision from an entity
   String getRev(TEntity entity);
 
@@ -21,6 +24,7 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
 
   Future<void> upsertLocal(TEntity entity);
   Future<void> upsertAllLocal(List<TEntity> list);
+  // Future<void> updateLocalSyncMetadata(TEntity entity);
 
   Future<void> deleteLocal(TEntity entity);
   Future<void> deleteAllLocal();
@@ -28,7 +32,8 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   // Get remote entity by server ID
   //Future<TEntity?> getRemote(TKey id);
   Future<TEntity?> getRemote(TServerKey serverId);
-  Future<List<TEntity>> getAllRemote();
+  Future<List<TEntity>> getAllRemote({DateTime? syncedSince, bool? noClientId});
+  // Future<List<TEntity>> getRemoteChangeByTime(DateTime time);
   Future<TEntity> putRemote(TEntity entity);
   Future<void> deleteRemote(TEntity entity);
 
@@ -36,6 +41,8 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   Map<String, dynamic> marshal(TEntity entity);
 
   bool shouldPersistRemote(TEntity entity);
+
+  Future<TEntity> assignClientId(TEntity item);
 }
 
 // Helper typedefs for clarity

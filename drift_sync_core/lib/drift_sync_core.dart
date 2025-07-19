@@ -8,6 +8,7 @@ export 'src/sync_state.dart';
 export 'src/synchronizer_db.dart';
 
 export 'src/server_change.dart';
+export 'src/local_sync_metadata.dart';
 export 'src/sync_entity_repository.dart';
 
 export 'src/adapters/rest/rest_sync_type_handler.dart';

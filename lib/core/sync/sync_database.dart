@@ -18,8 +18,10 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
     required NetworkInfo networkInfo,
   }) {
     _dio = dio;
-    // _networkInfo = networkInfo;
   }
+
+  // Seconds
+  int syncInterval = 30;
 
   final _syncStateController = StreamController<SyncState>.broadcast();
   Stream<SyncState> get syncStateStream => _syncStateController.stream;
@@ -30,9 +32,23 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
             _syncStateController.add(current);
           };
 
+  Timer? _periodicSyncTimer;
+
+  void startPeriodicSync({Duration? interval}) {
+    _periodicSyncTimer?.cancel();
+    final syncDuration = interval ?? Duration(seconds: syncInterval);
+    _periodicSyncTimer = Timer.periodic(syncDuration, (_) => _performSync());
+  }
+
+  void stopPeriodicSync() {
+    _periodicSyncTimer?.cancel();
+    _periodicSyncTimer = null;
+  }
+
   void init() {
     _performSync();
     initializeNetworkSync(_performSync);
+    startPeriodicSync(); // Start periodic sync every 30 seconds
   }
 
   late final Dio _dio;
@@ -49,6 +65,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
 
   @override
   Future<void> dispose() async {
+    stopPeriodicSync(); // Stop the timer on dispose
     await disposeNetworkSync();
     await super.dispose();
     await _syncStateController.close();

@@ -92,6 +92,9 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         // due to an unavailable server
         return;
       }
+
+      await downloadModelsWithNoClientIds();
+
       await downloadServerChanges();
     } finally {
       _updateState(state.stop());
@@ -127,10 +130,11 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       final handler = _getTypeHandlerByTypeName(localChange.entityType);
 
       try {
-        await this.appDatabase.transaction(() async {
-          // await appDatabase.concludeLocalChange(localChange);
-          await _doOperation(localChange, handler);
-        });
+        await _doOperation(localChange, handler);
+        // await this.appDatabase.transaction(() async {
+        //   // await appDatabase.concludeLocalChange(localChange);
+        //   await _doOperation(localChange, handler);
+        // });
       } on UnavailableException catch (_) {
         // in case we couldn't reach the server, let's just quit here and
         // report we aren't able to continue
@@ -193,69 +197,52 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
    *      Download Synchronization    *
    **********************************/
 
-  /// tries to do a partial synchronization from the server,
-  /// but falls back to full synchronization when needed
+  /// Downloads server changes using time-based partial resync for each model.
+  ///
+  /// Note: We do NOT need a global check for missing sync metadata here, because
+  /// the per-model logic in _timeBasedPartialResync will handle the case where
+  /// a model has never been synced (lastSyncedAt == null) and will perform a full
+  /// fetch for that model only. This is more robust and allows incremental adoption
+  /// of new models without requiring a full resync for all models.
   Future<void> downloadServerChanges() async {
     _logger.finest('Entered DownloadSynchronizer.sync method');
-    final lastChangeId = await this.appDatabase.getLastChangeId();
 
-    if (lastChangeId == null) {
-      _logger.finest('... no lastChangeId, so will do full resync');
-      await _fullResync();
-      return;
-    }
-    _logger.finest('... will sync from $lastChangeId');
+    _logger.finest('... will sync from');
     try {
-      final changes = await getServerPendingChanges(
-        lastChangeId == '' ? null : lastChangeId,
-      );
-      await _partialSyncServerChanges(changes);
-    } on NotFoundException catch (_) {
-      _logger.finest('...Received a NotFoundException, so doing a fullResync');
-      await _fullResync();
+      await _timeBasedPartialResync();
+    } on CancelException catch (_) {
+      _logger.finest('user cancelled sync');
+      rethrow;
+    } catch (e) {
+      _logger.severe('exception on downloadServerChanges: $e');
+      rethrow;
     }
   }
 
-  Future<void> _partialSyncServerChanges(List<ServerChange> changes) async {
+  Future<void> downloadModelsWithNoClientIds() async {
     _logger.finest('Entered _partialSyncServerChanges');
     try {
-      await appDatabase.transaction(() async {
-        ServerChange? lastChange;
-
-        int cnt = 0;
-        for (final change in changes) {
-          if (_state.cancelRequested) {
-            _logger.finest('... cancel requested. Leaving');
-            throw const CancelException();
-          }
-          if ((++cnt % 10000) == 0) {
-            _logger.finest('synching ${cnt}th item of ${change.entityType}');
-          }
-          final handler = _getTypeHandlerByTypeName(change.entityType);
-
-          if (change.deleted) {
-            final entity = await handler.unmarshal(change.entity);
-            final serverId = handler.getServerId(entity);
-            if (serverId != null) {
-              await handler.deleteLocal(entity);
-            }
-          } else {
-            final entity = await handler.unmarshal(change.entity);
-            await handler.upsertLocal(entity);
-          }
-
-          lastChange = change;
+      for (final handler in typeHandlers) {
+        if (_state.cancelRequested) {
+          _logger.finest('... cancel requested. Will leave.');
+          throw const CancelException();
         }
-        _logger.finest('... received all changes.');
-        if (lastChange != null) {
-          _logger.finest(
-            '... will setLastReceivedChangeId to ${lastChange.id}',
+
+        try {
+          await assignClientIdsToRemoteItemsWithoutClientId(
+            handler,
           );
 
-          final lcId = lastChange.id;
-          await appDatabase.setLastReceivedChangeId(lcId);
+          _logger.info('Updated the client without id');
+        } on UnavailableException {
+          rethrow;
+        } catch (e, stack) {
+          _logger.severe(
+              'Error syncing model without client id with handler  [1m${handler.entityType} [0m: $e');
+          _logger.severe(stack);
+          // Do not mark as successfully synced, and continue to next handler
         }
-      });
+      }
     } on CancelException catch (_) {
       _logger.finest('user cancelled sync');
       rethrow;
@@ -266,15 +253,43 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     _logger.finest('finished _partialSyncServerChanges with no incident');
   }
 
-  Future<void> _fullResync() async {
+  /// PARTIAL SYNC: Assign client IDs to remote items without client ID (generic for any handler)
+  Future<void> assignClientIdsToRemoteItemsWithoutClientId<T>(
+    SyncTypeHandler<T, dynamic, dynamic> handler,
+  ) async {
+    final itemsWithoutClientId = await handler.getAllRemote(noClientId: true);
+
+    if (itemsWithoutClientId.isEmpty) return;
+
+    var updatedItems = [];
+
+    for (final item in itemsWithoutClientId) {
+      final current = await handler.assignClientId(item);
+      updatedItems.add(current);
+    }
+
+    const batchSize = 5;
+    for (int i = 0; i < updatedItems.length; i += batchSize) {
+      final end = (i + batchSize < updatedItems.length)
+          ? i + batchSize
+          : updatedItems.length;
+      final batch = updatedItems.sublist(i, end);
+
+      final responses =
+          await Future.wait(batch.map((entity) => handler.putRemote(entity)));
+
+      _logger.finest('responses', responses);
+    }
+  }
+
+  /// For each handler/model, checks if lastSyncedAt is null (never synced) and does a full fetch for that model only.
+  /// Otherwise, fetches only changes since last sync. This is the most robust approach for incremental, model-aware sync.
+  Future<void> _timeBasedPartialResync() async {
     final sw = Stopwatch();
     sw.start();
-    _logger.finest('Entered fullResync');
+    _logger.finest('Entered _timeBasedPartialResync');
     try {
       _dependencyManager.resetSyncState();
-      // First, fetch all remote data outside the transaction
-      final Map<SyncTypeHandler, List<dynamic>> remoteData = {};
-      // Process handlers in dependency order
       for (final handler in typeHandlers) {
         if (_state.cancelRequested) {
           _logger.finest('... cancel requested. Will leave.');
@@ -284,10 +299,41 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         _logger.info(
             'started handler for \u001b[1m${handler.entityType}\u001b[0m');
         try {
-          final list = await handler.getAllRemote();
-          remoteData[handler] = list;
+          // 1. Get last sync time for this handler/model
+          final localMeta =
+              await appDatabase.getLocalSyncMetadata(handler.entityType);
+          final lastSyncedAt = localMeta?.lastSyncedAt;
+
+          // If lastSyncedAt is null, do a full fetch for this model only
+          var isFull = false;
+          if (lastSyncedAt == null) {
+            isFull = true;
+          }
+
+          // 2. Fetch changed items from remote since last sync (or all if full)
+          final changedItems = await handler.getAllRemote(
+              syncedSince: isFull != true ? lastSyncedAt : null);
+
+          if (changedItems.isEmpty) {
+            _dependencyManager.markSuccessfullySynced(handler);
+            continue;
+          }
+
+          // 3. Upsert those items locally (optionally in a transaction)
+          await appDatabase.transaction(() async {
+            if (isFull == true) {
+              await handler.deleteAllLocal();
+            }
+            await handler.upsertAllLocal(changedItems);
+
+            await appDatabase.updateEnityLocalSyncMetadata(
+                entityType: handler.entityType,
+                lastSyncedAt: handler.getlastSyncedAt(changedItems.last));
+          });
+
           _dependencyManager.markSuccessfullySynced(handler);
-          _logger.info('got all \u001b[1m${sw.elapsedMilliseconds}\u001b[0m');
+          _logger.info(
+              'synced \u001b[1m${handler.entityType}\u001b[0m in ${sw.elapsedMilliseconds}ms');
         } on UnavailableException {
           rethrow;
         } catch (e, stack) {
@@ -296,43 +342,6 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           // Do not mark as successfully synced, and continue to next handler
         }
       }
-
-      // Now perform database operations in a single transaction
-      await appDatabase.transaction(() async {
-        // Cancel all local changes
-        await appDatabase.cancelAllLocalChanges();
-        _logger.finest('... will reset last received changedId to null');
-        await appDatabase.setLastReceivedChangeId(null);
-        _logger.finest('... will clear all local records');
-
-        // Clear ALL local records for ALL handlers
-        for (final handler in _typeHandlers.values) {
-          _logger.finest(
-            '... will clear local records for handler \u001b[1m${handler.toString()}\u001b[0m',
-          );
-          await handler.deleteAllLocal();
-        }
-
-        // Insert all remote data
-        for (final entry in remoteData.entries) {
-          final handler = entry.key;
-          final list = entry.value;
-
-          if (_state.cancelRequested) {
-            _logger.finest('... cancel requested. Will leave.');
-            throw const CancelException();
-          }
-
-          await handler.upsertAllLocal(list);
-          _logger.info('called insertAll ${sw.elapsedMilliseconds}');
-          _logger.info(
-            'synced ${handler.toString()} ${sw.elapsedMilliseconds}',
-          );
-        }
-
-        await appDatabase.setLastReceivedChangeId(null);
-      });
-
       sw.stop();
       _logger.info(
         'synchronization terminated after taking ${sw.elapsedMilliseconds} milliseconds',
@@ -341,7 +350,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       _logger.finest('user cancelled sync');
       rethrow;
     } catch (e) {
-      _logger.severe('exception on fullResync: $e');
+      _logger.severe('exception on _timeBasedPartialResync: $e');
       rethrow;
     }
   }

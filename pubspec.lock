@@ -337,6 +337,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  device_uuid:
+    dependency: "direct main"
+    description:
+      name: device_uuid
+      sha256: a9f884aca88b5b2f384d0bfb2ce3d7f4e4e2ee27fa211ab13d7529da70055b06
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   dio:
     dependency: "direct main"
     description:
