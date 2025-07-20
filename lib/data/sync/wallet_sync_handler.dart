@@ -3,6 +3,7 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/wallet/wallet_remote_datasource.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 @injectable
 class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
@@ -23,8 +24,14 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
   String get entityType => WalletSyncHandler.entity;
 
   @override
-  Future<List<Wallet>> restGetAllRemote() async {
-    return await remoteDataSource.getAllWallets();
+  Future<List<Wallet>> restGetAllRemote({
+    bool? noClientId,
+    DateTime? syncedSince,
+  }) async {
+    return await remoteDataSource.getAllWallets(
+      noClientId: noClientId,
+      syncedSince: syncedSince,
+    );
   }
 
   @override
@@ -105,7 +112,16 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Wallet> entities) async {
-    final companions = entities.map((entity) => WalletsCompanion(
+    for (final entity in entities) {
+      if (entity.clientId.isEmpty) {
+        continue;
+      }
+
+      if (entity.deletedAt != null) {
+        // If the wallet is marked as deleted, remove it locally
+        await table.deleteWhere((w) => w.clientId.equals(entity.clientId));
+      } else {
+        final companion = WalletsCompanion(
           clientId: Value(entity.clientId),
           userId: Value(entity.userId),
           rev: Value(entity.rev),
@@ -120,8 +136,10 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
           description: Value(entity.description),
           stats: Value(entity.stats),
           icon: Value(entity.icon),
-        ));
-    await table.insertAll(companions, mode: InsertMode.insertOrReplace);
+        );
+        await table.insertOnConflictUpdate(companion);
+      }
+    }
   }
 
   @override
@@ -137,4 +155,19 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
   Future<Wallet> unmarshal(Map<String, dynamic> data) async {
     return Wallet.fromJson(data);
   }
+
+  @override
+  Future<Wallet> assignClientId(Wallet item) async {
+    if (item.clientId.isEmpty) {
+      final newClientId = await generateDeviceScopedId();
+      final updated = item.copyWith(clientId: newClientId);
+      await table.insertOnConflictUpdate(updated);
+      return updated;
+    } else {
+      return item;
+    }
+  }
+
+  @override
+  DateTime? getlastSyncedAt(Wallet entity) => entity.lastSyncedAt;
 }

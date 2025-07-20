@@ -6,7 +6,7 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 
 abstract class PartyRemoteDataSource {
-  Future<List<Party>> getAllParties();
+  Future<List<Party>> getAllParties({DateTime? syncedSince, bool? noClientId});
   Future<Party?> getParty(int id);
   Future<Party> insertParty(Party party);
   Future<Party> updateParty(Party party);
@@ -22,8 +22,16 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
   });
 
   @override
-  Future<List<Party>> getAllParties() async {
-    final response = await dio.get('parties');
+  Future<List<Party>> getAllParties(
+      {DateTime? syncedSince, bool? noClientId}) async {
+    final queryParams = <String, dynamic>{};
+    if (syncedSince != null) {
+      queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+    }
+    if (noClientId != null) {
+      queryParams['no_client_id'] = noClientId;
+    }
+    final response = await dio.get('parties', queryParameters: queryParams);
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
@@ -47,8 +55,8 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
   @override
   Future<Party> insertParty(Party party) async {
     final data = {
-      'client_id': party.clientId,
       'name': party.name,
+      'client_id': party.clientId,
       'description': party.description,
       if (party.icon != null) ...{
         'icon': party.icon?.content,
@@ -70,6 +78,7 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
   Future<Party> updateParty(Party party) async {
     final data = {
       'name': party.name,
+      'client_id': party.clientId,
       'description': party.description,
       if (party.icon != null) ...{
         'icon': party.icon?.content,

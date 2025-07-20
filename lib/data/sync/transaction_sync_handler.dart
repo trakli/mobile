@@ -6,6 +6,7 @@ import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 @lazySingleton
 class TransactionSyncHandler
@@ -95,8 +96,12 @@ class TransactionSyncHandler
   }
 
   @override
-  Future<List<TransactionCompleteDto>> restGetAllRemote() async {
-    return remoteDataSource.getAllTransactions();
+  Future<List<TransactionCompleteDto>> restGetAllRemote(
+      {bool? noClientId, DateTime? syncedSince}) async {
+    return remoteDataSource.getAllTransactions(
+      noClientId: noClientId,
+      syncedSince: syncedSince,
+    );
   }
 
   @override
@@ -124,6 +129,11 @@ class TransactionSyncHandler
   // Implementing the required methods from SyncTypeHandler
   @override
   Future<void> deleteLocal(TransactionCompleteDto entity) async {
+    // Delete all categorizables for this transaction
+    await db.categorizables.deleteWhere((row) =>
+        row.categorizableId.equals(entity.transaction.clientId) &
+        row.categorizableType.equals(CategorizableType.transaction.name));
+
     await table.deleteOne(entity.transaction);
   }
 
@@ -193,7 +203,20 @@ class TransactionSyncHandler
   @override
   Future<void> upsertAllLocal(List<TransactionCompleteDto> list) async {
     for (var entity in list) {
-      await upsertLocal(entity);
+      if (entity.transaction.clientId.isEmpty) {
+        continue;
+      }
+
+      if (entity.transaction.deletedAt != null) {
+        // If the transaction is marked as deleted, remove it locally
+        try {
+          await deleteLocal(entity);
+        } catch (e) {
+          //
+        }
+      } else {
+        await upsertLocal(entity);
+      }
     }
   }
 
@@ -282,4 +305,23 @@ class TransactionSyncHandler
   int? getServerId(TransactionCompleteDto entity) {
     return entity.transaction.id;
   }
+
+  @override
+  Future<TransactionCompleteDto> assignClientId(
+      TransactionCompleteDto item) async {
+    final transaction = item.transaction;
+
+    if (transaction.clientId.isEmpty) {
+      final newClientId = await generateDeviceScopedId();
+      final updated = transaction.copyWith(clientId: newClientId);
+      await table.insertOnConflictUpdate(updated);
+      return item.copyWith(transaction: updated);
+    } else {
+      return item;
+    }
+  }
+
+  @override
+  DateTime? getlastSyncedAt(TransactionCompleteDto entity) =>
+      entity.transaction.lastSyncedAt;
 }

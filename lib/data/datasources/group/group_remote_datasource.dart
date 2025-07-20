@@ -6,11 +6,14 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 
 abstract class GroupRemoteDataSource {
-  Future<List<Group>> getAllGroups();
+  Future<List<Group>> getAllGroups({DateTime? syncedSince, bool? noClientId});
   Future<Group> getGroup(int id);
   Future<Group> insertGroup(Group group);
   Future<Group> updateGroup(Group group);
   Future<void> deleteGroup(int int);
+
+  /// Updates multiple groups with new client IDs in a single request
+  // Future<void> updateGroupsWithClientIds(List<Group> groups);
 }
 
 @Injectable(as: GroupRemoteDataSource)
@@ -22,12 +25,19 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   });
 
   @override
-  Future<List<Group>> getAllGroups() async {
-    final response = await dio.get('groups');
+  Future<List<Group>> getAllGroups(
+      {DateTime? syncedSince, bool? noClientId}) async {
+    final queryParams = <String, dynamic>{};
+    if (syncedSince != null) {
+      queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+    }
+    if (noClientId != null) {
+      queryParams['no_client_id'] = noClientId;
+    }
+    final response = await dio.get('groups', queryParameters: queryParams);
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
-    //Filter only client_generated_id is not null
     final paginatedResponse = PaginationResponse.fromJson(
       apiResponse.data as Map<String, dynamic>,
       (Object? json) => Group.fromJson(json! as Map<String, dynamic>),
@@ -47,12 +57,12 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<Group> insertGroup(Group group) async {
     final response = await dio.post('groups', data: {
       'name': group.name,
+      'client_id': group.clientId,
       'description': group.description,
       if (group.icon != null) ...{
         'icon': group.icon?.content,
         'icon_type': group.icon?.type.name,
       },
-      'client_id': group.clientId,
       'created_at': formatServerIsoDateTimeString(DateTime.now()),
     });
     final apiResponse = ApiResponse.fromJson(response.data);
@@ -63,6 +73,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<Group> updateGroup(Group group) async {
     final response = await dio.put('groups/${group.clientId}', data: {
       'name': group.name,
+      'client_id': group.clientId,
       'description': group.description,
       if (group.icon != null) ...{
         'icon': group.icon!.content,

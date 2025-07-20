@@ -10,6 +10,7 @@ import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/database/tables/parties.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
@@ -17,7 +18,7 @@ import 'package:trakli/data/models/media.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/wallet_stats.dart';
 import 'dart:io';
-import 'tables/sync_statuc.dart';
+import 'tables/sync_meta_data.dart';
 import 'package:trakli/data/database/tables/categorizables.dart';
 
 part 'app_database.g.dart';
@@ -144,20 +145,6 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   }
 
   @override
-  Future<String?> getLastChangeId() async {
-    final status = await (select(syncMetadata)..limit(1)).getSingleOrNull();
-    return status?.lastReceivedChangeId;
-  }
-
-  @override
-  Future<void> setLastReceivedChangeId(String? id) async {
-    await into(syncMetadata).insertOnConflictUpdate(SyncMetadataCompanion(
-      id: const Value(1),
-      lastReceivedChangeId: Value(id),
-    ));
-  }
-
-  @override
   Future<void> insertLocalChange(PendingLocalChange pendingLocalChange) async {
     final localChange = LocalChangesCompanion(
       entityType: Value(pendingLocalChange.entityType),
@@ -215,5 +202,49 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
     final results = await query.getSingleOrNull();
     return results?.readTable(groups);
+  }
+
+  @override
+  Future<LocalSyncMetadata?> getLocalSyncMetadata(String entityType) async {
+    final row = await (select(syncMetadata)
+          ..where((t) => t.entityType.equals(entityType)))
+        .getSingleOrNull();
+    if (row == null) {
+      return null;
+    }
+
+    return LocalSyncMetadata(
+      entityType: row.entityType,
+      lastSyncedAt: row.lastSyncedAt,
+    );
+  }
+
+  @override
+  Future<List<LocalSyncMetadata>> getLocalSyncMetadataList() async {
+    final rows = await select(syncMetadata).get();
+    return rows
+        .map((row) => LocalSyncMetadata(
+              entityType: row.entityType,
+              lastSyncedAt: row.lastSyncedAt,
+            ))
+        .toList();
+  }
+
+  @override
+  Future<void> updateEnityLocalSyncMetadata(
+      {required String entityType, DateTime? lastSyncedAt}) async {
+    final time = lastSyncedAt?.add(
+          const Duration(seconds: 2),
+        ) ??
+        DateTime.now().add(
+          const Duration(seconds: 2),
+        );
+
+    await into(syncMetadata).insertOnConflictUpdate(
+      SyncMetadataCompanion(
+        entityType: Value(entityType),
+        lastSyncedAt: Value(time),
+      ),
+    );
   }
 }

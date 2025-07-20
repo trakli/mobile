@@ -12,7 +12,7 @@ _$SyncStateDtoImpl _$$SyncStateDtoImplFromJson(Map<String, dynamic> json) =>
       syncableType: json['syncable_type'] as String,
       syncableId: (json['syncable_id'] as num).toInt(),
       source: json['source'] as String?,
-      clientGeneratedId: json['client_generated_id'] as String,
+      clientGeneratedId: json['client_generated_id'] as String? ?? '',
       lastSyncedAt: json['last_synced_at'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),

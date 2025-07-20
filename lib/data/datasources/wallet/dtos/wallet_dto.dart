@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -12,7 +13,8 @@ part 'wallet_dto.g.dart';
 // @JsonSerializable(explicitToJson: true)
 class WalletDto with _$WalletDto {
   const factory WalletDto({
-    @JsonKey(name: 'client_generated_id') required String clientId,
+    @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+    required String clientId,
     @JsonKey(defaultValue: WalletType.bank) required WalletType type,
     required String name,
     String? description,

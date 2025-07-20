@@ -6,7 +6,8 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 
 abstract class CategoryRemoteDataSource {
-  Future<List<Category>> getAllCategories();
+  Future<List<Category>> getAllCategories(
+      {DateTime? syncedSince, bool? noClientId});
   Future<Category?> getCategory(int id);
   Future<Category> insertCategory(Category category);
   Future<Category> updateCategory(Category category);
@@ -22,12 +23,19 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   });
 
   @override
-  Future<List<Category>> getAllCategories() async {
-    final response = await dio.get('categories');
+  Future<List<Category>> getAllCategories(
+      {DateTime? syncedSince, bool? noClientId}) async {
+    final queryParams = <String, dynamic>{};
+    if (syncedSince != null) {
+      queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+    }
+    if (noClientId != null) {
+      queryParams['no_client_id'] = noClientId;
+    }
+    final response = await dio.get('categories', queryParameters: queryParams);
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
-    //Filter only client_generated_id is not null
     final paginatedResponse = PaginationResponse.fromJson(
       apiResponse.data as Map<String, dynamic>,
       (Object? json) => Category.fromJson(json! as Map<String, dynamic>),
@@ -48,9 +56,9 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   @override
   Future<Category> insertCategory(Category category) async {
     final data = {
-      'client_id': category.clientId,
       'type': category.type.name,
       'name': category.name,
+      'client_id': category.clientId,
       'description': category.description,
       if (category.icon != null) ...{
         'icon': category.icon!.content,
@@ -76,6 +84,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'categories/${category.id}',
       data: {
         'type': category.type.serverKey,
+        'client_id': category.clientId,
         'name': category.name,
         'description': category.description,
         if (category.icon != null) ...{

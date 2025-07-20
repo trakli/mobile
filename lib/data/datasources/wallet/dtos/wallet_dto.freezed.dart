@@ -20,7 +20,7 @@ WalletDto _$WalletDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WalletDto {
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
   String get clientId => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: WalletType.bank)
   WalletType get type => throw _privateConstructorUsedError;
@@ -62,7 +62,8 @@ abstract class $WalletDtoCopyWith<$Res> {
       _$WalletDtoCopyWithImpl<$Res, WalletDto>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      String clientId,
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
@@ -197,7 +198,8 @@ abstract class _$$WalletDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      String clientId,
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
@@ -316,7 +318,8 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WalletDtoImpl extends _WalletDto {
   const _$WalletDtoImpl(
-      {@JsonKey(name: 'client_generated_id') required this.clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      required this.clientId,
       @JsonKey(defaultValue: WalletType.bank) required this.type,
       required this.name,
       this.description,
@@ -340,7 +343,7 @@ class _$WalletDtoImpl extends _WalletDto {
       _$$WalletDtoImplFromJson(json);
 
   @override
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
   final String clientId;
   @override
   @JsonKey(defaultValue: WalletType.bank)
@@ -452,7 +455,8 @@ class _$WalletDtoImpl extends _WalletDto {
 
 abstract class _WalletDto extends WalletDto {
   const factory _WalletDto(
-      {@JsonKey(name: 'client_generated_id') required final String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      required final String clientId,
       @JsonKey(defaultValue: WalletType.bank) required final WalletType type,
       required final String name,
       final String? description,
@@ -476,7 +480,7 @@ abstract class _WalletDto extends WalletDto {
       _$WalletDtoImpl.fromJson;
 
   @override
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
   String get clientId;
   @override
   @JsonKey(defaultValue: WalletType.bank)

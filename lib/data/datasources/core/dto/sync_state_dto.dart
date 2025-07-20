@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 
 part 'sync_state_dto.freezed.dart';
 part 'sync_state_dto.g.dart';
@@ -10,7 +11,8 @@ class SyncStateDto with _$SyncStateDto {
     @JsonKey(name: 'syncable_type') required String syncableType,
     @JsonKey(name: 'syncable_id') required int syncableId,
     String? source,
-    @JsonKey(name: 'client_generated_id') required String clientGeneratedId,
+    @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+    required String clientGeneratedId,
     @JsonKey(name: 'last_synced_at') required String lastSyncedAt,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,

@@ -22,7 +22,7 @@ TransactionDTO _$TransactionDTOFromJson(Map<String, dynamic> json) =>
           : WalletDto.fromJson(json['wallet'] as Map<String, dynamic>),
       categories: json['categories'] as List<dynamic>,
       lastSyncedAt: DateTime.parse(json['last_synced_at'] as String),
-      clientGeneratedId: json['client_generated_id'] as String,
+      clientGeneratedId: json['client_generated_id'] as String? ?? '',
       syncState:
           SyncStateDto.fromJson(json['sync_state'] as Map<String, dynamic>),
     );
