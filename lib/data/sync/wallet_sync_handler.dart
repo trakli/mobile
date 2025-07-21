@@ -161,7 +161,6 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
     if (item.clientId.isEmpty) {
       final newClientId = await generateDeviceScopedId();
       final updated = item.copyWith(clientId: newClientId);
-      await table.insertOnConflictUpdate(updated);
       return updated;
     } else {
       return item;

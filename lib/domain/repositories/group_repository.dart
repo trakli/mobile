@@ -24,5 +24,5 @@ abstract class GroupRepository {
 
   Stream<Either<Failure, List<GroupEntity>>> listenToGroups();
 
-  Future<Either<Failure, bool>> hasAnyWallet();
+  Future<Either<Failure, bool>> hasAnyGroups();
 }

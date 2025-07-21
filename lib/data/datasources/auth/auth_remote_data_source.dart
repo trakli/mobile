@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
-import 'package:trakli/data/datasources/auth/dto/create_user_response_dto.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 
 abstract class AuthRemoteDataSource {
@@ -16,7 +15,7 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<CreateUserResponseDto> createUser({
+  Future<AuthResponseDto> createUser({
     required String firstName,
     String? lastName,
     required String email,
@@ -49,7 +48,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<CreateUserResponseDto> createUser({
+  Future<AuthResponseDto> createUser({
     required String firstName,
     String? lastName,
     required String email,
@@ -70,7 +69,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _dio.post('/register', data: data);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final userDto = CreateUserResponseDto.fromJson(apiResponse.data);
+      final userDto = AuthResponseDto.fromJson(apiResponse.data);
 
       return userDto;
     });

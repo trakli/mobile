@@ -6,6 +6,7 @@ abstract class AuthLocalDataSource {
   Future<void> saveUser(User user);
   Future<User?> getUser(int userId);
   Future<void> deleteUser();
+  Future<void> clearDatabase();
 }
 
 @Injectable(as: AuthLocalDataSource)
@@ -31,5 +32,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> deleteUser() async {
     await database.users.deleteAll();
+  }
+
+  @override
+  Future<void> clearDatabase() async {
+    await database.clearDatabase();
   }
 }

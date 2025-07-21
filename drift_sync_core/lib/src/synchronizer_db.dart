@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 mixin SynchronizerDb on GeneratedDatabase {
   Future<List<PendingLocalChange>> getPendingLocalChanges();
   Future<void> cancelAllLocalChanges();
+  Future<void> clearDatabase();
   Future<void> concludeLocalChange(
     PendingLocalChange localChange, {
     Object? error,

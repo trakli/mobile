@@ -19,6 +19,8 @@ abstract class PreferenceManager {
   Future<bool> setString(String key, String value);
   Future<bool> remove(String key);
   String? getString(String key);
+  Future<bool> setBool(String key, bool value);
+  bool? getBool(String key);
   SharedPreferences get prefs;
 }
 
@@ -98,5 +100,15 @@ class PreferenceManagerImpl implements PreferenceManager {
   @override
   Future<bool> remove(String key) {
     return _prefs.remove(key);
+  }
+
+  @override
+  bool? getBool(String key) {
+    return _prefs.getBool(key);
+  }
+
+  @override
+  Future<bool> setBool(String key, bool value) {
+    return _prefs.setBool(key, value);
   }
 }

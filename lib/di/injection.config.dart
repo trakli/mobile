@@ -407,8 +407,8 @@ _i174.GetIt $initGetIt(
         gh<_i243.SaveOnboardingState>(),
         gh<_i332.GetOnboardingStateStream>(),
       ));
-  gh.factory<_i98.EnsureDefaultWalletExistsUseCase>(
-      () => _i98.EnsureDefaultWalletExistsUseCase(
+  gh.factory<_i98.EnsureDefaultGroupExistsUseCase>(
+      () => _i98.EnsureDefaultGroupExistsUseCase(
             gh<_i957.GroupRepository>(),
             gh<_i867.OnboardingRepository>(),
           ));
@@ -441,7 +441,7 @@ _i174.GetIt $initGetIt(
         gh<_i820.UpdateGroupUseCase>(),
         gh<_i759.DeleteGroupUseCase>(),
         gh<_i146.ListenToGroupsUseCase>(),
-        gh<_i98.EnsureDefaultWalletExistsUseCase>(),
+        gh<_i98.EnsureDefaultGroupExistsUseCase>(),
       ));
   return getIt;
 }

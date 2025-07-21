@@ -247,4 +247,17 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       ),
     );
   }
+
+  @override
+  Future<void> clearDatabase() async {
+    await users.deleteAll();
+    await transactions.deleteAll();
+    await categories.deleteAll();
+    await parties.deleteAll();
+    await groups.deleteAll();
+    await wallets.deleteAll();
+    await localChanges.deleteAll();
+    await syncMetadata.deleteAll();
+    await categorizables.deleteAll();
+  }
 }

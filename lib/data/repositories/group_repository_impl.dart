@@ -122,7 +122,7 @@ class GroupRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, bool>> hasAnyWallet() {
+  Future<Either<Failure, bool>> hasAnyGroups() {
     return RepositoryErrorHandler.handleApiCall(() async {
       final groups = await localDataSource.getAllGroups();
       return groups.isNotEmpty;

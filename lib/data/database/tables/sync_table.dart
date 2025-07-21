@@ -4,7 +4,7 @@ const clientConstant = '';
 
 mixin SyncTable on Table {
   // Server ID (nullable since it's assigned by the server)
-  IntColumn get id => integer().nullable()();
+  IntColumn get id => integer().nullable().unique()();
 
   @JsonKey('user_id')
   IntColumn get userId => integer().nullable()();

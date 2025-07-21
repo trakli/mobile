@@ -21,7 +21,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   }
 
   // Seconds
-  int syncInterval = 30;
+  int syncInterval = 45;
 
   final _syncStateController = StreamController<SyncState>.broadcast();
   Stream<SyncState> get syncStateStream => _syncStateController.stream;
@@ -43,6 +43,13 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   void stopPeriodicSync() {
     _periodicSyncTimer?.cancel();
     _periodicSyncTimer = null;
+  }
+
+  /// Stops all synchronization activities (periodic and network sync). Call this after logout.
+  Future<void> stopAllSync() async {
+    stopPeriodicSync();
+    await disposeNetworkSync();
+    cancel();
   }
 
   void init() {

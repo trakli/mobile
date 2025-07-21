@@ -217,6 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: neutralN700,
                       ),
                       children: [
+                        const TextSpan(text: ' '),
                         TextSpan(
                           text: LocaleKeys.login.tr(),
                           style: TextStyle(

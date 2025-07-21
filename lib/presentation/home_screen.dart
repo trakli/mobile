@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:trakli/domain/entities/transaction_complete_entity.dart'
-    show TransactionCompleteEntity;
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -34,17 +34,51 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentIndex = 0;
-  // GroupEntity? group;
+  int currentWalletIndex = 0; // GroupEntity? group;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GroupCubit>().ensureDefaultGroup(
+            name: LocaleKeys.defaultGroupName.tr(),
+          );
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  List<TransactionCompleteEntity> filterTransactions({
+    required List<TransactionCompleteEntity> transactions,
+    required List<WalletEntity> wallets,
+    required int currentWalletIndex,
+    required GroupEntity? selectedGroup,
+    required GroupEntity? defaultGroup,
+  }) {
+    final bool hasWallets =
+        wallets.isNotEmpty && currentWalletIndex < wallets.length;
+
+    final String? currentWalletId =
+        hasWallets ? wallets[currentWalletIndex].clientId : null;
+    final String? selectedGroupId = selectedGroup?.clientId;
+    final String? defaultGroupId = defaultGroup?.clientId;
+
+    if (!hasWallets) return <TransactionCompleteEntity>[];
+
+    return transactions.where((transaction) {
+      final String transactionWalletId = transaction.wallet.clientId;
+      final String? transactionGroupId = transaction.group?.clientId;
+
+      final bool walletMatches = transactionWalletId == currentWalletId;
+      final bool groupMatches = transactionGroupId == selectedGroupId;
+      final bool isDefaultGroup =
+          transactionGroupId == null && selectedGroupId == defaultGroupId;
+
+      return walletMatches && (groupMatches || isDefaultGroup);
+    }).toList();
   }
 
   @override
@@ -116,18 +150,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           }
-          final transactions =
-              wallets.isNotEmpty && currentIndex < wallets.length
-                  ? state.transactions.where((transaction) {
-                      return (transaction.wallet.clientId ==
-                              wallets[currentIndex].clientId) &&
-                          ((transaction.group?.clientId ==
-                                  selectedGroup?.clientId) ||
-                              (transaction.group?.clientId == null &&
-                                  (selectedGroup?.clientId ==
-                                      defaultGroup?.clientId)));
-                    }).toList()
-                  : <TransactionCompleteEntity>[];
+          final transactions = filterTransactions(
+            transactions: state.transactions,
+            wallets: wallets,
+            currentWalletIndex: currentWalletIndex,
+            selectedGroup: selectedGroup,
+            defaultGroup: defaultGroup,
+          );
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -148,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       enlargeFactor: 0.2,
                       onPageChanged: (index, reason) {
                         setState(() {
-                          currentIndex = index;
+                          currentWalletIndex = index;
                         });
                       },
                     ),
@@ -163,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 12.h),
                   Align(
                     child: AnimatedSmoothIndicator(
-                      activeIndex: currentIndex,
+                      activeIndex: currentWalletIndex,
                       count: wallets.length,
                       effect: ExpandingDotsEffect(
                         activeDotColor: Theme.of(context).primaryColor,

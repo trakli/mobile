@@ -240,6 +240,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           _logger.severe(
               'Error syncing model without client id with handler  [1m${handler.entityType} [0m: $e');
           _logger.severe(stack);
+          rethrow;
           // Do not mark as successfully synced, and continue to next handler
         }
       }
@@ -264,11 +265,30 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     var updatedItems = [];
 
     for (final item in itemsWithoutClientId) {
-      final current = await handler.assignClientId(item);
-      updatedItems.add(current);
+      try {
+        final serverId = handler.getServerId(item);
+
+        if (serverId == null) {
+          continue;
+        }
+
+        final server = await handler.getLocalByServerId(serverId);
+
+        if (server != null) {
+          continue;
+        }
+
+        final current = handler.assignClientId(item);
+        updatedItems.add(current);
+      } catch (e, stack) {
+        _logger.warning('Failed to assign client ID for item: $e\n$stack');
+        continue;
+      }
     }
 
     const batchSize = 5;
+    final allResponses = <T>[];
+
     for (int i = 0; i < updatedItems.length; i += batchSize) {
       final end = (i + batchSize < updatedItems.length)
           ? i + batchSize
@@ -277,9 +297,12 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
       final responses =
           await Future.wait(batch.map((entity) => handler.putRemote(entity)));
+      allResponses.addAll(responses);
 
       _logger.finest('responses', responses);
     }
+
+    await handler.upsertAllLocal(allResponses);
   }
 
   /// For each handler/model, checks if lastSyncedAt is null (never synced) and does a full fetch for that model only.
