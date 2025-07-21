@@ -313,7 +313,7 @@ class _AppViewState extends State<AppView> {
                 listener: (context, state) {
                   state.maybeWhen(
                     authenticated: (user) async {
-                      getIt<SynchAppDatabase>().init();
+                      getIt<SynchAppDatabase>().doSync();
 
                       final entityResult = await getIt<OnboardingRepository>()
                           .getOnboardingState();

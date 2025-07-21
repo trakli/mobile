@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/di/injection.dart';
+import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_nav.dart';
@@ -35,9 +38,19 @@ class MainNavigationScreen extends StatelessWidget {
               width: 0.8.sw,
               child: const CustomDrawer(),
             ),
-            body: screens.elementAt(
-              MainNavigationPageState.values.indexOf(state),
-            ),
+            body: RefreshIndicator(
+                displacement: 20.0,
+                onRefresh: () async {
+                  final isAuthenticated =
+                      context.read<AuthCubit>().state.isAuthenticated;
+
+                  if (isAuthenticated) {
+                    getIt<SynchAppDatabase>().doSync();
+                  }
+                },
+                child: screens.elementAt(
+                  MainNavigationPageState.values.indexOf(state),
+                )),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             floatingActionButton: SizedBox(

@@ -21,9 +21,10 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   }
 
   // Seconds
-  int syncInterval = 45;
+  int syncInterval = 60 * 5;
 
   final _syncStateController = StreamController<SyncState>.broadcast();
+
   Stream<SyncState> get syncStateStream => _syncStateController.stream;
 
   @override
@@ -55,6 +56,12 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   void init() {
     _performSync();
     initializeNetworkSync(_performSync);
+    startPeriodicSync(); // Start periodic sync every 30 seconds
+  }
+
+  Future<void> doSync() async {
+    await _performSync();
+    stopPeriodicSync();
     startPeriodicSync(); // Start periodic sync every 30 seconds
   }
 
