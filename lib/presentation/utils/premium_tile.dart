@@ -25,14 +25,13 @@ class PremiumTile extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.isLoading) {
-          if (state.isLoading) {
-            return Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-              ),
-            );
-          }
+          return Center(
+            child: CircularProgressIndicator.adaptive(
+              valueColor: AlwaysStoppedAnimation(appPrimaryColor),
+            ),
+          );
         }
+
         if (state.subscription != null) {
           return InkWell(
             onTap: () {

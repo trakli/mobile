@@ -70,7 +70,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
-                    planType == PlanType.monthly ? "Monthly" : "Yearly",
+                    widget.plan.name,
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: neutralM900,
@@ -108,7 +108,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
             Text(
               "${CurrencyFormater.formatAmountWithSymbol(
                 context,
-                planType == PlanType.monthly ? 4000 : 10000,
+                widget.plan.priceCents.toDouble(),
                 currentDecimalDigits: 0,
                 compact: true,
               )}/Month",
@@ -127,31 +127,33 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
               ),
             ),
             Divider(height: 0, thickness: 1.5.h),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 8.w,
-              children: [
-                SvgPicture.asset(
-                  width: 16.w,
-                  height: 16.h,
-                  Assets.images.arrowCircleRight,
-                  colorFilter: ColorFilter.mode(
-                    appPrimaryColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    loremIpsum,
-                    style: TextStyle(
-                      color: neutralM700,
-                      fontSize: 12.sp,
+            ...widget.plan.features.map<Widget>((feature) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 8.w,
+                children: [
+                  SvgPicture.asset(
+                    width: 16.w,
+                    height: 16.h,
+                    Assets.images.arrowCircleRight,
+                    colorFilter: ColorFilter.mode(
+                      appPrimaryColor,
+                      BlendMode.srcIn,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            ),
+                  Expanded(
+                    child: Text(
+                      feature,
+                      style: TextStyle(
+                        color: neutralM700,
+                        fontSize: 12.sp,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),
