@@ -21,13 +21,14 @@ import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
+import 'package:trakli/presentation/plans/cubit/plans_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -68,6 +69,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<SyncCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<PlansCubit>(),
         ),
       ],
       child: const AppView(),

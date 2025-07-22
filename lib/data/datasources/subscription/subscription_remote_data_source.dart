@@ -21,10 +21,14 @@ class SubscriptionRemoteDataSourceImpl implements SubscriptionRemoteDataSource {
     required String region,
   }) async {
     return ErrorHandler.handleApiCall(() async {
+      print("object ====================");
       final response = await _dio.get(
-        '/cloud/plans',
+        'cloud/plans',
         queryParameters: {'region': region},
       );
+
+      print("object ====================");
+      print(response.data);
 
       final apiResponse = ApiResponse.fromJson(response.data);
       return SubscriptionDto.fromJson(apiResponse.data);
