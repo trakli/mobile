@@ -16,7 +16,6 @@ class PremiumTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PlansCubit, PlansState>(
       listener: (context, state) {
-        if (state.isLoading) {}
         if (state.failure != const Failure.none()) {
           showSnackBar(
             message: state.failure.customMessage,
@@ -37,9 +36,14 @@ class PremiumTile extends StatelessWidget {
         if (state.subscription != null) {
           return InkWell(
             onTap: () {
-              showCustomDialog(
-                widget: const PremiumDialog(),
-              );
+              final subscriptionInfo = state.subscription;
+              if (subscriptionInfo != null) {
+                showCustomDialog(
+                  widget: PremiumDialog(
+                    subscription: subscriptionInfo,
+                  ),
+                );
+              }
             },
             child: Container(
               padding: EdgeInsets.all(2.sp), // Border thickness

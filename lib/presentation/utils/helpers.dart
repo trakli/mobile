@@ -12,6 +12,7 @@ import 'package:popover/popover.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/enums.dart' show PlanType;
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -319,4 +320,15 @@ Widget bulletPoint(String text) {
       ),
     ],
   );
+}
+
+getPlanType(String interval) {
+  switch (interval) {
+    case 'monthly':
+      return PlanType.monthly;
+    case 'yearly':
+      return PlanType.yearly;
+    default:
+      throw ArgumentError('Invalid interval');
+  }
 }

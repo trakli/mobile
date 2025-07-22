@@ -2,29 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart' show CurrencyFormater;
+import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
-class SubscriptionTile extends StatelessWidget {
+class SubscriptionTile extends StatefulWidget {
   final bool isSelected;
-  final PlanType planType;
+  final PlanEntity plan;
   final VoidCallback? onTap;
 
   const SubscriptionTile({
     super.key,
     this.isSelected = false,
-    required this.planType,
+    required this.plan,
     this.onTap,
   });
 
   @override
+  State<SubscriptionTile> createState() => _SubscriptionTileState();
+}
+
+class _SubscriptionTileState extends State<SubscriptionTile> {
+  PlanType planType = PlanType.monthly;
+
+  @override
+  void initState() {
+    planType = getPlanType(widget.plan.id);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
           vertical: 16.h,
@@ -33,7 +46,7 @@ class SubscriptionTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFF5F5F7),
           borderRadius: BorderRadius.circular(8.r),
-          border: isSelected
+          border: widget.isSelected
               ? Border.all(
                   width: 2.w,
                   color: appPrimaryColor,
@@ -57,9 +70,7 @@ class SubscriptionTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: Text(
-                    planType == PlanType.monthly
-                        ? LocaleKeys.monthly.tr()
-                        : LocaleKeys.yearly.tr(),
+                    planType == PlanType.monthly ? "Monthly" : "Yearly",
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: neutralM900,
@@ -78,7 +89,7 @@ class SubscriptionTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
-                      LocaleKeys.recommended.tr(),
+                      "Recommended",
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.white,
@@ -87,22 +98,20 @@ class SubscriptionTile extends StatelessWidget {
                   ),
                 const Spacer(),
                 Icon(
-                  isSelected
+                  widget.isSelected
                       ? Icons.radio_button_checked_rounded
                       : Icons.radio_button_off_rounded,
-                  color: isSelected ? appPrimaryColor : Colors.grey,
+                  color: widget.isSelected ? appPrimaryColor : Colors.grey,
                 ),
               ],
             ),
             Text(
-              LocaleKeys.pricePerMonth.tr(args: [
-                CurrencyFormater.formatAmountWithSymbol(
-                  context,
-                  planType == PlanType.monthly ? 4000 : 10000,
-                  currentDecimalDigits: 0,
-                  compact: true,
-                )
-              ]),
+              "${CurrencyFormater.formatAmountWithSymbol(
+                context,
+                planType == PlanType.monthly ? 4000 : 10000,
+                currentDecimalDigits: 0,
+                compact: true,
+              )}/Month",
               style: TextStyle(
                 fontSize: 18.sp,
                 color: neutralM900,
@@ -110,7 +119,7 @@ class SubscriptionTile extends StatelessWidget {
               ),
             ),
             Text(
-              LocaleKeys.loremIpsum.tr(),
+              "Lorem ipsum dolor sit amet consectetur.",
               style: TextStyle(
                 fontSize: 14.sp,
                 color: neutralM700,
