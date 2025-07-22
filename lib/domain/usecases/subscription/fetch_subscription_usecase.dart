@@ -2,17 +2,17 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/data/models/plan.dart';
+import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/domain/repositories/subscription_repository.dart';
 
 @injectable
-class GetSubscriptionUseCase implements UseCase<SubscriptionEntity, NoParams> {
+class FetchSubscriptionPlans implements UseCase<SubscriptionEntity, String> {
   final SubscriptionRepository _repository;
 
-  GetSubscriptionUseCase(this._repository);
+  FetchSubscriptionPlans(this._repository);
 
   @override
-  Future<Either<Failure, SubscriptionEntity>> call(NoParams params) async {
-    return await _repository.getSubscription();
+  Future<Either<Failure, SubscriptionEntity>> call(String region) {
+    return _repository.fetchSubscriptionPlans(region: region);
   }
 }
