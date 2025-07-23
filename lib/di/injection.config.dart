@@ -49,7 +49,7 @@ import '../data/datasources/wallet/wallet_local_datasource.dart' as _i849;
 import '../data/datasources/wallet/wallet_remote_datasource.dart' as _i624;
 import '../data/repositories/auth_repository_imp.dart' as _i135;
 import '../data/repositories/category_repository_impl.dart' as _i324;
-import '../data/repositories/cloud_benefit_imp.dart' as _i164;
+import '../data/repositories/cloud_benefit_repository_imp.dart' as _i415;
 import '../data/repositories/exchange_rate_imp.dart' as _i827;
 import '../data/repositories/group_repository_impl.dart' as _i875;
 import '../data/repositories/onboarding_repository_impl.dart' as _i386;
@@ -227,6 +227,9 @@ _i174.GetIt $initGetIt(
       () => _i961.GetCategoriesUseCase(gh<_i410.CategoryRepository>()));
   gh.factory<_i292.DeleteCategoryUseCase>(
       () => _i292.DeleteCategoryUseCase(gh<_i410.CategoryRepository>()));
+  gh.singleton<_i415.CloudBenefitRepository>(() =>
+      _i415.CloudBenefitRepositoryImpl(
+          gh<_i61.CloudBenefitRemoteDataSource>()));
   gh.singleton<_i867.OnboardingRepository>(() => _i386.OnboardingRepositoryImpl(
         gh<_i480.OnboardingLocalDataSource>(),
         gh<_i1057.ExchangeRateRepository>(),
@@ -249,9 +252,6 @@ _i174.GetIt $initGetIt(
         remoteDataSource: gh<_i624.WalletRemoteDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
-  gh.singleton<_i164.CloudBenefitRepository>(() =>
-      _i164.CloudBenefitRepositoryImpl(
-          gh<_i61.CloudBenefitRemoteDataSource>()));
   gh.lazySingleton<_i893.TransactionSyncHandler>(
       () => _i893.TransactionSyncHandler(
             gh<_i704.AppDatabase>(),
@@ -272,10 +272,10 @@ _i174.GetIt $initGetIt(
       () => _i705.RegisterUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i524.LoginWithEmailUseCase>(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
+  gh.factory<_i61.FetchBenefits>(
+      () => _i61.FetchBenefits(gh<_i415.CloudBenefitRepository>()));
   gh.factory<_i831.RegisterCubit>(
       () => _i831.RegisterCubit(gh<_i705.RegisterUseCase>()));
-  gh.factory<_i61.FetchBenefits>(
-      () => _i61.FetchBenefits(gh<_i164.CloudBenefitRepository>()));
   gh.factory<_i768.LoginWithEmailPassword>(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
