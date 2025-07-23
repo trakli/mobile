@@ -118,7 +118,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
               ),
             ),
             Text(
-              "Lorem ipsum dolor sit amet consectetur.",
+              widget.plan.cta.text,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: neutralM700,
