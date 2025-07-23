@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/plans/cubit/plans_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/dialogs/premium_dialog.dart';
@@ -69,7 +71,7 @@ class PremiumTile extends StatelessWidget {
                   children: [
                     Image.asset(Assets.images.premiumPng.path),
                     Text(
-                      "Upgrade to Premium",
+                      LocaleKeys.upgradeToPremium.tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
