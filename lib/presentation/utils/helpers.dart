@@ -329,6 +329,6 @@ getPlanType(String interval) {
     case 'yearly':
       return PlanType.yearly;
     default:
-      throw ArgumentError('Invalid interval');
+      return PlanType.monthly;
   }
 }
