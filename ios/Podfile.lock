@@ -84,6 +84,8 @@ PODS:
     - sqlite3/rtree
   - SwiftyGif (5.4.5)
   - TOCropViewController (2.7.4)
+  - unique_identifier (0.0.1):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - XYUUID (1.0.0)
@@ -101,6 +103,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/darwin`)
+  - unique_identifier (from `.symlinks/plugins/unique_identifier/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
@@ -138,6 +141,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/darwin"
+  unique_identifier:
+    :path: ".symlinks/plugins/unique_identifier/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
@@ -160,6 +165,7 @@ SPEC CHECKSUMS:
   sqlite3_flutter_libs: f6acaa2172e6bb3e2e70c771661905080e8ebcf2
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  unique_identifier: 759d781cf134d96de2161628a1d52014df19599c
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   XYUUID: 9a2483143d14fc5204b619042ca65073df9fbd88
 

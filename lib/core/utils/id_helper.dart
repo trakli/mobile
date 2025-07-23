@@ -15,9 +15,15 @@ String hashConcatenatedStrings(String id) {
 Future<String> generateDeviceScopedId() async {
   // final deviceId = await DeviceUuid().getUUID();
   final randomId = const Uuid().v4();
+  // var identifier = const Uuid().v4();
+  // try {
+  //   identifier = await UniqueIdentifier.serial ?? identifier;
+  // } catch (_) {
+  //   // error occured
+  // }
 
   // return randomId;
-  // final random = deviceId != null ? '$deviceId-$randomId' : randomId;
+  // final random = deviceId != null ? '$deviceId-$identifier' : identifier;
   // return hashConcatenatedStrings(random);
   return randomId;
 }
