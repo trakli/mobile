@@ -64,12 +64,10 @@ import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../data/sync/wallet_sync_handler.dart' as _i849;
 import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
-import '../domain/repositories/cloud_benefit_repository.dart' as _i11;
 import '../domain/repositories/exchange_rate_repository.dart' as _i1057;
 import '../domain/repositories/group_repository.dart' as _i957;
 import '../domain/repositories/onboarding_repository.dart' as _i867;
 import '../domain/repositories/party_repository.dart' as _i661;
-import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/wallet_repository.dart' as _i368;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
@@ -211,9 +209,6 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
-  gh.singleton<_i11.CloudBenefitRepository>(() =>
-      _i164.CloudBenefitRepositoryImpl(
-          gh<_i61.CloudBenefitRemoteDataSource>()));
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i478.GroupRemoteDataSource>(
@@ -254,20 +249,23 @@ _i174.GetIt $initGetIt(
         remoteDataSource: gh<_i624.WalletRemoteDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
-  gh.factory<_i61.FetchBenefits>(
-      () => _i61.FetchBenefits(gh<_i11.CloudBenefitRepository>()));
+  gh.singleton<_i164.CloudBenefitRepository>(() =>
+      _i164.CloudBenefitRepositoryImpl(
+          gh<_i61.CloudBenefitRemoteDataSource>()));
   gh.lazySingleton<_i893.TransactionSyncHandler>(
       () => _i893.TransactionSyncHandler(
             gh<_i704.AppDatabase>(),
             gh<_i79.TransactionRemoteDataSource>(),
           ));
-  gh.singleton<_i804.SubscriptionRepository>(() =>
-      _i1047.SubscriptionRepositoryImpl(
-          gh<_i682.SubscriptionRemoteDataSource>()));
   gh.lazySingleton<_i235.GroupSyncHandler>(() => _i235.GroupSyncHandler(
         gh<_i704.AppDatabase>(),
         gh<_i478.GroupRemoteDataSource>(),
       ));
+  gh.singleton<_i1047.SubscriptionRepository>(() =>
+      _i1047.SubscriptionRepositoryImpl(
+          gh<_i682.SubscriptionRemoteDataSource>()));
+  gh.factory<_i314.FetchSubscriptionPlans>(
+      () => _i314.FetchSubscriptionPlans(gh<_i1047.SubscriptionRepository>()));
   gh.factory<_i400.LoginWithPhoneUseCase>(
       () => _i400.LoginWithPhoneUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i705.RegisterUseCase>(
@@ -276,6 +274,8 @@ _i174.GetIt $initGetIt(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i831.RegisterCubit>(
       () => _i831.RegisterCubit(gh<_i705.RegisterUseCase>()));
+  gh.factory<_i61.FetchBenefits>(
+      () => _i61.FetchBenefits(gh<_i164.CloudBenefitRepository>()));
   gh.factory<_i768.LoginWithEmailPassword>(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
@@ -356,6 +356,8 @@ _i174.GetIt $initGetIt(
       () => _i241.UpdateTransactionUseCase(gh<_i118.TransactionRepository>()));
   gh.factory<_i947.GetAllTransactionsUseCase>(
       () => _i947.GetAllTransactionsUseCase(gh<_i118.TransactionRepository>()));
+  gh.factory<_i977.PlansCubit>(
+      () => _i977.PlansCubit(gh<_i314.FetchSubscriptionPlans>()));
   gh.factory<_i418.UpdateWalletUseCase>(
       () => _i418.UpdateWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i62.DeleteWalletUseCase>(
@@ -364,8 +366,6 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
-  gh.factory<_i314.FetchSubscriptionPlans>(
-      () => _i314.FetchSubscriptionPlans(gh<_i804.SubscriptionRepository>()));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
         appDatabase: gh<_i704.AppDatabase>(),
         typeHandlers:
@@ -433,8 +433,6 @@ _i174.GetIt $initGetIt(
         ensureDefaultWalletExistsUseCase:
             gh<_i225.EnsureDefaultWalletExistsUseCase>(),
       ));
-  gh.factory<_i977.PlansCubit>(
-      () => _i977.PlansCubit(gh<_i314.FetchSubscriptionPlans>()));
   gh.factory<_i676.GroupCubit>(() => _i676.GroupCubit(
         gh<_i982.GetGroupsUseCase>(),
         gh<_i353.AddGroupUseCase>(),
