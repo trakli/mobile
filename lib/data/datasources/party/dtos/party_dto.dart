@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 
@@ -24,18 +23,4 @@ class PartyDto with _$PartyDto {
       _$PartyDtoFromJson(json);
 
   const PartyDto._();
-
-  Party toModel() {
-    return Party(
-      id: id,
-      name: name,
-      type: type,
-      description: description,
-      clientId: clientId,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      userId: userId,
-      icon: media,
-    );
-  }
 }
