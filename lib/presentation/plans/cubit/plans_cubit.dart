@@ -26,7 +26,6 @@ class PlansCubit extends Cubit<PlansState> {
       (failure) => emit(state.copyWith(isLoading: false, failure: failure)),
       (subscription) => emit(state.copyWith(
         isLoading: false,
-        isLoaded: true,
         subscription: subscription,
         failure: const Failure.none(),
       )),

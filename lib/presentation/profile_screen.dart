@@ -8,16 +8,13 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_info_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/auth/pages/login_screen.dart';
-import 'package:trakli/presentation/auth/pages/register_screen.dart';
+import 'package:trakli/presentation/benefits/benefits_widget.dart';
 import 'package:trakli/presentation/utils/action_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/benefit_tile.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 
@@ -146,70 +143,8 @@ class ProfileScreen extends StatelessWidget {
                 ],
               )
             else
-              Column(
-                spacing: 24.h,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: neutralN500,
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 12.h,
-                      children: [
-                        Text(
-                          LocaleKeys.dontHaveAccount.tr(),
-                          style: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w700,
-                            color: appOrange,
-                          ),
-                        ),
-                        Text(
-                          loremIpsum,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: neutralN700,
-                          ),
-                        ),
-                        Text(
-                          LocaleKeys.benefitsAccount.tr(),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: neutralN700,
-                          ),
-                        ),
-                        const BenefitTile(),
-                        const BenefitTile(),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 52.h,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AppNavigator.removeAllPreviousAndPushThenPush(
-                          context,
-                          const LoginScreen(),
-                          const RegisterScreen(),
-                        );
-                      },
-                      child: Text(
-                        LocaleKeys.createAccountNow.tr(),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              const BenefitsWidget(),
+            SizedBox(height: 62.h),
           ],
         ),
       ),

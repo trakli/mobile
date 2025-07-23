@@ -25,6 +25,8 @@ import '../data/datasources/auth/auth_local_data_source.dart' as _i276;
 import '../data/datasources/auth/auth_remote_data_source.dart' as _i496;
 import '../data/datasources/auth/preference_manager.dart' as _i683;
 import '../data/datasources/auth/token_manager.dart' as _i483;
+import '../data/datasources/benefits/cloud_benefit_remote_data_source.dart'
+    as _i61;
 import '../data/datasources/category/category_local_datasource.dart' as _i148;
 import '../data/datasources/category/category_remote_datasource.dart' as _i558;
 import '../data/datasources/exchange-rate/exchange_rate_local_datasource.dart'
@@ -47,6 +49,7 @@ import '../data/datasources/wallet/wallet_local_datasource.dart' as _i849;
 import '../data/datasources/wallet/wallet_remote_datasource.dart' as _i624;
 import '../data/repositories/auth_repository_imp.dart' as _i135;
 import '../data/repositories/category_repository_impl.dart' as _i324;
+import '../data/repositories/cloud_benefit_imp.dart' as _i164;
 import '../data/repositories/exchange_rate_imp.dart' as _i827;
 import '../data/repositories/group_repository_impl.dart' as _i875;
 import '../data/repositories/onboarding_repository_impl.dart' as _i386;
@@ -61,6 +64,7 @@ import '../data/sync/transaction_sync_handler.dart' as _i893;
 import '../data/sync/wallet_sync_handler.dart' as _i849;
 import '../domain/repositories/auth_repository.dart' as _i800;
 import '../domain/repositories/category_repository.dart' as _i410;
+import '../domain/repositories/cloud_benefit_repository.dart' as _i11;
 import '../domain/repositories/exchange_rate_repository.dart' as _i1057;
 import '../domain/repositories/group_repository.dart' as _i957;
 import '../domain/repositories/onboarding_repository.dart' as _i867;
@@ -85,6 +89,7 @@ import '../domain/usecases/category/delete_category_usecase.dart' as _i292;
 import '../domain/usecases/category/get_categories_usecase.dart' as _i961;
 import '../domain/usecases/category/listen_to_categories_usecase.dart' as _i500;
 import '../domain/usecases/category/update_category_usecase.dart' as _i986;
+import '../domain/usecases/cloud_benefits/fetch_benefits_usecase.dart' as _i61;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/group/add_group_usecase.dart' as _i353;
 import '../domain/usecases/group/delete_group_usecase.dart' as _i759;
@@ -124,6 +129,7 @@ import '../domain/usecases/wallet/update_wallet_usecase.dart' as _i418;
 import '../presentation/auth/cubits/auth/auth_cubit.dart' as _i872;
 import '../presentation/auth/cubits/login/login_cubit.dart' as _i15;
 import '../presentation/auth/cubits/register/register_cubit.dart' as _i831;
+import '../presentation/benefits/cubit/benefits_cubit.dart' as _i88;
 import '../presentation/category/cubit/category_cubit.dart' as _i455;
 import '../presentation/exchange_rate/cubit/exchange_rate_cubit.dart' as _i311;
 import '../presentation/groups/cubit/group_cubit.dart' as _i676;
@@ -186,6 +192,8 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i480.OnboardingLocalDataSource>(
       () => _i480.OnboardingLocalDataSourceImpl(gh<_i683.PreferenceManager>()));
+  gh.factory<_i61.CloudBenefitRemoteDataSource>(
+      () => _i61.CloudBenefitRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i682.SubscriptionRemoteDataSource>(
@@ -203,6 +211,9 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.singleton<_i11.CloudBenefitRepository>(() =>
+      _i164.CloudBenefitRepositoryImpl(
+          gh<_i61.CloudBenefitRemoteDataSource>()));
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i478.GroupRemoteDataSource>(
@@ -243,6 +254,8 @@ _i174.GetIt $initGetIt(
         remoteDataSource: gh<_i624.WalletRemoteDataSource>(),
         db: gh<_i704.AppDatabase>(),
       ));
+  gh.factory<_i61.FetchBenefits>(
+      () => _i61.FetchBenefits(gh<_i11.CloudBenefitRepository>()));
   gh.lazySingleton<_i893.TransactionSyncHandler>(
       () => _i893.TransactionSyncHandler(
             gh<_i704.AppDatabase>(),
@@ -307,6 +320,8 @@ _i174.GetIt $initGetIt(
         gh<_i292.DeleteCategoryUseCase>(),
         gh<_i961.GetCategoriesUseCase>(),
       ));
+  gh.factory<_i88.BenefitsCubit>(
+      () => _i88.BenefitsCubit(gh<_i61.FetchBenefits>()));
   gh.factory<_i640.LogoutUsecase>(
       () => _i640.LogoutUsecase(gh<_i800.AuthRepository>()));
   gh.lazySingleton<_i957.GroupRepository>(() => _i875.GroupRepositoryImpl(

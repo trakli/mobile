@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/domain/entities/cloud_benefit_entity.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
-import 'globals.dart' show loremIpsum;
-
 class BenefitTile extends StatelessWidget {
-  const BenefitTile({super.key});
+  final BenefitEntity benefit;
+
+  const BenefitTile({
+    super.key,
+    required this.benefit,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return  ExpansionTile(
+    return ExpansionTile(
       tilePadding: EdgeInsets.symmetric(
         horizontal: 16.w,
       ),
@@ -31,7 +35,7 @@ class BenefitTile extends StatelessWidget {
       textColor: appOrange,
       collapsedTextColor: neutralN700,
       title: Text(
-        'Benefits 1',
+        benefit.title,
         style: TextStyle(
           fontSize: 16.sp,
           fontWeight: FontWeight.w700,
@@ -42,10 +46,7 @@ class BenefitTile extends StatelessWidget {
         size: 32.sp,
       ),
       children: [
-        bulletPoint(loremIpsum),
-        bulletPoint(loremIpsum),
-        bulletPoint(loremIpsum),
-        bulletPoint(loremIpsum),
+        bulletPoint(benefit.description),
       ],
     );
   }
