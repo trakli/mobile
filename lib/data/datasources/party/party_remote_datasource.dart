@@ -4,6 +4,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 
 abstract class PartyRemoteDataSource {
   Future<List<Party>> getAllParties({DateTime? syncedSince, bool? noClientId});
@@ -62,7 +63,8 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
         'icon': party.icon?.content,
         'icon_type': party.icon?.type.name,
       },
-      'created_at': formatServerIsoDateTimeString(party.createdAt)
+      'created_at': formatServerIsoDateTimeString(party.createdAt),
+      if (party.type != null) 'type': party.type?.serverKey,
     };
 
     final response = await dio.post(
@@ -84,6 +86,7 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
         'icon': party.icon?.content,
         'icon_type': party.icon?.type.name,
       },
+      if (party.type != null) 'type': party.type?.serverKey,
     };
 
     final response = await dio.put(

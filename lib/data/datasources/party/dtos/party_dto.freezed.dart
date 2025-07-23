@@ -23,6 +23,8 @@ mixin _$PartyDto {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey()
+  PartyType get type => throw _privateConstructorUsedError;
   @JsonKey(name: 'client_generated_id')
   String get clientId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -51,6 +53,7 @@ abstract class $PartyDtoCopyWith<$Res> {
       {int id,
       String name,
       String? description,
+      @JsonKey() PartyType type,
       @JsonKey(name: 'client_generated_id') String clientId,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
@@ -76,6 +79,7 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
     Object? id = null,
     Object? name = null,
     Object? description = freezed,
+    Object? type = null,
     Object? clientId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -95,6 +99,10 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as PartyType,
       clientId: null == clientId
           ? _value.clientId
           : clientId // ignore: cast_nullable_to_non_nullable
@@ -131,6 +139,7 @@ abstract class _$$PartyDtoImplCopyWith<$Res>
       {int id,
       String name,
       String? description,
+      @JsonKey() PartyType type,
       @JsonKey(name: 'client_generated_id') String clientId,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
@@ -154,6 +163,7 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? description = freezed,
+    Object? type = null,
     Object? clientId = null,
     Object? createdAt = null,
     Object? updatedAt = null,
@@ -173,6 +183,10 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as PartyType,
       clientId: null == clientId
           ? _value.clientId
           : clientId // ignore: cast_nullable_to_non_nullable
@@ -204,6 +218,7 @@ class _$PartyDtoImpl extends _PartyDto {
       {required this.id,
       required this.name,
       this.description,
+      @JsonKey() required this.type,
       @JsonKey(name: 'client_generated_id') required this.clientId,
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'updated_at') required this.updatedAt,
@@ -221,6 +236,9 @@ class _$PartyDtoImpl extends _PartyDto {
   @override
   final String? description;
   @override
+  @JsonKey()
+  final PartyType type;
+  @override
   @JsonKey(name: 'client_generated_id')
   final String clientId;
   @override
@@ -236,7 +254,7 @@ class _$PartyDtoImpl extends _PartyDto {
 
   @override
   String toString() {
-    return 'PartyDto(id: $id, name: $name, description: $description, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, userId: $userId, media: $media)';
+    return 'PartyDto(id: $id, name: $name, description: $description, type: $type, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, userId: $userId, media: $media)';
   }
 
   @override
@@ -248,6 +266,7 @@ class _$PartyDtoImpl extends _PartyDto {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.clientId, clientId) ||
                 other.clientId == clientId) &&
             (identical(other.createdAt, createdAt) ||
@@ -260,8 +279,8 @@ class _$PartyDtoImpl extends _PartyDto {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, description, clientId,
-      createdAt, updatedAt, userId, media);
+  int get hashCode => Object.hash(runtimeType, id, name, description, type,
+      clientId, createdAt, updatedAt, userId, media);
 
   /// Create a copy of PartyDto
   /// with the given fields replaced by the non-null parameter values.
@@ -284,6 +303,7 @@ abstract class _PartyDto extends PartyDto {
       {required final int id,
       required final String name,
       final String? description,
+      @JsonKey() required final PartyType type,
       @JsonKey(name: 'client_generated_id') required final String clientId,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       @JsonKey(name: 'updated_at') required final DateTime updatedAt,
@@ -300,6 +320,9 @@ abstract class _PartyDto extends PartyDto {
   String get name;
   @override
   String? get description;
+  @override
+  @JsonKey()
+  PartyType get type;
   @override
   @JsonKey(name: 'client_generated_id')
   String get clientId;

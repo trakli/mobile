@@ -391,21 +391,8 @@ class _AppViewState extends State<AppView> {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-
-    // getIt<SynchAppDatabase>().sync();
-    // getIt<SynchAppDatabase>().init();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -49,8 +49,12 @@ class PartyCubit extends Cubit<PartyState> {
     );
   }
 
-  Future<void> addParty(String name,
-      {String? description, MediaEntity? media}) async {
+  Future<void> addParty(
+    String name, {
+    String? description,
+    MediaEntity? media,
+    required PartyType type,
+  }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
     final result = await addPartyUseCase(
@@ -58,6 +62,7 @@ class PartyCubit extends Cubit<PartyState> {
         name: name,
         description: description,
         media: media,
+        type: type,
       ),
     );
 
@@ -75,6 +80,7 @@ class PartyCubit extends Cubit<PartyState> {
     String? name,
     String? description,
     MediaEntity? media,
+    required PartyType type,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
@@ -84,6 +90,7 @@ class PartyCubit extends Cubit<PartyState> {
         name: name,
         description: description,
         media: media,
+        type: type,
       ),
     );
 

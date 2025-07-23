@@ -4,6 +4,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 
 abstract class PartyLocalDataSource {
   Future<List<Party>> getAllParties();
@@ -12,12 +13,14 @@ abstract class PartyLocalDataSource {
     String name, {
     String? description,
     Media? media,
+    PartyType? type,
   });
   Future<Party> updateParty(
     String clientId, {
     String? name,
     String? description,
     Media? media,
+    PartyType? type,
   });
   Future<Party> deleteParty(String clientId);
   Future<void> deleteAllParties();
@@ -47,6 +50,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
     String name, {
     String? description,
     Media? media,
+    PartyType? type,
   }) async {
     final now = formatServerIsoDateTime(DateTime.now());
 
@@ -58,6 +62,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
             createdAt: Value(now),
             updatedAt: Value(now),
             icon: Value(media),
+            type: Value(type),
           ),
         );
 
@@ -70,6 +75,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
     String? name,
     String? description,
     Media? media,
+    PartyType? type,
   }) async {
     final now = formatServerIsoDateTime(DateTime.now());
 
@@ -82,6 +88,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
             description != null ? Value(description) : const Value.absent(),
         updatedAt: Value(now),
         icon: media != null ? Value(media) : const Value.absent(),
+        type: type != null ? Value(type) : const Value.absent(),
       ),
     );
 

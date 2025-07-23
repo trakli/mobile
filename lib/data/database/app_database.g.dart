@@ -11,7 +11,9 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
@@ -645,7 +647,9 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
@@ -696,6 +700,11 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
               type: DriftSqlType.string, requiredDuringInsert: false)
           .withConverter<Media?>($PartiesTable.$convertericonn);
   @override
+  late final GeneratedColumnWithTypeConverter<PartyType?, String> type =
+      GeneratedColumn<String>('type', aliasedName, true,
+              type: DriftSqlType.string, requiredDuringInsert: false)
+          .withConverter<PartyType?>($PartiesTable.$convertertypen);
+  @override
   List<GeneratedColumn> get $columns => [
         id,
         userId,
@@ -707,7 +716,8 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
         lastSyncedAt,
         name,
         description,
-        icon
+        icon,
+        type
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -742,6 +752,8 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       icon: $PartiesTable.$convertericonn.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}icon'])),
+      type: $PartiesTable.$convertertypen.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])),
     );
   }
 
@@ -754,6 +766,10 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
       $convertericon = const MediaConverter();
   static JsonTypeConverter2<Media?, String?, Map<String, Object?>?>
       $convertericonn = JsonTypeConverter2.asNullable($convertericon);
+  static JsonTypeConverter2<PartyType, String, String> $convertertype =
+      const EnumNameConverter<PartyType>(PartyType.values);
+  static JsonTypeConverter2<PartyType?, String?, String?> $convertertypen =
+      JsonTypeConverter2.asNullable($convertertype);
 }
 
 class Party extends DataClass implements Insertable<Party> {
@@ -768,6 +784,7 @@ class Party extends DataClass implements Insertable<Party> {
   final String name;
   final String? description;
   final Media? icon;
+  final PartyType? type;
   const Party(
       {this.id,
       this.userId,
@@ -779,7 +796,8 @@ class Party extends DataClass implements Insertable<Party> {
       this.lastSyncedAt,
       required this.name,
       this.description,
-      this.icon});
+      this.icon,
+      this.type});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -808,6 +826,9 @@ class Party extends DataClass implements Insertable<Party> {
     if (!nullToAbsent || icon != null) {
       map['icon'] = Variable<String>($PartiesTable.$convertericonn.toSql(icon));
     }
+    if (!nullToAbsent || type != null) {
+      map['type'] = Variable<String>($PartiesTable.$convertertypen.toSql(type));
+    }
     return map;
   }
 
@@ -831,6 +852,7 @@ class Party extends DataClass implements Insertable<Party> {
           ? const Value.absent()
           : Value(description),
       icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
+      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
     );
   }
 
@@ -850,6 +872,8 @@ class Party extends DataClass implements Insertable<Party> {
       description: serializer.fromJson<String?>(json['description']),
       icon: $PartiesTable.$convertericonn
           .fromJson(serializer.fromJson<Map<String, Object?>?>(json['icon'])),
+      type: $PartiesTable.$convertertypen
+          .fromJson(serializer.fromJson<String?>(json['type'])),
     );
   }
   @override
@@ -868,6 +892,8 @@ class Party extends DataClass implements Insertable<Party> {
       'description': serializer.toJson<String?>(description),
       'icon': serializer.toJson<Map<String, Object?>?>(
           $PartiesTable.$convertericonn.toJson(icon)),
+      'type': serializer
+          .toJson<String?>($PartiesTable.$convertertypen.toJson(type)),
     };
   }
 
@@ -882,7 +908,8 @@ class Party extends DataClass implements Insertable<Party> {
           Value<DateTime?> lastSyncedAt = const Value.absent(),
           String? name,
           Value<String?> description = const Value.absent(),
-          Value<Media?> icon = const Value.absent()}) =>
+          Value<Media?> icon = const Value.absent(),
+          Value<PartyType?> type = const Value.absent()}) =>
       Party(
         id: id.present ? id.value : this.id,
         userId: userId.present ? userId.value : this.userId,
@@ -896,6 +923,7 @@ class Party extends DataClass implements Insertable<Party> {
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         icon: icon.present ? icon.value : this.icon,
+        type: type.present ? type.value : this.type,
       );
   Party copyWithCompanion(PartiesCompanion data) {
     return Party(
@@ -913,6 +941,7 @@ class Party extends DataClass implements Insertable<Party> {
       description:
           data.description.present ? data.description.value : this.description,
       icon: data.icon.present ? data.icon.value : this.icon,
+      type: data.type.present ? data.type.value : this.type,
     );
   }
 
@@ -929,14 +958,15 @@ class Party extends DataClass implements Insertable<Party> {
           ..write('lastSyncedAt: $lastSyncedAt, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('icon: $icon')
+          ..write('icon: $icon, ')
+          ..write('type: $type')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, deletedAt, lastSyncedAt, name, description, icon);
+      updatedAt, deletedAt, lastSyncedAt, name, description, icon, type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -951,7 +981,8 @@ class Party extends DataClass implements Insertable<Party> {
           other.lastSyncedAt == this.lastSyncedAt &&
           other.name == this.name &&
           other.description == this.description &&
-          other.icon == this.icon);
+          other.icon == this.icon &&
+          other.type == this.type);
 }
 
 class PartiesCompanion extends UpdateCompanion<Party> {
@@ -966,6 +997,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   final Value<String> name;
   final Value<String?> description;
   final Value<Media?> icon;
+  final Value<PartyType?> type;
   final Value<int> rowid;
   const PartiesCompanion({
     this.id = const Value.absent(),
@@ -979,6 +1011,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
+    this.type = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PartiesCompanion.insert({
@@ -993,6 +1026,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     required String name,
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
+    this.type = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Party> custom({
@@ -1007,6 +1041,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? icon,
+    Expression<String>? type,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1021,6 +1056,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (icon != null) 'icon': icon,
+      if (type != null) 'type': type,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1037,6 +1073,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       Value<String>? name,
       Value<String?>? description,
       Value<Media?>? icon,
+      Value<PartyType?>? type,
       Value<int>? rowid}) {
     return PartiesCompanion(
       id: id ?? this.id,
@@ -1050,6 +1087,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       name: name ?? this.name,
       description: description ?? this.description,
       icon: icon ?? this.icon,
+      type: type ?? this.type,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1091,6 +1129,10 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       map['icon'] =
           Variable<String>($PartiesTable.$convertericonn.toSql(icon.value));
     }
+    if (type.present) {
+      map['type'] =
+          Variable<String>($PartiesTable.$convertertypen.toSql(type.value));
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1111,6 +1153,7 @@ class PartiesCompanion extends UpdateCompanion<Party> {
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('icon: $icon, ')
+          ..write('type: $type, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1125,7 +1168,9 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
@@ -1606,7 +1651,9 @@ class $TransactionsTable extends Transactions
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
@@ -2347,7 +2394,9 @@ class $CategoriesTable extends Categories
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   @override
   late final GeneratedColumn<int> userId = GeneratedColumn<int>(
       'user_id', aliasedName, true,
@@ -4600,6 +4649,7 @@ typedef $$PartiesTableCreateCompanionBuilder = PartiesCompanion Function({
   required String name,
   Value<String?> description,
   Value<Media?> icon,
+  Value<PartyType?> type,
   Value<int> rowid,
 });
 typedef $$PartiesTableUpdateCompanionBuilder = PartiesCompanion Function({
@@ -4614,6 +4664,7 @@ typedef $$PartiesTableUpdateCompanionBuilder = PartiesCompanion Function({
   Value<String> name,
   Value<String?> description,
   Value<Media?> icon,
+  Value<PartyType?> type,
   Value<int> rowid,
 });
 
@@ -4682,6 +4733,11 @@ class $$PartiesTableFilterComposer
           column: $table.icon,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
+  ColumnWithTypeConverterFilters<PartyType?, PartyType, String> get type =>
+      $composableBuilder(
+          column: $table.type,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
   Expression<bool> transactionsRefs(
       Expression<bool> Function($$TransactionsTableFilterComposer f) f) {
     final $$TransactionsTableFilterComposer composer = $composerBuilder(
@@ -4746,6 +4802,9 @@ class $$PartiesTableOrderingComposer
 
   ColumnOrderings<String> get icon => $composableBuilder(
       column: $table.icon, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
 }
 
 class $$PartiesTableAnnotationComposer
@@ -4789,6 +4848,9 @@ class $$PartiesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<Media?, String> get icon =>
       $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<PartyType?, String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
 
   Expression<T> transactionsRefs<T extends Object>(
       Expression<T> Function($$TransactionsTableAnnotationComposer a) f) {
@@ -4846,6 +4908,7 @@ class $$PartiesTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
+            Value<PartyType?> type = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               PartiesCompanion(
@@ -4860,6 +4923,7 @@ class $$PartiesTableTableManager extends RootTableManager<
             name: name,
             description: description,
             icon: icon,
+            type: type,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -4874,6 +4938,7 @@ class $$PartiesTableTableManager extends RootTableManager<
             required String name,
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
+            Value<PartyType?> type = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               PartiesCompanion.insert(
@@ -4888,6 +4953,7 @@ class $$PartiesTableTableManager extends RootTableManager<
             name: name,
             description: description,
             icon: icon,
+            type: type,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

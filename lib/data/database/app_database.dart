@@ -15,6 +15,7 @@ import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 import 'package:trakli/data/models/media.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/wallet_stats.dart';
 import 'dart:io';

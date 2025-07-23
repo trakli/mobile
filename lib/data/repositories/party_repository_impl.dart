@@ -38,6 +38,7 @@ class PartyRepositoryImpl
     String name, {
     String? description,
     MediaEntity? media,
+    PartyType? type,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final party = await localDataSource.insertParty(
@@ -46,6 +47,7 @@ class PartyRepositoryImpl
         media: media != null
             ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
+        type: type,
       );
 
       unawaited(post(party));
@@ -59,6 +61,7 @@ class PartyRepositoryImpl
     String? name,
     String? description,
     MediaEntity? media,
+    PartyType? type,
   }) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final party = await localDataSource.updateParty(
@@ -68,6 +71,7 @@ class PartyRepositoryImpl
         media: media != null
             ? Media.fromLocal(content: media.content, type: media.mediaType)
             : null,
+        type: type,
       );
 
       unawaited(put(party));

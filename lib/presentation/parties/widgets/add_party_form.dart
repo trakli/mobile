@@ -35,6 +35,7 @@ class _AddPartyFormState extends State<AddPartyForm> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   MediaEntity? mediaEntity;
+  PartyType? _selectedType;
 
   @override
   void initState() {
@@ -43,6 +44,9 @@ class _AddPartyFormState extends State<AddPartyForm> {
       _nameController.text = widget.party!.name;
       _descriptionController.text = widget.party!.description ?? '';
       mediaEntity = widget.party?.icon;
+      _selectedType = widget.party?.type;
+    } else {
+      _selectedType = PartyType.individual;
     }
   }
 
@@ -59,6 +63,8 @@ class _AddPartyFormState extends State<AddPartyForm> {
     hideKeyBoard();
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
+    final type = _selectedType;
+    if (type == null) return;
 
     if (widget.party != null) {
       context.read<PartyCubit>().updateParty(
@@ -66,12 +72,14 @@ class _AddPartyFormState extends State<AddPartyForm> {
             name: name,
             description: description.isEmpty ? null : description,
             media: mediaEntity,
+            type: type,
           );
     } else {
       context.read<PartyCubit>().addParty(
             name,
             description: description.isEmpty ? null : description,
             media: mediaEntity,
+            type: type,
           );
     }
   }
@@ -158,6 +166,31 @@ class _AddPartyFormState extends State<AddPartyForm> {
                           ),
                         ),
                       ],
+                    ),
+                    SizedBox(height: 20.h),
+                    DropdownButtonFormField<PartyType>(
+                      value: _selectedType,
+                      items: PartyType.values.map((type) {
+                        return DropdownMenuItem<PartyType>(
+                          value: type,
+                          child: Text(type.customName),
+                        );
+                      }).toList(),
+                      onChanged: (type) {
+                        setState(() {
+                          _selectedType = type;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: LocaleKeys.type.tr(),
+                        hintText: LocaleKeys.selectPartyType.tr(),
+                      ),
+                      validator: (value) {
+                        if (value == null) {
+                          return LocaleKeys.selectPartyType.tr();
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 20.h),
                     TextFormField(

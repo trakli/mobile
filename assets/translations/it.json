@@ -286,5 +286,14 @@
   "deleteParty": "Delete Party",
   "deletePartyConfirm": "Are you sure you want to delete {name}? This action cannot be undone.",
   "general": "General",
-  "pricePerMonth": "{0}/Month"
+  "pricePerMonth": "{0}/Month",
+  "partyTypeIndividual": "Individuo",
+  "partyTypeOrganization": "Organizzazione",
+  "partyTypeBusiness": "Azienda",
+  "partyTypePartnership": "Partenariato",
+  "partyTypeNonProfit": "Non profit",
+  "partyTypeGovernmentAgency": "Agenzia governativa",
+  "partyTypeEducationalInstitution": "Istituzione educativa",
+  "partyTypeHealthcareProvider": "Fornitore di assistenza sanitaria",
+  "selectPartyType": "Seleziona tipo di parte"
 }

@@ -12,6 +12,7 @@ class PartyMapper {
       id: party.id,
       userId: party.userId,
       icon: party.icon?.toEntity(),
+      type: party.type,
     );
   }
 
