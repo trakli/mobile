@@ -36,78 +36,74 @@ class BenefitsWidget extends StatelessWidget {
             ),
           );
         }
-        if (state.cloudBenefits != null) {
-          return Column(
-            spacing: 24.h,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 16.h,
+        return Column(
+          spacing: 24.h,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: neutralN500,
                 ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: neutralN500,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12.h,
+                children: [
+                  Text(
+                    LocaleKeys.dontHaveAccount.tr(),
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: appOrange,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12.h,
-                  children: [
-                    Text(
-                      LocaleKeys.dontHaveAccount.tr(),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w700,
-                        color: appOrange,
-                      ),
+                  Text(
+                    state.cloudBenefits?.overview.description ?? "",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: neutralN700,
                     ),
-                    Text(
-                      state.cloudBenefits?.overview.description ?? "",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: neutralN700,
-                      ),
+                  ),
+                  Text(
+                    state.cloudBenefits?.overview.title ?? "",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                      color: neutralN700,
                     ),
-                    Text(
-                      state.cloudBenefits?.overview.title ?? "",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: neutralN700,
-                      ),
-                    ),
-                    if (benefits.isNotEmpty)
-                      ...benefits.map<Widget>((benefit) {
-                        return BenefitTile(
-                          benefit: benefit,
-                        );
-                      }),
-                  ],
+                  ),
+                  if (benefits.isNotEmpty)
+                    ...benefits.map<Widget>((benefit) {
+                      return BenefitTile(
+                        benefit: benefit,
+                      );
+                    }),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 52.h,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  AppNavigator.removeAllPreviousAndPushThenPush(
+                    context,
+                    const LoginScreen(),
+                    const RegisterScreen(),
+                  );
+                },
+                child: Text(
+                  LocaleKeys.createAccountNow.tr(),
                 ),
               ),
-              SizedBox(
-                height: 52.h,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    AppNavigator.removeAllPreviousAndPushThenPush(
-                      context,
-                      const LoginScreen(),
-                      const RegisterScreen(),
-                    );
-                  },
-                  child: Text(
-                    LocaleKeys.createAccountNow.tr(),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-
-        return const SizedBox.shrink();
+            ),
+          ],
+        );
       },
     );
   }
