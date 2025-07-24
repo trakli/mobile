@@ -4,11 +4,7 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/data/datasources/benefits/cloud_benefit_remote_data_source.dart';
 import 'package:trakli/domain/entities/cloud_benefit_entity.dart';
-
-abstract class CloudBenefitRepository {
-  Future<Either<Failure, CloudBenefitEntity>> fetchCloudBenefits();
-}
-
+import 'package:trakli/domain/repositories/cloud_benefit_repository.dart';
 
 @Singleton(as: CloudBenefitRepository)
 class CloudBenefitRepositoryImpl implements CloudBenefitRepository {

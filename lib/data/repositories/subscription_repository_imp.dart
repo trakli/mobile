@@ -4,14 +4,7 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/data/datasources/subscription/subscription_remote_data_source.dart';
 import 'package:trakli/domain/entities/subscription_entity.dart';
-
-abstract class SubscriptionRepository {
-  Future<Either<Failure, SubscriptionEntity>> fetchSubscriptionPlans({
-    required String region,
-  });
-}
-
-
+import 'package:trakli/domain/repositories/subscription_repository.dart';
 
 @Singleton(as: SubscriptionRepository)
 class SubscriptionRepositoryImpl implements SubscriptionRepository {
