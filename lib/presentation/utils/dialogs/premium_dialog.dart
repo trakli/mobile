@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/subscription_tile.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PremiumDialog extends StatefulWidget {
-  const PremiumDialog({super.key});
+  final SubscriptionEntity subscription;
+
+  const PremiumDialog({
+    super.key,
+    required this.subscription,
+  });
 
   @override
   State<PremiumDialog> createState() => _PremiumDialogState();
@@ -54,24 +61,17 @@ class _PremiumDialogState extends State<PremiumDialog> {
               ),
               textAlign: TextAlign.center,
             ),
-            SubscriptionTile(
-              planType: PlanType.monthly,
-              isSelected: type == PlanType.monthly,
-              onTap: () {
-                setState(() {
-                  type = PlanType.monthly;
-                });
-              },
-            ),
-            SubscriptionTile(
-              planType: PlanType.yearly,
-              isSelected: type == PlanType.yearly,
-              onTap: () {
-                setState(() {
-                  type = PlanType.yearly;
-                });
-              },
-            ),
+            ...widget.subscription.plans.map<Widget>((plan) {
+              return SubscriptionTile(
+                plan: plan,
+                isSelected: type == getPlanType(plan.id),
+                onTap: () {
+                  setState(() {
+                    type = getPlanType(plan.id);
+                  });
+                },
+              );
+            }),
             Row(
               spacing: 16.w,
               children: [

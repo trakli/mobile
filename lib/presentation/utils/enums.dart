@@ -80,7 +80,14 @@ enum DialogType {
 
 enum PlanType {
   monthly,
-  yearly,
+  yearly;
+
+  String get key {
+    return switch (this) {
+      PlanType.monthly => 'monthly',
+      PlanType.yearly => 'yearly',
+    };
+  }
 }
 
 enum MediaType { emoji, image, icon }
