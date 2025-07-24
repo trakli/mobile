@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/data/datasources/category/category_remote_datasource.dart';
@@ -37,13 +38,17 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   }
 
   @override
-  bool shouldPersistRemote(Category entity) {
-    return true;
-  }
+  bool shouldPersistRemote(Category entity) => true;
 
   @override
-  Future<List<Category>> restGetAllRemote() async {
-    return remoteDataSource.getAllCategories();
+  Future<List<Category>> restGetAllRemote({
+    bool? noClientId,
+    DateTime? syncedSince,
+  }) async {
+    return remoteDataSource.getAllCategories(
+      noClientId: noClientId,
+      syncedSince: syncedSince,
+    );
   }
 
   @override
@@ -65,6 +70,17 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
     if (entity.id != null) {
       await remoteDataSource.deleteCategory(entity.id!);
     }
+  }
+
+  @override
+  String getClientId(Category entity) => entity.clientId;
+
+  @override
+  int? getServerId(Category entity) => entity.id;
+
+  @override
+  Future<void> deleteAllLocal() async {
+    await table.deleteAll();
   }
 
   @override
@@ -92,7 +108,15 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Category> list) async {
-    final categories = list.map((entity) => CategoriesCompanion(
+    for (final entity in list) {
+      if (entity.clientId.isEmpty) {
+        continue;
+      }
+      if (entity.deletedAt != null) {
+        // If the entity is marked as deleted, remove it locally
+        await table.deleteWhere((c) => c.clientId.equals(entity.clientId));
+      } else {
+        final category = CategoriesCompanion(
           id: Value(entity.id),
           name: Value(entity.name),
           type: Value(entity.type),
@@ -103,18 +127,11 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
           createdAt: Value(entity.createdAt),
           lastSyncedAt: Value(entity.lastSyncedAt),
           icon: Value(entity.icon),
-        ));
-
-    await table.insertAll(categories, mode: InsertMode.insertOrReplace);
+        );
+        await table.insertOnConflictUpdate(category);
+      }
+    }
   }
-
-  @override
-  Future<void> deleteAllLocal() async {
-    await table.deleteAll();
-  }
-
-  @override
-  String getClientId(Category entity) => entity.clientId;
 
   @override
   Future<Category> getLocalByClientId(String clientId) async {
@@ -131,21 +148,31 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       final row = await (db.select(table)..where((t) => t.id.equals(serverId)))
           .getSingle();
       return Category(
-          id: row.id,
-          name: row.name,
-          type: row.type,
-          clientId: row.clientId,
-          slug: row.slug,
-          userId: row.userId,
-          createdAt: row.createdAt,
-          updatedAt: row.updatedAt
-          // rev: row.rev,
-          );
+        id: row.id,
+        name: row.name,
+        type: row.type,
+        clientId: row.clientId,
+        slug: row.slug,
+        userId: row.userId,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      );
     } catch (e) {
       return null;
     }
   }
 
   @override
-  int? getServerId(Category entity) => entity.id;
+  Future<Category> assignClientId(Category item) async {
+    if (item.clientId.isEmpty) {
+      final newClientId = await generateDeviceScopedId();
+      final updated = item.copyWith(clientId: newClientId);
+      return updated;
+    } else {
+      return item;
+    }
+  }
+
+  @override
+  DateTime? getlastSyncedAt(Category entity) => entity.lastSyncedAt;
 }

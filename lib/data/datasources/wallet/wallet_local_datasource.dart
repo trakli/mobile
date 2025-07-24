@@ -4,8 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:uuid/uuid.dart';
 import 'package:trakli/data/models/media.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 abstract class WalletLocalDataSource {
   Future<List<Wallet>> getAllWallets();
@@ -65,7 +65,9 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     DateTime dateTime = formatServerIsoDateTime(now);
 
     final companion = WalletsCompanion.insert(
-      clientId: const Uuid().v4(),
+      clientId: Value(
+        await generateDeviceScopedId(),
+      ),
       name: name,
       type: type,
       balance: Value(balance),

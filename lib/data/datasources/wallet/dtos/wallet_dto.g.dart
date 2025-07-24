@@ -8,7 +8,7 @@ part of 'wallet_dto.dart';
 
 _$WalletDtoImpl _$$WalletDtoImplFromJson(Map<String, dynamic> json) =>
     _$WalletDtoImpl(
-      clientId: json['client_generated_id'] as String,
+      clientId: json['client_generated_id'] as String? ?? '',
       type: $enumDecodeNullable(_$WalletTypeEnumMap, json['type']) ??
           WalletType.bank,
       name: json['name'] as String,

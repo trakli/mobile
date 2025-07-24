@@ -5,7 +5,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/wallet_stats.dart';
-import 'package:uuid/uuid.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 abstract class TransactionLocalDataSource {
   Future<List<TransactionCompleteDto>> getAllTransactions();
@@ -251,7 +251,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
     final model = await database.into(database.transactions).insertReturning(
           TransactionsCompanion.insert(
-            clientId: const Uuid().v4(),
+            clientId: Value(await generateDeviceScopedId()),
             amount: amount,
             description: Value(description),
             type: type,
@@ -494,6 +494,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         transaction: transaction,
         isDelete: true,
       );
+
+      // Delete all categorizables for this transaction
+      await database.categorizables.deleteWhere((row) =>
+          row.categorizableId.equals(transaction.clientId) &
+          row.categorizableType.equals(CategorizableType.transaction.name));
 
       await database.delete(database.transactions).delete(transaction);
 

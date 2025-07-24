@@ -2,10 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/repositories/onboarding_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -83,12 +86,30 @@ class AppWidget extends StatelessWidget {
   }
 }
 
-class AppView extends StatelessWidget {
+class AppView extends StatefulWidget {
   const AppView({super.key});
 
-  // final _navigatorKey = GlobalKey<NavigatorState>();
+  @override
+  State<AppView> createState() => _AppViewState();
+}
 
-  // NavigatorState get _navigator => _navigatorKey.currentState!;
+class _AppViewState extends State<AppView> {
+  @override
+  initState() {
+    super.initState();
+    clearKeychainValues();
+  }
+
+  Future<void> clearKeychainValues() async {
+    final prefs = getIt<PreferenceManager>();
+
+    if (prefs.getBool(KeyConstants.isFirstAppLaunch) ?? true) {
+      FlutterSecureStorage storage = const FlutterSecureStorage();
+      await storage.deleteAll();
+
+      await prefs.setBool(KeyConstants.isFirstAppLaunch, false);
+    }
+  }
 
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
@@ -292,7 +313,7 @@ class AppView extends StatelessWidget {
                 listener: (context, state) {
                   state.maybeWhen(
                     authenticated: (user) async {
-                      getIt<SynchAppDatabase>().init();
+                      getIt<SynchAppDatabase>().doSync();
 
                       final entityResult = await getIt<OnboardingRepository>()
                           .getOnboardingState();
@@ -319,6 +340,8 @@ class AppView extends StatelessWidget {
                       }
                     },
                     unauthenticated: () async {
+                      getIt<SynchAppDatabase>().stopAllSync();
+
                       final entityResult = await getIt<OnboardingRepository>()
                           .getOnboardingState();
 
@@ -368,20 +391,8 @@ class AppView extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    // getIt<SynchAppDatabase>().sync();
-    // getIt<SynchAppDatabase>().init();
-  }
 
   @override
   Widget build(BuildContext context) {

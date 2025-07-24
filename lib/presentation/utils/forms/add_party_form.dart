@@ -6,14 +6,22 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/domain/entities/party_entity.dart';
 
-class AddPartyForm extends StatelessWidget {
+class AddPartyForm extends StatefulWidget {
   final bool showClose;
 
   const AddPartyForm({
     super.key,
     this.showClose = false,
   });
+
+  @override
+  State<AddPartyForm> createState() => _AddPartyFormState();
+}
+
+class _AddPartyFormState extends State<AddPartyForm> {
+  PartyType _selectedType = PartyType.individual;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +33,7 @@ class AddPartyForm extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            padding: showClose ? EdgeInsets.only(top: 18.h) : null,
+            padding: widget.showClose ? EdgeInsets.only(top: 18.h) : null,
             child: Form(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,6 +75,37 @@ class AddPartyForm extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20.h),
+                  Text(
+                    LocaleKeys.type.tr(),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  DropdownButtonFormField<PartyType>(
+                    value: _selectedType,
+                    items: PartyType.values.map((type) {
+                      return DropdownMenuItem<PartyType>(
+                        value: type,
+                        child: Text(type.customName),
+                      );
+                    }).toList(),
+                    onChanged: (type) {
+                      if (type != null) {
+                        setState(() {
+                          _selectedType = type;
+                        });
+                      }
+                    },
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      hintText: LocaleKeys.selectPartyType.tr(),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
                   SizedBox(
                     height: 54.h,
                     width: double.infinity,
@@ -81,7 +120,7 @@ class AddPartyForm extends StatelessWidget {
                           onPressed: () {
                             hideKeyBoard();
                             if (Form.of(context).validate()) {
-                              // Do something
+                              // Pass _selectedType to your party creation logic here
                             }
                           },
                           child: Row(
@@ -110,7 +149,7 @@ class AddPartyForm extends StatelessWidget {
               ),
             ),
           ),
-          if (showClose)
+          if (widget.showClose)
             Positioned(
               top: 0,
               right: 0,

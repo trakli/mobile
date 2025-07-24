@@ -3,8 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:uuid/uuid.dart';
 import 'package:trakli/data/models/media.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 abstract class CategoryLocalDataSource {
   Future<List<Category>> getAllCategories();
@@ -49,7 +49,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
     final model = await database.into(database.categories).insertReturning(
           CategoriesCompanion.insert(
-            clientId: const Uuid().v4(),
+            clientId: Value(await generateDeviceScopedId()),
             name: name,
             slug: slug,
             type: type,

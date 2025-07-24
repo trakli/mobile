@@ -24,7 +24,7 @@ class GroupCubit extends Cubit<GroupState> {
   final UpdateGroupUseCase _updateGroupUseCase;
   final DeleteGroupUseCase _deleteGroupUseCase;
   final ListenToGroupsUseCase _listenToGroupsUseCase;
-  final EnsureDefaultWalletExistsUseCase _ensureDefaultWalletExistsUseCase;
+  final EnsureDefaultGroupExistsUseCase _ensureDefaultWalletExistsUseCase;
   StreamSubscription? _subscription;
 
   GroupCubit(

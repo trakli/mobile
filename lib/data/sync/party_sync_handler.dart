@@ -4,6 +4,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/parties.dart';
 import 'package:trakli/data/datasources/party/party_remote_datasource.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 @lazySingleton
 class PartySyncHandler extends SyncTypeHandler<Party, String, int>
@@ -40,8 +41,12 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
   bool shouldPersistRemote(Party entity) => true;
 
   @override
-  Future<List<Party>> restGetAllRemote() async {
-    return remoteDataSource.getAllParties();
+  Future<List<Party>> restGetAllRemote(
+      {bool? noClientId, DateTime? syncedSince}) async {
+    return remoteDataSource.getAllParties(
+      noClientId: noClientId,
+      syncedSince: syncedSince,
+    );
   }
 
   @override
@@ -77,7 +82,18 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Party> list) async {
-    await table.insertAll(list, mode: InsertMode.insertOrReplace);
+    for (final entity in list) {
+      if (entity.clientId.isEmpty) {
+        continue;
+      }
+
+      if (entity.deletedAt != null) {
+        // If the entity is marked as deleted, remove it locally
+        await table.deleteWhere((p) => p.clientId.equals(entity.clientId));
+      } else {
+        await table.insertOnConflictUpdate(entity);
+      }
+    }
   }
 
   @override
@@ -110,4 +126,18 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
   int? getServerId(Party entity) {
     return entity.id;
   }
+
+  @override
+  Future<Party> assignClientId(Party item) async {
+    if (item.clientId.isEmpty) {
+      final newClientId = await generateDeviceScopedId();
+      final updated = item.copyWith(clientId: newClientId);
+      return updated;
+    } else {
+      return item;
+    }
+  }
+
+  @override
+  DateTime? getlastSyncedAt(Party entity) => entity.lastSyncedAt;
 }

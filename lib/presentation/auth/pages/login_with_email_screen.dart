@@ -160,6 +160,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                         color: neutralN700,
                       ),
                       children: [
+                        const TextSpan(
+                          text: ' ',
+                        ),
                         TextSpan(
                           text: LocaleKeys.register.tr(),
                           style: TextStyle(

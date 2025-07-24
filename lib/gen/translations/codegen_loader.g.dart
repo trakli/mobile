@@ -154,7 +154,6 @@ abstract class  LocaleKeys {
   static const toExcel = 'toExcel';
   static const family = 'family';
   static const searchHint = 'searchHint';
-  static const totalIncome = 'totalIncome';
   static const displaySettings = 'displaySettings';
   static const transactionFormDisplayMode = 'transactionFormDisplayMode';
   static const themeMode = 'themeMode';
@@ -217,7 +216,6 @@ abstract class  LocaleKeys {
   static const pleaseSelectCurrency = 'pleaseSelectCurrency';
   static const confirm = 'confirm';
   static const categories = 'categories';
-  static const edit = 'edit';
   static const savings = 'savings';
   static const addSaving = 'addSaving';
   static const snapPicture = 'snapPicture';
@@ -268,6 +266,7 @@ abstract class  LocaleKeys {
   static const transactionsIn = 'transactionsIn';
   static const wallets = 'wallets';
   static const noData = 'noData';
+  static const totalIncome = 'totalIncome';
   static const totalExpense = 'totalExpense';
   static const thisMonth = 'thisMonth';
   static const noTransactionData = 'noTransactionData';
@@ -277,6 +276,7 @@ abstract class  LocaleKeys {
   static const duplicate = 'duplicate';
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
+  static const edit = 'edit';
   static const officeElements = 'officeElements';
   static const officeElementsDesc = 'officeElementsDesc';
   static const monthly = 'monthly';
@@ -291,5 +291,14 @@ abstract class  LocaleKeys {
   static const general = 'general';
   static const pricePerMonth = 'pricePerMonth';
   static const defaultName = 'defaultName';
+  static const partyTypeIndividual = 'partyTypeIndividual';
+  static const partyTypeOrganization = 'partyTypeOrganization';
+  static const partyTypeBusiness = 'partyTypeBusiness';
+  static const partyTypePartnership = 'partyTypePartnership';
+  static const partyTypeNonProfit = 'partyTypeNonProfit';
+  static const partyTypeGovernmentAgency = 'partyTypeGovernmentAgency';
+  static const partyTypeEducationalInstitution = 'partyTypeEducationalInstitution';
+  static const partyTypeHealthcareProvider = 'partyTypeHealthcareProvider';
+  static const selectPartyType = 'selectPartyType';
 
 }

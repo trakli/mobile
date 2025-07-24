@@ -11,4 +11,6 @@ class AuthState with _$AuthState {
 
   UserEntity? get user =>
       this is _Authenticated ? (this as _Authenticated).user : null;
+
+  bool get isAuthenticated => this is _Authenticated;
 }

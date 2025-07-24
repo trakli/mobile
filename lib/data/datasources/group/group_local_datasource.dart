@@ -2,8 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
-import 'package:uuid/uuid.dart';
 import 'package:trakli/data/models/media.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 abstract class GroupLocalDataSource {
   Future<List<Group>> getAllGroups();
@@ -48,7 +48,7 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
     final dateTime = formatServerIsoDateTime(now);
 
     final companion = GroupsCompanion.insert(
-      clientId: const Uuid().v4(),
+      clientId: Value(await generateDeviceScopedId()),
       name: name,
       description: Value(description),
       createdAt: Value(dateTime),

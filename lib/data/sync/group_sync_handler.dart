@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/datasources/group/group_remote_datasource.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 
 @lazySingleton
 class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
@@ -37,13 +38,17 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
   }
 
   @override
-  bool shouldPersistRemote(Group entity) {
-    return true;
-  }
+  bool shouldPersistRemote(Group entity) => true;
 
   @override
-  Future<List<Group>> restGetAllRemote() async {
-    return remoteDataSource.getAllGroups();
+  Future<List<Group>> restGetAllRemote({
+    bool? noClientId,
+    DateTime? syncedSince,
+  }) async {
+    return remoteDataSource.getAllGroups(
+      noClientId: noClientId,
+      syncedSince: syncedSince,
+    );
   }
 
   @override
@@ -90,7 +95,16 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
 
   @override
   Future<void> upsertAllLocal(List<Group> list) async {
-    final groups = list.map((entity) => GroupsCompanion(
+    for (final entity in list) {
+      if (entity.clientId.isEmpty) {
+        continue;
+      }
+
+      if (entity.deletedAt != null) {
+        // If the entity is marked as deleted, remove it locally
+        await table.deleteWhere((g) => g.clientId.equals(entity.clientId));
+      } else {
+        final group = GroupsCompanion(
           id: Value(entity.id),
           name: Value(entity.name),
           description: Value(entity.description),
@@ -99,9 +113,10 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
           createdAt: Value(entity.createdAt),
           updatedAt: Value(entity.updatedAt),
           icon: Value(entity.icon),
-        ));
-
-    await table.insertAll(groups, mode: InsertMode.insertOrReplace);
+        );
+        await table.insertOnConflictUpdate(group);
+      }
+    }
   }
 
   @override
@@ -155,4 +170,18 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
 
   @override
   int? getServerId(Group entity) => entity.id;
+
+  @override
+  Future<Group> assignClientId(Group item) async {
+    if ((item.clientId.isEmpty)) {
+      final newClientId = await generateDeviceScopedId();
+      final updated = item.copyWith(clientId: newClientId);
+      return updated;
+    } else {
+      return item;
+    }
+  }
+
+  @override
+  DateTime? getlastSyncedAt(Group entity) => entity.lastSyncedAt;
 }

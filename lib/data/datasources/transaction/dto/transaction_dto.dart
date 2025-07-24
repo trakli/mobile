@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -24,7 +25,7 @@ class TransactionDTO {
   final List<dynamic> categories;
   @JsonKey(name: 'last_synced_at')
   final DateTime lastSyncedAt;
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
   final String clientGeneratedId;
   @JsonKey(name: 'sync_state')
   final SyncStateDto syncState;

@@ -6,7 +6,8 @@ import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 
 abstract class TransactionRemoteDataSource {
-  Future<List<TransactionCompleteDto>> getAllTransactions();
+  Future<List<TransactionCompleteDto>> getAllTransactions(
+      {DateTime? syncedSince, bool? noClientId});
   Future<TransactionCompleteDto> getTransaction(int id);
   Future<TransactionCompleteDto> insertTransaction(
       TransactionCompleteDto transaction);
@@ -24,8 +25,17 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   });
 
   @override
-  Future<List<TransactionCompleteDto>> getAllTransactions() async {
-    final response = await dio.get('transactions');
+  Future<List<TransactionCompleteDto>> getAllTransactions(
+      {DateTime? syncedSince, bool? noClientId}) async {
+    final queryParams = <String, dynamic>{};
+    if (syncedSince != null) {
+      queryParams['synced_since'] = syncedSince.toIso8601String();
+    }
+    if (noClientId != null) {
+      queryParams['no_client_id'] = noClientId;
+    }
+    final response =
+        await dio.get('transactions', queryParameters: queryParams);
 
     final apiResponse = ApiResponse.fromJson(response.data);
 

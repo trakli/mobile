@@ -11,6 +11,7 @@ abstract class PartyRepository {
     String name, {
     String? description,
     MediaEntity? media,
+    PartyType? type,
   });
 
   Future<Either<Failure, Unit>> updateParty(
@@ -18,6 +19,7 @@ abstract class PartyRepository {
     String? name,
     String? description,
     MediaEntity? media,
+    PartyType? type,
   });
 
   Future<Either<Failure, Unit>> deleteParty(String clientId);

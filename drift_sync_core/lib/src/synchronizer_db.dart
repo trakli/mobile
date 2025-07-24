@@ -4,13 +4,15 @@ import 'package:drift/drift.dart';
 mixin SynchronizerDb on GeneratedDatabase {
   Future<List<PendingLocalChange>> getPendingLocalChanges();
   Future<void> cancelAllLocalChanges();
+  Future<void> clearDatabase();
   Future<void> concludeLocalChange(
     PendingLocalChange localChange, {
     Object? error,
     bool persistedToRemote = false,
   });
-  Future<String?> getLastChangeId();
-  Future<void> setLastReceivedChangeId(String? id);
+  Future<List<LocalSyncMetadata>> getLocalSyncMetadataList();
+  Future<LocalSyncMetadata?> getLocalSyncMetadata(String id);
+  // Future<LocalSyncMetadata?> updateLocalSyncMetadata(String id, DateTime time);
   Future<void> insertLocalChange(PendingLocalChange localChange);
 
   Future<void> concludeEntityLocalChanges(
@@ -18,4 +20,9 @@ mixin SynchronizerDb on GeneratedDatabase {
     int? entityId,
     Operation operation,
   );
+
+  Future<void> updateEnityLocalSyncMetadata({
+    required String entityType,
+    DateTime? lastSyncedAt,
+  });
 }

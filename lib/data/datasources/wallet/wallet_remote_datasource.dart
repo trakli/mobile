@@ -7,7 +7,7 @@ import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 
 abstract class WalletRemoteDataSource {
-  Future<List<Wallet>> getAllWallets();
+  Future<List<Wallet>> getAllWallets({DateTime? syncedSince, bool? noClientId});
   Future<Wallet?> getWallet(int id);
   Future<Wallet> insertWallet(Wallet wallet);
   Future<Wallet> updateWallet(Wallet wallet);
@@ -23,8 +23,16 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
   });
 
   @override
-  Future<List<Wallet>> getAllWallets() async {
-    final response = await dio.get('wallets');
+  Future<List<Wallet>> getAllWallets(
+      {DateTime? syncedSince, bool? noClientId}) async {
+    final queryParams = <String, dynamic>{};
+    if (syncedSince != null) {
+      queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+    }
+    if (noClientId != null) {
+      queryParams['no_client_id'] = noClientId;
+    }
+    final response = await dio.get('wallets', queryParameters: queryParams);
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
@@ -81,6 +89,7 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       if (wallet.description != null) 'description': wallet.description,
       'icon': wallet.icon?.content,
       'icon_type': wallet.icon?.type.name,
+      'client_id': wallet.clientId,
     };
 
     final response = await dio.put(

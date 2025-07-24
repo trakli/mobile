@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:uuid/uuid.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 import '../../domain/entities/transaction_entity.dart';
 
 class MockTransactionService {
@@ -29,7 +29,7 @@ class MockTransactionService {
   ) async {
     return _simulateDelay(() async {
       final transaction = TransactionEntity(
-        clientId: const Uuid().v4(),
+        clientId: await generateDeviceScopedId(),
         amount: amount,
         description: description,
         datetime: DateTime.now(),

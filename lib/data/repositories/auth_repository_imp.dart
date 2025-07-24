@@ -8,6 +8,7 @@ import 'package:trakli/core/network/network_info.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/auth/auth_local_data_source.dart';
 import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
+import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
 import 'package:trakli/data/mappers/user_mapper.dart';
@@ -52,6 +53,23 @@ class AuthRepositoryImpl implements AuthRepository {
     yield* _authStatusController.stream;
   }
 
+  Future<UserEntity> _handleAuthResponse(
+    AuthResponseDto authResponse, {
+    bool shouldClearCache = false,
+  }) async {
+    final newUser = User.fromJson(authResponse.user);
+    final currentUserId = await _preferenceManager.getUserId();
+    if ((currentUserId != null && currentUserId != newUser.id) ||
+        (shouldClearCache && currentUserId == null)) {
+      await _localDataSource.clearDatabase();
+    }
+    await _tokenManager.persistToken(authResponse.accessToken);
+    await _localDataSource.saveUser(newUser);
+    await _preferenceManager.saveUserId(newUser.id);
+    _authStatusController.add(AuthStatus.authenticated);
+    return UserMapper.toDomain(newUser);
+  }
+
   @override
   Future<Either<Failure, UserEntity>> loginWithEmailPassword({
     required String email,
@@ -62,14 +80,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-
-      await _tokenManager.persistToken(authResponse.accessToken);
-      final user = User.fromJson(authResponse.user);
-      await _localDataSource.saveUser(user);
-      await _preferenceManager.saveUserId(user.id);
-      _authStatusController.add(AuthStatus.authenticated);
-
-      return UserMapper.toDomain(user);
+      return _handleAuthResponse(authResponse, shouldClearCache: true);
     });
   }
 
@@ -91,16 +102,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         email: email,
       );
-
-      await _tokenManager.persistToken(authResponse.accessToken);
-
-      final user = User.fromJson(authResponse.user);
-      await _localDataSource.saveUser(user);
-      await _preferenceManager.saveUserId(user.id);
-
-      _authStatusController.add(AuthStatus.authenticated);
-
-      return UserMapper.toDomain(user);
+      return _handleAuthResponse(authResponse);
     });
   }
 
@@ -114,16 +116,7 @@ class AuthRepositoryImpl implements AuthRepository {
         phone: phone,
         password: password,
       );
-
-      await _tokenManager.persistToken(authResponse.accessToken);
-      final user = User.fromJson(authResponse.user);
-
-      await _localDataSource.saveUser(user);
-      await _preferenceManager.saveUserId(user.id);
-
-      _authStatusController.add(AuthStatus.authenticated);
-
-      return UserMapper.toDomain(user);
+      return _handleAuthResponse(authResponse, shouldClearCache: true);
     });
   }
 
@@ -131,8 +124,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, Unit>> logout() async {
     return RepositoryErrorHandler.handleApiCall<Unit>(() async {
       await _tokenManager.clearToken();
-      await _preferenceManager.clearUserId();
+      await _preferenceManager.clearAll();
       await _localDataSource.deleteUser();
+      await _localDataSource.clearDatabase();
       _authStatusController.add(AuthStatus.unauthenticated);
 
       return unit;

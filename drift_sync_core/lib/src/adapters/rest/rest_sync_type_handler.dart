@@ -4,7 +4,8 @@ import 'package:meta/meta.dart';
 
 mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
     on SyncTypeHandler<TEntity, TKey, TServerKey> {
-  Future<List<TEntity>> restGetAllRemote();
+  Future<List<TEntity>> restGetAllRemote(
+      {DateTime? syncedSince, bool? noClientId});
   Future<TEntity?> restGetRemote(TServerKey id);
   Future<TEntity> restPutRemote(TEntity entity);
   Future<void> restDeleteRemote(TEntity entity);
@@ -26,9 +27,13 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
   }
 
   @override
-  Future<List<TEntity>> getAllRemote() async {
+  Future<List<TEntity>> getAllRemote(
+      {DateTime? syncedSince, bool? noClientId}) async {
     try {
-      final entities = await restGetAllRemote();
+      final entities = await restGetAllRemote(
+        syncedSince: syncedSince,
+        noClientId: noClientId,
+      );
       return entities;
     } on DioException catch (exception) {
       if (isUnavailable(exception)) {

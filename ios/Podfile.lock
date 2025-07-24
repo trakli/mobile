@@ -1,6 +1,9 @@
 PODS:
   - connectivity_plus (0.0.1):
     - Flutter
+  - device_uuid (0.0.1):
+    - Flutter
+    - XYUUID
   - DKImagePickerController/Core (4.3.9):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -81,11 +84,15 @@ PODS:
     - sqlite3/rtree
   - SwiftyGif (5.4.5)
   - TOCropViewController (2.7.4)
+  - unique_identifier (0.0.1):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
+  - XYUUID (1.0.0)
 
 DEPENDENCIES:
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
+  - device_uuid (from `.symlinks/plugins/device_uuid/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
@@ -96,6 +103,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/darwin`)
+  - unique_identifier (from `.symlinks/plugins/unique_identifier/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
@@ -106,10 +114,13 @@ SPEC REPOS:
     - sqlite3
     - SwiftyGif
     - TOCropViewController
+    - XYUUID
 
 EXTERNAL SOURCES:
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/ios"
+  device_uuid:
+    :path: ".symlinks/plugins/device_uuid/ios"
   emoji_picker_flutter:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
@@ -130,11 +141,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   sqlite3_flutter_libs:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/darwin"
+  unique_identifier:
+    :path: ".symlinks/plugins/unique_identifier/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
+  device_uuid: 2ca5be1bf462a3162dd6b8a8f34a5e42988bac1c
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   emoji_picker_flutter: ece213fc274bdddefb77d502d33080dc54e616cc
@@ -151,7 +165,9 @@ SPEC CHECKSUMS:
   sqlite3_flutter_libs: f6acaa2172e6bb3e2e70c771661905080e8ebcf2
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
+  unique_identifier: 759d781cf134d96de2161628a1d52014df19599c
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
+  XYUUID: 9a2483143d14fc5204b619042ca65073df9fbd88
 
 PODFILE CHECKSUM: 0a7d5b7d0e53420cb0284f7b2f171f93843b94d2
 

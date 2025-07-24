@@ -16,7 +16,8 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   }
 
   @override
-  Future<List<TransactionCompleteDto>> getAllTransactions() async {
+  Future<List<TransactionCompleteDto>> getAllTransactions(
+      {DateTime? syncedSince, bool? noClientId}) async {
     return _simulateDelay(() async => _transactions);
   }
 
