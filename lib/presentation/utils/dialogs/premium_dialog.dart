@@ -1,14 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/subscription_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/subscription_tile.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PremiumDialog extends StatefulWidget {
   final SubscriptionEntity subscription;
@@ -46,7 +45,7 @@ class _PremiumDialogState extends State<PremiumDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              LocaleKeys.upgradeToPremium.tr(),
+              widget.subscription.overview.title,
               style: TextStyle(
                 fontSize: 24.sp,
                 color: neutralN700,
@@ -54,7 +53,7 @@ class _PremiumDialogState extends State<PremiumDialog> {
               ),
             ),
             Text(
-              loremIpsum,
+              widget.subscription.overview.description,
               style: TextStyle(
                 fontSize: 14.sp,
                 color: neutralN900,

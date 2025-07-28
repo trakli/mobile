@@ -1,5 +1,19 @@
 import 'package:equatable/equatable.dart';
 
+class OverviewEntity extends Equatable {
+  final String title;
+  final String description;
+
+  const OverviewEntity({
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  List<Object?> get props => [title, description];
+}
+
+
 class CtaEntity extends Equatable {
   final String text;
   final String buttonText;
@@ -19,9 +33,9 @@ class PlanEntity extends Equatable {
   final String interval;
   final List<String> features;
   final CtaEntity cta;
-  final int priceCents;
-  final String currency;
-  final int trialDays;
+  final double price;
+  final String priceFormatted;
+
 
   const PlanEntity({
     required this.id,
@@ -29,9 +43,8 @@ class PlanEntity extends Equatable {
     required this.interval,
     required this.features,
     required this.cta,
-    required this.priceCents,
-    required this.currency,
-    required this.trialDays,
+    required this.price,
+    required this.priceFormatted,
   });
 
   @override
@@ -41,13 +54,13 @@ class PlanEntity extends Equatable {
     interval,
     features,
     cta,
-    priceCents,
-    currency,
-    trialDays,
+    price,
+    priceFormatted,
   ];
 }
 
 class SubscriptionEntity extends Equatable {
+  final OverviewEntity overview;
   final String region;
   final String currency;
   final int trialDays;
@@ -55,6 +68,7 @@ class SubscriptionEntity extends Equatable {
   final List<PlanEntity> plans;
 
   const SubscriptionEntity({
+    required this.overview,
     required this.region,
     required this.currency,
     required this.trialDays,

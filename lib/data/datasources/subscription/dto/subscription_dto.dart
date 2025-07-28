@@ -4,9 +4,11 @@ import 'package:trakli/domain/entities/subscription_entity.dart';
 part 'subscription_dto.freezed.dart';
 part 'subscription_dto.g.dart';
 
+
 @freezed
 class SubscriptionDto with _$SubscriptionDto {
   const factory SubscriptionDto({
+    required OverviewDto overview,
     required String region,
     required String currency,
     @JsonKey(name: 'trial_days') required int trialDays,
@@ -20,11 +22,30 @@ class SubscriptionDto with _$SubscriptionDto {
   const SubscriptionDto._();
 
   SubscriptionEntity toEntity() => SubscriptionEntity(
+    overview: overview.toEntity(), // Convert OverviewDto to OverviewEntity
     region: region,
     currency: currency,
     trialDays: trialDays,
     freePlanEnabled: freePlanEnabled,
     plans: plans.map((e) => e.toEntity()).toList(),
+  );
+}
+
+@freezed
+class OverviewDto with _$OverviewDto {
+  const factory OverviewDto({
+    required String title,
+    required String description,
+  }) = _OverviewDto;
+
+  factory OverviewDto.fromJson(Map<String, dynamic> json) =>
+      _$OverviewDtoFromJson(json);
+
+  const OverviewDto._();
+
+  OverviewEntity toEntity() => OverviewEntity(
+    title: title,
+    description: description,
   );
 }
 
@@ -36,9 +57,8 @@ class PlanDto with _$PlanDto {
     required String interval,
     required List<String> features,
     required CtaDto cta,
-    @JsonKey(name: 'price_cents') required int priceCents,
-    required String currency,
-    @JsonKey(name: 'trial_days') required int trialDays,
+    required double price,
+    @JsonKey(name: 'price_formatted') required String priceFormatted,
   }) = _PlanDto;
 
   factory PlanDto.fromJson(Map<String, dynamic> json) =>
@@ -52,9 +72,8 @@ class PlanDto with _$PlanDto {
     interval: interval,
     features: features,
     cta: cta.toEntity(),
-    priceCents: priceCents,
-    currency: currency,
-    trialDays: trialDays,
+    price: price,
+    priceFormatted: priceFormatted,
   );
 }
 

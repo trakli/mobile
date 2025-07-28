@@ -20,6 +20,7 @@ SubscriptionDto _$SubscriptionDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SubscriptionDto {
+  OverviewDto get overview => throw _privateConstructorUsedError;
   String get region => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
   @JsonKey(name: 'trial_days')
@@ -45,11 +46,14 @@ abstract class $SubscriptionDtoCopyWith<$Res> {
       _$SubscriptionDtoCopyWithImpl<$Res, SubscriptionDto>;
   @useResult
   $Res call(
-      {String region,
+      {OverviewDto overview,
+      String region,
       String currency,
       @JsonKey(name: 'trial_days') int trialDays,
       @JsonKey(name: 'free_plan_enabled') bool freePlanEnabled,
       List<PlanDto> plans});
+
+  $OverviewDtoCopyWith<$Res> get overview;
 }
 
 /// @nodoc
@@ -67,6 +71,7 @@ class _$SubscriptionDtoCopyWithImpl<$Res, $Val extends SubscriptionDto>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? overview = null,
     Object? region = null,
     Object? currency = null,
     Object? trialDays = null,
@@ -74,6 +79,10 @@ class _$SubscriptionDtoCopyWithImpl<$Res, $Val extends SubscriptionDto>
     Object? plans = null,
   }) {
     return _then(_value.copyWith(
+      overview: null == overview
+          ? _value.overview
+          : overview // ignore: cast_nullable_to_non_nullable
+              as OverviewDto,
       region: null == region
           ? _value.region
           : region // ignore: cast_nullable_to_non_nullable
@@ -96,6 +105,16 @@ class _$SubscriptionDtoCopyWithImpl<$Res, $Val extends SubscriptionDto>
               as List<PlanDto>,
     ) as $Val);
   }
+
+  /// Create a copy of SubscriptionDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OverviewDtoCopyWith<$Res> get overview {
+    return $OverviewDtoCopyWith<$Res>(_value.overview, (value) {
+      return _then(_value.copyWith(overview: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -107,11 +126,15 @@ abstract class _$$SubscriptionDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String region,
+      {OverviewDto overview,
+      String region,
       String currency,
       @JsonKey(name: 'trial_days') int trialDays,
       @JsonKey(name: 'free_plan_enabled') bool freePlanEnabled,
       List<PlanDto> plans});
+
+  @override
+  $OverviewDtoCopyWith<$Res> get overview;
 }
 
 /// @nodoc
@@ -127,6 +150,7 @@ class __$$SubscriptionDtoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? overview = null,
     Object? region = null,
     Object? currency = null,
     Object? trialDays = null,
@@ -134,6 +158,10 @@ class __$$SubscriptionDtoImplCopyWithImpl<$Res>
     Object? plans = null,
   }) {
     return _then(_$SubscriptionDtoImpl(
+      overview: null == overview
+          ? _value.overview
+          : overview // ignore: cast_nullable_to_non_nullable
+              as OverviewDto,
       region: null == region
           ? _value.region
           : region // ignore: cast_nullable_to_non_nullable
@@ -162,7 +190,8 @@ class __$$SubscriptionDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SubscriptionDtoImpl extends _SubscriptionDto {
   const _$SubscriptionDtoImpl(
-      {required this.region,
+      {required this.overview,
+      required this.region,
       required this.currency,
       @JsonKey(name: 'trial_days') required this.trialDays,
       @JsonKey(name: 'free_plan_enabled') required this.freePlanEnabled,
@@ -173,6 +202,8 @@ class _$SubscriptionDtoImpl extends _SubscriptionDto {
   factory _$SubscriptionDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$SubscriptionDtoImplFromJson(json);
 
+  @override
+  final OverviewDto overview;
   @override
   final String region;
   @override
@@ -193,7 +224,7 @@ class _$SubscriptionDtoImpl extends _SubscriptionDto {
 
   @override
   String toString() {
-    return 'SubscriptionDto(region: $region, currency: $currency, trialDays: $trialDays, freePlanEnabled: $freePlanEnabled, plans: $plans)';
+    return 'SubscriptionDto(overview: $overview, region: $region, currency: $currency, trialDays: $trialDays, freePlanEnabled: $freePlanEnabled, plans: $plans)';
   }
 
   @override
@@ -201,6 +232,8 @@ class _$SubscriptionDtoImpl extends _SubscriptionDto {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SubscriptionDtoImpl &&
+            (identical(other.overview, overview) ||
+                other.overview == overview) &&
             (identical(other.region, region) || other.region == region) &&
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
@@ -213,8 +246,8 @@ class _$SubscriptionDtoImpl extends _SubscriptionDto {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, region, currency, trialDays,
-      freePlanEnabled, const DeepCollectionEquality().hash(_plans));
+  int get hashCode => Object.hash(runtimeType, overview, region, currency,
+      trialDays, freePlanEnabled, const DeepCollectionEquality().hash(_plans));
 
   /// Create a copy of SubscriptionDto
   /// with the given fields replaced by the non-null parameter values.
@@ -235,7 +268,8 @@ class _$SubscriptionDtoImpl extends _SubscriptionDto {
 
 abstract class _SubscriptionDto extends SubscriptionDto {
   const factory _SubscriptionDto(
-      {required final String region,
+      {required final OverviewDto overview,
+      required final String region,
       required final String currency,
       @JsonKey(name: 'trial_days') required final int trialDays,
       @JsonKey(name: 'free_plan_enabled') required final bool freePlanEnabled,
@@ -245,6 +279,8 @@ abstract class _SubscriptionDto extends SubscriptionDto {
   factory _SubscriptionDto.fromJson(Map<String, dynamic> json) =
       _$SubscriptionDtoImpl.fromJson;
 
+  @override
+  OverviewDto get overview;
   @override
   String get region;
   @override
@@ -266,6 +302,176 @@ abstract class _SubscriptionDto extends SubscriptionDto {
       throw _privateConstructorUsedError;
 }
 
+OverviewDto _$OverviewDtoFromJson(Map<String, dynamic> json) {
+  return _OverviewDto.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OverviewDto {
+  String get title => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+
+  /// Serializes this OverviewDto to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of OverviewDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $OverviewDtoCopyWith<OverviewDto> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OverviewDtoCopyWith<$Res> {
+  factory $OverviewDtoCopyWith(
+          OverviewDto value, $Res Function(OverviewDto) then) =
+      _$OverviewDtoCopyWithImpl<$Res, OverviewDto>;
+  @useResult
+  $Res call({String title, String description});
+}
+
+/// @nodoc
+class _$OverviewDtoCopyWithImpl<$Res, $Val extends OverviewDto>
+    implements $OverviewDtoCopyWith<$Res> {
+  _$OverviewDtoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of OverviewDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? title = null,
+    Object? description = null,
+  }) {
+    return _then(_value.copyWith(
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$OverviewDtoImplCopyWith<$Res>
+    implements $OverviewDtoCopyWith<$Res> {
+  factory _$$OverviewDtoImplCopyWith(
+          _$OverviewDtoImpl value, $Res Function(_$OverviewDtoImpl) then) =
+      __$$OverviewDtoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String title, String description});
+}
+
+/// @nodoc
+class __$$OverviewDtoImplCopyWithImpl<$Res>
+    extends _$OverviewDtoCopyWithImpl<$Res, _$OverviewDtoImpl>
+    implements _$$OverviewDtoImplCopyWith<$Res> {
+  __$$OverviewDtoImplCopyWithImpl(
+      _$OverviewDtoImpl _value, $Res Function(_$OverviewDtoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of OverviewDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? title = null,
+    Object? description = null,
+  }) {
+    return _then(_$OverviewDtoImpl(
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: null == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OverviewDtoImpl extends _OverviewDto {
+  const _$OverviewDtoImpl({required this.title, required this.description})
+      : super._();
+
+  factory _$OverviewDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OverviewDtoImplFromJson(json);
+
+  @override
+  final String title;
+  @override
+  final String description;
+
+  @override
+  String toString() {
+    return 'OverviewDto(title: $title, description: $description)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OverviewDtoImpl &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, title, description);
+
+  /// Create a copy of OverviewDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OverviewDtoImplCopyWith<_$OverviewDtoImpl> get copyWith =>
+      __$$OverviewDtoImplCopyWithImpl<_$OverviewDtoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OverviewDtoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _OverviewDto extends OverviewDto {
+  const factory _OverviewDto(
+      {required final String title,
+      required final String description}) = _$OverviewDtoImpl;
+  const _OverviewDto._() : super._();
+
+  factory _OverviewDto.fromJson(Map<String, dynamic> json) =
+      _$OverviewDtoImpl.fromJson;
+
+  @override
+  String get title;
+  @override
+  String get description;
+
+  /// Create a copy of OverviewDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$OverviewDtoImplCopyWith<_$OverviewDtoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 PlanDto _$PlanDtoFromJson(Map<String, dynamic> json) {
   return _PlanDto.fromJson(json);
 }
@@ -277,11 +483,9 @@ mixin _$PlanDto {
   String get interval => throw _privateConstructorUsedError;
   List<String> get features => throw _privateConstructorUsedError;
   CtaDto get cta => throw _privateConstructorUsedError;
-  @JsonKey(name: 'price_cents')
-  int get priceCents => throw _privateConstructorUsedError;
-  String get currency => throw _privateConstructorUsedError;
-  @JsonKey(name: 'trial_days')
-  int get trialDays => throw _privateConstructorUsedError;
+  double get price => throw _privateConstructorUsedError;
+  @JsonKey(name: 'price_formatted')
+  String get priceFormatted => throw _privateConstructorUsedError;
 
   /// Serializes this PlanDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -303,9 +507,8 @@ abstract class $PlanDtoCopyWith<$Res> {
       String interval,
       List<String> features,
       CtaDto cta,
-      @JsonKey(name: 'price_cents') int priceCents,
-      String currency,
-      @JsonKey(name: 'trial_days') int trialDays});
+      double price,
+      @JsonKey(name: 'price_formatted') String priceFormatted});
 
   $CtaDtoCopyWith<$Res> get cta;
 }
@@ -330,9 +533,8 @@ class _$PlanDtoCopyWithImpl<$Res, $Val extends PlanDto>
     Object? interval = null,
     Object? features = null,
     Object? cta = null,
-    Object? priceCents = null,
-    Object? currency = null,
-    Object? trialDays = null,
+    Object? price = null,
+    Object? priceFormatted = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -355,18 +557,14 @@ class _$PlanDtoCopyWithImpl<$Res, $Val extends PlanDto>
           ? _value.cta
           : cta // ignore: cast_nullable_to_non_nullable
               as CtaDto,
-      priceCents: null == priceCents
-          ? _value.priceCents
-          : priceCents // ignore: cast_nullable_to_non_nullable
-              as int,
-      currency: null == currency
-          ? _value.currency
-          : currency // ignore: cast_nullable_to_non_nullable
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      priceFormatted: null == priceFormatted
+          ? _value.priceFormatted
+          : priceFormatted // ignore: cast_nullable_to_non_nullable
               as String,
-      trialDays: null == trialDays
-          ? _value.trialDays
-          : trialDays // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 
@@ -394,9 +592,8 @@ abstract class _$$PlanDtoImplCopyWith<$Res> implements $PlanDtoCopyWith<$Res> {
       String interval,
       List<String> features,
       CtaDto cta,
-      @JsonKey(name: 'price_cents') int priceCents,
-      String currency,
-      @JsonKey(name: 'trial_days') int trialDays});
+      double price,
+      @JsonKey(name: 'price_formatted') String priceFormatted});
 
   @override
   $CtaDtoCopyWith<$Res> get cta;
@@ -420,9 +617,8 @@ class __$$PlanDtoImplCopyWithImpl<$Res>
     Object? interval = null,
     Object? features = null,
     Object? cta = null,
-    Object? priceCents = null,
-    Object? currency = null,
-    Object? trialDays = null,
+    Object? price = null,
+    Object? priceFormatted = null,
   }) {
     return _then(_$PlanDtoImpl(
       id: null == id
@@ -445,18 +641,14 @@ class __$$PlanDtoImplCopyWithImpl<$Res>
           ? _value.cta
           : cta // ignore: cast_nullable_to_non_nullable
               as CtaDto,
-      priceCents: null == priceCents
-          ? _value.priceCents
-          : priceCents // ignore: cast_nullable_to_non_nullable
-              as int,
-      currency: null == currency
-          ? _value.currency
-          : currency // ignore: cast_nullable_to_non_nullable
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      priceFormatted: null == priceFormatted
+          ? _value.priceFormatted
+          : priceFormatted // ignore: cast_nullable_to_non_nullable
               as String,
-      trialDays: null == trialDays
-          ? _value.trialDays
-          : trialDays // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -470,9 +662,8 @@ class _$PlanDtoImpl extends _PlanDto {
       required this.interval,
       required final List<String> features,
       required this.cta,
-      @JsonKey(name: 'price_cents') required this.priceCents,
-      required this.currency,
-      @JsonKey(name: 'trial_days') required this.trialDays})
+      required this.price,
+      @JsonKey(name: 'price_formatted') required this.priceFormatted})
       : _features = features,
         super._();
 
@@ -496,17 +687,14 @@ class _$PlanDtoImpl extends _PlanDto {
   @override
   final CtaDto cta;
   @override
-  @JsonKey(name: 'price_cents')
-  final int priceCents;
+  final double price;
   @override
-  final String currency;
-  @override
-  @JsonKey(name: 'trial_days')
-  final int trialDays;
+  @JsonKey(name: 'price_formatted')
+  final String priceFormatted;
 
   @override
   String toString() {
-    return 'PlanDto(id: $id, name: $name, interval: $interval, features: $features, cta: $cta, priceCents: $priceCents, currency: $currency, trialDays: $trialDays)';
+    return 'PlanDto(id: $id, name: $name, interval: $interval, features: $features, cta: $cta, price: $price, priceFormatted: $priceFormatted)';
   }
 
   @override
@@ -520,12 +708,9 @@ class _$PlanDtoImpl extends _PlanDto {
                 other.interval == interval) &&
             const DeepCollectionEquality().equals(other._features, _features) &&
             (identical(other.cta, cta) || other.cta == cta) &&
-            (identical(other.priceCents, priceCents) ||
-                other.priceCents == priceCents) &&
-            (identical(other.currency, currency) ||
-                other.currency == currency) &&
-            (identical(other.trialDays, trialDays) ||
-                other.trialDays == trialDays));
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.priceFormatted, priceFormatted) ||
+                other.priceFormatted == priceFormatted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -537,9 +722,8 @@ class _$PlanDtoImpl extends _PlanDto {
       interval,
       const DeepCollectionEquality().hash(_features),
       cta,
-      priceCents,
-      currency,
-      trialDays);
+      price,
+      priceFormatted);
 
   /// Create a copy of PlanDto
   /// with the given fields replaced by the non-null parameter values.
@@ -559,15 +743,14 @@ class _$PlanDtoImpl extends _PlanDto {
 
 abstract class _PlanDto extends PlanDto {
   const factory _PlanDto(
-          {required final String id,
-          required final String name,
-          required final String interval,
-          required final List<String> features,
-          required final CtaDto cta,
-          @JsonKey(name: 'price_cents') required final int priceCents,
-          required final String currency,
-          @JsonKey(name: 'trial_days') required final int trialDays}) =
-      _$PlanDtoImpl;
+      {required final String id,
+      required final String name,
+      required final String interval,
+      required final List<String> features,
+      required final CtaDto cta,
+      required final double price,
+      @JsonKey(name: 'price_formatted')
+      required final String priceFormatted}) = _$PlanDtoImpl;
   const _PlanDto._() : super._();
 
   factory _PlanDto.fromJson(Map<String, dynamic> json) = _$PlanDtoImpl.fromJson;
@@ -583,13 +766,10 @@ abstract class _PlanDto extends PlanDto {
   @override
   CtaDto get cta;
   @override
-  @JsonKey(name: 'price_cents')
-  int get priceCents;
+  double get price;
   @override
-  String get currency;
-  @override
-  @JsonKey(name: 'trial_days')
-  int get trialDays;
+  @JsonKey(name: 'price_formatted')
+  String get priceFormatted;
 
   /// Create a copy of PlanDto
   /// with the given fields replaced by the non-null parameter values.

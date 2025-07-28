@@ -9,6 +9,7 @@ part of 'subscription_dto.dart';
 _$SubscriptionDtoImpl _$$SubscriptionDtoImplFromJson(
         Map<String, dynamic> json) =>
     _$SubscriptionDtoImpl(
+      overview: OverviewDto.fromJson(json['overview'] as Map<String, dynamic>),
       region: json['region'] as String,
       currency: json['currency'] as String,
       trialDays: (json['trial_days'] as num).toInt(),
@@ -21,11 +22,24 @@ _$SubscriptionDtoImpl _$$SubscriptionDtoImplFromJson(
 Map<String, dynamic> _$$SubscriptionDtoImplToJson(
         _$SubscriptionDtoImpl instance) =>
     <String, dynamic>{
+      'overview': instance.overview.toJson(),
       'region': instance.region,
       'currency': instance.currency,
       'trial_days': instance.trialDays,
       'free_plan_enabled': instance.freePlanEnabled,
       'plans': instance.plans.map((e) => e.toJson()).toList(),
+    };
+
+_$OverviewDtoImpl _$$OverviewDtoImplFromJson(Map<String, dynamic> json) =>
+    _$OverviewDtoImpl(
+      title: json['title'] as String,
+      description: json['description'] as String,
+    );
+
+Map<String, dynamic> _$$OverviewDtoImplToJson(_$OverviewDtoImpl instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'description': instance.description,
     };
 
 _$PlanDtoImpl _$$PlanDtoImplFromJson(Map<String, dynamic> json) =>
@@ -36,9 +50,8 @@ _$PlanDtoImpl _$$PlanDtoImplFromJson(Map<String, dynamic> json) =>
       features:
           (json['features'] as List<dynamic>).map((e) => e as String).toList(),
       cta: CtaDto.fromJson(json['cta'] as Map<String, dynamic>),
-      priceCents: (json['price_cents'] as num).toInt(),
-      currency: json['currency'] as String,
-      trialDays: (json['trial_days'] as num).toInt(),
+      price: (json['price'] as num).toDouble(),
+      priceFormatted: json['price_formatted'] as String,
     );
 
 Map<String, dynamic> _$$PlanDtoImplToJson(_$PlanDtoImpl instance) =>
@@ -48,9 +61,8 @@ Map<String, dynamic> _$$PlanDtoImplToJson(_$PlanDtoImpl instance) =>
       'interval': instance.interval,
       'features': instance.features,
       'cta': instance.cta.toJson(),
-      'price_cents': instance.priceCents,
-      'currency': instance.currency,
-      'trial_days': instance.trialDays,
+      'price': instance.price,
+      'price_formatted': instance.priceFormatted,
     };
 
 _$CtaDtoImpl _$$CtaDtoImplFromJson(Map<String, dynamic> json) => _$CtaDtoImpl(
