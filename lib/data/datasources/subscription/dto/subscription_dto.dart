@@ -22,7 +22,7 @@ class SubscriptionDto with _$SubscriptionDto {
   const SubscriptionDto._();
 
   SubscriptionEntity toEntity() => SubscriptionEntity(
-    overview: overview.toEntity(), // Convert OverviewDto to OverviewEntity
+    overview: overview.toEntity(),
     region: region,
     currency: currency,
     trialDays: trialDays,
