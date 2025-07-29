@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formater.dart' show CurrencyFormater;
 import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -107,12 +106,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
               ],
             ),
             Text(
-              "${CurrencyFormater.formatAmountWithSymbol(
-                context,
-                widget.plan.price.toDouble(),
-                currentDecimalDigits: 0,
-                compact: true,
-              )}/Month",
+              "${widget.plan.priceFormatted}/${widget.plan.interval}",
               style: TextStyle(
                 fontSize: 18.sp,
                 color: neutralM900,
