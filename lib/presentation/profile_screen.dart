@@ -32,14 +32,13 @@ class ProfileScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
           horizontal: 16.w,
-          vertical: 16.h,
+          vertical: 8.h,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 8.h),
             CircleAvatar(
-              radius: 60.r,
+              radius: 48.r,
               child: Stack(
                 children: [
                   SizedBox(
@@ -55,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                       right: 0.w,
                       bottom: 2.h,
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(6.r),
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor.withValues(
                                 alpha: 0.2,
@@ -74,11 +73,11 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: 4.h),
             Text(
               user?.fullName ?? LocaleKeys.anonymous.tr(),
               style: TextStyle(
-                fontSize: 20.sp,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -1,9 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formater.dart' show CurrencyFormater;
 import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -88,7 +89,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Text(
-                      "Recommended",
+                      LocaleKeys.recommended.tr(),
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.white,
@@ -105,12 +106,7 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
               ],
             ),
             Text(
-              "${CurrencyFormater.formatAmountWithSymbol(
-                context,
-                widget.plan.priceCents.toDouble(),
-                currentDecimalDigits: 0,
-                compact: true,
-              )}/Month",
+              "${widget.plan.priceFormatted}/${widget.plan.interval}",
               style: TextStyle(
                 fontSize: 18.sp,
                 color: neutralM900,
