@@ -34,6 +34,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         _getOnboardingStateStream(NoParams()).listen((entity) {
       if (entity != null) {
         emit(OnboardingState.success(entity));
+      } else {
+        emit(const OnboardingState.success(OnboardingEntity()));
       }
     });
   }

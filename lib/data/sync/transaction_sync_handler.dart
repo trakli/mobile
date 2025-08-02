@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
@@ -311,7 +312,8 @@ class TransactionSyncHandler
       TransactionCompleteDto item) async {
     final transaction = item.transaction;
 
-    if (transaction.clientId.isEmpty) {
+    if (transaction.clientId.isEmpty ||
+        transaction.clientId == defaultClientId) {
       final newClientId = await generateDeviceScopedId();
       final updated = transaction.copyWith(clientId: newClientId);
       return item.copyWith(transaction: updated);

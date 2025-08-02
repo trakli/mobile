@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
+import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
@@ -40,7 +41,8 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
     final paginatedResponse = PaginationResponse.fromJson(
       apiResponse.data as Map<String, dynamic>,
-      (Object? json) => Group.fromJson(json! as Map<String, dynamic>),
+      (Object? json) => Group.fromJson(
+          JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
     );
 
     return paginatedResponse.data;
@@ -55,7 +57,7 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
 
   @override
   Future<Group> insertGroup(Group group) async {
-    final response = await dio.post('groups', data: {
+    final data = {
       'name': group.name,
       'client_id': group.clientId,
       'description': group.description,
@@ -64,14 +66,15 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
         'icon_type': group.icon?.type.name,
       },
       'created_at': formatServerIsoDateTimeString(DateTime.now()),
-    });
+    };
+    final response = await dio.post('groups', data: data);
     final apiResponse = ApiResponse.fromJson(response.data);
     return Group.fromJson(apiResponse.data as Map<String, dynamic>);
   }
 
   @override
   Future<Group> updateGroup(Group group) async {
-    final response = await dio.put('groups/${group.clientId}', data: {
+    final response = await dio.put('groups/${group.id}', data: {
       'name': group.name,
       'client_id': group.clientId,
       'description': group.description,

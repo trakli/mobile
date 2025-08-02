@@ -39,11 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<GroupCubit>().ensureDefaultGroup(
-            name: LocaleKeys.defaultGroupName.tr(),
-          );
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<GroupCubit>().ensureDefaultGroup(
+    //         name: LocaleKeys.defaultGroupName.tr(),
+    //       );
+    // });
   }
 
   @override

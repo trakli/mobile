@@ -8,7 +8,7 @@ part of 'category_dto.dart';
 
 _$CategoryDtoImpl _$$CategoryDtoImplFromJson(Map<String, dynamic> json) =>
     _$CategoryDtoImpl(
-      clientId: json['client_generated_id'] as String,
+      clientId: json['client_generated_id'] as String? ?? '',
       type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
       name: json['name'] as String,
       description: json['description'] as String?,

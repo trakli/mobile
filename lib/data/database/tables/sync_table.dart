@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-const clientConstant = '';
+const defaultClientId = '';
 
 mixin SyncTable on Table {
   // Server ID (nullable since it's assigned by the server)
@@ -14,7 +14,7 @@ mixin SyncTable on Table {
     'client_generated_id',
   )
   TextColumn get clientId =>
-      text().withDefault(const Constant(clientConstant))();
+      text().withDefault(const Constant(defaultClientId))();
 
   // Add any common columns needed for sync
   TextColumn get rev => text().withDefault(const Constant('1')).nullable()();

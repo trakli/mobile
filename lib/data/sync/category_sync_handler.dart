@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/id_helper.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/categories.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/datasources/category/category_remote_datasource.dart';
 
 @lazySingleton
@@ -59,7 +60,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   @override
   Future<Category> restPutRemote(Category entity) async {
     if (entity.id == null) {
-      return remoteDataSource.insertCategory(entity);
+      return await remoteDataSource.insertCategory(entity);
     } else {
       return await remoteDataSource.updateCategory(entity);
     }
@@ -164,7 +165,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
 
   @override
   Future<Category> assignClientId(Category item) async {
-    if (item.clientId.isEmpty) {
+    if (item.clientId.isEmpty || item.clientId == defaultClientId) {
       final newClientId = await generateDeviceScopedId();
       final updated = item.copyWith(clientId: newClientId);
       return updated;

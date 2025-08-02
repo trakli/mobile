@@ -262,7 +262,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
     if (itemsWithoutClientId.isEmpty) return;
 
-    var updatedItems = [];
+    var updatedItems = <T>[];
 
     for (final item in itemsWithoutClientId) {
       try {
@@ -278,7 +278,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           continue;
         }
 
-        final current = handler.assignClientId(item);
+        final current = await handler.assignClientId(item);
         updatedItems.add(current);
       } catch (e, stack) {
         _logger.warning('Failed to assign client ID for item: $e\n$stack');
@@ -294,9 +294,10 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           ? i + batchSize
           : updatedItems.length;
       final batch = updatedItems.sublist(i, end);
+      final futureAwait = batch.map((entity) => handler.putRemote(entity));
 
-      final responses =
-          await Future.wait(batch.map((entity) => handler.putRemote(entity)));
+      final responses = await Future.wait(futureAwait);
+
       allResponses.addAll(responses);
 
       _logger.finest('responses', responses);

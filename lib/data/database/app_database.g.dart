@@ -23,7 +23,7 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
       'client_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(clientConstant));
+      defaultValue: const Constant(defaultClientId));
   @override
   late final GeneratedColumn<String> rev = GeneratedColumn<String>(
       'rev', aliasedName, true,
@@ -659,7 +659,7 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
       'client_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(clientConstant));
+      defaultValue: const Constant(defaultClientId));
   @override
   late final GeneratedColumn<String> rev = GeneratedColumn<String>(
       'rev', aliasedName, true,
@@ -1180,7 +1180,7 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
       'client_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(clientConstant));
+      defaultValue: const Constant(defaultClientId));
   @override
   late final GeneratedColumn<String> rev = GeneratedColumn<String>(
       'rev', aliasedName, true,
@@ -1663,7 +1663,7 @@ class $TransactionsTable extends Transactions
       'client_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(clientConstant));
+      defaultValue: const Constant(defaultClientId));
   @override
   late final GeneratedColumn<String> rev = GeneratedColumn<String>(
       'rev', aliasedName, true,
@@ -2406,7 +2406,7 @@ class $CategoriesTable extends Categories
       'client_id', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(clientConstant));
+      defaultValue: const Constant(defaultClientId));
   @override
   late final GeneratedColumn<String> rev = GeneratedColumn<String>(
       'rev', aliasedName, true,

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
+import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
@@ -38,7 +39,8 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
 
     final paginatedResponse = PaginationResponse.fromJson(
       apiResponse.data as Map<String, dynamic>,
-      (Object? json) => Party.fromJson(json! as Map<String, dynamic>),
+      (Object? json) => Party.fromJson(
+          JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
     );
 
     return paginatedResponse.data;

@@ -12,9 +12,12 @@ import 'package:popover/popover.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/enums.dart' show PlanType;
+import 'package:trakli/presentation/utils/enums.dart' show PlanType, WalletType;
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 Future<File?> pickFile() async {
   try {
@@ -331,4 +334,31 @@ getPlanType(String interval) {
     default:
       return PlanType.monthly;
   }
+}
+
+/// Sets up default group and wallet with the given currency
+/// This function is reusable across different parts of the app
+Future<void> setupDefaultGroupAndWallet({
+  required BuildContext context,
+  required String currencyCode,
+  String? groupName,
+  String? walletName,
+  String? walletDescription,
+}) async {
+  // if (!context.mounted) return;
+
+  // Ensure default group exists
+  context.read<GroupCubit>().ensureDefaultGroup(
+        name: groupName ?? LocaleKeys.defaultGroupName.tr(),
+      );
+
+  // Check if context is still mounted before proceeding
+  // Create default wallet with selected currency
+  await context.read<WalletCubit>().ensureDefaultWallet(
+        currencyCode: currencyCode,
+        name: walletName ?? LocaleKeys.defaultWalletName.tr(),
+        type: WalletType.cash,
+        description:
+            walletDescription ?? LocaleKeys.defaultWalletDescription.tr(),
+      );
 }
