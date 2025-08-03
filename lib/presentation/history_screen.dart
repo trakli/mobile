@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
@@ -28,6 +30,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   bool showSearch = false;
+  List<dynamic> selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +75,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
             );
           }
 
-          final transactions = state.transactions;
+          final transactions = selectedItems.isEmpty
+              ? state.transactions
+              : state.transactions.where((transaction) {
+                  final selectedCategories =
+                      selectedItems.whereType<CategoryEntity>().toList();
+                  final selectedWallets =
+                      selectedItems.whereType<WalletEntity>().toList();
+
+                  final categoryMatch = selectedCategories.isNotEmpty &&
+                      transaction.categories.any((cat) => selectedCategories
+                          .any((selected) => selected.id == cat.id));
+
+                  final walletMatch = selectedWallets.isNotEmpty &&
+                      selectedWallets
+                          .any((wallet) => wallet.id == transaction.wallet.id);
+
+                  return categoryMatch || walletMatch;
+                }).toList();
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -220,10 +240,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 SizedBox(
                   height: 30.h,
                   child: ListView.separated(
-                    itemCount: 6,
+                    itemCount: selectedItems.length,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return _selectedItem();
+                      String itemName = '';
+                      final item = selectedItems[index];
+                      if (item is WalletEntity) {
+                        itemName = item.name;
+                      } else if (item is CategoryEntity) {
+                        itemName = item.name;
+                      }
+
+                      return _selectedItem(
+                          isWallet: item is WalletEntity,
+                          name: itemName,
+                          onTap: () {
+                            setState(() {
+                              selectedItems.removeAt(index);
+                            });
+                          });
                     },
                     separatorBuilder: (context, index) {
                       return SizedBox(width: 6.w);
@@ -357,9 +392,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
                         label: filterType.filterName,
+                        onSelect: (wallet) {
+                          setState(() {
+                            if (!selectedItems.any((item) =>
+                                (item is WalletEntity &&
+                                    item.clientId == wallet.clientId))) {
+                              selectedItems.add(wallet);
+                            }
+                          });
+                        },
                       )
                     : filterType == FilterType.category
-                        ? CategoryListPopover(label: filterType.filterName)
+                        ? CategoryListPopover(
+                            label: filterType.filterName,
+                            onSelect: (category) {
+                              setState(() {
+                                if (!selectedItems.any((item) =>
+                                    (item is CategoryEntity &&
+                                        item.clientId == category.clientId))) {
+                                  selectedItems.add(category);
+                                }
+                              });
+                            },
+                          )
                         : DateListPopover(label: filterType.filterName),
               );
             },
@@ -401,7 +456,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget _selectedItem() {
+  Widget _selectedItem({
+    bool isWallet = false,
+    required String name,
+    VoidCallback? onTap,
+  }) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 8.w,
@@ -418,16 +477,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
           SvgPicture.asset(
             width: 16.w,
             height: 16.h,
-            Assets.images.tag2,
+            isWallet ? Assets.images.wallet : Assets.images.tag2,
           ),
           Text(
-            LocaleKeys.family.tr(),
+            name,
             style: TextStyle(
               fontSize: 10.sp,
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: onTap,
             child: SvgPicture.asset(
               Assets.images.close,
               colorFilter: const ColorFilter.mode(

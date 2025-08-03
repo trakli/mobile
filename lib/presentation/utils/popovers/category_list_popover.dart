@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -9,10 +10,12 @@ import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class CategoryListPopover extends StatelessWidget {
   final String label;
+  final ValueChanged<CategoryEntity> onSelect;
 
   const CategoryListPopover({
     super.key,
     required this.label,
+    required this.onSelect,
   });
 
   @override
@@ -71,6 +74,7 @@ class CategoryListPopover extends StatelessWidget {
                             horizontal: 12.w,
                           ),
                           onTap: () {
+                            onSelect(category);
                             AppNavigator.pop(context);
                           },
                           title: Text(
