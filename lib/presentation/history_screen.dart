@@ -91,7 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       selectedWallets
                           .any((wallet) => wallet.id == transaction.wallet.id);
 
-                  return categoryMatch || walletMatch;
+                  return categoryMatch && walletMatch;
                 }).toList();
 
           return SingleChildScrollView(
