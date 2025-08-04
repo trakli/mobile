@@ -83,15 +83,27 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final selectedWallets =
                       selectedItems.whereType<WalletEntity>().toList();
 
-                  final bool categoryMatch = selectedCategories.isEmpty ||
-                      transaction.categories.any((cat) => selectedCategories
-                          .any((selected) => selected.clientId  == cat.clientId));
+                  final hasCategoryFilter = selectedCategories.isNotEmpty;
+                  final hasWalletFilter = selectedWallets.isNotEmpty;
 
-                  final bool walletMatch = selectedWallets.isEmpty ||
-                      selectedWallets
-                          .any((wallet) => wallet.clientId == transaction.wallet.clientId);
+                  final categoryMatch = hasCategoryFilter &&
+                      transaction.categories.any((cat) =>
+                          selectedCategories.any(
+                              (selected) => selected.clientId == cat.clientId));
 
-                  return categoryMatch && walletMatch;
+                  final walletMatch = hasWalletFilter &&
+                      selectedWallets.any((wallet) =>
+                          wallet.clientId == transaction.wallet.clientId);
+
+                  if (hasCategoryFilter && hasWalletFilter) {
+                    return categoryMatch && walletMatch;
+                  } else if (hasCategoryFilter) {
+                    return categoryMatch;
+                  } else if (hasWalletFilter) {
+                    return walletMatch;
+                  } else {
+                    return true;
+                  }
                 }).toList();
 
           return SingleChildScrollView(
