@@ -83,11 +83,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final selectedWallets =
                       selectedItems.whereType<WalletEntity>().toList();
 
-                  final bool categoryMatch = selectedCategories.isNotEmpty &&
+                  final bool categoryMatch = selectedCategories.isEmpty ||
                       transaction.categories.any((cat) => selectedCategories
                           .any((selected) => selected.clientId  == cat.clientId));
 
-                  final bool walletMatch = selectedWallets.isNotEmpty &&
+                  final bool walletMatch = selectedWallets.isEmpty ||
                       selectedWallets
                           .any((wallet) => wallet.clientId == transaction.wallet.clientId);
 
