@@ -83,7 +83,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final selectedWallets =
                       selectedItems.whereType<WalletEntity>().toList();
 
-                  state.transactions.where((transaction) {
+                  return state.transactions.where((transaction) {
                     final hasCategoryFilter = selectedCategories.isNotEmpty;
                     final hasWalletFilter = selectedWallets.isNotEmpty;
 
@@ -106,7 +106,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       return true;
                     }
                   }).toList();
-                });
+                })();
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
