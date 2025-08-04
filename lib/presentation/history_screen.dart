@@ -77,34 +77,36 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           final transactions = selectedItems.isEmpty
               ? state.transactions
-              : state.transactions.where((transaction) {
+              : (() {
                   final selectedCategories =
                       selectedItems.whereType<CategoryEntity>().toList();
                   final selectedWallets =
                       selectedItems.whereType<WalletEntity>().toList();
 
-                  final hasCategoryFilter = selectedCategories.isNotEmpty;
-                  final hasWalletFilter = selectedWallets.isNotEmpty;
+                  state.transactions.where((transaction) {
+                    final hasCategoryFilter = selectedCategories.isNotEmpty;
+                    final hasWalletFilter = selectedWallets.isNotEmpty;
 
-                  final categoryMatch = hasCategoryFilter &&
-                      transaction.categories.any((cat) =>
-                          selectedCategories.any(
-                              (selected) => selected.clientId == cat.clientId));
+                    final categoryMatch = hasCategoryFilter &&
+                        transaction.categories.any((cat) =>
+                            selectedCategories.any((selected) =>
+                                selected.clientId == cat.clientId));
 
-                  final walletMatch = hasWalletFilter &&
-                      selectedWallets.any((wallet) =>
-                          wallet.clientId == transaction.wallet.clientId);
+                    final walletMatch = hasWalletFilter &&
+                        selectedWallets.any((wallet) =>
+                            wallet.clientId == transaction.wallet.clientId);
 
-                  if (hasCategoryFilter && hasWalletFilter) {
-                    return categoryMatch && walletMatch;
-                  } else if (hasCategoryFilter) {
-                    return categoryMatch;
-                  } else if (hasWalletFilter) {
-                    return walletMatch;
-                  } else {
-                    return true;
-                  }
-                }).toList();
+                    if (hasCategoryFilter && hasWalletFilter) {
+                      return categoryMatch && walletMatch;
+                    } else if (hasCategoryFilter) {
+                      return categoryMatch;
+                    } else if (hasWalletFilter) {
+                      return walletMatch;
+                    } else {
+                      return true;
+                    }
+                  }).toList();
+                });
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
