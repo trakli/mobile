@@ -281,12 +281,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             onTap: () {
                               setState(() {
                                 selectedItems.removeAt(index);
-                              });
-                              if (item is String) {
-                                setState(() {
+                                if (item is String) {
                                   dateRange = null;
-                                });
-                              }
+                                }
+                              });
                             });
                       },
                       separatorBuilder: (context, index) {
