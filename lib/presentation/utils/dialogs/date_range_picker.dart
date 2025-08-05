@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/helpers.dart' show showSnackBar;
 
 class DateRangePicker extends StatelessWidget {
   final Function(PickerDateRange) onDateSelected;
@@ -58,8 +61,11 @@ class DateRangePicker extends StatelessWidget {
                     ),
                     startRangeSelectionColor: Theme.of(context).primaryColor,
                     endRangeSelectionColor: Theme.of(context).primaryColor,
-                    // activeDatesTextStyle: AppTypography.bodySmallRegular,
-                    // rangeSelectionColor: AppColors.calendarSelected,
+                    activeDatesTextStyle: TextStyle(
+                      fontSize: 14.sp,
+                    ),
+                    rangeSelectionColor:
+                        Theme.of(context).primaryColor.withAlpha(35),
                   ),
                   child: SfDateRangePicker(
                     // showTodayButton: true,
@@ -74,7 +80,10 @@ class DateRangePicker extends StatelessWidget {
                         onDateSelected(val);
                         AppNavigator.pop(context, val);
                       } else {
-                        // AppAlerts.showWarningSnackBar(LocaleKeys.calendar_select_date_range.tr());
+                        showSnackBar(
+                          message: LocaleKeys.selectDateOrDateRange.tr(),
+                          borderRadius: 8.r,
+                        );
                       }
                     },
                     onCancel: () {

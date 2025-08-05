@@ -300,5 +300,6 @@
   "partyTypeGovernmentAgency": "Behörde",
   "partyTypeEducationalInstitution": "Bildungseinrichtung",
   "partyTypeHealthcareProvider": "Gesundheitsdienstleister",
-  "selectPartyType": "Parteityp auswählen"
+  "selectPartyType": "Parteityp auswählen",
+  "selectDateOrDateRange": "Wählen Sie ein Datum oder einen Datumsbereich"
 }

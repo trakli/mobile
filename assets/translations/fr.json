@@ -298,5 +298,6 @@
   "partyTypeGovernmentAgency": "Agence gouvernementale",
   "partyTypeEducationalInstitution": "Établissement d'enseignement",
   "partyTypeHealthcareProvider": "Fournisseur de soins de santé",
-  "selectPartyType": "Sélectionner le type de partie"
+  "selectPartyType": "Sélectionner le type de partie",
+  "selectDateOrDateRange": "Choisissez une date ou une plage de dates"
 }
