@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
+import 'package:trakli/data/datasources/core/util.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/media.dart';
 
@@ -25,6 +26,8 @@ class CategoryDto with _$CategoryDto {
     required DateTime updatedAt,
     @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
     DateTime? lastSyncedAt,
+    @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+    DateTime? deletedAt,
     @JsonKey(name: 'sync_state') required SyncStateDto syncState,
     Media? icon,
   }) = _CategoryDto;

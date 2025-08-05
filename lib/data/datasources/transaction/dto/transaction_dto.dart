@@ -9,6 +9,7 @@ part 'transaction_dto.g.dart';
 @JsonSerializable()
 class TransactionDTO {
   final int id;
+  @JsonKey(fromJson: _parseAmount)
   final double amount;
   final TransactionType type;
   final String? description;
@@ -25,6 +26,8 @@ class TransactionDTO {
   final List<dynamic> categories;
   @JsonKey(name: 'last_synced_at')
   final DateTime lastSyncedAt;
+  @JsonKey(name: 'deleted_at')
+  final DateTime? deletedAt;
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientGeneratedId;
   @JsonKey(name: 'sync_state')
@@ -43,6 +46,7 @@ class TransactionDTO {
     this.wallet,
     required this.categories,
     required this.lastSyncedAt,
+    this.deletedAt,
     required this.clientGeneratedId,
     required this.syncState,
   });
@@ -51,4 +55,21 @@ class TransactionDTO {
       _$TransactionDTOFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionDTOToJson(this);
+}
+
+double _parseAmount(dynamic value) {
+  if (value == null) return 0.0;
+
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  if (value is String) {
+    // Remove any commas and parse as double
+    final cleanValue = value.replaceAll(',', '');
+    return double.tryParse(cleanValue) ?? 0.0;
+  }
+
+  // Try to convert to string and parse
+  final stringValue = value.toString();
+  final cleanValue = stringValue.replaceAll(',', '');
+  return double.tryParse(cleanValue) ?? 0.0;
 }

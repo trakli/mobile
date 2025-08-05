@@ -20,14 +20,21 @@ class WalletDto with _$WalletDto {
     String? description,
     @JsonKey(name: 'balance') required double balance,
     required String currency,
-    @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'created_at',
+    )
     required DateTime createdAt,
     int? id,
     @JsonKey(name: 'user_id') required int userId,
-    @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'updated_at',
+    )
     required DateTime updatedAt,
-    @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'last_synced_at',
+    )
     DateTime? lastSyncedAt,
+    @JsonKey(name: 'deleted_at') DateTime? deletedAt,
     @JsonKey(name: 'sync_state') required SyncStateDto syncState,
     String? rev,
     @JsonKey(name: 'stats') WalletStats? stats,
@@ -47,6 +54,7 @@ class WalletDto with _$WalletDto {
       rev: rev,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      deletedAt: deletedAt,
       name: name,
       type: type,
       balance: balance,

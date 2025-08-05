@@ -136,6 +136,9 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'datetime': formatServerIsoDateTimeString(transaction.datetime),
       'created_at': formatServerIsoDateTimeString(transaction.createdAt),
       'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
+      'deleted_at': transaction.deletedAt != null
+          ? formatServerIsoDateTimeString(transaction.deletedAt!)
+          : null,
       'categories': categories.map((c) => c.id).toList(),
       'wallet_id': wallet.id,
       'party_id': party?.id,

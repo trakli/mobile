@@ -35,6 +35,8 @@ mixin _$CategoryDto {
   DateTime get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState => throw _privateConstructorUsedError;
   Media? get icon => throw _privateConstructorUsedError;
@@ -68,6 +70,8 @@ abstract class $CategoryDtoCopyWith<$Res> {
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+      DateTime? deletedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       Media? icon});
 
@@ -99,6 +103,7 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
     Object? userId = null,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
+    Object? deletedAt = freezed,
     Object? syncState = null,
     Object? icon = freezed,
   }) {
@@ -143,6 +148,10 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       syncState: null == syncState
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
@@ -186,6 +195,8 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+      DateTime? deletedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       Media? icon});
 
@@ -216,6 +227,7 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
+    Object? deletedAt = freezed,
     Object? syncState = null,
     Object? icon = freezed,
   }) {
@@ -260,6 +272,10 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       syncState: null == syncState
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
@@ -290,6 +306,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
       required this.updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       this.lastSyncedAt,
+      @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime) this.deletedAt,
       @JsonKey(name: 'sync_state') required this.syncState,
       this.icon});
 
@@ -322,6 +339,9 @@ class _$CategoryDtoImpl implements _CategoryDto {
   @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
   final DateTime? lastSyncedAt;
   @override
+  @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+  final DateTime? deletedAt;
+  @override
   @JsonKey(name: 'sync_state')
   final SyncStateDto syncState;
   @override
@@ -329,7 +349,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
 
   @override
   String toString() {
-    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState, icon: $icon)';
+    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, icon: $icon)';
   }
 
   @override
@@ -352,6 +372,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
             (identical(other.syncState, syncState) ||
                 other.syncState == syncState) &&
             (identical(other.icon, icon) || other.icon == icon));
@@ -371,6 +393,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
       userId,
       updatedAt,
       lastSyncedAt,
+      deletedAt,
       syncState,
       icon);
 
@@ -406,6 +429,8 @@ abstract class _CategoryDto implements CategoryDto {
       required final DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       final DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+      final DateTime? deletedAt,
       @JsonKey(name: 'sync_state') required final SyncStateDto syncState,
       final Media? icon}) = _$CategoryDtoImpl;
 
@@ -437,6 +462,9 @@ abstract class _CategoryDto implements CategoryDto {
   @override
   @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
   DateTime? get lastSyncedAt;
+  @override
+  @JsonKey(name: 'deleted_at', fromJson: safeParseDateTime)
+  DateTime? get deletedAt;
   @override
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState;
