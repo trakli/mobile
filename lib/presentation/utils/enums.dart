@@ -5,6 +5,14 @@ import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
 import 'package:trakli/presentation/wallets/wallet_screen.dart';
 
+enum DateFilterOption {
+  thisWeek,
+  thisMonth,
+  last3Months,
+  last6Months,
+  thisYear,
+}
+
 enum WalletType {
   bank,
   cash,

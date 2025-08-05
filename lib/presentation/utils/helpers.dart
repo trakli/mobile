@@ -9,7 +9,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:popover/popover.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart' show PlanType, WalletType;
@@ -361,4 +363,45 @@ Future<void> setupDefaultGroupAndWallet({
         description:
             walletDescription ?? LocaleKeys.defaultWalletDescription.tr(),
       );
+}
+
+DateTime getStartDateFromKey(String key) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  switch (key) {
+    case LocaleKeys.thisWeek:
+      final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
+      return startOfWeek;
+    case LocaleKeys.thisMonth:
+      return DateTime(today.year, today.month);
+    case LocaleKeys.lastThreeMonths:
+      return DateTime(today.year, today.month - 2);
+    case LocaleKeys.lastSixMonths:
+      return DateTime(today.year, today.month - 5);
+    case LocaleKeys.thisYear:
+      return DateTime(today.year);
+    default:
+      return now;
+  }
+}
+
+bool matchTransactionDate(
+  PickerDateRange? range,
+  TransactionEntity transaction,
+) {
+  final txDate = transaction.datetime;
+  final start = range?.startDate;
+  final end = range?.endDate;
+
+  if (start == null) return true;
+
+  if (end == null) {
+    return txDate.year == start.year &&
+        txDate.month == start.month &&
+        txDate.day == start.day;
+  }
+
+  return (txDate.isAtSameMomentAs(start) || txDate.isAfter(start)) &&
+      (txDate.isAtSameMomentAs(end) || txDate.isBefore(end));
 }

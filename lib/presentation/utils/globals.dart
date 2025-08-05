@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -246,10 +247,10 @@ const String loremIpsum =
     "Lorem ipsum dolor sit amet consectetur. Aliquam integer at sed a at leo vulputate at. Etiam blandit proin amet.";
 
 List<String> dateOptions = [
-  "This week",
-  "This month",
-  "Last 3 months",
-  "Last 6 months",
-  "This year",
-  "Custom"
+  LocaleKeys.thisWeek,
+  LocaleKeys.thisMonth,
+  LocaleKeys.lastThreeMonths,
+  LocaleKeys.lastSixMonths,
+  LocaleKeys.thisYear,
+  LocaleKeys.custom,
 ];

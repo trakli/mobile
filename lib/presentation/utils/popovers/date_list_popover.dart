@@ -1,16 +1,25 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart'
+    show PickerDateRange;
 import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/dialogs/date_range_picker.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class DateListPopover extends StatelessWidget {
   final String label;
+  final ValueChanged<PickerDateRange> onSelect;
+  final ValueChanged<String> onSelectString;
 
   const DateListPopover({
     super.key,
     required this.label,
+    required this.onSelect,
+    required this.onSelectString,
   });
 
   @override
@@ -33,26 +42,37 @@ class DateListPopover extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             shrinkWrap: true,
+            itemCount: dateOptions.length,
             itemBuilder: (context, index) {
               final option = dateOptions[index];
               return ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                 onTap: () async {
-                  AppNavigator.pop(context);
                   if (index == dateOptions.length - 1) {
-                    await showDatePicker(
-                      context: context,
-                      firstDate: DateTime.now().subtract(
-                        const Duration(days: 1000),
-                      ),
-                      lastDate: DateTime.now().add(
-                        const Duration(days: 1000),
+                    await showCustomDialog(
+                      widget: DateRangePicker(
+                        onDateSelected: (range) {
+                          onSelect(range);
+                          onSelectString(option);
+                        },
                       ),
                     );
+                    if (context.mounted) {
+                      AppNavigator.pop(context);
+                    }
+                  } else {
+                    onSelect(
+                      PickerDateRange(
+                        getStartDateFromKey(option),
+                        DateTime.now(),
+                      ),
+                    );
+                    onSelectString(option);
+                    AppNavigator.pop(context);
                   }
                 },
                 title: Text(
-                  option,
+                  option.tr(),
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: SvgPicture.asset(
@@ -63,7 +83,6 @@ class DateListPopover extends StatelessWidget {
             separatorBuilder: (context, index) {
               return SizedBox(height: 4.h);
             },
-            itemCount: dateOptions.length,
           ),
         ],
       ),
