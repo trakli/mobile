@@ -21,7 +21,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
   }
 
   // Seconds
-  int syncInterval = 30; //60 * 5;
+  int syncInterval = 60 * 5;
 
   final _syncStateController = StreamController<SyncState>.broadcast();
 
