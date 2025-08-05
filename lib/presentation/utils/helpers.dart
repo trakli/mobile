@@ -338,6 +338,7 @@ getPlanType(String interval) {
   }
 }
 
+DateTime? getStartDateFromKey(String key) {
 /// Sets up default group and wallet with the given currency
 /// This function is reusable across different parts of the app
 Future<void> setupDefaultGroupAndWallet({
@@ -382,7 +383,7 @@ DateTime getStartDateFromKey(String key) {
     case LocaleKeys.thisYear:
       return DateTime(today.year);
     default:
-      return now;
+      return null;
   }
 }
 
