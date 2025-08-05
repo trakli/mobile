@@ -68,12 +68,8 @@ class DateRangePicker extends StatelessWidget {
                         Theme.of(context).primaryColor.withAlpha(35),
                   ),
                   child: SfDateRangePicker(
-                    // showTodayButton: true,
+                    showTodayButton: true,
                     showActionButtons: true,
-                    onSelectionChanged: (value) {
-                      // print("Something changed");
-                      // print(value.value);
-                    },
                     onSubmit: (value) {
                       if (value != null) {
                         final val = value as PickerDateRange;
@@ -94,7 +90,7 @@ class DateRangePicker extends StatelessWidget {
                     ),
                     headerHeight: 52.h,
                     selectionMode: DateRangePickerSelectionMode.range,
-                    selectionRadius: 16,
+                    selectionRadius: 18.r,
                     showNavigationArrow: true,
                     monthViewSettings: DateRangePickerMonthViewSettings(
                       viewHeaderHeight: 40.h,
