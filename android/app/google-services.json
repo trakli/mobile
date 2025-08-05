@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "212694832657",
+    "project_id": "trakli",
+    "storage_bucket": "trakli.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212694832657:android:b187aba6eab17ee05743b0",
+        "android_client_info": {
+          "package_name": "com.whilesmart.trakli"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB49ck6qT_7LWi6U1NI27RNVRl3ejiYj9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
