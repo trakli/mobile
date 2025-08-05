@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -10,7 +11,8 @@ part 'category_dto.g.dart';
 @freezed
 class CategoryDto with _$CategoryDto {
   const factory CategoryDto({
-    @JsonKey(name: 'client_generated_id') required String clientId,
+    @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
+    required String clientId,
     required TransactionType type,
     required String name,
     String? description,

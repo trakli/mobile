@@ -25,7 +25,7 @@ class TransactionDTO {
   final List<dynamic> categories;
   @JsonKey(name: 'last_synced_at')
   final DateTime lastSyncedAt;
-  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientGeneratedId;
   @JsonKey(name: 'sync_state')
   final SyncStateDto syncState;

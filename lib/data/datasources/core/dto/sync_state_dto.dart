@@ -11,7 +11,7 @@ class SyncStateDto with _$SyncStateDto {
     @JsonKey(name: 'syncable_type') required String syncableType,
     @JsonKey(name: 'syncable_id') required int syncableId,
     String? source,
-    @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+    @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
     required String clientGeneratedId,
     @JsonKey(name: 'last_synced_at') required String lastSyncedAt,
     @JsonKey(name: 'created_at') required DateTime createdAt,

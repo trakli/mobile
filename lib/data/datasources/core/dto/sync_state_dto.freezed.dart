@@ -26,7 +26,7 @@ mixin _$SyncStateDto {
   @JsonKey(name: 'syncable_id')
   int get syncableId => throw _privateConstructorUsedError;
   String? get source => throw _privateConstructorUsedError;
-  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientGeneratedId => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_synced_at')
   String get lastSyncedAt => throw _privateConstructorUsedError;
@@ -56,7 +56,7 @@ abstract class $SyncStateDtoCopyWith<$Res> {
       @JsonKey(name: 'syncable_type') String syncableType,
       @JsonKey(name: 'syncable_id') int syncableId,
       String? source,
-      @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientGeneratedId,
       @JsonKey(name: 'last_synced_at') String lastSyncedAt,
       @JsonKey(name: 'created_at') DateTime createdAt,
@@ -137,7 +137,7 @@ abstract class _$$SyncStateDtoImplCopyWith<$Res>
       @JsonKey(name: 'syncable_type') String syncableType,
       @JsonKey(name: 'syncable_id') int syncableId,
       String? source,
-      @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientGeneratedId,
       @JsonKey(name: 'last_synced_at') String lastSyncedAt,
       @JsonKey(name: 'created_at') DateTime createdAt,
@@ -211,7 +211,7 @@ class _$SyncStateDtoImpl implements _SyncStateDto {
       @JsonKey(name: 'syncable_type') required this.syncableType,
       @JsonKey(name: 'syncable_id') required this.syncableId,
       this.source,
-      @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+      @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       required this.clientGeneratedId,
       @JsonKey(name: 'last_synced_at') required this.lastSyncedAt,
       @JsonKey(name: 'created_at') required this.createdAt,
@@ -231,7 +231,7 @@ class _$SyncStateDtoImpl implements _SyncStateDto {
   @override
   final String? source;
   @override
-  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientGeneratedId;
   @override
   @JsonKey(name: 'last_synced_at')
@@ -296,7 +296,7 @@ abstract class _SyncStateDto implements SyncStateDto {
           @JsonKey(name: 'syncable_type') required final String syncableType,
           @JsonKey(name: 'syncable_id') required final int syncableId,
           final String? source,
-          @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+          @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
           required final String clientGeneratedId,
           @JsonKey(name: 'last_synced_at') required final String lastSyncedAt,
           @JsonKey(name: 'created_at') required final DateTime createdAt,
@@ -317,7 +317,7 @@ abstract class _SyncStateDto implements SyncStateDto {
   @override
   String? get source;
   @override
-  @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientGeneratedId;
   @override
   @JsonKey(name: 'last_synced_at')

@@ -48,6 +48,11 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
 
   /// Stops all synchronization activities (periodic and network sync). Call this after logout.
   Future<void> stopAllSync() async {
+    logger.d('Stopping all sync');
+    _syncStateController.add(const SyncState(
+      isSynchronizing: false,
+      cancelRequested: false,
+    ));
     stopPeriodicSync();
     await disposeNetworkSync();
     cancel();
@@ -73,7 +78,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
       await sync();
     } catch (e, stackTrace) {
       logger.e('Error during sync', error: e, stackTrace: stackTrace);
-      rethrow;
+      // rethrow;
     }
   }
 

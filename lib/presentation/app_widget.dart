@@ -32,7 +32,15 @@ import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+
+// Global flag to track if we're in onboarding mode
+bool _isInOnboardingMode = false;
+
+// Getter and setter for onboarding mode
+bool get isInOnboardingMode => _isInOnboardingMode;
+void setOnboardingMode(bool value) => _isInOnboardingMode = value;
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -98,6 +106,7 @@ class _AppViewState extends State<AppView> {
   initState() {
     super.initState();
     clearKeychainValues();
+    _setupOnboardingWatch();
   }
 
   Future<void> clearKeychainValues() async {
@@ -108,6 +117,31 @@ class _AppViewState extends State<AppView> {
       await storage.deleteAll();
 
       await prefs.setBool(KeyConstants.isFirstAppLaunch, false);
+    }
+  }
+
+  Future<void> _setupOnboardingWatch() async {
+    final entityResult =
+        await getIt<OnboardingRepository>().getOnboardingState();
+
+    final entity = entityResult.fold(
+      (failure) => null,
+      (entity) => entity,
+    );
+
+    if (entity?.isOnboardingComplete == true) {
+      final currency = entity?.selectedCurrency;
+
+      if (currency != null) {
+        // Setup default group and wallet with selected currency
+
+        if (mounted) {
+          await setupDefaultGroupAndWallet(
+            context: context,
+            currencyCode: currency.code,
+          );
+        }
+      }
     }
   }
 
@@ -123,6 +157,7 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     rebuildAllChildren(context);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     return GlobalLoaderOverlay(
       duration: const Duration(seconds: 1),
@@ -324,6 +359,7 @@ class _AppViewState extends State<AppView> {
                       );
 
                       if (entity?.isOnboardingComplete == true) {
+                        setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
                             builder: (context) => MainNavigationScreen(),
@@ -331,6 +367,7 @@ class _AppViewState extends State<AppView> {
                           (route) => false,
                         );
                       } else {
+                        setOnboardingMode(true);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
                             builder: (context) => const OnboardSettingsScreen(),
@@ -351,6 +388,7 @@ class _AppViewState extends State<AppView> {
                       );
 
                       if (entity?.isOnboardingComplete == true) {
+                        setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
                             builder: (context) => MainNavigationScreen(),
@@ -358,6 +396,7 @@ class _AppViewState extends State<AppView> {
                           (route) => false,
                         );
                       } else {
+                        setOnboardingMode(true);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
                             builder: (context) => const OnboardingScreen(),
@@ -378,6 +417,12 @@ class _AppViewState extends State<AppView> {
                 child: BlocBuilder<SyncCubit, bool>(
                   builder: (context, isSyncing) {
                     if (!isSyncing) return const SizedBox.shrink();
+
+                    // Don't show sync indicator on onboarding screens
+                    if (isInOnboardingMode) {
+                      return const SizedBox.shrink();
+                    }
+
                     return const SyncIndicatorOverlay();
                   },
                 ),

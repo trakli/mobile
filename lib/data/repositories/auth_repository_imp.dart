@@ -15,6 +15,7 @@ import 'package:trakli/data/mappers/user_mapper.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
+import 'package:trakli/domain/repositories/onboarding_repository.dart';
 
 @Singleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -22,6 +23,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthLocalDataSource _localDataSource;
   final TokenManager _tokenManager;
   final PreferenceManager _preferenceManager;
+  final OnboardingRepository _onboardingRepository;
   final _authStatusController = StreamController<AuthStatus>.broadcast();
 
   AuthRepositoryImpl({
@@ -30,10 +32,12 @@ class AuthRepositoryImpl implements AuthRepository {
     required NetworkInfo networkInfo,
     required TokenManager tokenManager,
     required PreferenceManager preferenceManager,
+    required OnboardingRepository onboardingRepository,
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
         _tokenManager = tokenManager,
-        _preferenceManager = preferenceManager;
+        _preferenceManager = preferenceManager,
+        _onboardingRepository = onboardingRepository;
 
   @override
   Stream<AuthStatus> get authStatus async* {
@@ -127,6 +131,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _preferenceManager.clearAll();
       await _localDataSource.deleteUser();
       await _localDataSource.clearDatabase();
+      await _onboardingRepository.resetOnboarding();
       _authStatusController.add(AuthStatus.unauthenticated);
 
       return unit;

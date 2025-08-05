@@ -13,7 +13,7 @@ part 'wallet_dto.g.dart';
 // @JsonSerializable(explicitToJson: true)
 class WalletDto with _$WalletDto {
   const factory WalletDto({
-    @JsonKey(name: 'client_generated_id', defaultValue: clientConstant)
+    @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
     required String clientId,
     @JsonKey(defaultValue: WalletType.bank) required WalletType type,
     required String name,

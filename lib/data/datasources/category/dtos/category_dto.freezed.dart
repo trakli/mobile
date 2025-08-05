@@ -20,7 +20,7 @@ CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CategoryDto {
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientId => throw _privateConstructorUsedError;
   TransactionType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -56,7 +56,8 @@ abstract class $CategoryDtoCopyWith<$Res> {
       _$CategoryDtoCopyWithImpl<$Res, CategoryDto>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
+      String clientId,
       TransactionType type,
       String name,
       String? description,
@@ -173,7 +174,8 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'client_generated_id') String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
+      String clientId,
       TransactionType type,
       String name,
       String? description,
@@ -274,7 +276,8 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CategoryDtoImpl implements _CategoryDto {
   const _$CategoryDtoImpl(
-      {@JsonKey(name: 'client_generated_id') required this.clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
+      required this.clientId,
       required this.type,
       required this.name,
       this.description,
@@ -294,7 +297,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
       _$$CategoryDtoImplFromJson(json);
 
   @override
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientId;
   @override
   final TransactionType type;
@@ -389,7 +392,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
 
 abstract class _CategoryDto implements CategoryDto {
   const factory _CategoryDto(
-      {@JsonKey(name: 'client_generated_id') required final String clientId,
+      {@JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
+      required final String clientId,
       required final TransactionType type,
       required final String name,
       final String? description,
@@ -409,7 +413,7 @@ abstract class _CategoryDto implements CategoryDto {
       _$CategoryDtoImpl.fromJson;
 
   @override
-  @JsonKey(name: 'client_generated_id')
+  @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientId;
   @override
   TransactionType get type;

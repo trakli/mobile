@@ -6,14 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:trakli/presentation/app_widget.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class OnboardSettingsScreen extends StatefulWidget {
@@ -59,18 +58,34 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: 0.18.sh,
-          bottom: 16.h,
-        ),
-        child: PageView(
-          controller: pageController,
-          children: [
-            pageOne,
-            pageTwo,
-          ],
+    return BlocListener<OnboardingCubit, OnboardingState>(
+      listenWhen: (previous, current) =>
+          previous.currencySymbol != current.currencySymbol,
+      listener: (context, state) {
+        final currency = state.entity?.selectedCurrency;
+        if (currency != null) {
+          // Setup defaults when currency changes
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setupDefaultGroupAndWallet(
+              context: context,
+              currencyCode: currency.code,
+            );
+          });
+        }
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(
+            top: 0.18.sh,
+            bottom: 16.h,
+          ),
+          child: PageView(
+            controller: pageController,
+            children: [
+              pageOne,
+              pageTwo,
+            ],
+          ),
         ),
       ),
     );
@@ -138,7 +153,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               },
             ),
           ),
-          SizedBox(height: 80.h),
+          SizedBox(height: 10.h),
           SizedBox(
             height: 52.h,
             width: double.infinity,
@@ -187,10 +202,6 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               showLoader();
             } else {
               hideLoader();
-              AppNavigator.removeAllPreviousAndPush(
-                context,
-                MainNavigationScreen(),
-              );
             }
           },
         ),
@@ -235,7 +246,8 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                        color: (state.entity?.selectedCurrency == currency)
+                        color: (state.entity?.selectedCurrency?.code ==
+                                currency.code)
                             ? Theme.of(context).primaryColor
                             : Colors.grey,
                       ),
@@ -275,32 +287,32 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                 },
               ),
             ),
-            SizedBox(height: 80.h),
+            SizedBox(height: 10.h),
             SizedBox(
               height: 52.h,
               width: double.infinity,
-              child: PrimaryButton(
-                onPress: () async {
-                  final currency = context
-                      .read<OnboardingCubit>()
-                      .state
-                      .entity
-                      ?.selectedCurrency;
-                  if (currency != null) {
-                    context.read<GroupCubit>().ensureDefaultGroup(
-                          name: LocaleKeys.defaultGroupName.tr(),
-                        );
-                    // Create default wallet with selected currency
-                    context.read<WalletCubit>().ensureDefaultWallet(
-                          currencyCode: currency.code,
-                          name: LocaleKeys.defaultWalletName.tr(),
-                          type: WalletType.cash,
-                          description: LocaleKeys.defaultWalletDescription.tr(),
-                        );
-                  }
-                },
-                buttonText: LocaleKeys.done.tr(),
-              ),
+              child: Builder(builder: (context) {
+                final state = context.watch<OnboardingCubit>().state;
+
+                final isCurrencySelected =
+                    state.entity?.selectedCurrency != null;
+
+                return PrimaryButton(
+                  onPress: !isCurrencySelected
+                      ? null
+                      : () async {
+                          setOnboardingMode(false);
+                          AppNavigator.removeAllPreviousAndPush(
+                            context,
+                            MainNavigationScreen(),
+                          );
+                        },
+                  backgroundColor:
+                      isCurrencySelected ? null : Colors.grey.shade300,
+                  buttonTextColor: isCurrencySelected ? null : Colors.grey,
+                  buttonText: LocaleKeys.done.tr(),
+                );
+              }),
             )
           ],
         ),

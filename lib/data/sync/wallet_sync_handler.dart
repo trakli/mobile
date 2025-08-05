@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/datasources/wallet/wallet_remote_datasource.dart';
 import 'package:trakli/core/utils/id_helper.dart';
 
@@ -158,7 +159,7 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
 
   @override
   Future<Wallet> assignClientId(Wallet item) async {
-    if (item.clientId.isEmpty) {
+    if (item.clientId.isEmpty || item.clientId == defaultClientId) {
       final newClientId = await generateDeviceScopedId();
       final updated = item.copyWith(clientId: newClientId);
       return updated;

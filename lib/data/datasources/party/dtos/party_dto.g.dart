@@ -39,8 +39,8 @@ const _$PartyTypeEnumMap = {
   PartyType.organization: 'organization',
   PartyType.business: 'business',
   PartyType.partnership: 'partnership',
-  PartyType.nonProfit: 'nonProfit',
-  PartyType.governmentAgency: 'governmentAgency',
-  PartyType.educationalInstitution: 'educationalInstitution',
-  PartyType.healthcareProvider: 'healthcareProvider',
+  PartyType.nonProfit: 'non_profit',
+  PartyType.governmentAgency: 'government_agency',
+  PartyType.educationalInstitution: 'educational_institution',
+  PartyType.healthcareProvider: 'healthcare_provider',
 };
