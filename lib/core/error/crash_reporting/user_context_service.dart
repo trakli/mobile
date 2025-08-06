@@ -6,7 +6,6 @@ import 'package:trakli/domain/entities/user_entity.dart';
 
 /// Service for managing user context in crash reporting
 /// This service provides a centralized way to set and clear user information
-/// in crash reports for better debugging and user identification
 @injectable
 class UserContextService {
   final CrashReportingService _crashReportingService;
@@ -21,7 +20,6 @@ class UserContextService {
   /// Get the current user context
   UserEntity? get currentUser => _currentUser;
 
-  /// Check if user context is currently set
   bool get isContextSet => _isContextSet;
 
   /// Initialize package info (should be called once)
@@ -36,11 +34,8 @@ class UserContextService {
   }
 
   /// Set user context in crash reporting
-  /// This method sets the user ID, properties, and custom keys for better crash analysis
-  /// Returns true if successful, false otherwise
   Future<bool> setUserContext(UserEntity user) async {
     try {
-      // Avoid redundant operations if same user is already set
       if (_currentUser?.id == user.id && _isContextSet) {
         logger.d('User context already set for user: ${user.email}');
         return true;
@@ -48,17 +43,12 @@ class UserContextService {
 
       logger.i('Setting user context for user: ${user.email}');
 
-      // Set user ID (primary identifier)
+      // Set user ID (primary identifier), can use client id instead
       await _crashReportingService.setUserId(user.id.toString());
 
-      // Set comprehensive user properties
       final userProperties = _buildUserProperties(user);
       await _crashReportingService.setUserProperties(userProperties);
 
-      // Set app-specific context
-      // await setAppContext();
-
-      // Update internal state
       _currentUser = user;
       _isContextSet = true;
 
@@ -74,8 +64,6 @@ class UserContextService {
   }
 
   /// Clear user context when user logs out
-  /// This method removes all user-specific information from crash reports
-  /// Returns true if successful, false otherwise
   Future<bool> clearUserContext() async {
     try {
       if (!_isContextSet) {
@@ -88,15 +76,12 @@ class UserContextService {
       // Clear user ID
       await _crashReportingService.setUserId('');
 
-      // Clear user properties by setting them to empty/default values
       final emptyProperties = _buildEmptyUserProperties();
       await _crashReportingService.setUserProperties(emptyProperties);
 
-      // Clear custom keys
       final emptyKeys = _buildEmptyCustomKeys();
       await _setCustomKeysBatch(emptyKeys);
 
-      // Update internal state
       _currentUser = null;
       _isContextSet = false;
 
@@ -110,8 +95,6 @@ class UserContextService {
       return false;
     }
   }
-
-  // Private helper methods
 
   Map<String, dynamic> _buildUserProperties(UserEntity user) {
     return {

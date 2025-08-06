@@ -1,32 +1,14 @@
-# Drift Sync Crash Reporting Integration
+# Drift Sync Crash Reporting
 
-This document explains how to integrate crash reporting with the `drift_sync_core` package to track errors and logs in your Crashlytics instance.
+This guide shows how to automatically track errors from the `drift_sync_core` package in your crash reporting system (like Firebase Crashlytics).
 
-## Overview
+## What It Does
 
-The integration allows all errors and logs from the `drift_sync_core` package to be automatically forwarded to your main app's crash reporting service (Firebase Crashlytics, Sentry, etc.).
+Instead of manually catching and reporting every drift sync error, this integration automatically forwards all errors and logs to your main crash reporting service.
 
-## Architecture
+## Quick Setup
 
-### Components
-
-1. **`DriftSyncCrashReportingInterface`** - Abstract interface in the drift_sync_core package
-2. **`DriftSyncLogger`** - Enhanced logger that forwards logs to crash reporting
-3. **`DriftSyncCrashReportingAdapter`** - Adapter that implements the interface and connects to your crash reporting service
-4. **`DriftSyncCrashReportingService`** - Service to manage the integration
-
-### Flow
-
-```
-drift_sync_core → DriftSyncLogger → DriftSyncCrashReportingInterface →
-DriftSyncCrashReportingAdapter → CrashReportingService → Firebase Crashlytics
-```
-
-## Setup
-
-### 1. Automatic Setup
-
-The integration is automatically initialized in your `bootstrap.dart` file:
+The integration is already set up in your `bootstrap.dart`:
 
 ```dart
 // Initialize crash reporting
@@ -38,36 +20,32 @@ final driftSyncCrashReportingService = getIt<DriftSyncCrashReportingService>();
 await driftSyncCrashReportingService.initialize();
 ```
 
-### 2. Manual Setup (if needed)
+That's it! All drift sync errors will now be automatically tracked.
 
-If you need to set it up manually:
-
-```dart
-// Get the services
-final crashReportingService = getIt<CrashReportingService>();
-final driftSyncCrashReportingService = getIt<DriftSyncCrashReportingService>();
-
-// Initialize
-await driftSyncCrashReportingService.initialize();
-```
-
-## Usage
+## What Gets Tracked
 
 ### Automatic Error Tracking
 
-All errors in the drift sync operations are automatically tracked:
+- **Sync errors** - When synchronization fails
+- **Database errors** - When database operations fail
+- **Network errors** - When API calls fail
+- **Validation errors** - When data validation fails
 
-- **Sync Errors**: Errors during synchronization operations
-- **Database Errors**: Errors during database operations
-- **Network Errors**: Errors during API calls
-- **Validation Errors**: Errors during data validation
+### What You Get
 
-### Setting User Context
+Each error report includes:
+
+- The specific operation that failed
+- The type of data being synced
+- Additional context about the error
+- User information (if set)
+
+## Setting User Context
 
 ```dart
 final driftSyncCrashReportingService = getIt<DriftSyncCrashReportingService>();
 
-// Set user context for drift sync operations
+// Set user info for better error tracking
 await driftSyncCrashReportingService.setUserContext(
   'user123',
   {
@@ -77,97 +55,47 @@ await driftSyncCrashReportingService.setUserContext(
 );
 ```
 
-### Setting Custom Keys
+## Adding Custom Information
 
 ```dart
-// Set custom keys for drift sync operations
+// Add custom data to all drift sync error reports
 await driftSyncCrashReportingService.setCustomKeys({
   'sync_frequency': 'hourly',
   'sync_batch_size': 100,
-  'sync_timeout': 30000,
 });
 ```
 
-### Logging Operations
+## Manual Error Logging
+
+If you need to log specific operations:
 
 ```dart
-// Log a drift sync operation
+// Log a sync operation
 await driftSyncCrashReportingService.logOperation(
   'full_sync',
   details: {
     'models_count': 5,
-    'start_time': DateTime.now().toIso8601String(),
     'sync_type': 'full',
   },
 );
-```
 
-### Manual Error Recording
-
-```dart
-// Record a drift sync error
+// Record a specific error
 await driftSyncCrashReportingService.recordSyncError(
   error,
-  stackTrace: stackTrace,
   operation: 'upload_changes',
   details: {
     'entity_type': 'Transaction',
     'changes_count': 10,
   },
 );
-
-// Record a fatal error
-await driftSyncCrashReportingService.recordSyncFatalError(
-  error,
-  stackTrace: stackTrace,
-  operation: 'database_migration',
-  details: {
-    'migration_version': '2.0.0',
-    'database_size': '50MB',
-  },
-);
 ```
 
-## What Gets Tracked
-
-### Automatic Tracking
-
-The following are automatically tracked by the drift sync package:
-
-1. **Sync Operations**:
-
-   - Start/stop of sync operations
-   - Sync state changes
-   - Handler initialization
-
-2. **Errors**:
-
-   - Network errors during sync
-   - Database errors
-   - Validation errors
-   - Cancellation errors
-
-3. **Performance**:
-   - Sync duration
-   - Handler processing time
-   - Batch processing metrics
-
-### Custom Information
-
-Each error includes:
-
-- **Component**: `drift_sync_core`
-- **Operation**: The specific operation being performed
-- **Entity Type**: The type of entity being synced
-- **Error Context**: Additional context about the error
-
-## Example Crash Reports
+## Example Error Reports
 
 ### Sync Error
 
 ```
 Error: Drift Sync Error: upload_changes
-Component: drift_sync_core
 Operation: upload_changes
 Entity Type: Transaction
 Changes Count: 10
@@ -178,69 +106,33 @@ Message: Failed to upload local changes to server
 
 ```
 Error: Drift Sync Error: database_operation
-Component: drift_sync_core
 Operation: upsert_local
 Entity Type: User
 Message: Failed to upsert user data locally
 ```
 
-## Configuration
-
-### Environment-Specific Settings
+## Environment Settings
 
 ```dart
-// In your bootstrap function
+// Disable in development, enable in production
 if (Environment.dev == env) {
-  // Disable crash reporting for drift sync in development
   await driftSyncCrashReportingService.setCustomKeys({
     'drift_sync_crash_reporting_enabled': false,
   });
 } else {
-  // Enable crash reporting in production
   await driftSyncCrashReportingService.setCustomKeys({
     'drift_sync_crash_reporting_enabled': true,
   });
 }
 ```
 
-### Custom Error Filtering
-
-You can filter which errors get reported by modifying the adapter:
-
-```dart
-@override
-Future<void> recordError(
-  Object error, {
-  StackTrace? stackTrace,
-  String? reason,
-  Map<String, dynamic>? information,
-}) async {
-  // Only report certain types of errors
-  if (error is NetworkException || error is DatabaseException) {
-    await _crashReporting.recordError(
-      error,
-      stackTrace: stackTrace,
-      reason: reason ?? 'Drift Sync Error',
-      information: {
-        'component': 'drift_sync_core',
-        ...?information,
-      },
-    );
-  }
-}
-```
-
 ## Testing
 
-### Unit Testing
-
 ```dart
-test('drift sync crash reporting integration', () async {
-  // Mock the crash reporting service
+test('drift sync crash reporting works', () async {
   final mockCrashReporting = MockCrashReportingService();
   final adapter = DriftSyncCrashReportingAdapter(mockCrashReporting);
 
-  // Set up drift sync logger
   DriftSyncLogger.setCrashReporting(adapter);
 
   // Trigger an error
@@ -250,66 +142,38 @@ test('drift sync crash reporting integration', () async {
     DriftSyncLogger.error('Test error message', error);
   }
 
-  // Verify the error was recorded
+  // Verify error was recorded
   verify(mockCrashReporting.recordError(any, reason: anyNamed('reason')));
-});
-```
-
-### Integration Testing
-
-```dart
-testWidgets('drift sync crash reporting in app', (tester) async {
-  await tester.pumpWidget(MyApp());
-
-  // Trigger a sync operation that might fail
-  // Verify errors are recorded in crash reporting
 });
 ```
 
 ## Troubleshooting
 
-### Common Issues
+### No errors being reported?
 
-1. **No errors being reported**:
+- Make sure `DriftSyncCrashReportingService.initialize()` was called
+- Check that your crash reporting service is properly configured
 
-   - Check that `DriftSyncCrashReportingService.initialize()` was called
-   - Verify the crash reporting service is properly configured
-   - Check that the adapter is properly injected
+### Missing user context?
 
-2. **Missing context information**:
+- Set user context before sync operations start
+- Verify custom keys are being set correctly
 
-   - Ensure user context is set before sync operations
-   - Verify custom keys are being set correctly
+### Performance issues?
 
-3. **Performance impact**:
-   - Crash reporting operations are asynchronous and shouldn't block sync
-   - Consider filtering less critical errors in high-volume scenarios
-
-### Debug Mode
-
-Enable debug logging to see what's being sent to crash reporting:
-
-```dart
-// In debug mode, log all operations
-if (kDebugMode) {
-  await driftSyncCrashReportingService.logOperation(
-    'debug_sync_start',
-    details: {'debug_mode': true},
-  );
-}
-```
+- Crash reporting is async and shouldn't block sync operations
+- Consider filtering less critical errors in high-volume scenarios
 
 ## Best Practices
 
-1. **Set User Context Early**: Set user context as soon as the user logs in
-2. **Use Descriptive Operations**: Use clear, descriptive operation names
-3. **Include Relevant Details**: Add context that will help with debugging
-4. **Filter Appropriately**: Don't report every minor error
-5. **Monitor Performance**: Watch for any performance impact from crash reporting
+1. **Set user context early** - Do it right after user login
+2. **Use clear operation names** - "upload_transactions" instead of "sync"
+3. **Add helpful details** - Include context that will help with debugging
+4. **Don't over-report** - Focus on important errors, not every minor issue
 
-## Migration from Previous Versions
+## Migration
 
-If you were previously using manual error handling in drift sync operations, you can now remove that code as errors are automatically tracked.
+If you were manually catching drift sync errors before, you can now remove that code:
 
 ### Before
 
@@ -329,4 +193,4 @@ try {
 await synchronizer.sync();
 ```
 
-The integration provides comprehensive error tracking for drift sync operations while maintaining clean, readable code.
+Much cleaner! 🎉
