@@ -18,9 +18,7 @@ _$CategoryDtoImpl _$$CategoryDtoImplFromJson(Map<String, dynamic> json) =>
       userId: (json['user_id'] as num).toInt(),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       lastSyncedAt: DateTime.parse(json['last_synced_at'] as String),
-      deletedAt: json['deleted_at'] == null
-          ? null
-          : DateTime.parse(json['deleted_at'] as String),
+      deletedAt: safeParseDateTime(json['deleted_at']),
       syncState:
           SyncStateDto.fromJson(json['sync_state'] as Map<String, dynamic>),
       icon: json['icon'] == null

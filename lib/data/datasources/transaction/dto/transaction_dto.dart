@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
+import 'package:trakli/data/datasources/core/amount_parser.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -9,7 +10,7 @@ part 'transaction_dto.g.dart';
 @JsonSerializable()
 class TransactionDTO {
   final int id;
-  @JsonKey(fromJson: _parseAmount)
+  @JsonKey(fromJson: parseAmount)
   final double amount;
   final TransactionType type;
   final String? description;
@@ -55,21 +56,4 @@ class TransactionDTO {
       _$TransactionDTOFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionDTOToJson(this);
-}
-
-double _parseAmount(dynamic value) {
-  if (value == null) return 0.0;
-
-  if (value is double) return value;
-  if (value is int) return value.toDouble();
-  if (value is String) {
-    // Remove any commas and parse as double
-    final cleanValue = value.replaceAll(',', '');
-    return double.tryParse(cleanValue) ?? 0.0;
-  }
-
-  // Try to convert to string and parse
-  final stringValue = value.toString();
-  final cleanValue = stringValue.replaceAll(',', '');
-  return double.tryParse(cleanValue) ?? 0.0;
 }

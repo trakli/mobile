@@ -50,7 +50,7 @@ _$PlanDtoImpl _$$PlanDtoImplFromJson(Map<String, dynamic> json) =>
       features:
           (json['features'] as List<dynamic>).map((e) => e as String).toList(),
       cta: CtaDto.fromJson(json['cta'] as Map<String, dynamic>),
-      price: (json['price'] as num).toDouble(),
+      price: parseAmount(json['price']),
       priceFormatted: json['price_formatted'] as String,
     );
 

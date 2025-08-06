@@ -1,9 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/domain/entities/subscription_entity.dart';
+import 'package:trakli/data/datasources/core/amount_parser.dart';
 
 part 'subscription_dto.freezed.dart';
 part 'subscription_dto.g.dart';
-
 
 @freezed
 class SubscriptionDto with _$SubscriptionDto {
@@ -22,13 +22,13 @@ class SubscriptionDto with _$SubscriptionDto {
   const SubscriptionDto._();
 
   SubscriptionEntity toEntity() => SubscriptionEntity(
-    overview: overview.toEntity(),
-    region: region,
-    currency: currency,
-    trialDays: trialDays,
-    freePlanEnabled: freePlanEnabled,
-    plans: plans.map((e) => e.toEntity()).toList(),
-  );
+        overview: overview.toEntity(),
+        region: region,
+        currency: currency,
+        trialDays: trialDays,
+        freePlanEnabled: freePlanEnabled,
+        plans: plans.map((e) => e.toEntity()).toList(),
+      );
 }
 
 @freezed
@@ -44,9 +44,9 @@ class OverviewDto with _$OverviewDto {
   const OverviewDto._();
 
   OverviewEntity toEntity() => OverviewEntity(
-    title: title,
-    description: description,
-  );
+        title: title,
+        description: description,
+      );
 }
 
 @freezed
@@ -57,7 +57,7 @@ class PlanDto with _$PlanDto {
     required String interval,
     required List<String> features,
     required CtaDto cta,
-    required double price,
+    @JsonKey(fromJson: parseAmount) required double price,
     @JsonKey(name: 'price_formatted') required String priceFormatted,
   }) = _PlanDto;
 
@@ -67,14 +67,14 @@ class PlanDto with _$PlanDto {
   const PlanDto._();
 
   PlanEntity toEntity() => PlanEntity(
-    id: id,
-    name: name,
-    interval: interval,
-    features: features,
-    cta: cta.toEntity(),
-    price: price,
-    priceFormatted: priceFormatted,
-  );
+        id: id,
+        name: name,
+        interval: interval,
+        features: features,
+        cta: cta.toEntity(),
+        price: price,
+        priceFormatted: priceFormatted,
+      );
 }
 
 @freezed
@@ -84,13 +84,12 @@ class CtaDto with _$CtaDto {
     @JsonKey(name: 'button_text') required String buttonText,
   }) = _CtaDto;
 
-  factory CtaDto.fromJson(Map<String, dynamic> json) =>
-      _$CtaDtoFromJson(json);
+  factory CtaDto.fromJson(Map<String, dynamic> json) => _$CtaDtoFromJson(json);
 
   const CtaDto._();
 
   CtaEntity toEntity() => CtaEntity(
-    text: text,
-    buttonText: buttonText,
-  );
+        text: text,
+        buttonText: buttonText,
+      );
 }

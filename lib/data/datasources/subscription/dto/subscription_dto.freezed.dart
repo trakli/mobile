@@ -483,6 +483,7 @@ mixin _$PlanDto {
   String get interval => throw _privateConstructorUsedError;
   List<String> get features => throw _privateConstructorUsedError;
   CtaDto get cta => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: parseAmount)
   double get price => throw _privateConstructorUsedError;
   @JsonKey(name: 'price_formatted')
   String get priceFormatted => throw _privateConstructorUsedError;
@@ -507,7 +508,7 @@ abstract class $PlanDtoCopyWith<$Res> {
       String interval,
       List<String> features,
       CtaDto cta,
-      double price,
+      @JsonKey(fromJson: parseAmount) double price,
       @JsonKey(name: 'price_formatted') String priceFormatted});
 
   $CtaDtoCopyWith<$Res> get cta;
@@ -592,7 +593,7 @@ abstract class _$$PlanDtoImplCopyWith<$Res> implements $PlanDtoCopyWith<$Res> {
       String interval,
       List<String> features,
       CtaDto cta,
-      double price,
+      @JsonKey(fromJson: parseAmount) double price,
       @JsonKey(name: 'price_formatted') String priceFormatted});
 
   @override
@@ -662,7 +663,7 @@ class _$PlanDtoImpl extends _PlanDto {
       required this.interval,
       required final List<String> features,
       required this.cta,
-      required this.price,
+      @JsonKey(fromJson: parseAmount) required this.price,
       @JsonKey(name: 'price_formatted') required this.priceFormatted})
       : _features = features,
         super._();
@@ -687,6 +688,7 @@ class _$PlanDtoImpl extends _PlanDto {
   @override
   final CtaDto cta;
   @override
+  @JsonKey(fromJson: parseAmount)
   final double price;
   @override
   @JsonKey(name: 'price_formatted')
@@ -748,7 +750,7 @@ abstract class _PlanDto extends PlanDto {
       required final String interval,
       required final List<String> features,
       required final CtaDto cta,
-      required final double price,
+      @JsonKey(fromJson: parseAmount) required final double price,
       @JsonKey(name: 'price_formatted')
       required final String priceFormatted}) = _$PlanDtoImpl;
   const _PlanDto._() : super._();
@@ -766,6 +768,7 @@ abstract class _PlanDto extends PlanDto {
   @override
   CtaDto get cta;
   @override
+  @JsonKey(fromJson: parseAmount)
   double get price;
   @override
   @JsonKey(name: 'price_formatted')

@@ -26,7 +26,7 @@ mixin _$WalletDto {
   WalletType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   double get balance => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -69,7 +69,7 @@ abstract class $WalletDtoCopyWith<$Res> {
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
-      @JsonKey(name: 'balance') double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) double balance,
       String currency,
       @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
@@ -210,7 +210,7 @@ abstract class _$$WalletDtoImplCopyWith<$Res>
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
-      @JsonKey(name: 'balance') double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) double balance,
       String currency,
       @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
@@ -335,7 +335,7 @@ class _$WalletDtoImpl extends _WalletDto {
       @JsonKey(defaultValue: WalletType.bank) required this.type,
       required this.name,
       this.description,
-      @JsonKey(name: 'balance') required this.balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) required this.balance,
       required this.currency,
       @JsonKey(name: 'created_at') required this.createdAt,
       this.id,
@@ -363,7 +363,7 @@ class _$WalletDtoImpl extends _WalletDto {
   @override
   final String? description;
   @override
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   final double balance;
   @override
   final String currency;
@@ -476,7 +476,8 @@ abstract class _WalletDto extends WalletDto {
       @JsonKey(defaultValue: WalletType.bank) required final WalletType type,
       required final String name,
       final String? description,
-      @JsonKey(name: 'balance') required final double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount)
+      required final double balance,
       required final String currency,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       final int? id,
@@ -504,7 +505,7 @@ abstract class _WalletDto extends WalletDto {
   @override
   String? get description;
   @override
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   double get balance;
   @override
   String get currency;
