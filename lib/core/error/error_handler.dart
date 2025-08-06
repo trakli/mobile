@@ -2,8 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/core/error/utils/field_error.dart';
 import 'package:trakli/core/utils/services/logger.dart';
+import 'package:trakli/core/error/crash_reporting/crash_reporting_service.dart';
 
 class ErrorHandler {
+  static CrashReportingService? _crashReportingService;
+
+  /// Set the crash reporting service instance
+  static void setCrashReportingService(CrashReportingService service) {
+    _crashReportingService = service;
+  }
+
   static Future<T> handleApiCall<T>(
     Future<T> Function() apiCall,
   ) async {
@@ -17,6 +25,15 @@ class ErrorHandler {
   }
 
   static ApiException handleDioException(DioException err) {
+    // Record the error in crash reporting
+    _crashReportingService?.recordApiError(
+      err.requestOptions.path,
+      err.response?.statusCode,
+      err.message ?? 'Unknown error',
+      requestData: err.requestOptions.data,
+      responseData: err.response?.data,
+    );
+
     if (err.type == DioExceptionType.connectionError) {
       return NetworkException('No internet connection');
     }
@@ -69,6 +86,13 @@ class ErrorHandler {
     Object error,
     StackTrace stacktrace,
   ) {
+    // Record the error in crash reporting
+    _crashReportingService?.recordError(
+      error,
+      stackTrace: stacktrace,
+      reason: 'Unknown Error',
+    );
+
     logger.e('Unknown error: $error');
     logger.e('Stack trace: $stacktrace');
     return ServerException(error.toString());

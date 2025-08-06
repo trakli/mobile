@@ -17,4 +17,5 @@ export 'src/schema/schema.dart';
 
 export 'src/sync_dependency_manager.dart';
 
+// Logging and crash reporting
 export 'src/logging/logging.dart';

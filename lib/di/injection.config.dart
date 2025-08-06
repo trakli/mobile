@@ -14,9 +14,16 @@ import 'package:drift_sync_core/drift_sync_core.dart' as _i877;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../core/error/crash_reporting/crash_reporting_interface.dart' as _i414;
+import '../core/error/crash_reporting/crash_reporting_service.dart' as _i538;
+import '../core/error/crash_reporting/implementations/firebase_crashlytics_service.dart'
+    as _i529;
+import '../core/error/crash_reporting/user_context_service.dart' as _i481;
 import '../core/module/http_module.dart' as _i488;
 import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;
+import '../core/sync/drift_sync_crash_reporting_adapter.dart' as _i705;
+import '../core/sync/drift_sync_crash_reporting_service.dart' as _i545;
 import '../core/sync/sync_database.dart' as _i646;
 import '../core/sync/sync_service.dart' as _i957;
 import '../core/utils/services/shared_prefs.dart' as _i789;
@@ -166,6 +173,8 @@ _i174.GetIt $initGetIt(
     () => injectHttpClientModule.devHttpUrl,
     instanceName: 'HttpUrl',
   );
+  gh.factory<_i414.CrashReportingInterface>(
+      () => _i529.FirebaseCrashlyticsService());
   gh.singleton<_i683.PreferenceManager>(
       () => _i683.PreferenceManagerImpl()..init());
   gh.factory<_i655.PartyLocalDataSource>(
@@ -196,6 +205,8 @@ _i174.GetIt $initGetIt(
       () => _i61.CloudBenefitRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
+  gh.factory<_i538.CrashReportingService>(
+      () => _i538.CrashReportingService(gh<_i414.CrashReportingInterface>()));
   gh.factory<_i682.SubscriptionRemoteDataSource>(
       () => _i682.SubscriptionRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i900.ExchangeRateLocalDataSource>(() =>
@@ -211,6 +222,13 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.factory<_i705.DriftSyncCrashReportingAdapter>(() =>
+      _i705.DriftSyncCrashReportingAdapter(gh<_i538.CrashReportingService>()));
+  gh.factory<_i481.UserContextService>(
+      () => _i481.UserContextService(gh<_i538.CrashReportingService>()));
+  gh.factory<_i545.DriftSyncCrashReportingService>(() =>
+      _i545.DriftSyncCrashReportingService(
+          gh<_i705.DriftSyncCrashReportingAdapter>()));
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i478.GroupRemoteDataSource>(
@@ -387,11 +405,6 @@ _i174.GetIt $initGetIt(
         deleteTransactionUseCase: gh<_i1022.DeleteTransactionUseCase>(),
         listenToTransactionsUseCase: gh<_i1022.ListenToTransactionsUseCase>(),
       ));
-  gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
-        gh<_i444.StreamAuthStatus>(),
-        gh<_i880.GetLoggedInUser>(),
-        gh<_i640.LogoutUsecase>(),
-      ));
   gh.factory<_i82.ListenToWalletsUseCase>(
       () => _i82.ListenToWalletsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i225.EnsureDefaultWalletExistsUseCase>(() =>
@@ -415,6 +428,12 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
+  gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
+        gh<_i444.StreamAuthStatus>(),
+        gh<_i880.GetLoggedInUser>(),
+        gh<_i640.LogoutUsecase>(),
+        gh<_i481.UserContextService>(),
+      ));
   gh.factory<_i982.GetGroupsUseCase>(
       () => _i982.GetGroupsUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i759.DeleteGroupUseCase>(

@@ -1,10 +1,8 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
-import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
-
-final _logger = Logger('dbsync:Synchronizer');
 
 abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   DriftSynchronizer({
@@ -138,10 +136,29 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       } on UnavailableException catch (_) {
         // in case we couldn't reach the server, let's just quit here and
         // report we aren't able to continue
+        DriftSyncLogger.warning(
+          'Server unavailable during upload',
+          null,
+          null,
+        );
         return false;
-      } catch (ex) {
+      } catch (ex, stackTrace) {
         // in case the server reported some error, let's register
         // that and continue with the other local changes.
+        // Only log if the exception is NOT a DioException
+        if (ex is! DioException) {
+          DriftSyncLogger.error(
+            'Error uploading local change',
+            ex,
+            stackTrace,
+            'upload_local_change',
+            {
+              'entity_type': localChange.entityType,
+              'change_id': localChange.entityId,
+              'is_deleted': localChange.deleted.toString(),
+            },
+          );
+        }
         await appDatabase.concludeLocalChange(localChange, error: ex);
       }
     }
@@ -205,26 +222,35 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   /// fetch for that model only. This is more robust and allows incremental adoption
   /// of new models without requiring a full resync for all models.
   Future<void> downloadServerChanges() async {
-    _logger.finest('Entered DownloadSynchronizer.sync method');
+    DriftSyncLogger.logger.finest('Entered DownloadSynchronizer.sync method');
 
-    _logger.finest('... will sync from');
+    DriftSyncLogger.logger.finest('... will sync from');
     try {
       await _timeBasedPartialResync();
     } on CancelException catch (_) {
-      _logger.finest('user cancelled sync');
+      DriftSyncLogger.logger.finest('user cancelled sync');
       rethrow;
-    } catch (e) {
-      _logger.severe('exception on downloadServerChanges: $e');
+    } catch (e, stackTrace) {
+      // Only log if the exception is NOT a DioException
+      if (e is! DioException) {
+        DriftSyncLogger.error(
+          'exception on downloadServerChanges',
+          e,
+          stackTrace,
+          'download_server_changes',
+          {'operation': 'download_server_changes'},
+        );
+      }
       rethrow;
     }
   }
 
   Future<void> downloadModelsWithNoClientIds() async {
-    _logger.finest('Entered _partialSyncServerChanges');
+    DriftSyncLogger.logger.finest('Entered _partialSyncServerChanges');
     try {
       for (final handler in typeHandlers) {
         if (_state.cancelRequested) {
-          _logger.finest('... cancel requested. Will leave.');
+          DriftSyncLogger.logger.finest('... cancel requested. Will leave.');
           throw const CancelException();
         }
 
@@ -233,25 +259,39 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
             handler,
           );
 
-          _logger.info('Updated the client without id');
+          DriftSyncLogger.logger.info('Updated the client without id');
         } on UnavailableException {
           rethrow;
         } catch (e, stack) {
-          _logger.severe(
-              'Error syncing model without client id with handler  [1m${handler.entityType} [0m: $e');
-          _logger.severe(stack);
+          // Only log if the exception is NOT a DioException
+          if (e is! DioException) {
+            DriftSyncLogger.error(
+              'Error syncing model without client id',
+              e,
+              stack,
+              'assign_client_ids',
+              {
+                'handler_type': handler.entityType,
+                'operation': 'assign_client_ids_to_remote_items',
+              },
+            );
+          }
           rethrow;
           // Do not mark as successfully synced, and continue to next handler
         }
       }
     } on CancelException catch (_) {
-      _logger.finest('user cancelled sync');
+      DriftSyncLogger.logger.finest('user cancelled sync');
       rethrow;
     } catch (ex) {
-      _logger.finest('exception on _partialSyncServerChanges: $ex');
+      if (ex is! DioException) {
+        DriftSyncLogger.logger
+            .finest('exception on _partialSyncServerChanges: $ex');
+      }
       rethrow;
     }
-    _logger.finest('finished _partialSyncServerChanges with no incident');
+    DriftSyncLogger.logger
+        .finest('finished _partialSyncServerChanges with no incident');
   }
 
   /// PARTIAL SYNC: Assign client IDs to remote items without client ID (generic for any handler)
@@ -281,7 +321,10 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         final current = await handler.assignClientId(item);
         updatedItems.add(current);
       } catch (e, stack) {
-        _logger.warning('Failed to assign client ID for item: $e\n$stack');
+        if (e is! DioException) {
+          DriftSyncLogger.logger
+              .warning('Failed to assign client ID for item: $e\n$stack');
+        }
         continue;
       }
     }
@@ -300,7 +343,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
       allResponses.addAll(responses);
 
-      _logger.finest('responses', responses);
+      DriftSyncLogger.logger.finest('responses', responses);
     }
 
     await handler.upsertAllLocal(allResponses);
@@ -311,29 +354,30 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   Future<void> _timeBasedPartialResync() async {
     final sw = Stopwatch();
     sw.start();
-    _logger.finest('Entered _timeBasedPartialResync');
+    DriftSyncLogger.logger.finest('Entered _timeBasedPartialResync');
     try {
       _dependencyManager.resetSyncState();
       for (final handler in typeHandlers) {
         if (_state.cancelRequested) {
-          _logger.finest('... cancel requested. Will leave.');
+          DriftSyncLogger.logger.finest('... cancel requested. Will leave.');
           throw const CancelException();
         }
         if (!_dependencyManager.canSync(handler)) continue;
-        _logger.info(
+        DriftSyncLogger.logger.info(
             'started handler for \u001b[1m${handler.entityType}\u001b[0m');
+
+        // 1. Get last sync time for this handler/model
+        final localMeta =
+            await appDatabase.getLocalSyncMetadata(handler.entityType);
+        final lastSyncedAt = localMeta?.lastSyncedAt;
+
+        // If lastSyncedAt is null, do a full fetch for this model only
+        var isFull = false;
+        if (lastSyncedAt == null) {
+          isFull = true;
+        }
+
         try {
-          // 1. Get last sync time for this handler/model
-          final localMeta =
-              await appDatabase.getLocalSyncMetadata(handler.entityType);
-          final lastSyncedAt = localMeta?.lastSyncedAt;
-
-          // If lastSyncedAt is null, do a full fetch for this model only
-          var isFull = false;
-          if (lastSyncedAt == null) {
-            isFull = true;
-          }
-
           // 2. Fetch changed items from remote since last sync (or all if full)
           final changedItems = await handler.getAllRemote(
               syncedSince: isFull != true ? lastSyncedAt : null);
@@ -356,25 +400,47 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           });
 
           _dependencyManager.markSuccessfullySynced(handler);
-          _logger.info(
+          DriftSyncLogger.logger.info(
               'synced \u001b[1m${handler.entityType}\u001b[0m in ${sw.elapsedMilliseconds}ms');
         } on UnavailableException {
           rethrow;
         } catch (e, stack) {
-          _logger.severe('Error syncing handler ${handler.entityType}: $e');
-          _logger.severe(stack);
+          // Only log if the exception is NOT a DioException
+          if (e is! DioException) {
+            DriftSyncLogger.error(
+              'Error syncing handler',
+              e,
+              stack,
+              'sync_handler',
+              {
+                'handler_type': handler.entityType,
+                'operation': 'time_based_partial_resync',
+                'last_synced_at': lastSyncedAt?.toIso8601String(),
+                'is_full_sync': isFull.toString(),
+              },
+            );
+          }
           // Do not mark as successfully synced, and continue to next handler
         }
       }
       sw.stop();
-      _logger.info(
+      DriftSyncLogger.logger.info(
         'synchronization terminated after taking ${sw.elapsedMilliseconds} milliseconds',
       );
     } on CancelException catch (_) {
-      _logger.finest('user cancelled sync');
+      DriftSyncLogger.logger.finest('user cancelled sync');
       rethrow;
-    } catch (e) {
-      _logger.severe('exception on _timeBasedPartialResync: $e');
+    } catch (e, stackTrace) {
+      // Only log if the exception is NOT a DioException
+      if (e is! DioException) {
+        DriftSyncLogger.fatal(
+          'exception on _timeBasedPartialResync',
+          e,
+          stackTrace,
+          'time_based_partial_resync_failure',
+          {'total_handlers': typeHandlers.length.toString()},
+        );
+      }
       rethrow;
     }
   }

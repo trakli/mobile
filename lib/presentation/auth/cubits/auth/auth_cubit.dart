@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/crash_reporting/user_context_service.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/usecases/auth/get_loggedin_user.dart';
@@ -19,11 +21,13 @@ class AuthCubit extends Cubit<AuthState> {
   final GetLoggedInUser _getLoggedInUser;
   StreamSubscription<AuthStatus>? _authSubscription;
   final LogoutUsecase _logoutUsecase;
+  final UserContextService _userContextService;
 
   AuthCubit(
     this._streamAuthStatus,
     this._getLoggedInUser,
     this._logoutUsecase,
+    this._userContextService,
   ) : super(const AuthState.initial());
 
   void listenToAuthStatus() {
@@ -35,17 +39,38 @@ class AuthCubit extends Cubit<AuthState> {
           final result = await _getLoggedInUser(NoParams());
           result.fold(
             (failure) => emit(AuthState.error(failure)),
-            (user) => emit(AuthState.authenticated(user)),
+            (user) {
+              emit(AuthState.authenticated(user));
+              _setUserContext(user);
+            },
           );
           break;
         case AuthStatus.unauthenticated:
           emit(const AuthState.unauthenticated());
+          _clearUserContext();
           break;
         case AuthStatus.unknown:
           emit(const AuthState.unauthenticated());
+          _clearUserContext();
           break;
       }
     });
+  }
+
+  /// Set user context in crash reporting
+  Future<void> _setUserContext(UserEntity user) async {
+    final success = await _userContextService.setUserContext(user);
+    if (!success) {
+      logger.w('Failed to set user context for user: ${user.email}');
+    }
+  }
+
+  /// Clear user context when user logs out
+  Future<void> _clearUserContext() async {
+    final success = await _userContextService.clearUserContext();
+    if (!success) {
+      logger.w('Failed to clear user context');
+    }
   }
 
   Future<void> logout() async {

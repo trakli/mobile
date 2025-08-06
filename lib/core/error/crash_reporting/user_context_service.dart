@@ -28,6 +28,7 @@ class UserContextService {
   Future<void> initialize() async {
     try {
       _packageInfo = await PackageInfo.fromPlatform();
+      await setAppContext();
       logger.i('Package info initialized: ${_packageInfo?.version}');
     } catch (e, stackTrace) {
       logger.e('Failed to initialize package info: $e', stackTrace: stackTrace);
@@ -55,7 +56,7 @@ class UserContextService {
       await _crashReportingService.setUserProperties(userProperties);
 
       // Set app-specific context
-      await _setAppContext();
+      // await setAppContext();
 
       // Update internal state
       _currentUser = user;
@@ -148,7 +149,7 @@ class UserContextService {
     };
   }
 
-  Future<void> _setAppContext() async {
+  Future<void> setAppContext() async {
     // Get app version from package info
     final appVersion = _packageInfo?.version ?? 'unknown';
     final buildNumber = _packageInfo?.buildNumber ?? 'unknown';

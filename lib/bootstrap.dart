@@ -2,10 +2,16 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/crash_reporting.dart';
+import 'package:trakli/core/error/crash_reporting/user_context_service.dart';
+import 'package:trakli/core/error/error_handler.dart';
+import 'package:trakli/core/sync/drift_sync_crash_reporting_service.dart';
 import 'package:trakli/di/injection.dart';
+import 'package:trakli/firebase_options.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
 /// Adds a global error handler to the Flutter app.
@@ -14,17 +20,33 @@ import 'package:trakli/presentation/utils/globals.dart';
 ///
 /// The error handler also initializes the Flutter app by calling [WidgetsFlutterBinding.ensureInitialized] and running the app in a zone guarded against errors
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
-  FlutterError.onError = (details) {
-    log(details.exceptionAsString(), stackTrace: details.stack);
-  };
-
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+
+      // Initialize Firebase
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
       configureDependencies(Environment.dev);
 
-      // Initialize sync database
-      // getIt<SynchAppDatabase>().init();
+      // Initialize crash reporting
+      final crashReportingService = getIt<CrashReportingService>();
+      await crashReportingService.initialize();
+
+      // Initialize user context service
+      final userContextService = getIt<UserContextService>();
+      await userContextService.initialize();
+
+      // Initialize drift sync crash reporting
+      final driftSyncCrashReportingService =
+          getIt<DriftSyncCrashReportingService>();
+
+      await driftSyncCrashReportingService.initialize();
+
+      // Set up error handler with crash reporting
+      ErrorHandler.setCrashReportingService(crashReportingService);
 
       await EasyLocalization.ensureInitialized();
 
@@ -41,6 +63,15 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
         ),
       );
     },
-    (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
+    (error, stackTrace) {
+      log(error.toString(), stackTrace: stackTrace);
+      // Record unhandled errors in crash reporting
+      final crashReportingService = getIt<CrashReportingService>();
+      crashReportingService.recordFatalError(
+        error,
+        stackTrace: stackTrace,
+        reason: 'Unhandled Error',
+      );
+    },
   );
 }
