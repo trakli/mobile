@@ -66,32 +66,6 @@ jobs:
           name: apk
           path: build/app/outputs/flutter-apk/
 
-  build-ios:
-    name: Build iOS
-    runs-on: macos-14
-    needs: test
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.32.8"
-          channel: "stable"
-          cache: true
-
-      - name: Get Flutter dependencies
-        run: flutter pub get
-
-      - name: Install iOS dependencies
-        run: |
-          cd ios
-          pod install
-
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign
-
   distribute:
     name: Upload artifact to Firebase App Distribution
     runs-on: ubuntu-latest
