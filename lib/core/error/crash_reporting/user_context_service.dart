@@ -133,7 +133,6 @@ class UserContextService {
   }
 
   Future<void> setAppContext() async {
-    // Get app version from package info
     final appVersion = _packageInfo?.version ?? 'unknown';
     final buildNumber = _packageInfo?.buildNumber ?? 'unknown';
     final appName = _packageInfo?.appName ?? 'Trakli';
