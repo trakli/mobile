@@ -15,6 +15,7 @@ class PartyDto with _$PartyDto {
     @JsonKey(name: 'client_generated_id') required String clientId,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    @JsonKey(name: 'deleted_at') DateTime? deletedAt,
     required int userId,
     Media? media,
   }) = _PartyDto;

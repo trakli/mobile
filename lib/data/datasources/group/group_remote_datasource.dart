@@ -79,8 +79,8 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       'client_id': group.clientId,
       'description': group.description,
       if (group.icon != null) ...{
-        'icon': group.icon!.content,
-        'icon_type': group.icon!.type.name,
+        'icon': group.icon?.content,
+        'icon_type': group.icon?.type.name,
       }
     });
     final apiResponse = ApiResponse.fromJson(response.data);

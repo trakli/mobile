@@ -16,3 +16,6 @@ export 'src/adapters/rest/rest_sync_type_handler.dart';
 export 'src/schema/schema.dart';
 
 export 'src/sync_dependency_manager.dart';
+
+// Logging and crash reporting
+export 'src/logging/logging.dart';

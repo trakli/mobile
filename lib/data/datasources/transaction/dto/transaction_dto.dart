@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
+import 'package:trakli/data/datasources/core/amount_parser.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -9,6 +10,7 @@ part 'transaction_dto.g.dart';
 @JsonSerializable()
 class TransactionDTO {
   final int id;
+  @JsonKey(fromJson: parseAmount)
   final double amount;
   final TransactionType type;
   final String? description;
@@ -25,6 +27,8 @@ class TransactionDTO {
   final List<dynamic> categories;
   @JsonKey(name: 'last_synced_at')
   final DateTime lastSyncedAt;
+  @JsonKey(name: 'deleted_at')
+  final DateTime? deletedAt;
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientGeneratedId;
   @JsonKey(name: 'sync_state')
@@ -43,6 +47,7 @@ class TransactionDTO {
     this.wallet,
     required this.categories,
     required this.lastSyncedAt,
+    this.deletedAt,
     required this.clientGeneratedId,
     required this.syncState,
   });

@@ -19,7 +19,12 @@ _$WalletDtoImpl _$$WalletDtoImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num?)?.toInt(),
       userId: (json['user_id'] as num).toInt(),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      lastSyncedAt: DateTime.parse(json['last_synced_at'] as String),
+      lastSyncedAt: json['last_synced_at'] == null
+          ? null
+          : DateTime.parse(json['last_synced_at'] as String),
+      deletedAt: json['deleted_at'] == null
+          ? null
+          : DateTime.parse(json['deleted_at'] as String),
       syncState:
           SyncStateDto.fromJson(json['sync_state'] as Map<String, dynamic>),
       rev: json['rev'] as String?,
@@ -44,6 +49,7 @@ Map<String, dynamic> _$$WalletDtoImplToJson(_$WalletDtoImpl instance) =>
       'user_id': instance.userId,
       'updated_at': instance.updatedAt.toIso8601String(),
       'last_synced_at': instance.lastSyncedAt?.toIso8601String(),
+      'deleted_at': instance.deletedAt?.toIso8601String(),
       'sync_state': instance.syncState.toJson(),
       'rev': instance.rev,
       'stats': instance.stats?.toJson(),

@@ -26,18 +26,20 @@ mixin _$WalletDto {
   WalletType get type => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   double get balance => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'user_id')
   int get userId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'updated_at')
   DateTime get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'last_synced_at')
   DateTime? get lastSyncedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'deleted_at')
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState => throw _privateConstructorUsedError;
   String? get rev => throw _privateConstructorUsedError;
@@ -67,14 +69,14 @@ abstract class $WalletDtoCopyWith<$Res> {
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
-      @JsonKey(name: 'balance') double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) double balance,
       String currency,
-      @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
+      @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
       @JsonKey(name: 'user_id') int userId,
-      @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
-      @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
-      DateTime? lastSyncedAt,
+      @JsonKey(name: 'updated_at') DateTime updatedAt,
+      @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at') DateTime? deletedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       String? rev,
       @JsonKey(name: 'stats') WalletStats? stats,
@@ -109,6 +111,7 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
     Object? userId = null,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
+    Object? deletedAt = freezed,
     Object? syncState = null,
     Object? rev = freezed,
     Object? stats = freezed,
@@ -159,6 +162,10 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       syncState: null == syncState
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
@@ -203,14 +210,14 @@ abstract class _$$WalletDtoImplCopyWith<$Res>
       @JsonKey(defaultValue: WalletType.bank) WalletType type,
       String name,
       String? description,
-      @JsonKey(name: 'balance') double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) double balance,
       String currency,
-      @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
+      @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
       @JsonKey(name: 'user_id') int userId,
-      @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
-      @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
-      DateTime? lastSyncedAt,
+      @JsonKey(name: 'updated_at') DateTime updatedAt,
+      @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at') DateTime? deletedAt,
       @JsonKey(name: 'sync_state') SyncStateDto syncState,
       String? rev,
       @JsonKey(name: 'stats') WalletStats? stats,
@@ -244,6 +251,7 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
+    Object? deletedAt = freezed,
     Object? syncState = null,
     Object? rev = freezed,
     Object? stats = freezed,
@@ -294,6 +302,10 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
           ? _value.lastSyncedAt
           : lastSyncedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       syncState: null == syncState
           ? _value.syncState
           : syncState // ignore: cast_nullable_to_non_nullable
@@ -323,16 +335,14 @@ class _$WalletDtoImpl extends _WalletDto {
       @JsonKey(defaultValue: WalletType.bank) required this.type,
       required this.name,
       this.description,
-      @JsonKey(name: 'balance') required this.balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount) required this.balance,
       required this.currency,
-      @JsonKey(name: 'created_at', fromJson: DateTime.parse)
-      required this.createdAt,
+      @JsonKey(name: 'created_at') required this.createdAt,
       this.id,
       @JsonKey(name: 'user_id') required this.userId,
-      @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
-      required this.updatedAt,
-      @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
-      this.lastSyncedAt,
+      @JsonKey(name: 'updated_at') required this.updatedAt,
+      @JsonKey(name: 'last_synced_at') this.lastSyncedAt,
+      @JsonKey(name: 'deleted_at') this.deletedAt,
       @JsonKey(name: 'sync_state') required this.syncState,
       this.rev,
       @JsonKey(name: 'stats') this.stats,
@@ -353,12 +363,12 @@ class _$WalletDtoImpl extends _WalletDto {
   @override
   final String? description;
   @override
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   final double balance;
   @override
   final String currency;
   @override
-  @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
   final int? id;
@@ -366,11 +376,14 @@ class _$WalletDtoImpl extends _WalletDto {
   @JsonKey(name: 'user_id')
   final int userId;
   @override
-  @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
   @override
-  @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'last_synced_at')
   final DateTime? lastSyncedAt;
+  @override
+  @JsonKey(name: 'deleted_at')
+  final DateTime? deletedAt;
   @override
   @JsonKey(name: 'sync_state')
   final SyncStateDto syncState;
@@ -385,7 +398,7 @@ class _$WalletDtoImpl extends _WalletDto {
 
   @override
   String toString() {
-    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, syncState: $syncState, rev: $rev, stats: $stats, icon: $icon)';
+    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, rev: $rev, stats: $stats, icon: $icon)';
   }
 
   @override
@@ -410,6 +423,8 @@ class _$WalletDtoImpl extends _WalletDto {
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
                 other.lastSyncedAt == lastSyncedAt) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
             (identical(other.syncState, syncState) ||
                 other.syncState == syncState) &&
             (identical(other.rev, rev) || other.rev == rev) &&
@@ -432,6 +447,7 @@ class _$WalletDtoImpl extends _WalletDto {
       userId,
       updatedAt,
       lastSyncedAt,
+      deletedAt,
       syncState,
       rev,
       stats,
@@ -460,16 +476,15 @@ abstract class _WalletDto extends WalletDto {
       @JsonKey(defaultValue: WalletType.bank) required final WalletType type,
       required final String name,
       final String? description,
-      @JsonKey(name: 'balance') required final double balance,
+      @JsonKey(name: 'balance', fromJson: parseAmount)
+      required final double balance,
       required final String currency,
-      @JsonKey(name: 'created_at', fromJson: DateTime.parse)
-      required final DateTime createdAt,
+      @JsonKey(name: 'created_at') required final DateTime createdAt,
       final int? id,
       @JsonKey(name: 'user_id') required final int userId,
-      @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
-      required final DateTime updatedAt,
-      @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
-      final DateTime? lastSyncedAt,
+      @JsonKey(name: 'updated_at') required final DateTime updatedAt,
+      @JsonKey(name: 'last_synced_at') final DateTime? lastSyncedAt,
+      @JsonKey(name: 'deleted_at') final DateTime? deletedAt,
       @JsonKey(name: 'sync_state') required final SyncStateDto syncState,
       final String? rev,
       @JsonKey(name: 'stats') final WalletStats? stats,
@@ -490,12 +505,12 @@ abstract class _WalletDto extends WalletDto {
   @override
   String? get description;
   @override
-  @JsonKey(name: 'balance')
+  @JsonKey(name: 'balance', fromJson: parseAmount)
   double get balance;
   @override
   String get currency;
   @override
-  @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
   int? get id;
@@ -503,11 +518,14 @@ abstract class _WalletDto extends WalletDto {
   @JsonKey(name: 'user_id')
   int get userId;
   @override
-  @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'updated_at')
   DateTime get updatedAt;
   @override
-  @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+  @JsonKey(name: 'last_synced_at')
   DateTime? get lastSyncedAt;
+  @override
+  @JsonKey(name: 'deleted_at')
+  DateTime? get deletedAt;
   @override
   @JsonKey(name: 'sync_state')
   SyncStateDto get syncState;

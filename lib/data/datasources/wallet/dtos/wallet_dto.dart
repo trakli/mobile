@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
+import 'package:trakli/data/datasources/core/amount_parser.dart';
 import 'package:trakli/data/datasources/core/dto/sync_state_dto.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -18,16 +19,23 @@ class WalletDto with _$WalletDto {
     @JsonKey(defaultValue: WalletType.bank) required WalletType type,
     required String name,
     String? description,
-    @JsonKey(name: 'balance') required double balance,
+    @JsonKey(name: 'balance', fromJson: parseAmount) required double balance,
     required String currency,
-    @JsonKey(name: 'created_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'created_at',
+    )
     required DateTime createdAt,
     int? id,
     @JsonKey(name: 'user_id') required int userId,
-    @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'updated_at',
+    )
     required DateTime updatedAt,
-    @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
+    @JsonKey(
+      name: 'last_synced_at',
+    )
     DateTime? lastSyncedAt,
+    @JsonKey(name: 'deleted_at') DateTime? deletedAt,
     @JsonKey(name: 'sync_state') required SyncStateDto syncState,
     String? rev,
     @JsonKey(name: 'stats') WalletStats? stats,
@@ -47,6 +55,7 @@ class WalletDto with _$WalletDto {
       rev: rev,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      deletedAt: deletedAt,
       name: name,
       type: type,
       balance: balance,
@@ -59,8 +68,4 @@ class WalletDto with _$WalletDto {
 
     return wallet;
   }
-}
-
-double parseBalance(String balance) {
-  return double.parse(balance.replaceAll(',', ''));
 }

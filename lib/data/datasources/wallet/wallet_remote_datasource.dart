@@ -51,7 +51,7 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
     if (response.data == null) return null;
 
     final apiResponse = ApiResponse.fromJson(response.data);
-    return Wallet.fromJson(apiResponse.data);
+    return WalletDto.fromJson(apiResponse.data).toModel();
   }
 
   @override
