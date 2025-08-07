@@ -100,7 +100,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
-  freezed: ^2.5.8
+  freezed: ^3.0.0-0.0.dev
   json_serializable: ^6.9.5
   injectable_generator: ^2.7.0
   lint_staged: ^0.5.1
