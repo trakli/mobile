@@ -56,6 +56,7 @@ jobs:
           flutter-version: "3.32.8"
           channel: "stable"
           cache: true
+
       - name: Build APK
         run: flutter build apk
 
@@ -79,6 +80,9 @@ jobs:
           flutter-version: "3.32.8"
           channel: "stable"
           cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
 
       - name: Install iOS dependencies
         run: |
