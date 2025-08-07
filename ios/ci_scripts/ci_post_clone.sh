@@ -7,7 +7,7 @@ set -e
 cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
 
 # Download and extract Flutter SDK from the provided URL.
-FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.29.3-stable.zip"
+FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.32.8-stable.zip"
 FLUTTER_DIR="$HOME/flutter"
 
 curl -A "Mozilla/5.0" -o flutter.zip $FLUTTER_URL
