@@ -42,7 +42,7 @@ jobs:
       - name: Run tests
         run: flutter test
 
-  build:
+  build-android:
     name: Build APK
     runs-on: ubuntu-latest
     needs: test
@@ -65,10 +65,33 @@ jobs:
           name: apk
           path: build/app/outputs/flutter-apk/
 
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.32.8"
+          channel: "stable"
+          cache: true
+
+      - name: Install iOS dependencies
+        run: |
+          cd ios
+          pod install
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
   distribute:
     name: Upload artifact to Firebase App Distribution
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-android
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
