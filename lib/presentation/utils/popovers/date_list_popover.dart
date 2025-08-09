@@ -7,13 +7,14 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart'
 import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/dialogs/date_range_picker.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class DateListPopover extends StatelessWidget {
   final String label;
   final ValueChanged<PickerDateRange> onSelect;
-  final ValueChanged<String> onSelectString;
+  final ValueChanged<DateFilterOption> onSelectString;
 
   const DateListPopover({
     super.key,
@@ -42,13 +43,13 @@ class DateListPopover extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             shrinkWrap: true,
-            itemCount: dateOptions.length,
+            itemCount: DateFilterOption.values.length,
             itemBuilder: (context, index) {
-              final option = dateOptions[index];
+              final option = DateFilterOption.values.elementAt(index);
               return ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
                 onTap: () async {
-                  if (index == dateOptions.length - 1) {
+                  if (index == DateFilterOption.values.length - 1) {
                     await showCustomDialog(
                       widget: DateRangePicker(
                         onDateSelected: (range) {
@@ -63,7 +64,7 @@ class DateListPopover extends StatelessWidget {
                   } else {
                     onSelect(
                       PickerDateRange(
-                        getStartDateFromKey(option),
+                        getStartDateFromKey(option.name),
                         DateTime.now(),
                       ),
                     );
@@ -72,7 +73,7 @@ class DateListPopover extends StatelessWidget {
                   }
                 },
                 title: Text(
-                  option.tr(),
+                  option.name.tr(),
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: SvgPicture.asset(

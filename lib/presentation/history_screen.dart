@@ -70,13 +70,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       body: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-              ),
-            );
-          }
+          // if (state.isLoading) {
+          //   return Center(
+          //     child: CircularProgressIndicator.adaptive(
+          //       valueColor: AlwaysStoppedAnimation(appPrimaryColor),
+          //     ),
+          //   );
+          // }
 
           final transactions = selectedItems.isEmpty && dateRange == null
               ? state.transactions
@@ -271,8 +271,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           itemName = item.name;
                         } else if (item is CategoryEntity) {
                           itemName = item.name;
-                        } else if (item is String) {
-                          itemName = item;
+                        } else if (item is DateFilterOption) {
+                          itemName = item.name.tr();
                         }
 
                         return _selectedItem(
@@ -281,7 +281,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             onTap: () {
                               setState(() {
                                 selectedItems.removeAt(index);
-                                if (item is String) {
+                                if (item is DateFilterOption) {
                                   dateRange = null;
                                 }
                               });
@@ -449,11 +449,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 dateRange = range;
                               });
                             },
-                            onSelectString: (key) {
+                            onSelectString: (dateFilterOption) {
                               setState(() {
                                 selectedItems
-                                    .removeWhere((item) => item is String);
-                                selectedItems.add(key.tr());
+                                    .removeWhere((item) => item is DateFilterOption);
+                                selectedItems.add(dateFilterOption);
                               });
                             },
                           ),
