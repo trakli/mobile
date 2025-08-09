@@ -143,13 +143,13 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         builder: (context, state) {
-          // if (state.isLoading) {
-          //   return Center(
-          //     child: CircularProgressIndicator.adaptive(
-          //       valueColor: AlwaysStoppedAnimation<Color>(appPrimaryColor),
-          //     ),
-          //   );
-          // }
+          if (state.isLoading) {
+            return Center(
+              child: CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation<Color>(appPrimaryColor),
+              ),
+            );
+          }
           final transactions = filterTransactions(
             transactions: state.transactions,
             wallets: wallets,
