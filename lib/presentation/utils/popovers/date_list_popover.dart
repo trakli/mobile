@@ -8,7 +8,6 @@ import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/dialogs/date_range_picker.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class DateListPopover extends StatelessWidget {
@@ -69,7 +68,9 @@ class DateListPopover extends StatelessWidget {
                       ),
                     );
                     onSelectString(option);
-                    AppNavigator.pop(context);
+                    if (context.mounted) {
+                      AppNavigator.pop(context);
+                    }
                   }
                 },
                 title: Text(
