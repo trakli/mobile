@@ -264,7 +264,12 @@
   "noData": "No data",
   "databaseViewer": "Database Viewer",
   "totalExpense": "Total Expense",
-  "thisMonth": "This month",
+  "thisMonth": "Questo mese",
+  "thisWeek": "Questa settimana",
+  "lastThreeMonths": "Ultimi 3 mesi",
+  "lastSixMonths": "Ultimi 6 mesi",
+  "thisYear": "Quest'anno",
+  "custom": "Personalizzato",
   "noTransactionData": "No transaction data available",
   "addTransactionsToSeeChart": "Add transactions with parties to see the chart",
   "deleteGroup": "Delete Group",
@@ -295,5 +300,6 @@
   "partyTypeGovernmentAgency": "Agenzia governativa",
   "partyTypeEducationalInstitution": "Istituzione educativa",
   "partyTypeHealthcareProvider": "Fornitore di assistenza sanitaria",
-  "selectPartyType": "Seleziona tipo di parte"
+  "selectPartyType": "Seleziona tipo di parte",
+  "selectDateOrDateRange": "Seleziona una data o un intervallo di date"
 }

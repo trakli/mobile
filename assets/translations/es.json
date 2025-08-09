@@ -264,7 +264,12 @@
   "wallets": "wallets",
   "noData": "No data",
   "totalExpense": "Total Expense",
-  "thisMonth": "This month",
+  "thisMonth": "Este mes",
+  "thisWeek": "Esta semana",
+  "lastThreeMonths": "Últimos 3 meses",
+  "lastSixMonths": "Últimos 6 meses",
+  "thisYear": "Este año",
+  "custom": "Personalizado",
   "noTransactionData": "No transaction data available",
   "addTransactionsToSeeChart": "Add transactions with parties to see the chart",
   "deleteGroup": "Delete Group",
@@ -294,5 +299,6 @@
   "partyTypeGovernmentAgency": "Agencia gubernamental",
   "partyTypeEducationalInstitution": "Institución educativa",
   "partyTypeHealthcareProvider": "Proveedor de atención médica",
-  "selectPartyType": "Seleccionar tipo de parte"
+  "selectPartyType": "Seleccionar tipo de parte",
+  "selectDateOrDateRange": "Elige una fecha o un rango de fechas"
 }

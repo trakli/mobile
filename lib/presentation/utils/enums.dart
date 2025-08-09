@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/home_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
@@ -102,6 +103,26 @@ enum FilterType {
       FilterType.date => 'Date',
       FilterType.category => 'Categories',
       FilterType.wallet => 'Wallets',
+    };
+  }
+}
+
+enum DateFilterOption {
+  thisWeek,
+  thisMonth,
+  last3Months,
+  last6Months,
+  thisYear,
+  custom;
+
+  String get name {
+    return switch (this) {
+      DateFilterOption.thisWeek => LocaleKeys.thisWeek,
+      DateFilterOption.thisMonth => LocaleKeys.thisMonth,
+      DateFilterOption.last3Months => LocaleKeys.lastThreeMonths,
+      DateFilterOption.last6Months => LocaleKeys.lastSixMonths,
+      DateFilterOption.thisYear => LocaleKeys.thisYear,
+      DateFilterOption.custom => LocaleKeys.custom,
     };
   }
 }

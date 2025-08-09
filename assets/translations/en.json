@@ -265,6 +265,11 @@
   "totalIncome": "Total Income",
   "totalExpense": "Total Expense",
   "thisMonth": "This month",
+  "thisWeek": "This week",
+  "lastThreeMonths": "Last 3 months",
+  "lastSixMonths": "Last 6 months",
+  "thisYear": "This year",
+  "custom": "Custom",
   "noTransactionData": "No transaction data available",
   "addTransactionsToSeeChart": "Add transactions with parties to see the chart",
   "deleteGroup": "Delete Group",
@@ -295,5 +300,6 @@
   "partyTypeGovernmentAgency": "Government Agency",
   "partyTypeEducationalInstitution": "Educational Institution",
   "partyTypeHealthcareProvider": "Healthcare Provider",
-  "selectPartyType": "Select party type"
+  "selectPartyType": "Select party type",
+  "selectDateOrDateRange": "Pick a date or select a date range"
 }

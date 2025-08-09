@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart'
+    show PickerDateRange;
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
@@ -31,6 +33,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   bool showSearch = false;
   List<dynamic> selectedItems = [];
+  PickerDateRange? dateRange;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             );
           }
 
-          final transactions = selectedItems.isEmpty
+          final transactions = selectedItems.isEmpty && dateRange == null
               ? state.transactions
               : (() {
                   final selectedCategories =
@@ -83,27 +86,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   final selectedWallets =
                       selectedItems.whereType<WalletEntity>().toList();
 
-                  return state.transactions.where((transaction) {
-                    final hasCategoryFilter = selectedCategories.isNotEmpty;
-                    final hasWalletFilter = selectedWallets.isNotEmpty;
+                  final hasCategoryFilter = selectedCategories.isNotEmpty;
+                  final hasWalletFilter = selectedWallets.isNotEmpty;
 
+                  return state.transactions.where((transaction) {
                     final categoryMatch = hasCategoryFilter &&
                         transaction.categories.any((cat) =>
                             selectedCategories.any((selected) =>
                                 selected.clientId == cat.clientId));
-
                     final walletMatch = hasWalletFilter &&
                         selectedWallets.any((wallet) =>
                             wallet.clientId == transaction.wallet.clientId);
 
+                    final dateMatch = matchTransactionDate(
+                      dateRange,
+                      transaction.transaction,
+                    );
+
                     if (hasCategoryFilter && hasWalletFilter) {
-                      return categoryMatch && walletMatch;
+                      return categoryMatch && walletMatch && dateMatch;
                     } else if (hasCategoryFilter) {
-                      return categoryMatch;
+                      return categoryMatch && dateMatch;
                     } else if (hasWalletFilter) {
-                      return walletMatch;
+                      return walletMatch && dateMatch;
                     } else {
-                      return true;
+                      return dateMatch;
                     }
                   }).toList();
                 })();
@@ -251,34 +258,40 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ],
                 ),
                 SizedBox(height: 4.h),
-                SizedBox(
-                  height: 30.h,
-                  child: ListView.separated(
-                    itemCount: selectedItems.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      String itemName = '';
-                      final item = selectedItems[index];
-                      if (item is WalletEntity) {
-                        itemName = item.name;
-                      } else if (item is CategoryEntity) {
-                        itemName = item.name;
-                      }
+                if (selectedItems.isNotEmpty)
+                  SizedBox(
+                    height: 30.h,
+                    child: ListView.separated(
+                      itemCount: selectedItems.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        String itemName = '';
+                        final item = selectedItems[index];
+                        if (item is WalletEntity) {
+                          itemName = item.name;
+                        } else if (item is CategoryEntity) {
+                          itemName = item.name;
+                        } else if (item is DateFilterOption) {
+                          itemName = item.name.tr();
+                        }
 
-                      return _selectedItem(
-                          isWallet: item is WalletEntity,
-                          name: itemName,
-                          onTap: () {
-                            setState(() {
-                              selectedItems.removeAt(index);
+                        return _selectedItem(
+                            isWallet: item is WalletEntity,
+                            name: itemName,
+                            onTap: () {
+                              setState(() {
+                                selectedItems.removeAt(index);
+                                if (item is DateFilterOption) {
+                                  dateRange = null;
+                                }
+                              });
                             });
-                          });
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(width: 6.w);
-                    },
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(width: 6.w);
+                      },
+                    ),
                   ),
-                ),
                 SizedBox(height: 16.h),
                 transactions.isEmpty
                     ? SizedBox(
@@ -429,7 +442,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               });
                             },
                           )
-                        : DateListPopover(label: filterType.filterName),
+                        : DateListPopover(
+                            label: filterType.filterName,
+                            onSelect: (range) {
+                              setState(() {
+                                dateRange = range;
+                              });
+                            },
+                            onSelectString: (dateFilterOption) {
+                              setState(() {
+                                selectedItems
+                                    .removeWhere((item) => item is DateFilterOption);
+                                selectedItems.add(dateFilterOption);
+                              });
+                            },
+                          ),
               );
             },
             child: Container(
