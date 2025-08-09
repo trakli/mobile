@@ -365,6 +365,7 @@ Future<void> setupDefaultGroupAndWallet({
       );
 }
 
+/// Returns a datetime to use as a start date
 DateTime? getStartDateFromKey(String key) {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
@@ -386,6 +387,7 @@ DateTime? getStartDateFromKey(String key) {
   }
 }
 
+/// Checks if a transaction matches the date range passed
 bool matchTransactionDate(
   PickerDateRange? range,
   TransactionEntity transaction,
