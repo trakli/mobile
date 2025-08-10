@@ -1,1 +1,30 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"trakli","appId":"1:212694832657:android:b187aba6eab17ee05743b0","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"trakli","appId":"1:212694832657:ios:3ded64d1870e16015743b0","uploadDebugSymbols":true,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"trakli","configurations":{"android":"1:212694832657:android:b187aba6eab17ee05743b0","ios":"1:212694832657:ios:3ded64d1870e16015743b0"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "trakli",
+          "appId": "1:212694832657:android:b187aba6eab17ee05743b0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "trakli",
+          "appId": "1:212694832657:ios:3ded64d1870e16015743b0",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "trakli",
+          "configurations": {
+            "android": "1:212694832657:android:b187aba6eab17ee05743b0",
+            "ios": "1:212694832657:ios:3ded64d1870e16015743b0"
+          }
+        }
+      }
+    }
+  }
+}

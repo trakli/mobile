@@ -39,6 +39,10 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# iOS build artifacts
+*.ipa
+*.mobileprovision
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
@@ -46,3 +50,19 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+.fvm/.env
+*.jks
+key.properties
+google_service_account.json
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Fastlane sensitive files
+android/fastlane/.env
+ios/fastlane/.env
+android/key.jks
+
+# Android vendor folder (generated files)
+android/vendor/
