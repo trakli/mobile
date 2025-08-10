@@ -13,7 +13,7 @@ _$WalletDtoImpl _$$WalletDtoImplFromJson(Map<String, dynamic> json) =>
           WalletType.bank,
       name: json['name'] as String,
       description: json['description'] as String?,
-      balance: (json['balance'] as num).toDouble(),
+      balance: parseAmount(json['balance']),
       currency: json['currency'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       id: (json['id'] as num?)?.toInt(),
