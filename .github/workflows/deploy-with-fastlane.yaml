@@ -90,7 +90,7 @@ jobs:
         env:
           CREDENTIAL_FILE_CONTENT: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
         run: |
-          cat <<< "${{CREDENTIAL_FILE_CONTENT}}" > service_credentials_content.json
+          cat <<< "$CREDENTIAL_FILE_CONTENT" > service_credentials_content.json
 
       - name: Create key.jks
         run: |
