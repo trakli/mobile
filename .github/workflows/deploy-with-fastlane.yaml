@@ -82,13 +82,15 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      - name: Create firebase google_service_account.json
-        run: |
-          cat <<< "${{ secrets.CREDENTIAL_FILE_CONTENT }}" > service_credentials_content.json
-
       - name: Create google_service_account.json
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_ACCOUNT_BASE64 }}" | base64 --decode > google_service_account.json
+
+      - name: Create firebase google_service_account.json
+        env:
+          CREDENTIAL_FILE_CONTENT: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+        run: |
+          cat <<< "${{ CREDENTIAL_FILE_CONTENT }}" > service_credentials_content.json
 
       - name: Create key.jks
         run: |
