@@ -38,11 +38,11 @@ jobs:
           sudo gem install cocoapods
           pod --version
 
-      - name: Install Fastlane dependencies
-        run: |
-          cd ios
-          bundle install
-          bundle exec fastlane --version
+      # - name: Install Fastlane dependencies
+      #   run: |
+      #     cd ios
+      #     bundle install
+      #     bundle exec fastlane --version
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
