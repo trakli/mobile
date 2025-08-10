@@ -37,7 +37,7 @@ jobs:
         uses: subosito/flutter-action@v2.16.0
         with:
           # https://github.com/subosito/flutter-action?tab=readme-ov-file#use-version-from-pubspecyaml
-          flutter-version-file: "pubspec.yaml"
+          # flutter-version-file: "pubspec.yaml"
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
