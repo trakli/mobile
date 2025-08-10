@@ -35,8 +35,14 @@ jobs:
 
       - name: Install CocoaPods
         run: |
-          sudo gem install cocoapods
-          pod --version
+          cd ios
+          bundle exec gem install cocoapods
+          bundle exec pod --version
+
+      - name: Install iOS Pods
+        run: |
+          cd ios
+          bundle exec pod install
 
       # - name: Install Fastlane dependencies
       #   run: |
