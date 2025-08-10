@@ -20,7 +20,7 @@ jobs:
   build_ios:
     name: Build iOS
     # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
-    runs-on: macos-12
+    runs-on: macos-14
     timeout-minutes: 20
     steps:
       - name: Checkout
