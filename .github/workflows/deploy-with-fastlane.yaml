@@ -84,7 +84,7 @@ jobs:
 
       - name: Create firebase google_service_account.json
         run: |
-          echo "${{ secrets.CREDENTIAL_FILE_CONTENT }}" | base64 --decode > service_credentials_content.json
+          cat <<< "${{ secrets.CREDENTIAL_FILE_CONTENT }}" > service_credentials_content.json
 
       - name: Create google_service_account.json
         run: |
