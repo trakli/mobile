@@ -33,6 +33,11 @@ jobs:
           bundler-cache: true
           working-directory: "ios"
 
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod --version
+
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
         with:
@@ -73,7 +78,6 @@ jobs:
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
         with:
-          flutter-version-file: "pubspec.yaml"
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
