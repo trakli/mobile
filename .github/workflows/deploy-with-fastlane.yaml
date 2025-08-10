@@ -14,13 +14,13 @@ on:
 env:
   FLUTTER_CHANNEL: "stable"
   FLUTTER_VERSION: "3.32.8"
-  RUBY_VERSION: "3.2.2"
+  RUBY_VERSION: "3.4.5" #"3.2.2"
 
 jobs:
   build_ios:
     name: Build iOS
     # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
-    runs-on: macos-latest
+    runs-on: macos-12
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -30,13 +30,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: false
+          bundler-cache: true
           working-directory: "ios"
-
-      - name: Install Ruby dependencies
-        run: |
-          cd ios
-          bundle install
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
@@ -47,15 +42,19 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
+      # - name: Install CocoaPods
+      #   run: |
+      #     HOMEBREW_NO_AUTO_UPDATE=1
+      #     brew install cocoapods
+
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+
       - name: Generate Flutter iOS files
         run: |
           flutter pub get
           flutter build ios --no-codesign
-
-      - name: Install iOS Pods
-        run: |
-          cd ios
-          bundle exec pod install
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
