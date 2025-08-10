@@ -45,7 +45,7 @@ jobs:
       - name: Install iOS Pods
         run: |
           cd ios
-          pod install
+          bundle exec pod install
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
