@@ -47,15 +47,15 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      # - name: Generate Flutter iOS files
-      #   run: |
-      #     flutter pub get
-      #     flutter build ios --no-codesign
+      - name: Generate Flutter iOS files
+        run: |
+          flutter pub get
+          flutter build ios --no-codesign
 
-      # - name: Install iOS Pods
-      #   run: |
-      #     cd ios
-      #     bundle exec pod install
+      - name: Install iOS Pods
+        run: |
+          cd ios
+          bundle exec pod install
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
