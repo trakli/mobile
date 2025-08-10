@@ -20,7 +20,7 @@ jobs:
   build_ios:
     name: Build iOS
     # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -41,7 +41,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
-
       # - name: Install CocoaPods
       #   run: |
       #     HOMEBREW_NO_AUTO_UPDATE=1
@@ -51,10 +50,13 @@ jobs:
         run: |
           sudo gem install cocoapods
 
+      - name: CocoaPods version
+        run: |
+          pod --version
+
       - name: Generate Flutter iOS files
         run: |
           flutter pub get
-          flutter build ios --no-codesign
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
