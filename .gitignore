@@ -42,6 +42,7 @@ app.*.map.json
 # iOS build artifacts
 *.ipa
 *.mobileprovision
+*.dSYM.zip
 
 # Android Studio will place build artifacts here
 /android/app/debug

@@ -15,7 +15,7 @@ PODS:
     - DKPhotoGallery/Preview (= 0.0.19)
     - DKPhotoGallery/Resource (= 0.0.19)
     - SDWebImage
-    - SwiftyGif
+    - SwiftyGif 
   - DKPhotoGallery/Core (0.0.19):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Preview

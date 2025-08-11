@@ -37,3 +37,5 @@ Runner/GeneratedPluginRegistrant.*
 # Build artifacts
 vendor/**
 build/**
+
+Runner.app.dSYM.zip

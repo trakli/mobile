@@ -33,11 +33,6 @@ jobs:
           bundler-cache: true
           working-directory: "ios"
 
-      - name: Update CocoaPods in bundle
-        working-directory: "ios"
-        run: |
-          bundle update cocoapods
-
       - name: Verify CocoaPods version
         working-directory: "ios"
         run: |
