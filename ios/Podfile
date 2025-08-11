@@ -31,10 +31,6 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Firebase version overrides for compatibility
-  # pod 'FirebaseCore', '~> 12.0.0'
-  # pod 'FirebaseAnalytics', '~> 12.0.0'
-  # pod 'FirebaseCrashlytics', '~> 12.0.0'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
