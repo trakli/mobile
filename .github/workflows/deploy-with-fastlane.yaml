@@ -26,10 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: CocoaPods version
-        run: |
-          pod --version
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -37,18 +33,17 @@ jobs:
           bundler-cache: true
           working-directory: "ios"
 
-      - name: CocoaPods version
+      - name: Update CocoaPods in bundle
+        working-directory: "ios"
         run: |
-          pod --version
+          bundle update cocoapods
 
-      - name: Install CocoaPods in current Ruby
-        run: gem install cocoapods
-
-      - name: Ruby version
+      - name: Verify CocoaPods version
+        working-directory: "ios"
         run: |
-          ruby --version
+          bundle exec pod --version
 
-      - name: CocoaPods version
+      - name: GlobalInstall CocoaPods
         run: |
           pod --version
 
@@ -77,6 +72,11 @@ jobs:
       - name: Generate Flutter iOS files
         run: |
           flutter pub get
+
+      - name: Install iOS pods
+        working-directory: "ios"
+        run: |
+          bundle exec pod install
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
