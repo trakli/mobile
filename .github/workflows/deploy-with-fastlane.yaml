@@ -20,11 +20,16 @@ jobs:
   build_ios:
     name: Build iOS
     # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
-    runs-on: macos-latest
+    runs-on: macos-13
     timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.2"
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -72,6 +77,12 @@ jobs:
         working-directory: "ios"
         run: |
           bundle exec pod install
+
+      # - name: Clean and reinstall pods (Firebase compatibility)
+      #   working-directory: "ios"
+      #   run: |
+      #     rm -rf Pods Podfile.lock
+      #     bundle exec pod install
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
