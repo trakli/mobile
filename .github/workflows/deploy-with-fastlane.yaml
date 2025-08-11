@@ -53,7 +53,11 @@ jobs:
 
       - name: Install CocoaPods
         run: |
-          sudo gem install cocoapods
+          gem install cocoapods
+
+      - name: Ruby version
+        run: |
+          ruby --version
 
       - name: CocoaPods version
         run: |
