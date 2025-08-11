@@ -51,9 +51,9 @@ jobs:
       #   run: |
       #     bundle update
 
-      - name: Install CocoaPods
-        run: |
-          gem install cocoapods
+      # - name: Install CocoaPods
+      #   run: |
+      #     gem install cocoapods
 
       - name: Ruby version
         run: |
