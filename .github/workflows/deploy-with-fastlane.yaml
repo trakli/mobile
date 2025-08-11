@@ -20,11 +20,15 @@ jobs:
   build_ios:
     name: Build iOS
     # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
-    runs-on: macos-15.2
+    runs-on: macos-latest
     timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Verify macOS version
+        run: |
+          sw_vers
 
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
