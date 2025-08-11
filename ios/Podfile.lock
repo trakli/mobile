@@ -232,9 +232,6 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
-  - FirebaseAnalytics (~> 12.0.0)
-  - FirebaseCore (~> 12.0.0)
-  - FirebaseCrashlytics (~> 12.0.0)
   - Flutter (from `Flutter`)
   - flutter_device_uuid (from `.symlinks/plugins/flutter_device_uuid/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -353,6 +350,6 @@ SPEC CHECKSUMS:
   UICKeyChainStore: 85db518bb1d294366d15ec9b92a416c4e670518f
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: 2e13084c97913d0bfc7fec60491104010ce727fd
+PODFILE CHECKSUM: 160eab1e0e78f073ecb4451d0d907a0dde66d2c2
 
 COCOAPODS: 1.16.2
