@@ -15,7 +15,7 @@ PODS:
     - DKPhotoGallery/Preview (= 0.0.19)
     - DKPhotoGallery/Resource (= 0.0.19)
     - SDWebImage
-    - SwiftyGif 
+    - SwiftyGif
   - DKPhotoGallery/Core (0.0.19):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Preview
@@ -232,6 +232,9 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
+  - FirebaseAnalytics (~> 12.0.0)
+  - FirebaseCore (~> 12.0.0)
+  - FirebaseCrashlytics (~> 12.0.0)
   - Flutter (from `Flutter`)
   - flutter_device_uuid (from `.symlinks/plugins/flutter_device_uuid/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -350,6 +353,6 @@ SPEC CHECKSUMS:
   UICKeyChainStore: 85db518bb1d294366d15ec9b92a416c4e670518f
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: be4663332fca77601dd6736e3676fe47177084e1
+PODFILE CHECKSUM: 2e13084c97913d0bfc7fec60491104010ce727fd
 
 COCOAPODS: 1.16.2
