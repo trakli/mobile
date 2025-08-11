@@ -26,12 +26,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: CocoaPods version
+        run: |
+          pod --version
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: false
+          bundler-cache: true
           working-directory: "ios"
+
+      - name: CocoaPods version
+        run: |
+          pod --version
+
+      - name: Install CocoaPods in current Ruby
+        run: gem install cocoapods
+
+      - name: Ruby version
+        run: |
+          ruby --version
+
+      - name: CocoaPods version
+        run: |
+          pod --version
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
@@ -55,14 +74,6 @@ jobs:
       #   run: |
       #     gem install cocoapods
 
-      - name: Ruby version
-        run: |
-          ruby --version
-
-      - name: CocoaPods version
-        run: |
-          pod --version
-
       - name: Generate Flutter iOS files
         run: |
           flutter pub get
@@ -70,7 +81,7 @@ jobs:
       - uses: maierj/fastlane-action@v3.1.0
         with:
           lane: "release_app_store"
-          subdirectory: ios
+          subdirectory: "ios"
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
