@@ -30,7 +30,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-          bundler-cache: true
+          bundler-cache: false
           working-directory: "ios"
 
       - name: Run Flutter tasks
@@ -40,7 +40,7 @@ jobs:
           # flutter-version-file: "pubspec.yaml"
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
-          cache: true
+          cache: false
       # - name: Install CocoaPods
       #   run: |
       #     HOMEBREW_NO_AUTO_UPDATE=1
