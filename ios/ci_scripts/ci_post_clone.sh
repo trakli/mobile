@@ -7,10 +7,27 @@ set -e
 cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
 
 # Extract version from git tag and set as environment variables for Flutter build
-VERSION=$(git describe --tags --abbrev=0)
+echo "Xcode Cloud Environment variables:"
+echo "CI_TAG: $CI_TAG"
+echo "CI_GIT_REF: $CI_GIT_REF"
+
+# Use Xcode Cloud environment variables if available, otherwise try git
+if [ -n "$CI_TAG" ]; then
+    VERSION="$CI_TAG"
+    echo "Using CI_TAG: $VERSION"
+elif [ -n "$CI_GIT_REF" ]; then
+    # CI_GIT_REF might include refs/tags/ prefix, so we need to extract the tag name
+    VERSION=$(echo "$CI_GIT_REF" | sed 's|refs/tags/||')
+    echo "Using CI_GIT_REF: $VERSION"
+else
+    echo "Trying git describe..."
+    VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+    if [ -n "$VERSION" ]; then
+        echo "Using git describe: $VERSION"
+    fi
+fi
+
 if [ -n "$VERSION" ]; then
-    echo "Using version from tag: $VERSION"
-    
     # Remove 'v' prefix if present (e.g., v0.1.32-rc.1 -> 0.1.32-rc.1)
     VERSION_NUMBER="${VERSION#v}"
     
@@ -24,7 +41,7 @@ if [ -n "$VERSION" ]; then
     # Also set for Fastlane to use
     export VERSION_NUMBER
 else
-    echo "No tag found, using default version from project"
+    echo "No version found, using default version from project"
 fi
 
 # Download and extract Flutter SDK from the provided URL.
