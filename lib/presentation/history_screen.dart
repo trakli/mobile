@@ -280,7 +280,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         }
 
                         return _selectedItem(
-                            isWallet: item is WalletEntity,
+                            iconPath: getIconPath(item),
                             name: itemName,
                             onTap: () {
                               setState(() {
@@ -502,7 +502,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _selectedItem({
-    bool isWallet = false,
+    String? iconPath,
     required String name,
     VoidCallback? onTap,
   }) {
@@ -519,11 +519,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         spacing: 4.w,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            width: 16.w,
-            height: 16.h,
-            isWallet ? Assets.images.wallet : Assets.images.tag2,
-          ),
+          if (iconPath != null)
+            SvgPicture.asset(
+              width: 16.w,
+              height: 16.h,
+              iconPath,
+            ),
           Text(
             name,
             style: TextStyle(

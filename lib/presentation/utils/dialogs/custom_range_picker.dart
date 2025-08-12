@@ -33,80 +33,95 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Select Date Range",
-              style: Theme.of(context).textTheme.titleMedium),
-          SizedBox(height: 20.h),
-          TextFormField(
-            readOnly: true,
-            decoration: const InputDecoration(
-              labelText: "From Date",
-              suffixIcon: Icon(Icons.calendar_today),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 20.h,
+      ),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 48.h,
+          horizontal: 16.w,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Select Date Range",
+                style: Theme.of(context).textTheme.titleMedium),
+            SizedBox(height: 20.h),
+            TextFormField(
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: "From Date",
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              controller: TextEditingController(
+                text: range?.startDate != null
+                    ? formatDate.format(range!.startDate!)
+                    : "",
+              ),
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: range?.startDate ?? DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (picked != null) {
+                  setState(() {
+                    final endDate = range?.endDate;
+                    range = PickerDateRange(picked, endDate);
+                  });
+                }
+              },
             ),
-            controller: TextEditingController(
-              text: range?.startDate != null
-                  ? formatDate.format(range!.startDate!)
-                  : "",
+            SizedBox(height: 16.h),
+            TextFormField(
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: "To Date",
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              controller: TextEditingController(
+                text: range?.endDate != null
+                    ? formatDate.format(range!.endDate!)
+                    : "",
+              ),
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: range?.endDate ?? DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (picked != null) {
+                  setState(() {
+                    final startDate = range?.startDate;
+                    range = PickerDateRange(startDate, picked);
+                  });
+                }
+              },
             ),
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: range?.startDate ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-              if (picked != null) {
-                setState(() {
-                  final endDate = range?.endDate;
-                  range = PickerDateRange(picked, endDate);
-                });
-              }
-            },
-          ),
-          SizedBox(height: 16.h),
-          TextFormField(
-            readOnly: true,
-            decoration: const InputDecoration(
-              labelText: "To Date",
-              suffixIcon: Icon(Icons.calendar_today),
+            SizedBox(height: 20.h),
+            SizedBox(
+              height: 52.h,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: range?.startDate != null && range?.endDate != null
+                    ? () {
+                        widget.onSelect(range!);
+                        AppNavigator.pop(context);
+                      }
+                    : null,
+                child: const Text("Apply"),
+              ),
             ),
-            controller: TextEditingController(
-              text: range?.endDate != null
-                  ? formatDate.format(range!.endDate!)
-                  : "",
-            ),
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: range?.endDate ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
-              if (picked != null) {
-                setState(() {
-                  final startDate = range?.startDate;
-                  range = PickerDateRange(startDate, picked);
-                });
-              }
-            },
-          ),
-          SizedBox(height: 20.h),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: range?.startDate != null && range?.endDate != null
-                  ? () {
-                      widget.onSelect(range!);
-                      AppNavigator.pop(context);
-                    }
-                  : null,
-              child: const Text("Apply"),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

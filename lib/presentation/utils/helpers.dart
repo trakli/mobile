@@ -12,11 +12,15 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:popover/popover.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/enums.dart' show PlanType, WalletType;
+import 'package:trakli/presentation/utils/enums.dart'
+    show PlanType, WalletType, DateFilterOption;
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -408,8 +412,10 @@ bool matchTransactionDate(
       (txDate.isAtSameMomentAs(end) || txDate.isBefore(end));
 }
 
+/// Date formatter
 DateFormat formatDate = DateFormat('d MMM yyyy');
 
+/// Format a date range to a string
 String? formatRange(PickerDateRange? range) {
   if (range != null) {
     if (range.startDate != null && range.endDate != null) {
@@ -417,6 +423,20 @@ String? formatRange(PickerDateRange? range) {
     } else {
       return "";
     }
+  }
+  return null;
+}
+
+/// Get svgIcon for a type
+String? getIconPath(dynamic item) {
+  if (item is WalletEntity) {
+    return Assets.images.wallet;
+  }
+  if (item is CategoryEntity) {
+    return Assets.images.tag2;
+  }
+  if (item is DateFilterOption) {
+    return Assets.images.calendar;
   }
   return null;
 }
