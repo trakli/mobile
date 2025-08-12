@@ -272,7 +272,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         } else if (item is CategoryEntity) {
                           itemName = item.name;
                         } else if (item is DateFilterOption) {
-                          itemName = item.name.tr();
+                          if (item == DateFilterOption.custom) {
+                            itemName = formatRange(dateRange) ?? "";
+                          } else {
+                            itemName = item.name.tr();
+                          }
                         }
 
                         return _selectedItem(
@@ -451,8 +455,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             },
                             onSelectString: (dateFilterOption) {
                               setState(() {
-                                selectedItems
-                                    .removeWhere((item) => item is DateFilterOption);
+                                selectedItems.removeWhere(
+                                    (item) => item is DateFilterOption);
                                 selectedItems.add(dateFilterOption);
                               });
                             },

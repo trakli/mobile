@@ -4,6 +4,7 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,13 +14,12 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart' show PlanType, WalletType;
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<File?> pickFile() async {
   try {
@@ -406,4 +406,17 @@ bool matchTransactionDate(
 
   return (txDate.isAtSameMomentAs(start) || txDate.isAfter(start)) &&
       (txDate.isAtSameMomentAs(end) || txDate.isBefore(end));
+}
+
+DateFormat formatDate = DateFormat('d MMM yyyy');
+
+String? formatRange(PickerDateRange? range) {
+  if (range != null) {
+    if (range.startDate != null && range.endDate != null) {
+      return "${formatDate.format(range.startDate!)} - ${formatDate.format(range.endDate!)}";
+    } else {
+      return "";
+    }
+  }
+  return null;
 }
