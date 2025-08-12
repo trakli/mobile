@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart'
     show PickerDateRange;
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
@@ -50,14 +52,16 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Select Date Range",
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              LocaleKeys.selectDateRange.tr(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             SizedBox(height: 20.h),
             TextFormField(
               readOnly: true,
-              decoration: const InputDecoration(
-                labelText: "From Date",
-                suffixIcon: Icon(Icons.calendar_today),
+              decoration: InputDecoration(
+                labelText: LocaleKeys.fromDate.tr(),
+                suffixIcon: const Icon(Icons.calendar_today),
               ),
               controller: TextEditingController(
                 text: range?.startDate != null
@@ -82,9 +86,9 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
             SizedBox(height: 16.h),
             TextFormField(
               readOnly: true,
-              decoration: const InputDecoration(
-                labelText: "To Date",
-                suffixIcon: Icon(Icons.calendar_today),
+              decoration: InputDecoration(
+                labelText: LocaleKeys.toDate.tr(),
+                suffixIcon: const Icon(Icons.calendar_today),
               ),
               controller: TextEditingController(
                 text: range?.endDate != null
@@ -117,7 +121,7 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
                         AppNavigator.pop(context);
                       }
                     : null,
-                child: const Text("Apply"),
+                child: Text(LocaleKeys.apply.tr()),
               ),
             ),
           ],

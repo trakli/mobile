@@ -306,5 +306,9 @@ abstract class  LocaleKeys {
   static const partyTypeHealthcareProvider = 'partyTypeHealthcareProvider';
   static const selectPartyType = 'selectPartyType';
   static const selectDateOrDateRange = 'selectDateOrDateRange';
+  static const selectDateRange = 'selectDateRange';
+  static const fromDate = 'fromDate';
+  static const toDate = 'toDate';
+  static const apply = 'apply';
 
 }

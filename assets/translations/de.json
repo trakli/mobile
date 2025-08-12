@@ -301,5 +301,9 @@
   "partyTypeEducationalInstitution": "Bildungseinrichtung",
   "partyTypeHealthcareProvider": "Gesundheitsdienstleister",
   "selectPartyType": "Parteityp auswählen",
-  "selectDateOrDateRange": "Wählen Sie ein Datum oder einen Datumsbereich"
+  "selectDateOrDateRange": "Wählen Sie ein Datum oder einen Datumsbereich",
+  "selectDateRange": "Datumsbereich auswählen",
+  "fromDate": "Startdatum",
+  "toDate": "Enddatum",
+  "apply": "Anwenden"
 }
