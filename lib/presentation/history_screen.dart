@@ -123,7 +123,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Column(
               children: [
                 Row(
-                  spacing: 6.w,
+                  spacing: 4.w,
                   children: [
                     if (showSearch)
                       Expanded(
@@ -159,20 +159,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ),
                         ),
                       )
-                    else ...[
-                      _filterType(
-                        iconPath: Assets.images.calendar,
-                        filterType: FilterType.date,
+                    else
+                      Expanded(
+                        child: Row(
+                          spacing: 6.w,
+                          children: [
+                            _filterType(
+                              iconPath: Assets.images.calendar,
+                              filterType: FilterType.date,
+                            ),
+                            _filterType(
+                              iconPath: Assets.images.tag2,
+                              filterType: FilterType.category,
+                            ),
+                            _filterType(
+                              iconPath: Assets.images.wallet,
+                              filterType: FilterType.wallet,
+                            ),
+                          ],
+                        ),
                       ),
-                      _filterType(
-                        iconPath: Assets.images.tag2,
-                        filterType: FilterType.category,
-                      ),
-                      _filterType(
-                        iconPath: Assets.images.wallet,
-                        filterType: FilterType.wallet,
-                      ),
-                    ],
                     IconButton(
                       padding: EdgeInsets.zero,
                       style: IconButton.styleFrom(
@@ -466,6 +472,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(
                 vertical: 12.h,
+                horizontal: 4.w,
               ),
               decoration: BoxDecoration(
                 color: appPrimaryColor.withAlpha(20),
@@ -485,11 +492,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     width: 12.w,
                     height: 12.h,
                   ),
-                  Text(
-                    filterType.filterName,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: neutralN900,
+                  Expanded(
+                    child: Text(
+                      filterType.filterName,
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: neutralN900,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   )
                 ],
