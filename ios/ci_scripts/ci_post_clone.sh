@@ -6,6 +6,27 @@ set -e
 # The default execution directory of this script is the ci_scripts directory.
 cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
 
+# Extract version from git tag and set as environment variables for Flutter build
+VERSION=$(git describe --tags --abbrev=0)
+if [ -n "$VERSION" ]; then
+    echo "Using version from tag: $VERSION"
+    
+    # Remove 'v' prefix if present (e.g., v0.1.32-rc.1 -> 0.1.32-rc.1)
+    VERSION_NUMBER="${VERSION#v}"
+    
+    # Set environment variables for Flutter build
+    export FLUTTER_BUILD_NAME="$VERSION_NUMBER"
+    export FLUTTER_BUILD_NUMBER="$VERSION_NUMBER"
+    
+    echo "Set FLUTTER_BUILD_NAME=$FLUTTER_BUILD_NAME"
+    echo "Set FLUTTER_BUILD_NUMBER=$FLUTTER_BUILD_NUMBER"
+    
+    # Also set for Fastlane to use
+    export VERSION_NUMBER
+else
+    echo "No tag found, using default version from project"
+fi
+
 # Download and extract Flutter SDK from the provided URL.
 FLUTTER_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.32.8-stable.zip"
 FLUTTER_DIR="$HOME/flutter"
