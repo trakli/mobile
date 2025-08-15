@@ -428,45 +428,45 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 maxWidth: filterType == FilterType.date ? 0.45.sw : null,
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
-                  label: filterType.filterName,
-                  onSelect: (wallet) {
-                    setState(() {
-                      if (!selectedItems.any((item) =>
-                      (item is WalletEntity &&
-                          item.clientId == wallet.clientId))) {
-                        selectedItems.add(wallet);
-                      }
-                    });
-                  },
-                )
+                        label: filterType.filterName,
+                        onSelect: (wallet) {
+                          setState(() {
+                            if (!selectedItems.any((item) =>
+                                (item is WalletEntity &&
+                                    item.clientId == wallet.clientId))) {
+                              selectedItems.add(wallet);
+                            }
+                          });
+                        },
+                      )
                     : filterType == FilterType.category
-                    ? CategoryListPopover(
-                  label: filterType.filterName,
-                  onSelect: (category) {
-                    setState(() {
-                      if (!selectedItems.any((item) =>
-                      (item is CategoryEntity &&
-                          item.clientId == category.clientId))) {
-                        selectedItems.add(category);
-                      }
-                    });
-                  },
-                )
-                    : DateListPopover(
-                  label: filterType.filterName,
-                  onSelect: (range) {
-                    setState(() {
-                      dateRange = range;
-                    });
-                  },
-                  onSelectString: (dateFilterOption) {
-                    setState(() {
-                      selectedItems.removeWhere(
-                              (item) => item is DateFilterOption);
-                      selectedItems.add(dateFilterOption);
-                    });
-                  },
-                ),
+                        ? CategoryListPopover(
+                            label: filterType.filterName,
+                            onSelect: (category) {
+                              setState(() {
+                                if (!selectedItems.any((item) =>
+                                    (item is CategoryEntity &&
+                                        item.clientId == category.clientId))) {
+                                  selectedItems.add(category);
+                                }
+                              });
+                            },
+                          )
+                        : DateListPopover(
+                            label: filterType.filterName,
+                            onSelect: (range) {
+                              setState(() {
+                                dateRange = range;
+                              });
+                            },
+                            onSelectString: (dateFilterOption) {
+                              setState(() {
+                                selectedItems.removeWhere(
+                                    (item) => item is DateFilterOption);
+                                selectedItems.add(dateFilterOption);
+                              });
+                            },
+                          ),
               );
             },
             icon: SvgPicture.asset(
