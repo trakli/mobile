@@ -420,91 +420,89 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Expanded(
       child: Builder(
         builder: (context) {
-          return InkWell(
+          return OutlinedButton.icon(
             key: key,
-            onTap: () {
+            onPressed: () {
               showCustomPopOver(
                 context,
                 maxWidth: filterType == FilterType.date ? 0.45.sw : null,
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
-                        label: filterType.filterName,
-                        onSelect: (wallet) {
-                          setState(() {
-                            if (!selectedItems.any((item) =>
-                                (item is WalletEntity &&
-                                    item.clientId == wallet.clientId))) {
-                              selectedItems.add(wallet);
-                            }
-                          });
-                        },
-                      )
+                  label: filterType.filterName,
+                  onSelect: (wallet) {
+                    setState(() {
+                      if (!selectedItems.any((item) =>
+                      (item is WalletEntity &&
+                          item.clientId == wallet.clientId))) {
+                        selectedItems.add(wallet);
+                      }
+                    });
+                  },
+                )
                     : filterType == FilterType.category
-                        ? CategoryListPopover(
-                            label: filterType.filterName,
-                            onSelect: (category) {
-                              setState(() {
-                                if (!selectedItems.any((item) =>
-                                    (item is CategoryEntity &&
-                                        item.clientId == category.clientId))) {
-                                  selectedItems.add(category);
-                                }
-                              });
-                            },
-                          )
-                        : DateListPopover(
-                            label: filterType.filterName,
-                            onSelect: (range) {
-                              setState(() {
-                                dateRange = range;
-                              });
-                            },
-                            onSelectString: (dateFilterOption) {
-                              setState(() {
-                                selectedItems.removeWhere(
-                                    (item) => item is DateFilterOption);
-                                selectedItems.add(dateFilterOption);
-                              });
-                            },
-                          ),
+                    ? CategoryListPopover(
+                  label: filterType.filterName,
+                  onSelect: (category) {
+                    setState(() {
+                      if (!selectedItems.any((item) =>
+                      (item is CategoryEntity &&
+                          item.clientId == category.clientId))) {
+                        selectedItems.add(category);
+                      }
+                    });
+                  },
+                )
+                    : DateListPopover(
+                  label: filterType.filterName,
+                  onSelect: (range) {
+                    setState(() {
+                      dateRange = range;
+                    });
+                  },
+                  onSelectString: (dateFilterOption) {
+                    setState(() {
+                      selectedItems.removeWhere(
+                              (item) => item is DateFilterOption);
+                      selectedItems.add(dateFilterOption);
+                    });
+                  },
+                ),
               );
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 12.h,
-                horizontal: 4.w,
-              ),
-              decoration: BoxDecoration(
-                color: appPrimaryColor.withAlpha(20),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: appPrimaryColor,
-                  width: 0.5.w,
-                ),
-              ),
-              child: Row(
-                spacing: 4.w,
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    iconPath,
-                    width: 12.w,
-                    height: 12.h,
-                  ),
-                  Expanded(
-                    child: Text(
-                      filterType.filterName,
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: neutralN900,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                ],
-              ),
+            icon: SvgPicture.asset(
+              iconPath,
+              width: 12.w,
+              height: 12.h,
             ),
+            label: Text(
+              filterType.filterName,
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: neutralN900,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            // child: Container(
+            //   padding: EdgeInsets.symmetric(
+            //     vertical: 12.h,
+            //     horizontal: 4.w,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: appPrimaryColor.withAlpha(20),
+            //     borderRadius: BorderRadius.circular(8.r),
+            //     border: Border.all(
+            //       color: appPrimaryColor,
+            //       width: 0.5.w,
+            //     ),
+            //   ),
+            //   child: Row(
+            //     spacing: 4.w,
+            //     mainAxisSize: MainAxisSize.min,
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //     ],
+            //   ),
+            // ),
           );
         },
       ),
