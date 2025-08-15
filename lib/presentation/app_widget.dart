@@ -31,8 +31,8 @@ import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:trakli/presentation/utils/sync_cubit.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/sync_cubit.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 // Global flag to track if we're in onboarding mode
@@ -40,6 +40,7 @@ bool _isInOnboardingMode = false;
 
 // Getter and setter for onboarding mode
 bool get isInOnboardingMode => _isInOnboardingMode;
+
 void setOnboardingMode(bool value) => _isInOnboardingMode = value;
 
 class AppWidget extends StatelessWidget {
@@ -263,6 +264,26 @@ class _AppViewState extends State<AppView> {
                   horizontal: 32.0.w,
                   vertical: 12.h,
                 ),
+              ),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              iconSize: 12.sp,
+              foregroundColor: textColor,
+              textStyle: TextStyle(
+                fontSize: 10.sp,
+                color: neutralN900,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              side: BorderSide(
+                color: appPrimaryColor,
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: 8.w,
+                vertical: 12.h,
               ),
             ),
           ),

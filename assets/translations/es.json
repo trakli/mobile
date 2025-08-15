@@ -300,5 +300,9 @@
   "partyTypeEducationalInstitution": "Institución educativa",
   "partyTypeHealthcareProvider": "Proveedor de atención médica",
   "selectPartyType": "Seleccionar tipo de parte",
-  "selectDateOrDateRange": "Elige una fecha o un rango de fechas"
+  "selectDateOrDateRange": "Elige una fecha o un rango de fechas",
+  "selectDateRange": "Seleccionar rango de fechas",
+  "fromDate": "Fecha de inicio",
+  "toDate": "Fecha de fin",
+  "apply": "Aplicar"
 }

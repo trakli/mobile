@@ -299,5 +299,9 @@
   "partyTypeEducationalInstitution": "Établissement d'enseignement",
   "partyTypeHealthcareProvider": "Fournisseur de soins de santé",
   "selectPartyType": "Sélectionner le type de partie",
-  "selectDateOrDateRange": "Choisissez une date ou une plage de dates"
+  "selectDateOrDateRange": "Choisissez une date ou une plage de dates",
+  "selectDateRange": "Sélectionner la plage de dates",
+  "fromDate": "Date de début",
+  "toDate": "Date de fin",
+  "apply": "Appliquer"
 }

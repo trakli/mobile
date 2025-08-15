@@ -301,5 +301,9 @@
   "partyTypeEducationalInstitution": "Educational Institution",
   "partyTypeHealthcareProvider": "Healthcare Provider",
   "selectPartyType": "Select party type",
-  "selectDateOrDateRange": "Pick a date or select a date range"
+  "selectDateOrDateRange": "Pick a date or select a date range",
+  "selectDateRange": "Select Date Range",
+  "fromDate": "From Date",
+  "toDate": "To Date",
+  "apply": "Apply"
 }

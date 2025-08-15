@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart'
     show PickerDateRange;
 import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/dialogs/date_range_picker.dart';
+import 'package:trakli/presentation/utils/dialogs/custom_range_picker.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
@@ -50,8 +50,8 @@ class DateListPopover extends StatelessWidget {
                 onTap: () async {
                   if (index == DateFilterOption.values.length - 1) {
                     await showCustomDialog(
-                      widget: DateRangePicker(
-                        onDateSelected: (range) {
+                      widget: CustomRangePicker(
+                        onSelect: (range) {
                           onSelect(range);
                           onSelectString(option);
                         },

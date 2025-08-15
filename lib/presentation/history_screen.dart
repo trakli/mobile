@@ -123,7 +123,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Column(
               children: [
                 Row(
-                  spacing: 6.w,
+                  spacing: 4.w,
                   children: [
                     if (showSearch)
                       Expanded(
@@ -159,20 +159,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ),
                         ),
                       )
-                    else ...[
-                      _filterType(
-                        iconPath: Assets.images.calendar,
-                        filterType: FilterType.date,
+                    else
+                      Expanded(
+                        child: Row(
+                          spacing: 6.w,
+                          children: [
+                            _filterType(
+                              iconPath: Assets.images.calendar,
+                              filterType: FilterType.date,
+                            ),
+                            _filterType(
+                              iconPath: Assets.images.tag2,
+                              filterType: FilterType.category,
+                            ),
+                            _filterType(
+                              iconPath: Assets.images.wallet,
+                              filterType: FilterType.wallet,
+                            ),
+                          ],
+                        ),
                       ),
-                      _filterType(
-                        iconPath: Assets.images.tag2,
-                        filterType: FilterType.category,
-                      ),
-                      _filterType(
-                        iconPath: Assets.images.wallet,
-                        filterType: FilterType.wallet,
-                      ),
-                    ],
                     IconButton(
                       padding: EdgeInsets.zero,
                       style: IconButton.styleFrom(
@@ -272,11 +278,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         } else if (item is CategoryEntity) {
                           itemName = item.name;
                         } else if (item is DateFilterOption) {
-                          itemName = item.name.tr();
+                          if (item == DateFilterOption.custom) {
+                            itemName = formatRange(dateRange) ?? "";
+                          } else {
+                            itemName = item.name.tr();
+                          }
                         }
 
                         return _selectedItem(
-                            isWallet: item is WalletEntity,
+                            iconPath: getIconPath(item),
                             name: itemName,
                             onTap: () {
                               setState(() {
@@ -410,9 +420,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Expanded(
       child: Builder(
         builder: (context) {
-          return InkWell(
+          return OutlinedButton.icon(
             key: key,
-            onTap: () {
+            onPressed: () {
               showCustomPopOver(
                 context,
                 maxWidth: filterType == FilterType.date ? 0.45.sw : null,
@@ -451,46 +461,48 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             },
                             onSelectString: (dateFilterOption) {
                               setState(() {
-                                selectedItems
-                                    .removeWhere((item) => item is DateFilterOption);
+                                selectedItems.removeWhere(
+                                    (item) => item is DateFilterOption);
                                 selectedItems.add(dateFilterOption);
                               });
                             },
                           ),
               );
             },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 12.h,
-              ),
-              decoration: BoxDecoration(
-                color: appPrimaryColor.withAlpha(20),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: appPrimaryColor,
-                  width: 0.5.w,
-                ),
-              ),
-              child: Row(
-                spacing: 4.w,
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    iconPath,
-                    width: 12.w,
-                    height: 12.h,
-                  ),
-                  Text(
-                    filterType.filterName,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: neutralN900,
-                    ),
-                  )
-                ],
-              ),
+            icon: SvgPicture.asset(
+              iconPath,
+              width: 12.w,
+              height: 12.h,
             ),
+            label: Text(
+              filterType.filterName,
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: neutralN900,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            // child: Container(
+            //   padding: EdgeInsets.symmetric(
+            //     vertical: 12.h,
+            //     horizontal: 4.w,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: appPrimaryColor.withAlpha(20),
+            //     borderRadius: BorderRadius.circular(8.r),
+            //     border: Border.all(
+            //       color: appPrimaryColor,
+            //       width: 0.5.w,
+            //     ),
+            //   ),
+            //   child: Row(
+            //     spacing: 4.w,
+            //     mainAxisSize: MainAxisSize.min,
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //     ],
+            //   ),
+            // ),
           );
         },
       ),
@@ -498,7 +510,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _selectedItem({
-    bool isWallet = false,
+    String? iconPath,
     required String name,
     VoidCallback? onTap,
   }) {
@@ -515,11 +527,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         spacing: 4.w,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            width: 16.w,
-            height: 16.h,
-            isWallet ? Assets.images.wallet : Assets.images.tag2,
-          ),
+          if (iconPath != null)
+            SvgPicture.asset(
+              width: 16.w,
+              height: 16.h,
+              iconPath,
+            ),
           Text(
             name,
             style: TextStyle(
