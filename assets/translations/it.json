@@ -311,5 +311,6 @@
   "newPassword": "Nuova password",
   "resetPassword": "Reimposta password",
   "passwordMatchError": "Le password non corrispondono",
-  "otpEmptyError": "Inserisci il codice OTP"
+  "otpEmptyError": "Inserisci il codice OTP",
+  "otpInvalidError": "Il codice OTP deve contenere solo numeri"
 }

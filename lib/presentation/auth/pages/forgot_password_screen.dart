@@ -197,12 +197,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           SizedBox(height: 8.h),
           CustomTextField(
+            keyboardType: TextInputType.number,
             controller: codeController,
             hintText: LocaleKeys.code.tr(),
             filled: true,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return LocaleKeys.otpEmptyError.tr();
+              } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                return LocaleKeys.otpInvalidError.tr();
               }
               return null;
             },
@@ -254,7 +257,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   if (formKey.currentState!.validate()) {
                     context.read<LoginCubit>().passwordReset(
                           email: emailController.text,
-                          code: codeController.text,
+                          code: int.parse(codeController.text),
                           newPassword: newPassController.text,
                           newPasswordConfirmation:
                               newPassConfirmController.text,

@@ -30,7 +30,7 @@ abstract class AuthRemoteDataSource {
 
   Future<ApiResponse> passwordReset({
     required String email,
-    required String code,
+    required int code,
     required String newPassword,
     required String newPasswordConfirmation,
   });
@@ -116,7 +116,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<ApiResponse> passwordReset({
     required String email,
-    required String code,
+    required int code,
     required String newPassword,
     required String newPasswordConfirmation,
   }) {

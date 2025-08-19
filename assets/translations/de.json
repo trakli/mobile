@@ -311,5 +311,6 @@
   "newPassword": "Neues Passwort",
   "resetPassword": "Passwort zurücksetzen",
   "passwordMatchError": "Passwörter stimmen nicht überein",
-  "otpEmptyError": "Bitte geben Sie den OTP-Code ein"
+  "otpEmptyError": "Bitte geben Sie den OTP-Code ein",
+  "otpInvalidError": "Der OTP-Code darf nur Zahlen enthalten"
 }

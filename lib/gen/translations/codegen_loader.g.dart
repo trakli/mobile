@@ -316,5 +316,6 @@ abstract class  LocaleKeys {
   static const resetPassword = 'resetPassword';
   static const passwordMatchError = 'passwordMatchError';
   static const otpEmptyError = 'otpEmptyError';
+  static const otpInvalidError = 'otpInvalidError';
 
 }

@@ -32,7 +32,7 @@ abstract class AuthRepository {
 
   Future<Either<Failure, ApiResponse>> passwordReset({
     required String email,
-    required String code,
+    required int code,
     required String newPassword,
     required String newPasswordConfirmation,
   });

@@ -85,7 +85,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> passwordReset({
     required String email,
-    required String code,
+    required int code,
     required String newPassword,
     required String newPasswordConfirmation,
   }) async {

@@ -24,7 +24,7 @@ class PasswordResetUseCase implements UseCase<ApiResponse, PasswordResetParams> 
 
 class PasswordResetParams {
   final String email;
-  final String code;
+  final int code;
   final String newPassword;
   final String newPasswordConfirmation;
 
