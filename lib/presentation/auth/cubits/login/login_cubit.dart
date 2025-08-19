@@ -68,6 +68,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> passwordResetCode({
     required String email,
   }) async {
+    if (state is _Submitting) return;
     emit(const LoginState.submitting());
 
     final result = await _passwordResetCodeUseCase(
@@ -88,6 +89,7 @@ class LoginCubit extends Cubit<LoginState> {
     required String newPassword,
     required String newPasswordConfirmation,
   }) async {
+    if (state is _Submitting) return;
     emit(const LoginState.submitting());
 
     final result = await _passwordResetUseCase(
@@ -100,8 +102,8 @@ class LoginCubit extends Cubit<LoginState> {
     );
 
     result.fold(
-          (failure) => emit(LoginState.error(failure)),
-          (response) => emit(LoginState.resetPassword(response)),
+      (failure) => emit(LoginState.error(failure)),
+      (response) => emit(LoginState.resetPassword(response)),
     );
   }
 }

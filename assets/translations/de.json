@@ -309,5 +309,6 @@
   "sendCode": "Code senden",
   "code": "Code",
   "newPassword": "Neues Passwort",
-  "resetPassword": "Passwort zurücksetzen"
+  "resetPassword": "Passwort zurücksetzen",
+  "passwordMatchError": "Passwörter stimmen nicht überein"
 }

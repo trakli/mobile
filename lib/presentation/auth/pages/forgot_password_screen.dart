@@ -30,7 +30,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void nextPage() {
     pageController.nextPage(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.easeIn,
     );
   }
@@ -219,7 +219,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             controller: newPassConfirmController,
             hintText: LocaleKeys.confirmPassword.tr(),
             filled: true,
-            validator: validatePassword,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return LocaleKeys.passEmptyDesc.tr();
+              } else if (value != newPassController.text) {
+                return LocaleKeys.passwordMatchError.tr();
+              }
+              return null;
+            },
           ),
           SizedBox(height: 24.h),
           SizedBox(

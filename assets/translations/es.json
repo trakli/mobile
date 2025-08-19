@@ -308,5 +308,6 @@
   "sendCode": "Enviar código",
   "code": "Código",
   "newPassword": "Nueva contraseña",
-  "resetPassword": "Restablecer contraseña"
+  "resetPassword": "Restablecer contraseña",
+  "passwordMatchError": "Las contraseñas no coinciden"
 }

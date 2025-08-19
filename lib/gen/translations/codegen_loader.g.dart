@@ -314,5 +314,6 @@ abstract class  LocaleKeys {
   static const code = 'code';
   static const newPassword = 'newPassword';
   static const resetPassword = 'resetPassword';
+  static const passwordMatchError = 'passwordMatchError';
 
 }
