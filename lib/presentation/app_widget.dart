@@ -326,12 +326,11 @@ class _AppViewState extends State<AppView> {
             ),
           ),
           textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
               ),
+              foregroundColor: appPrimaryColor,
             ),
           ),
           popupMenuTheme: PopupMenuThemeData(

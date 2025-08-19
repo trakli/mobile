@@ -57,4 +57,22 @@ class LoginCubit extends Cubit<LoginState> {
       (user) => emit(LoginState.success(user)),
     );
   }
+
+  Future<void> passwordResetCode({
+    required String email,
+  }) async {
+    emit(const LoginState.submitting());
+
+    // final result = await _loginWithPhonePassword(
+    //   LoginWithPhoneParams(
+    //     phone: phone,
+    //     password: password,
+    //   ),
+    // );
+    //
+    // result.fold(
+    //       (failure) => emit(LoginState.error(failure)),
+    //       (user) => emit(LoginState.success(user)),
+    // );
+  }
 }

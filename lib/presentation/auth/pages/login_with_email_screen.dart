@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/pages/forgot_password_screen.dart';
 import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
@@ -149,6 +150,18 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       buttonTextColor: Colors.white,
                     );
                   }),
+                ),
+                SizedBox(height: 4.h),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                    onPressed: () {
+                      AppNavigator.push(context, const ForgotPasswordScreen());
+                    },
+                    child: Text(
+                      LocaleKeys.forgotPassword.tr(),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 Align(
