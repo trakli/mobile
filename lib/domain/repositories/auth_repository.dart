@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 
@@ -22,6 +24,17 @@ abstract class AuthRepository {
     String? lastName,
     String? username,
     String? phone,
+  });
+
+  Future<Either<Failure, ApiResponse>> passwordResetCode({
+    required String email,
+  });
+
+  Future<Either<Failure, ApiResponse>> passwordReset({
+    required String email,
+    required String code,
+    required String newPassword,
+    required String newPasswordConfirmation,
   });
 
   Stream<AuthStatus> get authStatus;

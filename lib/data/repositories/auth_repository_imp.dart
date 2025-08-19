@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/exceptions.dart';
@@ -11,6 +12,7 @@ import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
+import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/mappers/user_mapper.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
@@ -173,6 +175,36 @@ class AuthRepositoryImpl implements AuthRepository {
     return RepositoryErrorHandler.handleApiCall<Unit>(() async {
       await _preferenceManager.onboardingCompleted();
       return unit;
+    });
+  }
+
+  @override
+  Future<Either<Failure, ApiResponse>> passwordResetCode({
+    required String email,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<ApiResponse>(() async {
+      final authResponse = await _remoteDataSource.passwordResetCode(
+        email: email,
+      );
+      return authResponse;
+    });
+  }
+
+  @override
+  Future<Either<Failure, ApiResponse>> passwordReset({
+    required String email,
+    required String code,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<ApiResponse>(() async {
+      final authResponse = await _remoteDataSource.passwordReset(
+        email: email,
+        code: code,
+        newPassword: newPassword,
+        newPasswordConfirmation: newPasswordConfirmation,
+      );
+      return authResponse;
     });
   }
 }
