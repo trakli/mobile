@@ -303,5 +303,9 @@
   "selectDateRange": "Sélectionner la plage de dates",
   "fromDate": "Date de début",
   "toDate": "Date de fin",
-  "apply": "Appliquer"
+  "apply": "Appliquer",
+  "sendCode": "Envoyer le code",
+  "code": "Code",
+  "newPassword": "Nouveau mot de passe",
+  "resetPassword": "Réinitialiser le mot de passe"
 }

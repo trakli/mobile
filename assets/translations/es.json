@@ -304,5 +304,9 @@
   "selectDateRange": "Seleccionar rango de fechas",
   "fromDate": "Fecha de inicio",
   "toDate": "Fecha de fin",
-  "apply": "Aplicar"
+  "apply": "Aplicar",
+  "sendCode": "Enviar código",
+  "code": "Código",
+  "newPassword": "Nueva contraseña",
+  "resetPassword": "Restablecer contraseña"
 }

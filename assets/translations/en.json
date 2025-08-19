@@ -305,5 +305,9 @@
   "selectDateRange": "Select Date Range",
   "fromDate": "From Date",
   "toDate": "To Date",
-  "apply": "Apply"
+  "apply": "Apply",
+  "sendCode": "Send Code",
+  "code": "Code",
+  "newPassword": "New password",
+  "resetPassword": "Reset password"
 }

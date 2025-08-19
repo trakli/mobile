@@ -53,21 +53,22 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         state.when(
-          initial: () {},
-          submitting: () {
-            showLoader();
-          },
-          success: (user) {
-            hideLoader();
-          },
-          error: (failure) {
-            hideLoader();
-            showSnackBar(
-              message: failure.customMessage,
-              borderRadius: 8.r,
-            );
-          },
-        );
+            initial: () {},
+            submitting: () {
+              showLoader();
+            },
+            success: (user) {
+              hideLoader();
+            },
+            error: (failure) {
+              hideLoader();
+              showSnackBar(
+                message: failure.customMessage,
+                borderRadius: 8.r,
+              );
+            },
+            resetCode: (response) {},
+            resetPassword: (response) {});
       },
       child: Scaffold(
         backgroundColor: Colors.white,

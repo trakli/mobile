@@ -6,13 +6,15 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
 
 @injectable
-class PasswordResetCodeUseCase implements UseCase<void, PasswordResetCodeParams> {
+class PasswordResetCodeUseCase
+    implements UseCase<ApiResponse, PasswordResetCodeParams> {
   final AuthRepository _authRepository;
 
   PasswordResetCodeUseCase(this._authRepository);
 
   @override
-  Future<Either<Failure, ApiResponse>> call(PasswordResetCodeParams params) async {
+  Future<Either<Failure, ApiResponse>> call(
+      PasswordResetCodeParams params) async {
     return await _authRepository.passwordResetCode(
       email: params.email,
     );

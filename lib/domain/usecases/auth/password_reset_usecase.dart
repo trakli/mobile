@@ -6,7 +6,7 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
 
 @injectable
-class PasswordResetUseCase implements UseCase<void, PasswordResetParams> {
+class PasswordResetUseCase implements UseCase<ApiResponse, PasswordResetParams> {
   final AuthRepository _authRepository;
 
   PasswordResetUseCase(this._authRepository);

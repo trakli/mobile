@@ -21,6 +21,8 @@ mixin _$LoginState {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
     required TResult Function(Failure failure) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -29,6 +31,8 @@ mixin _$LoginState {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
     TResult? Function(Failure failure)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,6 +41,8 @@ mixin _$LoginState {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) =>
@@ -46,6 +52,8 @@ mixin _$LoginState {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -54,6 +62,8 @@ mixin _$LoginState {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -62,6 +72,8 @@ mixin _$LoginState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -133,6 +145,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
     required TResult Function(Failure failure) error,
   }) {
     return initial();
@@ -144,6 +158,8 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
     TResult? Function(Failure failure)? error,
   }) {
     return initial?.call();
@@ -155,6 +171,8 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -170,6 +188,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -181,6 +201,8 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -192,6 +214,8 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -250,6 +274,8 @@ class _$SubmittingImpl implements _Submitting {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
     required TResult Function(Failure failure) error,
   }) {
     return submitting();
@@ -261,6 +287,8 @@ class _$SubmittingImpl implements _Submitting {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
     TResult? Function(Failure failure)? error,
   }) {
     return submitting?.call();
@@ -272,6 +300,8 @@ class _$SubmittingImpl implements _Submitting {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -287,6 +317,8 @@ class _$SubmittingImpl implements _Submitting {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
     required TResult Function(_Error value) error,
   }) {
     return submitting(this);
@@ -298,6 +330,8 @@ class _$SubmittingImpl implements _Submitting {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
     TResult? Function(_Error value)? error,
   }) {
     return submitting?.call(this);
@@ -309,6 +343,8 @@ class _$SubmittingImpl implements _Submitting {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -406,6 +442,8 @@ class _$SuccessImpl implements _Success {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
     required TResult Function(Failure failure) error,
   }) {
     return success(user);
@@ -417,6 +455,8 @@ class _$SuccessImpl implements _Success {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
     TResult? Function(Failure failure)? error,
   }) {
     return success?.call(user);
@@ -428,6 +468,8 @@ class _$SuccessImpl implements _Success {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -443,6 +485,8 @@ class _$SuccessImpl implements _Success {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
     required TResult Function(_Error value) error,
   }) {
     return success(this);
@@ -454,6 +498,8 @@ class _$SuccessImpl implements _Success {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
     TResult? Function(_Error value)? error,
   }) {
     return success?.call(this);
@@ -465,6 +511,8 @@ class _$SuccessImpl implements _Success {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -484,6 +532,361 @@ abstract class _Success implements LoginState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SuccessImplCopyWith<_$SuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ResetCodeImplCopyWith<$Res> {
+  factory _$$ResetCodeImplCopyWith(
+          _$ResetCodeImpl value, $Res Function(_$ResetCodeImpl) then) =
+      __$$ResetCodeImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({ApiResponse response});
+
+  $ApiResponseCopyWith<$Res> get response;
+}
+
+/// @nodoc
+class __$$ResetCodeImplCopyWithImpl<$Res>
+    extends _$LoginStateCopyWithImpl<$Res, _$ResetCodeImpl>
+    implements _$$ResetCodeImplCopyWith<$Res> {
+  __$$ResetCodeImplCopyWithImpl(
+      _$ResetCodeImpl _value, $Res Function(_$ResetCodeImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? response = null,
+  }) {
+    return _then(_$ResetCodeImpl(
+      null == response
+          ? _value.response
+          : response // ignore: cast_nullable_to_non_nullable
+              as ApiResponse,
+    ));
+  }
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiResponseCopyWith<$Res> get response {
+    return $ApiResponseCopyWith<$Res>(_value.response, (value) {
+      return _then(_value.copyWith(response: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$ResetCodeImpl implements _ResetCode {
+  const _$ResetCodeImpl(this.response);
+
+  @override
+  final ApiResponse response;
+
+  @override
+  String toString() {
+    return 'LoginState.resetCode(response: $response)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ResetCodeImpl &&
+            (identical(other.response, response) ||
+                other.response == response));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, response);
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ResetCodeImplCopyWith<_$ResetCodeImpl> get copyWith =>
+      __$$ResetCodeImplCopyWithImpl<_$ResetCodeImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() submitting,
+    required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
+    required TResult Function(Failure failure) error,
+  }) {
+    return resetCode(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? submitting,
+    TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
+    TResult? Function(Failure failure)? error,
+  }) {
+    return resetCode?.call(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? submitting,
+    TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
+    TResult Function(Failure failure)? error,
+    required TResult orElse(),
+  }) {
+    if (resetCode != null) {
+      return resetCode(response);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Submitting value) submitting,
+    required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
+    required TResult Function(_Error value) error,
+  }) {
+    return resetCode(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Submitting value)? submitting,
+    TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
+    TResult? Function(_Error value)? error,
+  }) {
+    return resetCode?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Submitting value)? submitting,
+    TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (resetCode != null) {
+      return resetCode(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ResetCode implements LoginState {
+  const factory _ResetCode(final ApiResponse response) = _$ResetCodeImpl;
+
+  ApiResponse get response;
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResetCodeImplCopyWith<_$ResetCodeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ResetPasswordImplCopyWith<$Res> {
+  factory _$$ResetPasswordImplCopyWith(
+          _$ResetPasswordImpl value, $Res Function(_$ResetPasswordImpl) then) =
+      __$$ResetPasswordImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({ApiResponse response});
+
+  $ApiResponseCopyWith<$Res> get response;
+}
+
+/// @nodoc
+class __$$ResetPasswordImplCopyWithImpl<$Res>
+    extends _$LoginStateCopyWithImpl<$Res, _$ResetPasswordImpl>
+    implements _$$ResetPasswordImplCopyWith<$Res> {
+  __$$ResetPasswordImplCopyWithImpl(
+      _$ResetPasswordImpl _value, $Res Function(_$ResetPasswordImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? response = null,
+  }) {
+    return _then(_$ResetPasswordImpl(
+      null == response
+          ? _value.response
+          : response // ignore: cast_nullable_to_non_nullable
+              as ApiResponse,
+    ));
+  }
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiResponseCopyWith<$Res> get response {
+    return $ApiResponseCopyWith<$Res>(_value.response, (value) {
+      return _then(_value.copyWith(response: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$ResetPasswordImpl implements _ResetPassword {
+  const _$ResetPasswordImpl(this.response);
+
+  @override
+  final ApiResponse response;
+
+  @override
+  String toString() {
+    return 'LoginState.resetPassword(response: $response)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ResetPasswordImpl &&
+            (identical(other.response, response) ||
+                other.response == response));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, response);
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ResetPasswordImplCopyWith<_$ResetPasswordImpl> get copyWith =>
+      __$$ResetPasswordImplCopyWithImpl<_$ResetPasswordImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() submitting,
+    required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
+    required TResult Function(Failure failure) error,
+  }) {
+    return resetPassword(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? submitting,
+    TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
+    TResult? Function(Failure failure)? error,
+  }) {
+    return resetPassword?.call(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? submitting,
+    TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
+    TResult Function(Failure failure)? error,
+    required TResult orElse(),
+  }) {
+    if (resetPassword != null) {
+      return resetPassword(response);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Submitting value) submitting,
+    required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
+    required TResult Function(_Error value) error,
+  }) {
+    return resetPassword(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Submitting value)? submitting,
+    TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
+    TResult? Function(_Error value)? error,
+  }) {
+    return resetPassword?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Submitting value)? submitting,
+    TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (resetPassword != null) {
+      return resetPassword(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ResetPassword implements LoginState {
+  const factory _ResetPassword(final ApiResponse response) =
+      _$ResetPasswordImpl;
+
+  ApiResponse get response;
+
+  /// Create a copy of LoginState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResetPasswordImplCopyWith<_$ResetPasswordImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -570,6 +973,8 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) resetCode,
+    required TResult Function(ApiResponse response) resetPassword,
     required TResult Function(Failure failure) error,
   }) {
     return error(failure);
@@ -581,6 +986,8 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? resetCode,
+    TResult? Function(ApiResponse response)? resetPassword,
     TResult? Function(Failure failure)? error,
   }) {
     return error?.call(failure);
@@ -592,6 +999,8 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? resetCode,
+    TResult Function(ApiResponse response)? resetPassword,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -607,6 +1016,8 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_ResetCode value) resetCode,
+    required TResult Function(_ResetPassword value) resetPassword,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -618,6 +1029,8 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_ResetCode value)? resetCode,
+    TResult? Function(_ResetPassword value)? resetPassword,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -629,6 +1042,8 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_ResetCode value)? resetCode,
+    TResult Function(_ResetPassword value)? resetPassword,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
