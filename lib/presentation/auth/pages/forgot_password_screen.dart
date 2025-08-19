@@ -36,6 +36,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    codeController.dispose();
+    newPassController.dispose();
+    newPassConfirmController.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
@@ -190,6 +200,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             controller: codeController,
             hintText: LocaleKeys.code.tr(),
             filled: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return LocaleKeys.otpEmptyError.tr();
+              }
+              return null;
+            },
           ),
           SizedBox(height: 16.h),
           Text(

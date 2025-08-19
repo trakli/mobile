@@ -310,5 +310,6 @@
   "code": "Code",
   "newPassword": "New password",
   "resetPassword": "Reset password",
-  "passwordMatchError": "Passwords do not match"
+  "passwordMatchError": "Passwords do not match",
+  "otpEmptyError": "Please enter the OTP code"
 }

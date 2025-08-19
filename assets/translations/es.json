@@ -309,5 +309,6 @@
   "code": "Código",
   "newPassword": "Nueva contraseña",
   "resetPassword": "Restablecer contraseña",
-  "passwordMatchError": "Las contraseñas no coinciden"
+  "passwordMatchError": "Las contraseñas no coinciden",
+  "otpEmptyError": "Por favor, introduzca el código OTP"
 }
