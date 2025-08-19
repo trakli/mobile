@@ -310,5 +310,12 @@ abstract class  LocaleKeys {
   static const fromDate = 'fromDate';
   static const toDate = 'toDate';
   static const apply = 'apply';
+  static const sendCode = 'sendCode';
+  static const code = 'code';
+  static const newPassword = 'newPassword';
+  static const resetPassword = 'resetPassword';
+  static const passwordMatchError = 'passwordMatchError';
+  static const otpEmptyError = 'otpEmptyError';
+  static const otpInvalidError = 'otpInvalidError';
 
 }

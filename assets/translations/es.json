@@ -304,5 +304,12 @@
   "selectDateRange": "Seleccionar rango de fechas",
   "fromDate": "Fecha de inicio",
   "toDate": "Fecha de fin",
-  "apply": "Aplicar"
+  "apply": "Aplicar",
+  "sendCode": "Enviar código",
+  "code": "Código",
+  "newPassword": "Nueva contraseña",
+  "resetPassword": "Restablecer contraseña",
+  "passwordMatchError": "Las contraseñas no coinciden",
+  "otpEmptyError": "Por favor, introduzca el código OTP",
+  "otpInvalidError": "El código OTP debe contener solo números"
 }

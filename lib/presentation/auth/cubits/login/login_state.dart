@@ -5,5 +5,7 @@ class LoginState with _$LoginState {
   const factory LoginState.initial() = _Initial;
   const factory LoginState.submitting() = _Submitting;
   const factory LoginState.success(UserEntity user) = _Success;
+  const factory LoginState.resetCode(ApiResponse response) = _ResetCode;
+  const factory LoginState.resetPassword(ApiResponse response) = _ResetPassword;
   const factory LoginState.error(Failure failure) = _Error;
 }

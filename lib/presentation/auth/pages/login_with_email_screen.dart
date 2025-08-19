@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/pages/forgot_password_screen.dart';
 import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
@@ -52,21 +53,22 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         state.when(
-          initial: () {},
-          submitting: () {
-            showLoader();
-          },
-          success: (user) {
-            hideLoader();
-          },
-          error: (failure) {
-            hideLoader();
-            showSnackBar(
-              message: failure.customMessage,
-              borderRadius: 8.r,
-            );
-          },
-        );
+            initial: () {},
+            submitting: () {
+              showLoader();
+            },
+            success: (user) {
+              hideLoader();
+            },
+            error: (failure) {
+              hideLoader();
+              showSnackBar(
+                message: failure.customMessage,
+                borderRadius: 8.r,
+              );
+            },
+            resetCode: (response) {},
+            resetPassword: (response) {});
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -149,6 +151,18 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       buttonTextColor: Colors.white,
                     );
                   }),
+                ),
+                SizedBox(height: 4.h),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                    onPressed: () {
+                      AppNavigator.push(context, const ForgotPasswordScreen());
+                    },
+                    child: Text(
+                      LocaleKeys.forgotPassword.tr(),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 Align(

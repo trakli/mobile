@@ -23,6 +23,17 @@ abstract class AuthRemoteDataSource {
     String? phone,
     required String password,
   });
+
+  Future<ApiResponse> passwordResetCode({
+    required String email,
+  });
+
+  Future<ApiResponse> passwordReset({
+    required String email,
+    required int code,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  });
 }
 
 @Injectable(as: AuthRemoteDataSource)
@@ -85,6 +96,42 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       return AuthResponseDto.fromJson(response.data);
+    });
+  }
+
+  @override
+  Future<ApiResponse> passwordResetCode({
+    required String email,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        '/password/reset-code',
+        data: {'email': email},
+      );
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return apiResponse;
+    });
+  }
+
+  @override
+  Future<ApiResponse> passwordReset({
+    required String email,
+    required int code,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        '/password/reset',
+        data: {
+          'email': email,
+          'code': code,
+          'new_password': newPassword,
+          'new_password_confirmation': newPasswordConfirmation,
+        },
+      );
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return apiResponse;
     });
   }
 }
