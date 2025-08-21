@@ -42,7 +42,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^30.1.42
   syncfusion_flutter_core: ^30.1.42
   dropdown_search: ^6.0.2
-  file_picker: ^8.1.7
+  file_picker: ^10.3.2
   font_awesome_flutter: ^10.8.0
   currency_picker: ^2.0.21
   smooth_page_indicator: ^1.2.0+3
