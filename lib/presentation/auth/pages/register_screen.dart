@@ -171,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             });
           }
         },
-        buttonText: "Start Sign Up",
+        buttonText: LocaleKeys.startSignUp.tr(),
         buttonTextColor: Colors.white,
       ),
     );
@@ -182,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Verification Code",
+          LocaleKeys.verificationCode.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -191,9 +191,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SizedBox(height: 8.h),
         CustomTextField(
           controller: codeController,
-          hintText: "Enter code",
+          hintText: LocaleKeys.enterCode.tr(),
           filled: true,
-          validator: validateEmail,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return LocaleKeys.otpEmptyError.tr();
+            } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+              return LocaleKeys.otpInvalidError.tr();
+            }
+            return null;
+          },
         ),
         SizedBox(height: 16.h),
         SizedBox(
@@ -207,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 });
               }
             },
-            buttonText: "Submit Code",
+            buttonText: LocaleKeys.submitCode.tr(),
             buttonTextColor: Colors.white,
           ),
         ),
@@ -216,8 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           alignment: Alignment.topRight,
           child: TextButton(
             onPressed: () {},
-            child: const Text(
-              "Resend Code",
+            child: Text(
+              LocaleKeys.resendCode.tr(),
             ),
           ),
         ),
