@@ -318,5 +318,8 @@
   "verificationCode": "Codice di verifica",
   "enterCode": "Inserisci il codice",
   "submitCode": "Invia codice",
-  "resendCode": "Reinvia codice"
+  "resendCode": "Reinvia codice",
+  "or": "O",
+  "proceedWithGoogle": "Continua con Google",
+  "proceedWithApple": "Continua con Apple"
 }

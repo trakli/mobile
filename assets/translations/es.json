@@ -317,5 +317,8 @@
   "verificationCode": "Código de verificación",
   "enterCode": "Ingrese el código",
   "submitCode": "Enviar código",
-  "resendCode": "Reenviar código"
+  "resendCode": "Reenviar código",
+  "or": "O",
+  "proceedWithGoogle": "Continuar con Google",
+  "proceedWithApple": "Continuar con Apple"
 }

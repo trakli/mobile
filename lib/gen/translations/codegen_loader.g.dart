@@ -323,5 +323,8 @@ abstract class  LocaleKeys {
   static const enterCode = 'enterCode';
   static const submitCode = 'submitCode';
   static const resendCode = 'resendCode';
+  static const or = 'or';
+  static const proceedWithGoogle = 'proceedWithGoogle';
+  static const proceedWithApple = 'proceedWithApple';
 
 }
