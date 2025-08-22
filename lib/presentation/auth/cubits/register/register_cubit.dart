@@ -78,4 +78,54 @@ class RegisterCubit extends Cubit<RegisterState> {
       },
     );
   }
+
+  Future<void> verifyEmail({
+    required String email,
+    required String code,
+  }) async {
+    emit(const RegisterState.submitting());
+
+    final result = await _verifyEmailUseCase(
+      VerifyEmailParams(
+        email: email,
+        code: code,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        emit(RegisterState.error(failure));
+      },
+      (response) {
+        emit(RegisterState.process(response));
+      },
+    );
+  }
+
+  Future<void> createUserNew({
+    required String email,
+    required String password,
+    required String firstName,
+    String? lastName,
+  }) async {
+    emit(const RegisterState.submitting());
+
+    final result = await _createUserNewUseCase(
+      CreateUserNewParams(
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        emit(RegisterState.error(failure));
+      },
+      (response) {
+        emit(RegisterState.process(response));
+      },
+    );
+  }
 }
