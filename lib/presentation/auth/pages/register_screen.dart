@@ -110,12 +110,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 SizedBox(height: 28.h),
-                Text(
-                  LocaleKeys.email.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  spacing: 4.w,
+                  children: [
+                    Text(
+                      LocaleKeys.email.tr(),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (currentStep == 2)
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: appPrimaryColor,
+                        size: 24.sp,
+                      ),
+                  ],
                 ),
                 SizedBox(height: 8.h),
                 CustomTextField(
