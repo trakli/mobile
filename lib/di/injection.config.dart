@@ -79,7 +79,9 @@ import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/wallet_repository.dart' as _i368;
+import '../domain/usecases/auth/create_user_new_usecase.dart' as _i875;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
+import '../domain/usecases/auth/get_otp_usecase.dart' as _i402;
 import '../domain/usecases/auth/is_onboarding_completed.dart' as _i828;
 import '../domain/usecases/auth/login_by_email_usecase.dart' as _i42;
 import '../domain/usecases/auth/login_by_phone_usecase.dart' as _i498;
@@ -93,6 +95,7 @@ import '../domain/usecases/auth/password_reset_code_usecase.dart' as _i542;
 import '../domain/usecases/auth/password_reset_usecase.dart' as _i494;
 import '../domain/usecases/auth/register_usecase.dart' as _i705;
 import '../domain/usecases/auth/stream_auth_status.dart' as _i444;
+import '../domain/usecases/auth/verify_email_usecase.dart' as _i100;
 import '../domain/usecases/category/add_category_usecase.dart' as _i445;
 import '../domain/usecases/category/delete_category_usecase.dart' as _i292;
 import '../domain/usecases/category/get_categories_usecase.dart' as _i961;
@@ -299,8 +302,12 @@ _i174.GetIt $initGetIt(
       () => _i542.PasswordResetCodeUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i524.LoginWithEmailUseCase>(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
-  gh.factory<_i831.RegisterCubit>(
-      () => _i831.RegisterCubit(gh<_i705.RegisterUseCase>()));
+  gh.factory<_i100.VerifyEmailUseCase>(
+      () => _i100.VerifyEmailUseCase(gh<_i800.AuthRepository>()));
+  gh.factory<_i875.CreateUserNewUseCase>(
+      () => _i875.CreateUserNewUseCase(gh<_i800.AuthRepository>()));
+  gh.factory<_i402.GetOtpCodeUseCase>(
+      () => _i402.GetOtpCodeUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i768.LoginWithEmailPassword>(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
@@ -385,6 +392,12 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
+  gh.factory<_i831.RegisterCubit>(() => _i831.RegisterCubit(
+        gh<_i705.RegisterUseCase>(),
+        gh<_i402.GetOtpCodeUseCase>(),
+        gh<_i100.VerifyEmailUseCase>(),
+        gh<_i875.CreateUserNewUseCase>(),
+      ));
   gh.factory<_i314.FetchSubscriptionPlans>(
       () => _i314.FetchSubscriptionPlans(gh<_i804.SubscriptionRepository>()));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(
