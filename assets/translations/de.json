@@ -317,5 +317,8 @@
   "verificationCode": "Bestätigungscode",
   "enterCode": "Code eingeben",
   "submitCode": "Code absenden",
-  "resendCode": "Code erneut senden"
+  "resendCode": "Code erneut senden",
+  "or": "ODER",
+  "proceedWithGoogle": "Mit Google fortfahren",
+  "proceedWithApple": "Mit Apple fortfahren"
 }

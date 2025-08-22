@@ -78,6 +78,7 @@ class LoginScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12.sp),
               child: Row(
+                spacing: 28.w,
                 children: [
                   const Expanded(
                     child: Divider(
@@ -85,9 +86,7 @@ class LoginScreen extends StatelessWidget {
                       color: Color(0xFF79828E),
                     ),
                   ),
-                  SizedBox(width: 28.w),
-                  const Text("OU"),
-                  SizedBox(width: 28.w),
+                  Text(LocaleKeys.or.tr()),
                   const Expanded(
                     child: Divider(
                       height: 0,
@@ -104,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                 iconPath: Assets.images.google,
                 borderColor: const Color(0xFF79828E),
                 backgroundColor: Colors.white,
-                buttonText: "Proceed with google",
+                buttonText: LocaleKeys.proceedWithGoogle.tr(),
                 buttonTextColor: textColor,
               ),
             ),
@@ -116,7 +115,7 @@ class LoginScreen extends StatelessWidget {
                 iconPath: Assets.images.apple,
                 borderColor: const Color(0xFF79828E),
                 backgroundColor: Colors.white,
-                buttonText: "Proceed with apple",
+                buttonText: LocaleKeys.proceedWithApple.tr(),
                 buttonTextColor: textColor,
               ),
             ),
