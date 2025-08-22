@@ -318,5 +318,10 @@ abstract class  LocaleKeys {
   static const passwordMatchError = 'passwordMatchError';
   static const otpEmptyError = 'otpEmptyError';
   static const otpInvalidError = 'otpInvalidError';
+  static const startSignUp = 'startSignUp';
+  static const verificationCode = 'verificationCode';
+  static const enterCode = 'enterCode';
+  static const submitCode = 'submitCode';
+  static const resendCode = 'resendCode';
 
 }
