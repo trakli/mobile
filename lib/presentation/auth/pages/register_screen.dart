@@ -60,20 +60,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<RegisterCubit, RegisterState>(
       listener: (context, state) {
         state.when(
-          initial: () {},
-          submitting: () {
-            showLoader();
-          },
-          success: (user) {
-            hideLoader();
-          },
-          error: (failure) {
-            hideLoader();
-            showSnackBar(
-                message: failure.customMessage,
-                backgroundColor: expenseRedText);
-          },
-        );
+            initial: () {},
+            submitting: () {
+              showLoader();
+            },
+            success: (user) {
+              hideLoader();
+            },
+            error: (failure) {
+              hideLoader();
+              showSnackBar(
+                  message: failure.customMessage,
+                  backgroundColor: expenseRedText);
+            },
+            process: (response) {
+              hideLoader();
+            });
       },
       child: Scaffold(
         backgroundColor: Colors.white,
