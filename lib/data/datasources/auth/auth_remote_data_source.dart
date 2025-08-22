@@ -34,6 +34,22 @@ abstract class AuthRemoteDataSource {
     required String newPassword,
     required String newPasswordConfirmation,
   });
+
+  Future<ApiResponse> getOtpCode({
+    required String email,
+  });
+
+  Future<ApiResponse> verifyEmail({
+    required String email,
+    required String code,
+  });
+
+  Future<ApiResponse> createUserNew({
+    required String firstName,
+    String? lastName,
+    required String email,
+    required String password,
+  });
 }
 
 @Injectable(as: AuthRemoteDataSource)
@@ -128,6 +144,65 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'code': code,
           'new_password': newPassword,
           'new_password_confirmation': newPasswordConfirmation,
+        },
+      );
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return apiResponse;
+    });
+  }
+
+  @override
+  Future<ApiResponse> getOtpCode({
+    required String email,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        // Todo fit end point
+        '/password/reset',
+        data: {
+          'email': email,
+        },
+      );
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return apiResponse;
+    });
+  }
+
+  @override
+  Future<ApiResponse> verifyEmail({
+    required String email,
+    required String code,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        // Todo fit end point
+        '/password/reset',
+        data: {
+          'email': email,
+          'code': code,
+        },
+      );
+      final apiResponse = ApiResponse.fromJson(response.data);
+      return apiResponse;
+    });
+  }
+
+  @override
+  Future<ApiResponse> createUserNew({
+    required String firstName,
+    String? lastName,
+    required String email,
+    required String password,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        // Todo fit end point
+        '/password/reset',
+        data: {
+          'email': email,
+          'password': password,
+          'first_name': firstName,
+          if (lastName != null && lastName.isNotEmpty) 'last_name': lastName,
         },
       );
       final apiResponse = ApiResponse.fromJson(response.data);

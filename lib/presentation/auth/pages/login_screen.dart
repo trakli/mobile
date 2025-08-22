@@ -9,6 +9,7 @@ import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -37,14 +38,13 @@ class LoginScreen extends StatelessWidget {
             SvgPicture.asset(
               Assets.images.logoGreen,
             ),
-            SizedBox(height: 8.h),
             SvgPicture.asset(
               Assets.images.loginLogo,
             ),
-            SizedBox(height: 30.h),
+            SizedBox(height: 20.h),
             SizedBox(
               width: double.infinity,
-              height: 54.h,
+              height: 52.h,
               child: PrimaryButton(
                 onPress: () {
                   Navigator.push(
@@ -97,36 +97,30 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 16.w,
-              children: [
-                SizedBox(
-                  height: 54.h,
-                  child: PrimaryButton(
-                    onPress: () {
-                      // TODO: Implement Google sign in
-                    },
-                    iconPath: Assets.images.google,
-                    borderColor: const Color(0xFF79828E),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                  height: 54.h,
-                  child: PrimaryButton(
-                    onPress: () {
-                      // TODO: Implement Apple sign in
-                    },
-                    iconPath: Assets.images.apple,
-                    buttonTextColor: const Color(0xFF79828E),
-                    borderColor: const Color(0xFF79828E),
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: 54.h,
+              child: PrimaryButton(
+                onPress: () {},
+                iconPath: Assets.images.google,
+                borderColor: const Color(0xFF79828E),
+                backgroundColor: Colors.white,
+                buttonText: "Proceed with google",
+                buttonTextColor: textColor,
+              ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 12.h),
+            SizedBox(
+              height: 54.h,
+              child: PrimaryButton(
+                onPress: () {},
+                iconPath: Assets.images.apple,
+                borderColor: const Color(0xFF79828E),
+                backgroundColor: Colors.white,
+                buttonText: "Proceed with apple",
+                buttonTextColor: textColor,
+              ),
+            ),
+            SizedBox(height: 8.h),
             TextButton(
               onPressed: () {
                 AppNavigator.push(
