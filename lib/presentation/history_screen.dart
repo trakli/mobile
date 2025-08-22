@@ -482,27 +482,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               overflow: TextOverflow.ellipsis,
             ),
-            // child: Container(
-            //   padding: EdgeInsets.symmetric(
-            //     vertical: 12.h,
-            //     horizontal: 4.w,
-            //   ),
-            //   decoration: BoxDecoration(
-            //     color: appPrimaryColor.withAlpha(20),
-            //     borderRadius: BorderRadius.circular(8.r),
-            //     border: Border.all(
-            //       color: appPrimaryColor,
-            //       width: 0.5.w,
-            //     ),
-            //   ),
-            //   child: Row(
-            //     spacing: 4.w,
-            //     mainAxisSize: MainAxisSize.min,
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //     ],
-            //   ),
-            // ),
           );
         },
       ),

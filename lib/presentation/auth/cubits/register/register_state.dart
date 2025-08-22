@@ -5,5 +5,6 @@ class RegisterState with _$RegisterState {
   const factory RegisterState.initial() = _Initial;
   const factory RegisterState.submitting() = _Submitting;
   const factory RegisterState.success(UserEntity user) = _Success;
+  const factory RegisterState.process(ApiResponse response) = _Process;
   const factory RegisterState.error(Failure failure) = _Error;
 }

@@ -28,8 +28,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController codeController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late final TapGestureRecognizer _recognizerTap;
+  int currentStep = 0;
 
   @override
   void initState() {
@@ -58,20 +60,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<RegisterCubit, RegisterState>(
       listener: (context, state) {
         state.when(
-          initial: () {},
-          submitting: () {
-            showLoader();
-          },
-          success: (user) {
-            hideLoader();
-          },
-          error: (failure) {
-            hideLoader();
-            showSnackBar(
-                message: failure.customMessage,
-                backgroundColor: expenseRedText);
-          },
-        );
+            initial: () {},
+            submitting: () {
+              showLoader();
+            },
+            success: (user) {
+              hideLoader();
+            },
+            error: (failure) {
+              hideLoader();
+              showSnackBar(
+                  message: failure.customMessage,
+                  backgroundColor: expenseRedText);
+            },
+            process: (response) {
+              hideLoader();
+            });
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -106,55 +110,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 SizedBox(height: 28.h),
-                Text(
-                  LocaleKeys.firstName.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: firstNameController,
-                  hintText: LocaleKeys.firstName.tr(),
-                  filled: true,
-                  validator: validateFirstName,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.lastName.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: lastNameController,
-                  hintText: LocaleKeys.lastName.tr(),
-                  filled: true,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.username.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: usernameController,
-                  hintText: LocaleKeys.username.tr(),
-                  filled: true,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.email.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  spacing: 4.w,
+                  children: [
+                    Text(
+                      LocaleKeys.email.tr(),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (currentStep == 2)
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: appPrimaryColor,
+                        size: 24.sp,
+                      ),
+                  ],
                 ),
                 SizedBox(height: 8.h),
                 CustomTextField(
@@ -162,51 +135,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: LocaleKeys.email.tr(),
                   filled: true,
                   validator: validateEmail,
+                  readOnly: currentStep != 0,
                 ),
                 SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.password.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: passwordController,
-                  hintText: LocaleKeys.password.tr(),
-                  isPassword: true,
-                  filled: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return LocaleKeys.passEmptyDesc.tr();
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 24.h),
-                SizedBox(
-                  width: double.infinity,
-                  height: 54.h,
-                  child: Builder(builder: (context) {
-                    return PrimaryButton(
-                      onPress: () {
-                        if (formKey.currentState!.validate()) {
-                          context.read<RegisterCubit>().register(
-                                firstName: firstNameController.text,
-                                lastName: lastNameController.text,
-                                username: usernameController.text,
-                                phone: phoneController.text,
-                                password: passwordController.text,
-                                email: emailController.text,
-                              );
-                        }
-                      },
-                      buttonText: LocaleKeys.createAccount.tr(),
-                      buttonTextColor: Colors.white,
-                    );
-                  }),
-                ),
+                if (currentStep == 0) _stepOne(),
+                if (currentStep == 1) _stepTwo(),
+                if (currentStep == 2) _stepThree(),
                 SizedBox(height: 16.h),
                 Align(
                   child: RichText(
@@ -234,6 +168,178 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _stepOne() {
+    return SizedBox(
+      width: double.infinity,
+      height: 54.h,
+      child: PrimaryButton(
+        onPress: () {
+          if (formKey.currentState!.validate()) {
+            setState(() {
+              currentStep = currentStep + 1;
+            });
+          }
+        },
+        buttonText: LocaleKeys.startSignUp.tr(),
+        buttonTextColor: Colors.white,
+      ),
+    );
+  }
+
+  _stepTwo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          LocaleKeys.verificationCode.tr(),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        CustomTextField(
+          keyboardType: TextInputType.number,
+          controller: codeController,
+          hintText: LocaleKeys.enterCode.tr(),
+          filled: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return LocaleKeys.otpEmptyError.tr();
+            } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+              return LocaleKeys.otpInvalidError.tr();
+            }
+            return null;
+          },
+        ),
+        SizedBox(height: 16.h),
+        SizedBox(
+          width: double.infinity,
+          height: 54.h,
+          child: PrimaryButton(
+            onPress: () {
+              if (formKey.currentState!.validate()) {
+                setState(() {
+                  currentStep = currentStep + 1;
+                });
+              }
+            },
+            buttonText: LocaleKeys.submitCode.tr(),
+            buttonTextColor: Colors.white,
+          ),
+        ),
+        SizedBox(height: 4.h),
+        Align(
+          alignment: Alignment.topRight,
+          child: TextButton(
+            onPressed: () {},
+            child: Text(
+              LocaleKeys.resendCode.tr(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _stepThree() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          spacing: 16.w,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.firstName.tr(),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    controller: firstNameController,
+                    hintText: LocaleKeys.firstName.tr(),
+                    filled: true,
+                    validator: validateFirstName,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.lastName.tr(),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    controller: lastNameController,
+                    hintText: LocaleKeys.lastName.tr(),
+                    filled: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          LocaleKeys.password.tr(),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        CustomTextField(
+          controller: passwordController,
+          hintText: LocaleKeys.password.tr(),
+          isPassword: true,
+          filled: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return LocaleKeys.passEmptyDesc.tr();
+            }
+            return null;
+          },
+        ),
+        SizedBox(height: 24.h),
+        SizedBox(
+          width: double.infinity,
+          height: 54.h,
+          child: Builder(builder: (context) {
+            return PrimaryButton(
+              onPress: () {
+                if (formKey.currentState!.validate()) {
+                  context.read<RegisterCubit>().register(
+                        firstName: firstNameController.text,
+                        lastName: lastNameController.text,
+                        username: usernameController.text,
+                        phone: phoneController.text,
+                        password: passwordController.text,
+                        email: emailController.text,
+                      );
+                }
+              },
+              buttonText: LocaleKeys.createAccount.tr(),
+              buttonTextColor: Colors.white,
+            );
+          }),
+        ),
+      ],
     );
   }
 }
