@@ -190,6 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         SizedBox(height: 8.h),
         CustomTextField(
+          keyboardType: TextInputType.number,
           controller: codeController,
           hintText: LocaleKeys.enterCode.tr(),
           filled: true,
