@@ -19,6 +19,16 @@ export PATH="$PATH:$FLUTTER_DIR/bin"
 # Install and configure FlutterFire CLI
 dart pub global activate flutterfire_cli
 
+# Set up PATH to include global pub cache where FlutterFire is installed
+export PATH="$PATH:$HOME/.pub-cache/bin"
+
+# Install Node.js and Firebase Tools as an alternative (more reliable in CI)
+if ! command -v node &> /dev/null; then
+  echo "Installing Node.js..."
+  brew install node
+fi
+npm install -g firebase-tools
+
 # Install Flutter artifacts for iOS (--ios), or macOS (--macos) platforms.
 flutter precache --ios
 
@@ -40,3 +50,7 @@ brew install cocoapods
 cd ios && pod install # run `pod install` in the `ios` directory.
 
 exit 0
+
+
+
+
