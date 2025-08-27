@@ -15,6 +15,10 @@ unzip -q flutter.zip -d $HOME
 rm flutter.zip
 export PATH="$PATH:$FLUTTER_DIR/bin"
 
+
+# Install and configure FlutterFire CLI
+dart pub global activate flutterfire_cli
+
 # Install Flutter artifacts for iOS (--ios), or macOS (--macos) platforms.
 flutter precache --ios
 
@@ -27,9 +31,6 @@ flutter precache --ios
 
 # Install Flutter dependencies.
 flutter pub get
-
-# configure flutter fire
-# dart pub global activate flutterfire_cli
 
 # Install CocoaPods using Homebrew.
 HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates.
