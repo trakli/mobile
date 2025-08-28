@@ -5,6 +5,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
+import 'package:trakli/core/error/exceptions.dart';
 
 abstract class CategoryLocalDataSource {
   Future<List<Category>> getAllCategories();
@@ -44,6 +45,15 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
   Future<Category> insertCategory(
       String name, String slug, TransactionType type, int userId,
       {String? description, Media? media}) async {
+    // Check if category name already exists
+    final existingCategory = await (database.select(database.categories)
+          ..where((c) => c.name.equals(name)))
+        .getSingleOrNull();
+
+    if (existingCategory != null) {
+      throw DuplicateException('Category with name "$name" already exists');
+    }
+
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
 
@@ -72,6 +82,18 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
     String? description,
     Media? media,
   }) async {
+    // Check if category name already exists (only if name is being updated)
+    if (name != null) {
+      final existingCategory = await (database.select(database.categories)
+            ..where(
+                (c) => c.name.equals(name) & c.clientId.isNotValue(clientId)))
+          .getSingleOrNull();
+
+      if (existingCategory != null) {
+        throw DuplicateException('Category with name "$name" already exists');
+      }
+    }
+
     final now = DateTime.now();
     DateTime dateTime = formatServerIsoDateTime(now);
 

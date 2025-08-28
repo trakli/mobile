@@ -51,7 +51,11 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
           if (state.failure.hasError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.failure.customMessage),
+                content: Text(state.failure.maybeMap(
+                  orElse: () => state.failure.customMessage,
+                  duplicate: (failure) =>
+                      LocaleKeys.categoryNameAlreadyExists.tr(),
+                )),
                 backgroundColor: Colors.red,
               ),
             );
