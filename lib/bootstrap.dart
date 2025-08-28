@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/crash_reporting.dart';
@@ -19,7 +20,13 @@ import 'package:trakli/presentation/utils/globals.dart';
 /// The error handler logs the error and its stack trace to the console.
 ///
 /// The error handler also initializes the Flutter app by calling [WidgetsFlutterBinding.ensureInitialized] and running the app in a zone guarded against errors
-Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
+Future<void> bootstrap(
+  FutureOr<Widget> Function() builder, {
+  bool sendCrashlyticsZoneErrors = true,
+}) async {
+  // Initialize crash reporting service outside the zone to make it available in error handler
+  CrashReportingService? crashReportingService;
+
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +39,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       configureDependencies(Environment.dev);
 
       // Initialize crash reporting
-      final crashReportingService = getIt<CrashReportingService>();
-      await crashReportingService.initialize();
+      crashReportingService = getIt<CrashReportingService>();
+      await crashReportingService?.initialize();
 
       // Initialize user context service
       final userContextService = getIt<UserContextService>();
@@ -46,7 +53,10 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       await driftSyncCrashReportingService.initialize();
 
       // Set up error handler with crash reporting
-      ErrorHandler.setCrashReportingService(crashReportingService);
+      ErrorHandler.setCrashReportingService(crashReportingService!);
+
+      // Set up BlocObserver for crash reporting
+      Bloc.observer = AppBlocObserver(crashReportingService);
 
       await EasyLocalization.ensureInitialized();
 
