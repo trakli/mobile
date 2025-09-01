@@ -21,6 +21,7 @@ mixin _$RegisterState {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
     required TResult Function(Failure failure) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -29,6 +30,7 @@ mixin _$RegisterState {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
     TResult? Function(Failure failure)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,6 +39,7 @@ mixin _$RegisterState {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) =>
@@ -46,6 +49,7 @@ mixin _$RegisterState {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -54,6 +58,7 @@ mixin _$RegisterState {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -62,6 +67,7 @@ mixin _$RegisterState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -133,6 +139,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
     required TResult Function(Failure failure) error,
   }) {
     return initial();
@@ -144,6 +151,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
     TResult? Function(Failure failure)? error,
   }) {
     return initial?.call();
@@ -155,6 +163,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -170,6 +179,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -181,6 +191,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -192,6 +203,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -250,6 +262,7 @@ class _$SubmittingImpl implements _Submitting {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
     required TResult Function(Failure failure) error,
   }) {
     return submitting();
@@ -261,6 +274,7 @@ class _$SubmittingImpl implements _Submitting {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
     TResult? Function(Failure failure)? error,
   }) {
     return submitting?.call();
@@ -272,6 +286,7 @@ class _$SubmittingImpl implements _Submitting {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -287,6 +302,7 @@ class _$SubmittingImpl implements _Submitting {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
     required TResult Function(_Error value) error,
   }) {
     return submitting(this);
@@ -298,6 +314,7 @@ class _$SubmittingImpl implements _Submitting {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
     TResult? Function(_Error value)? error,
   }) {
     return submitting?.call(this);
@@ -309,6 +326,7 @@ class _$SubmittingImpl implements _Submitting {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -406,6 +424,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
     required TResult Function(Failure failure) error,
   }) {
     return success(user);
@@ -417,6 +436,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
     TResult? Function(Failure failure)? error,
   }) {
     return success?.call(user);
@@ -428,6 +448,7 @@ class _$SuccessImpl implements _Success {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -443,6 +464,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
     required TResult Function(_Error value) error,
   }) {
     return success(this);
@@ -454,6 +476,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
     TResult? Function(_Error value)? error,
   }) {
     return success?.call(this);
@@ -465,6 +488,7 @@ class _$SuccessImpl implements _Success {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -484,6 +508,177 @@ abstract class _Success implements RegisterState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SuccessImplCopyWith<_$SuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ProcessImplCopyWith<$Res> {
+  factory _$$ProcessImplCopyWith(
+          _$ProcessImpl value, $Res Function(_$ProcessImpl) then) =
+      __$$ProcessImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({ApiResponse response});
+
+  $ApiResponseCopyWith<$Res> get response;
+}
+
+/// @nodoc
+class __$$ProcessImplCopyWithImpl<$Res>
+    extends _$RegisterStateCopyWithImpl<$Res, _$ProcessImpl>
+    implements _$$ProcessImplCopyWith<$Res> {
+  __$$ProcessImplCopyWithImpl(
+      _$ProcessImpl _value, $Res Function(_$ProcessImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RegisterState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? response = null,
+  }) {
+    return _then(_$ProcessImpl(
+      null == response
+          ? _value.response
+          : response // ignore: cast_nullable_to_non_nullable
+              as ApiResponse,
+    ));
+  }
+
+  /// Create a copy of RegisterState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiResponseCopyWith<$Res> get response {
+    return $ApiResponseCopyWith<$Res>(_value.response, (value) {
+      return _then(_value.copyWith(response: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$ProcessImpl implements _Process {
+  const _$ProcessImpl(this.response);
+
+  @override
+  final ApiResponse response;
+
+  @override
+  String toString() {
+    return 'RegisterState.process(response: $response)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProcessImpl &&
+            (identical(other.response, response) ||
+                other.response == response));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, response);
+
+  /// Create a copy of RegisterState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ProcessImplCopyWith<_$ProcessImpl> get copyWith =>
+      __$$ProcessImplCopyWithImpl<_$ProcessImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() submitting,
+    required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
+    required TResult Function(Failure failure) error,
+  }) {
+    return process(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? submitting,
+    TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
+    TResult? Function(Failure failure)? error,
+  }) {
+    return process?.call(response);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? submitting,
+    TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
+    TResult Function(Failure failure)? error,
+    required TResult orElse(),
+  }) {
+    if (process != null) {
+      return process(response);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Submitting value) submitting,
+    required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
+    required TResult Function(_Error value) error,
+  }) {
+    return process(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Submitting value)? submitting,
+    TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
+    TResult? Function(_Error value)? error,
+  }) {
+    return process?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Submitting value)? submitting,
+    TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (process != null) {
+      return process(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Process implements RegisterState {
+  const factory _Process(final ApiResponse response) = _$ProcessImpl;
+
+  ApiResponse get response;
+
+  /// Create a copy of RegisterState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ProcessImplCopyWith<_$ProcessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -570,6 +765,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() submitting,
     required TResult Function(UserEntity user) success,
+    required TResult Function(ApiResponse response) process,
     required TResult Function(Failure failure) error,
   }) {
     return error(failure);
@@ -581,6 +777,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? submitting,
     TResult? Function(UserEntity user)? success,
+    TResult? Function(ApiResponse response)? process,
     TResult? Function(Failure failure)? error,
   }) {
     return error?.call(failure);
@@ -592,6 +789,7 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? submitting,
     TResult Function(UserEntity user)? success,
+    TResult Function(ApiResponse response)? process,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -607,6 +805,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Submitting value) submitting,
     required TResult Function(_Success value) success,
+    required TResult Function(_Process value) process,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -618,6 +817,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Submitting value)? submitting,
     TResult? Function(_Success value)? success,
+    TResult? Function(_Process value)? process,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -629,6 +829,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Submitting value)? submitting,
     TResult Function(_Success value)? success,
+    TResult Function(_Process value)? process,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

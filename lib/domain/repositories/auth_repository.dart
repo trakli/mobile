@@ -37,6 +37,22 @@ abstract class AuthRepository {
     required String newPasswordConfirmation,
   });
 
+  Future<Either<Failure, ApiResponse>> getOtpCode({
+    required String email,
+  });
+
+  Future<Either<Failure, ApiResponse>> verifyEmail({
+    required String email,
+    required String code,
+  });
+
+  Future<Either<Failure, ApiResponse>> createUserNew({
+    required String firstName,
+    String? lastName,
+    required String email,
+    required String password,
+  });
+
   Stream<AuthStatus> get authStatus;
 
   Future<Either<Failure, Unit>> logout();
