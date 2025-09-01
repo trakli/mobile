@@ -308,6 +308,13 @@ _i174.GetIt $initGetIt(
       () => _i875.CreateUserNewUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i402.GetOtpCodeUseCase>(
       () => _i402.GetOtpCodeUseCase(gh<_i800.AuthRepository>()));
+  gh.factory<_i455.CategoryCubit>(() => _i455.CategoryCubit(
+        gh<_i445.AddCategoryUseCase>(),
+        gh<_i986.UpdateCategoryUseCase>(),
+        gh<_i292.DeleteCategoryUseCase>(),
+        gh<_i961.GetCategoriesUseCase>(),
+        gh<_i500.ListenToCategoriesUseCase>(),
+      ));
   gh.factory<_i768.LoginWithEmailPassword>(
       () => _i768.LoginWithEmailPassword(gh<_i800.AuthRepository>()));
   gh.factory<_i723.LoginWithPhonePassword>(
@@ -342,12 +349,6 @@ _i174.GetIt $initGetIt(
       () => _i714.ListenToPartiesUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i397.ListenExchangeRate>(
       () => _i397.ListenExchangeRate(gh<_i1057.ExchangeRateRepository>()));
-  gh.factory<_i455.CategoryCubit>(() => _i455.CategoryCubit(
-        gh<_i445.AddCategoryUseCase>(),
-        gh<_i986.UpdateCategoryUseCase>(),
-        gh<_i292.DeleteCategoryUseCase>(),
-        gh<_i961.GetCategoriesUseCase>(),
-      ));
   gh.factory<_i88.BenefitsCubit>(
       () => _i88.BenefitsCubit(gh<_i61.FetchBenefits>()));
   gh.factory<_i640.LogoutUsecase>(
