@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -6,14 +7,15 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/category/add_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/delete_category_usecase.dart';
 import 'package:trakli/domain/usecases/category/get_categories_usecase.dart';
+import 'package:trakli/domain/usecases/category/listen_to_categories_usecase.dart';
 import 'package:trakli/domain/usecases/category/update_category_usecase.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
-part 'category_state.dart';
 part 'category_cubit.freezed.dart';
+part 'category_state.dart';
 
 @injectable
 class CategoryCubit extends Cubit<CategoryState> {
@@ -21,14 +23,17 @@ class CategoryCubit extends Cubit<CategoryState> {
   final UpdateCategoryUseCase _updateCategoryUseCase;
   final DeleteCategoryUseCase _deleteCategoryUseCase;
   final GetCategoriesUseCase _getCategoriesUseCase;
+  final ListenToCategoriesUseCase listenToCategoriesUseCase;
+  StreamSubscription? _categoriesSubscription;
 
   CategoryCubit(
     this._addCategoryUseCase,
     this._updateCategoryUseCase,
     this._deleteCategoryUseCase,
     this._getCategoriesUseCase,
+    this.listenToCategoriesUseCase,
   ) : super(CategoryState.initial()) {
-    loadCategories();
+    listenToCategories();
   }
 
   Future<void> loadCategories() async {
@@ -142,5 +147,24 @@ class CategoryCubit extends Cubit<CategoryState> {
         failure: const Failure.none(),
       )),
     );
+  }
+
+  void listenToCategories() {
+    _categoriesSubscription?.cancel();
+    _categoriesSubscription = listenToCategoriesUseCase(NoParams()).listen(
+      (either) => either.fold(
+        (failure) => emit(state.copyWith(failure: failure)),
+        (categories) => emit(state.copyWith(
+          categories: categories,
+          failure: const Failure.none(),
+        )),
+      ),
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _categoriesSubscription?.cancel();
+    return super.close();
   }
 }
