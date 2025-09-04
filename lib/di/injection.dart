@@ -14,7 +14,6 @@ final getIt = GetIt.instance;
   ignoreUnregisteredTypes: [
     AppDatabase,
     SyncTypeHandler<Transaction, String, int>,
-    // SyncDependencyManagerBase,
     SyncDependencyManager
   ],
 )

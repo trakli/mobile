@@ -274,6 +274,7 @@
   "deleteGroup": "Delete Group",
   "deleteGroupConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
   "duplicate": "Duplicate",
+  "categoryNameAlreadyExists": "Le nom de la catégorie existe déjà",
   "deleteWallet": "Delete Wallet",
   "deleteWalletConfirm": "Are you sure you want to delete {name}?",
   "defaultName": "Default",

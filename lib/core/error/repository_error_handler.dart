@@ -26,6 +26,8 @@ class RepositoryErrorHandler {
       return left(const NetworkFailure());
     } on UnknownException {
       return left(const UnknownFailure());
+    } on DuplicateException catch (e) {
+      return left(DuplicateFailure(e.message));
     } on NotFoundException {
       return left(const NotFoundFailure());
     } catch (e, stackTrace) {

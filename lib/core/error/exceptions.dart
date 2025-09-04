@@ -50,3 +50,8 @@ class ValidationException extends ApiException {
   ValidationException(super.message, {required this.errors})
       : super(statusCode: 422);
 }
+
+class DuplicateException extends ApiException {
+  DuplicateException(super.message, {int? statusCode, super.data})
+      : super(statusCode: statusCode ?? 409);
+}
