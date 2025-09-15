@@ -22,12 +22,6 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
       KeyConstants.selectedCurrency,
       jsonEncode(model.toJson()),
     );
-    // if (model.selectedCurrency != null) {
-    //   await _preferenceManager.setString(
-    //     KeyConstants.selectedCurrency,
-    //     jsonEncode(model.toJson()),
-    //   );
-    // }
   }
 
   @override
