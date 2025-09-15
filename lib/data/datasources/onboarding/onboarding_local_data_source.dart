@@ -18,10 +18,16 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
 
   @override
   Future<void> saveOnboardingState(OnboardingModel model) async {
-    if (model.selectedCurrency != null) {
-      await _preferenceManager.setString(
-          KeyConstants.selectedCurrency, jsonEncode(model.toJson()));
-    }
+    await _preferenceManager.setString(
+      KeyConstants.selectedCurrency,
+      jsonEncode(model.toJson()),
+    );
+    // if (model.selectedCurrency != null) {
+    //   await _preferenceManager.setString(
+    //     KeyConstants.selectedCurrency,
+    //     jsonEncode(model.toJson()),
+    //   );
+    // }
   }
 
   @override

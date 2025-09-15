@@ -37,7 +37,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     return super.close();
   }
 
-  Future<void> setCurrentGroup(GroupEntity groupEntity) async {
+  Future<void> setCurrentGroup(GroupEntity? groupEntity) async {
     emit(
       state.copyWith(selectedGroup: groupEntity),
     );

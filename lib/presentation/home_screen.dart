@@ -86,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final wallets = context.watch<WalletCubit>().state.wallets;
 
     final groups = context.watch<GroupCubit>().state.groups;
-    final defaultGroupId =
-        context.watch<OnboardingCubit>().state.entity?.defaultGroup;
+    final entity = context.watch<OnboardingCubit>().state.entity;
+    final defaultGroupId = entity?.defaultGroup;
 
     final defaultGroup =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context.watch<TransactionCubit>().state.selectedGroup;
 
     if (transactionGroup == null && selectedGroup != null) {
-      context.watch<TransactionCubit>().setCurrentGroup(selectedGroup);
+      context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
     }
 
     return Scaffold(
@@ -226,8 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         if (mounted && groupEntity != null) {
                           setState(() {
-                            // group = groupEntity;
-
                             context
                                 .read<TransactionCubit>()
                                 .setCurrentGroup(groupEntity);
