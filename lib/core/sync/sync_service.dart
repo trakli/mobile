@@ -9,7 +9,7 @@ class SyncService {
 
   void startPeriodicSync(VoidCallback callback) {
     _syncTimer?.cancel();
-    _syncTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+    _syncTimer = Timer.periodic(const Duration(minutes: 10), (_) {
       callback();
     });
   }

@@ -92,17 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final defaultGroup =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 
-    final selectedGroup =
-        context.watch<TransactionCubit>().state.selectedGroup ??
-            defaultGroup ??
-            groups.firstOrNull;
-
-    final transactionGroup =
+    final currentSelectedGroup =
         context.watch<TransactionCubit>().state.selectedGroup;
 
-    if (transactionGroup == null && selectedGroup != null) {
-      context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
-    }
+    final selectedGroup =
+        currentSelectedGroup ?? defaultGroup ?? groups.firstOrNull;
+
+    context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
 
     return Scaffold(
       appBar: CustomAppBar(
