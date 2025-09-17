@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
@@ -27,12 +28,10 @@ class EnsureDefaultGroupExistsUseCase
         if (settings == null) {
           return const Left(Failure.notFound());
         }
-        if (settings.defaultGroup != null) {
-          return const Right(unit);
-        }
 
         // Only fetch groups if defaultGroup is not set
         final hasAnyGroup = await groupRepository.getAllGroups();
+
         return hasAnyGroup.fold(
           (failure) => Left(failure),
           (groups) async {
@@ -54,6 +53,12 @@ class EnsureDefaultGroupExistsUseCase
                 );
               });
             } else {
+              // if default group is not in the groups, then insert it
+              final defaultGroup = groups.firstWhereOrNull(
+                  (group) => group.clientId == settings.defaultGroup);
+              if (defaultGroup != null) {
+                return const Right(unit);
+              }
               // Set the first group as default and save.
               final updatedSettings =
                   settings.copyWith(defaultGroup: groups.first.clientId);

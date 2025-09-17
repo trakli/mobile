@@ -53,8 +53,8 @@ class PartyDisplayWidget extends StatelessWidget {
           ),
           Container(
             padding: EdgeInsets.symmetric(
-              vertical: 4.h,
-              horizontal: 8.w,
+              vertical: 1.h,
+              horizontal: 1.w,
             ),
             decoration: BoxDecoration(
               color: const Color(0xFFF5F6F7),

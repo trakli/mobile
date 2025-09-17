@@ -398,6 +398,7 @@ class _AppViewState extends State<AppView> {
                     },
                     unauthenticated: () async {
                       getIt<SynchAppDatabase>().stopAllSync();
+                      context.read<TransactionCubit>().setCurrentGroup(null);
 
                       final entityResult = await getIt<OnboardingRepository>()
                           .getOnboardingState();
