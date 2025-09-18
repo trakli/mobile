@@ -37,6 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   String? _phoneNumber;
   RegisterType registerType = RegisterType.email;
   late TabController _tabController;
+  bool canMove = true;
 
   @override
   void initState() {
@@ -80,9 +81,11 @@ class _RegisterScreenState extends State<RegisterScreen>
             },
             process: (response) {
               hideLoader();
-              setState(() {
-                currentStep = currentStep + 1;
-              });
+              if (canMove) {
+                setState(() {
+                  currentStep = currentStep + 1;
+                });
+              }
             });
       },
       child: Scaffold(
@@ -268,6 +271,9 @@ class _RegisterScreenState extends State<RegisterScreen>
           height: 54.h,
           child: PrimaryButton(
             onPress: () {
+              setState(() {
+                canMove = true;
+              });
               if (formKey.currentState!.validate()) {
                 if (registerType == RegisterType.email) {
                   context.read<RegisterCubit>().verifyEmail(
@@ -292,7 +298,24 @@ class _RegisterScreenState extends State<RegisterScreen>
         Align(
           alignment: Alignment.topRight,
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                canMove = false;
+              });
+              if (registerType == RegisterType.phone) {
+                if (_phoneNumber != null && _phoneNumber!.isNotEmpty) {
+                  context.read<RegisterCubit>().getOtpCode(
+                        phone: _phoneNumber,
+                        type: registerType.name,
+                      );
+                }
+              } else {
+                context.read<RegisterCubit>().getOtpCode(
+                      email: emailController.text,
+                      type: registerType.name,
+                    );
+              }
+            },
             child: Text(
               LocaleKeys.resendCode.tr(),
             ),
