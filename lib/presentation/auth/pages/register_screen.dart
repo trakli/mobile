@@ -124,13 +124,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                   indicatorColor: appPrimaryColor,
                   labelColor: appPrimaryColor,
                   controller: _tabController,
-                  onTap: (currentStep == 0)
-                      ? (index) {
+                  onTap:(index) {
                           setState(() {
                             registerType = RegisterType.values.elementAt(index);
                           });
                         }
-                      : null,
+                      ,
                   tabs: [
                     Tab(
                       text: LocaleKeys.email.tr(),
@@ -391,8 +390,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             controller: emailController,
             hintText: LocaleKeys.email.tr(),
             filled: true,
-            validator: validateEmail,
-            readOnly: currentStep != 0,
+            validator: validateEmailNoEmpty,
           )
         else
           CustomPhoneField(
