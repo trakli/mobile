@@ -134,3 +134,11 @@ jobs:
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
+
+      - name: Deploy to Firebase
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: "firebase"
+          subdirectory: android
+        env:
+          APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
