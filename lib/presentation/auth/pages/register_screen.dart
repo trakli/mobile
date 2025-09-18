@@ -23,7 +23,8 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
@@ -34,9 +35,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late final TapGestureRecognizer _recognizerTap;
   int currentStep = 0;
   String? _phoneNumber;
+  RegisterType registerType = RegisterType.email;
+  late TabController _tabController;
 
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
     _recognizerTap = TapGestureRecognizer()
       ..onTap = () {
         AppNavigator.pushReplacement(
@@ -113,13 +117,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                TabBar(
+                  indicatorColor: appPrimaryColor,
+                  labelColor: appPrimaryColor,
+                  controller: _tabController,
+                  onTap: (currentStep == 0)
+                      ? (index) {
+                          setState(() {
+                            registerType = RegisterType.values.elementAt(index);
+                          });
+                        }
+                      : null,
+                  tabs: [
+                    Tab(
+                      text: LocaleKeys.email.tr(),
+                    ),
+                    Tab(
+                      text: LocaleKeys.phoneNumber.tr(),
+                    )
+                  ],
+                ),
                 SizedBox(height: 28.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   spacing: 4.w,
                   children: [
                     Text(
-                      LocaleKeys.email.tr(),
+                      registerType == RegisterType.email
+                          ? LocaleKeys.email.tr()
+                          : LocaleKeys.phoneNumber.tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
@@ -134,13 +160,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: emailController,
-                  hintText: LocaleKeys.email.tr(),
-                  filled: true,
-                  validator: validateEmail,
-                  readOnly: currentStep != 0,
-                ),
+                if (registerType == RegisterType.email)
+                  CustomTextField(
+                    controller: emailController,
+                    hintText: LocaleKeys.email.tr(),
+                    filled: true,
+                    validator: validateEmail,
+                    readOnly: currentStep != 0,
+                  )
+                else
+                  CustomPhoneField(
+                    onChanged: (number) {
+                      _phoneNumber = number.completeNumber;
+                    },
+                  ),
                 SizedBox(height: 16.h),
                 if (currentStep == 0) _stepOne(),
                 if (currentStep == 1) _stepTwo(),
@@ -182,10 +215,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: PrimaryButton(
         onPress: () {
           if (formKey.currentState!.validate()) {
-            context.read<RegisterCubit>().getOtpCode(
-                  email: emailController.text,
-                  type: RegisterType.email.name,
-                );
+            if (registerType == RegisterType.phone) {
+              if (_phoneNumber != null && _phoneNumber!.isNotEmpty) {
+                context.read<RegisterCubit>().getOtpCode(
+                      phone: _phoneNumber,
+                      type: registerType.name,
+                    );
+              }
+            } else {
+              context.read<RegisterCubit>().getOtpCode(
+                    email: emailController.text,
+                    type: registerType.name,
+                  );
+            }
           }
         },
         buttonText: LocaleKeys.startSignUp.tr(),
@@ -227,11 +269,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: PrimaryButton(
             onPress: () {
               if (formKey.currentState!.validate()) {
-                context.read<RegisterCubit>().verifyEmail(
-                      email: emailController.text,
-                      code: codeController.text,
-                      type: RegisterType.email.name,
+                context.read<RegisterCubit>().getOtpCode(
+                      phone: _phoneNumber,
+                      type: registerType.name,
                     );
+                setState(() {
+                  currentStep = currentStep + 1;
+                });
               }
             },
             buttonText: LocaleKeys.submitCode.tr(),
@@ -304,18 +348,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         SizedBox(height: 16.h),
         Text(
-          LocaleKeys.phoneNumber.tr(),
+          !(registerType == RegisterType.email)
+              ? LocaleKeys.email.tr()
+              : LocaleKeys.phoneNumber.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: 8.h),
-        CustomPhoneField(
-          onChanged: (number) {
-            _phoneNumber = number.completeNumber;
-          },
-        ),
+        if (registerType == RegisterType.phone)
+          CustomTextField(
+            controller: emailController,
+            hintText: LocaleKeys.email.tr(),
+            filled: true,
+            validator: validateEmail,
+            readOnly: currentStep != 0,
+          )
+        else
+          CustomPhoneField(
+            onChanged: (number) {
+              _phoneNumber = number.completeNumber;
+            },
+          ),
         SizedBox(height: 16.h),
         Text(
           LocaleKeys.password.tr(),
