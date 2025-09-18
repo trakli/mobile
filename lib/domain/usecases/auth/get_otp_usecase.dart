@@ -17,14 +17,20 @@ class GetOtpCodeUseCase implements UseCase<ApiResponse, GetOtpCodeParams> {
   ) async {
     return await _authRepository.getOtpCode(
       email: params.email,
+      phone: params.phone,
+      type: params.type,
     );
   }
 }
 
 class GetOtpCodeParams {
-  final String email;
+  final String? email;
+  final String? phone;
+  final String type;
 
   const GetOtpCodeParams({
-    required this.email,
+    this.email,
+    this.phone,
+    required this.type,
   });
 }

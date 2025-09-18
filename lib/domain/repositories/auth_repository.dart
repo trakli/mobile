@@ -38,19 +38,16 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, ApiResponse>> getOtpCode({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
   });
 
   Future<Either<Failure, ApiResponse>> verifyEmail({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
     required String code,
-  });
-
-  Future<Either<Failure, ApiResponse>> createUserNew({
-    required String firstName,
-    String? lastName,
-    required String email,
-    required String password,
   });
 
   Stream<AuthStatus> get authStatus;

@@ -6,6 +6,18 @@ import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/statistics_screen.dart';
 import 'package:trakli/presentation/wallets/wallet_screen.dart';
 
+enum RegisterType {
+  email,
+  phone;
+
+  String get name {
+    return switch (this) {
+      RegisterType.email => 'email',
+      RegisterType.phone => 'phone',
+    };
+  }
+}
+
 enum WalletType {
   bank,
   cash,

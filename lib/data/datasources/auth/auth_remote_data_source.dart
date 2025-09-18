@@ -36,19 +36,16 @@ abstract class AuthRemoteDataSource {
   });
 
   Future<ApiResponse> getOtpCode({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
   });
 
   Future<ApiResponse> verifyEmail({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
     required String code,
-  });
-
-  Future<ApiResponse> createUserNew({
-    required String firstName,
-    String? lastName,
-    required String email,
-    required String password,
   });
 }
 
@@ -153,14 +150,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ApiResponse> getOtpCode({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
   }) {
+    String? contact;
+    if (phone != null && phone.isNotEmpty) contact = phone;
+    if (email != null && email.isNotEmpty) contact = email;
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
-        // Todo fit end point
-        '/password/reset',
+        '/send-verification-code',
         data: {
-          'email': email,
+          'contact': contact,
+          'type': type,
+          'purpose': 'registration',
         },
       );
       final apiResponse = ApiResponse.fromJson(response.data);
@@ -170,39 +173,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ApiResponse> verifyEmail({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
     required String code,
   }) {
+    String? contact;
+    if (phone != null && phone.isNotEmpty) contact = phone;
+    if (email != null && email.isNotEmpty) contact = email;
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
-        // Todo fit end point
-        '/password/reset',
+        '/verify-code',
         data: {
-          'email': email,
+          'contact': contact,
+          'type': type,
           'code': code,
-        },
-      );
-      final apiResponse = ApiResponse.fromJson(response.data);
-      return apiResponse;
-    });
-  }
-
-  @override
-  Future<ApiResponse> createUserNew({
-    required String firstName,
-    String? lastName,
-    required String email,
-    required String password,
-  }) {
-    return ErrorHandler.handleApiCall(() async {
-      final response = await _dio.post(
-        // Todo fit end point
-        '/password/reset',
-        data: {
-          'email': email,
-          'password': password,
-          'first_name': firstName,
-          if (lastName != null && lastName.isNotEmpty) 'last_name': lastName,
+          'purpose': 'registration',
         },
       );
       final apiResponse = ApiResponse.fromJson(response.data);

@@ -17,17 +17,23 @@ class VerifyEmailUseCase implements UseCase<ApiResponse, VerifyEmailParams> {
   ) async {
     return await _authRepository.verifyEmail(
       email: params.email,
+      phone: params.phone,
       code: params.code,
+      type: params.type,
     );
   }
 }
 
 class VerifyEmailParams {
-  final String email;
+  final String? email;
+  final String? phone;
+  final String type;
   final String code;
 
   const VerifyEmailParams({
-    required this.email,
+    this.email,
+    this.phone,
+    required this.type,
     required this.code,
   });
 }
