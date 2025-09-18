@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 20.h),
             SizedBox(
               width: double.infinity,
-              height: 52.h,
+              height: 54.h,
               child: PrimaryButton(
                 onPress: () {
                   Navigator.push(
