@@ -286,21 +286,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         Align(
           alignment: Alignment.topRight,
           child: TextButton(
-            onPressed: () {
-              if (registerType == RegisterType.phone) {
-                if (_phoneNumber != null && _phoneNumber!.isNotEmpty) {
-                  context.read<RegisterCubit>().getOtpCode(
-                        phone: _phoneNumber,
-                        type: registerType.name,
-                      );
-                }
-              } else {
-                context.read<RegisterCubit>().getOtpCode(
-                      email: emailController.text,
-                      type: registerType.name,
-                    );
-              }
-            },
+            onPressed: () {},
             child: Text(
               LocaleKeys.resendCode.tr(),
             ),
