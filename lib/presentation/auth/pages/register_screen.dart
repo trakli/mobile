@@ -344,8 +344,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Builder(builder: (context) {
             return PrimaryButton(
               onPress: () {
-                print("_phoneNumber");
-                print(_phoneNumber);
                 if (formKey.currentState!.validate()) {
                   context.read<RegisterCubit>().register(
                         firstName: firstNameController.text,
