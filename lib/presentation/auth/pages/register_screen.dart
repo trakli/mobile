@@ -269,13 +269,19 @@ class _RegisterScreenState extends State<RegisterScreen>
           child: PrimaryButton(
             onPress: () {
               if (formKey.currentState!.validate()) {
-                context.read<RegisterCubit>().getOtpCode(
-                      phone: _phoneNumber,
-                      type: registerType.name,
-                    );
-                setState(() {
-                  currentStep = currentStep + 1;
-                });
+                if (registerType == RegisterType.email) {
+                  context.read<RegisterCubit>().verifyEmail(
+                        email: emailController.text,
+                        code: codeController.text,
+                        type: registerType.name,
+                      );
+                } else {
+                  context.read<RegisterCubit>().verifyEmail(
+                        phone: _phoneNumber,
+                        code: codeController.text,
+                        type: registerType.name,
+                      );
+                }
               }
             },
             buttonText: LocaleKeys.submitCode.tr(),
