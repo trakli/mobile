@@ -207,4 +207,48 @@ class AuthRepositoryImpl implements AuthRepository {
       return authResponse;
     });
   }
+
+  @override
+  Future<Either<Failure, ApiResponse>> getOtpCode({
+    required String email,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<ApiResponse>(() async {
+      final authResponse = await _remoteDataSource.getOtpCode(
+        email: email,
+      );
+      return authResponse;
+    });
+  }
+
+  @override
+  Future<Either<Failure, ApiResponse>> verifyEmail({
+    required String email,
+    required String code,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<ApiResponse>(() async {
+      final authResponse = await _remoteDataSource.verifyEmail(
+        email: email,
+        code: code,
+      );
+      return authResponse;
+    });
+  }
+
+  @override
+  Future<Either<Failure, ApiResponse>> createUserNew({
+    required String firstName,
+    String? lastName,
+    required String email,
+    required String password,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<ApiResponse>(() async {
+      final authResponse = await _remoteDataSource.createUserNew(
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+      );
+      return authResponse;
+    });
+  }
 }

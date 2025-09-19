@@ -313,5 +313,13 @@
   "resetPassword": "Passwort zurücksetzen",
   "passwordMatchError": "Passwörter stimmen nicht überein",
   "otpEmptyError": "Bitte geben Sie den OTP-Code ein",
-  "otpInvalidError": "Der OTP-Code darf nur Zahlen enthalten"
+  "otpInvalidError": "Der OTP-Code darf nur Zahlen enthalten",
+  "startSignUp": "Registrierung starten",
+  "verificationCode": "Bestätigungscode",
+  "enterCode": "Code eingeben",
+  "submitCode": "Code absenden",
+  "resendCode": "Code erneut senden",
+  "or": "ODER",
+  "proceedWithGoogle": "Mit Google fortfahren",
+  "proceedWithApple": "Mit Apple fortfahren"
 }

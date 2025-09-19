@@ -311,5 +311,13 @@
   "resetPassword": "Réinitialiser le mot de passe",
   "passwordMatchError": "Les mots de passe ne correspondent pas",
   "otpEmptyError": "Veuillez entrer le code OTP",
-  "otpInvalidError": "Le code OTP doit contenir uniquement des chiffres"
+  "otpInvalidError": "Le code OTP doit contenir uniquement des chiffres",
+  "startSignUp": "Commencer l'inscription",
+  "verificationCode": "Code de vérification",
+  "enterCode": "Entrez le code",
+  "submitCode": "Soumettre le code",
+  "resendCode": "Renvoyer le code",
+  "or": "OU",
+  "proceedWithGoogle": "Continuer avec Google",
+  "proceedWithApple": "Continuer avec Apple"
 }

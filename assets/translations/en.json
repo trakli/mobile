@@ -313,5 +313,13 @@
   "resetPassword": "Reset password",
   "passwordMatchError": "Passwords do not match",
   "otpEmptyError": "Please enter the OTP code",
-  "otpInvalidError": "OTP must contain only numbers"
+  "otpInvalidError": "OTP must contain only numbers",
+  "startSignUp": "Start Sign Up",
+  "verificationCode": "Verification Code",
+  "enterCode": "Enter code",
+  "submitCode": "Submit Code",
+  "resendCode": "Resend Code",
+  "or": "OR",
+  "proceedWithGoogle": "Proceed with Google",
+  "proceedWithApple": "Proceed with Apple"
 }
