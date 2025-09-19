@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 @injectable
 class VerifyEmailUseCase implements UseCase<ApiResponse, VerifyEmailParams> {
@@ -30,10 +32,13 @@ class VerifyEmailParams {
   final String type;
   final String code;
 
-  const VerifyEmailParams({
+  VerifyEmailParams({
     this.email,
     this.phone,
     required this.type,
     required this.code,
-  });
+  }) : assert(
+          email != null || phone != null,
+          LocaleKeys.emailPhoneValidateDesc.tr(),
+        );
 }

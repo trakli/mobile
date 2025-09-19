@@ -106,7 +106,7 @@ String? validatePassword(String? value) {
 
 String? validateFirstName(String? value) {
   if (value == null || value.isEmpty) {
-    return LocaleKeys.firstName.tr();
+    return LocaleKeys.firstNameEmptyDesc.tr();
   }
   return null;
 }

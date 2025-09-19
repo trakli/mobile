@@ -124,12 +124,11 @@ class _RegisterScreenState extends State<RegisterScreen>
                   indicatorColor: appPrimaryColor,
                   labelColor: appPrimaryColor,
                   controller: _tabController,
-                  onTap:(index) {
-                          setState(() {
-                            registerType = RegisterType.values.elementAt(index);
-                          });
-                        }
-                      ,
+                  onTap: (index) {
+                    setState(() {
+                      registerType = RegisterType.values.elementAt(index);
+                    });
+                  },
                   tabs: [
                     Tab(
                       text: LocaleKeys.email.tr(),
@@ -373,6 +372,20 @@ class _RegisterScreenState extends State<RegisterScreen>
               ),
             ),
           ],
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          LocaleKeys.username.tr(),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        CustomTextField(
+          controller: usernameController,
+          hintText: LocaleKeys.username.tr(),
+          filled: true,
         ),
         SizedBox(height: 16.h),
         Text(

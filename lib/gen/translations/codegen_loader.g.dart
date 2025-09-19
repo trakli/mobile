@@ -154,6 +154,7 @@ abstract class  LocaleKeys {
   static const toExcel = 'toExcel';
   static const family = 'family';
   static const searchHint = 'searchHint';
+  static const totalIncome = 'totalIncome';
   static const displaySettings = 'displaySettings';
   static const transactionFormDisplayMode = 'transactionFormDisplayMode';
   static const themeMode = 'themeMode';
@@ -198,7 +199,6 @@ abstract class  LocaleKeys {
   static const exchangeRateHint = 'exchangeRateHint';
   static const valueRequired = 'valueRequired';
   static const transferMoney = 'transferMoney';
-  static const databaseViewer = 'databaseViewer';
   static const unknown = 'unknown';
   static const from = 'from';
   static const to = 'to';
@@ -266,7 +266,7 @@ abstract class  LocaleKeys {
   static const transactionsIn = 'transactionsIn';
   static const wallets = 'wallets';
   static const noData = 'noData';
-  static const totalIncome = 'totalIncome';
+  static const databaseViewer = 'databaseViewer';
   static const totalExpense = 'totalExpense';
   static const thisMonth = 'thisMonth';
   static const thisWeek = 'thisWeek';
@@ -283,6 +283,7 @@ abstract class  LocaleKeys {
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
   static const edit = 'edit';
+  static const defaultName = 'defaultName';
   static const officeElements = 'officeElements';
   static const officeElementsDesc = 'officeElementsDesc';
   static const monthly = 'monthly';
@@ -296,7 +297,6 @@ abstract class  LocaleKeys {
   static const deletePartyConfirm = 'deletePartyConfirm';
   static const general = 'general';
   static const pricePerMonth = 'pricePerMonth';
-  static const defaultName = 'defaultName';
   static const partyTypeIndividual = 'partyTypeIndividual';
   static const partyTypeOrganization = 'partyTypeOrganization';
   static const partyTypeBusiness = 'partyTypeBusiness';
@@ -326,5 +326,6 @@ abstract class  LocaleKeys {
   static const or = 'or';
   static const proceedWithGoogle = 'proceedWithGoogle';
   static const proceedWithApple = 'proceedWithApple';
+  static const emailPhoneValidateDesc = 'emailPhoneValidateDesc';
 
 }

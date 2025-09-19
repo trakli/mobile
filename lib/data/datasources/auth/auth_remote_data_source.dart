@@ -155,8 +155,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String type,
   }) {
     String? contact;
-    if (phone != null && phone.isNotEmpty) contact = phone;
-    if (email != null && email.isNotEmpty) contact = email;
+    if (phone != null && phone.isNotEmpty) {
+      contact = phone;
+    } else if (email != null && email.isNotEmpty) {
+      contact = email;
+    }
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
         '/send-verification-code',
@@ -179,8 +182,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String code,
   }) {
     String? contact;
-    if (phone != null && phone.isNotEmpty) contact = phone;
-    if (email != null && email.isNotEmpty) contact = email;
+    if (phone != null && phone.isNotEmpty) {
+      contact = phone;
+    } else if (email != null && email.isNotEmpty) {
+      contact = email;
+    }
     return ErrorHandler.handleApiCall(() async {
       final response = await _dio.post(
         '/verify-code',

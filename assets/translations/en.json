@@ -314,12 +314,13 @@
   "passwordMatchError": "Passwords do not match",
   "otpEmptyError": "Please enter the OTP code",
   "otpInvalidError": "OTP must contain only numbers",
-  "startSignUp": "Start Sign Up",
-  "verificationCode": "Verification Code",
+  "startSignUp": "Start sign up",
+  "verificationCode": "Verification code",
   "enterCode": "Enter code",
-  "submitCode": "Submit Code",
-  "resendCode": "Resend Code",
+  "submitCode": "Submit code",
+  "resendCode": "Resend code",
   "or": "OR",
   "proceedWithGoogle": "Proceed with Google",
-  "proceedWithApple": "Proceed with Apple"
+  "proceedWithApple": "Proceed with Apple",
+  "emailPhoneValidateDesc": "Either email or phone must be provided."
 }

@@ -321,5 +321,6 @@
   "resendCode": "Code erneut senden",
   "or": "ODER",
   "proceedWithGoogle": "Mit Google fortfahren",
-  "proceedWithApple": "Mit Apple fortfahren"
+  "proceedWithApple": "Mit Apple fortfahren",
+  "emailPhoneValidateDesc": "Entweder eine E-Mail oder eine Telefonnummer muss angegeben werden."
 }
