@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
 class CustomPhoneField extends StatelessWidget {
@@ -26,7 +27,7 @@ class CustomPhoneField extends StatelessWidget {
         errorStyle: const TextStyle(
           color: Colors.redAccent,
         ),
-        hintText: "Phone",
+        hintText: LocaleKeys.phoneNumber.tr(),
         error: null,
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
