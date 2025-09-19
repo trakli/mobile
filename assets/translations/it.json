@@ -321,5 +321,6 @@
   "resendCode": "Reinvia codice",
   "or": "O",
   "proceedWithGoogle": "Continua con Google",
-  "proceedWithApple": "Continua con Apple"
+  "proceedWithApple": "Continua con Apple",
+  "emailPhoneValidateDesc": "È necessario fornire un'email o un numero di telefono."
 }

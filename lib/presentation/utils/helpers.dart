@@ -83,6 +83,20 @@ String? validateEmail(String? value) {
   return null;
 }
 
+String? validateEmailNoEmpty(String? value) {
+  if (value == null || value.isEmpty) {
+    return null;
+  }
+// Regular expression for email validation
+  const pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  final regex = RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return LocaleKeys.emailValidDesc.tr();
+  }
+  return null;
+}
+
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {
     return LocaleKeys.passEmptyDesc.tr();
@@ -92,7 +106,7 @@ String? validatePassword(String? value) {
 
 String? validateFirstName(String? value) {
   if (value == null || value.isEmpty) {
-    return LocaleKeys.firstName.tr();
+    return LocaleKeys.firstNameEmptyDesc.tr();
   }
   return null;
 }
@@ -440,3 +454,4 @@ String? getIconPath(dynamic item) {
   }
   return null;
 }
+

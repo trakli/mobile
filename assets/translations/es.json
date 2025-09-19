@@ -320,5 +320,6 @@
   "resendCode": "Reenviar código",
   "or": "O",
   "proceedWithGoogle": "Continuar con Google",
-  "proceedWithApple": "Continuar con Apple"
+  "proceedWithApple": "Continuar con Apple",
+  "emailPhoneValidateDesc": "Se debe proporcionar un correo electrónico o un número de teléfono."
 }

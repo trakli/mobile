@@ -79,7 +79,6 @@ import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/wallet_repository.dart' as _i368;
-import '../domain/usecases/auth/create_user_new_usecase.dart' as _i875;
 import '../domain/usecases/auth/get_loggedin_user.dart' as _i880;
 import '../domain/usecases/auth/get_otp_usecase.dart' as _i402;
 import '../domain/usecases/auth/is_onboarding_completed.dart' as _i828;
@@ -296,8 +295,6 @@ _i174.GetIt $initGetIt(
       () => _i100.VerifyEmailUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i400.LoginWithPhoneUseCase>(
       () => _i400.LoginWithPhoneUseCase(gh<_i800.AuthRepository>()));
-  gh.factory<_i875.CreateUserNewUseCase>(
-      () => _i875.CreateUserNewUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i494.PasswordResetUseCase>(
       () => _i494.PasswordResetUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i402.GetOtpCodeUseCase>(
@@ -331,6 +328,11 @@ _i174.GetIt $initGetIt(
       () => _i42.LoginByEmailUsecase(gh<_i800.AuthRepository>()));
   gh.factory<_i444.StreamAuthStatus>(
       () => _i444.StreamAuthStatus(gh<_i800.AuthRepository>()));
+  gh.factory<_i831.RegisterCubit>(() => _i831.RegisterCubit(
+        gh<_i705.RegisterUseCase>(),
+        gh<_i402.GetOtpCodeUseCase>(),
+        gh<_i100.VerifyEmailUseCase>(),
+      ));
   gh.factory<_i575.GetOnboardingState>(
       () => _i575.GetOnboardingState(gh<_i867.OnboardingRepository>()));
   gh.factory<_i332.GetOnboardingStateStream>(
@@ -393,12 +395,6 @@ _i174.GetIt $initGetIt(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i713.GetWalletsUseCase>(
       () => _i713.GetWalletsUseCase(gh<_i368.WalletRepository>()));
-  gh.factory<_i831.RegisterCubit>(() => _i831.RegisterCubit(
-        gh<_i705.RegisterUseCase>(),
-        gh<_i402.GetOtpCodeUseCase>(),
-        gh<_i100.VerifyEmailUseCase>(),
-        gh<_i875.CreateUserNewUseCase>(),
-      ));
   gh.factory<_i314.FetchSubscriptionPlans>(
       () => _i314.FetchSubscriptionPlans(gh<_i804.SubscriptionRepository>()));
   gh.lazySingleton<_i646.SynchAppDatabase>(() => _i646.SynchAppDatabase(

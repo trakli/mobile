@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
-import 'package:trakli/domain/usecases/auth/create_user_new_usecase.dart';
 import 'package:trakli/domain/usecases/auth/get_otp_usecase.dart';
 import 'package:trakli/domain/usecases/auth/register_usecase.dart';
 import 'package:trakli/domain/usecases/auth/verify_email_usecase.dart';
@@ -17,13 +16,11 @@ class RegisterCubit extends Cubit<RegisterState> {
   final RegisterUseCase _registerUseCase;
   final GetOtpCodeUseCase _getOtpCodeUseCase;
   final VerifyEmailUseCase _verifyEmailUseCase;
-  final CreateUserNewUseCase _createUserNewUseCase;
 
   RegisterCubit(
     this._registerUseCase,
     this._getOtpCodeUseCase,
     this._verifyEmailUseCase,
-    this._createUserNewUseCase,
   ) : super(const RegisterState.initial());
 
   Future<void> register({
@@ -60,12 +57,18 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
-  Future<void> getOtpCode({required String email}) async {
+  Future<void> getOtpCode({
+    String? email,
+    String? phone,
+    required String type,
+  }) async {
     emit(const RegisterState.submitting());
 
     final result = await _getOtpCodeUseCase(
       GetOtpCodeParams(
         email: email,
+        phone: phone,
+        type: type,
       ),
     );
 
@@ -80,7 +83,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   Future<void> verifyEmail({
-    required String email,
+    String? email,
+    String? phone,
+    required String type,
     required String code,
   }) async {
     emit(const RegisterState.submitting());
@@ -88,7 +93,9 @@ class RegisterCubit extends Cubit<RegisterState> {
     final result = await _verifyEmailUseCase(
       VerifyEmailParams(
         email: email,
+        phone: phone,
         code: code,
+        type: type,
       ),
     );
 
@@ -102,30 +109,4 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
-  Future<void> createUserNew({
-    required String email,
-    required String password,
-    required String firstName,
-    String? lastName,
-  }) async {
-    emit(const RegisterState.submitting());
-
-    final result = await _createUserNewUseCase(
-      CreateUserNewParams(
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      ),
-    );
-
-    result.fold(
-      (failure) {
-        emit(RegisterState.error(failure));
-      },
-      (response) {
-        emit(RegisterState.process(response));
-      },
-    );
-  }
 }

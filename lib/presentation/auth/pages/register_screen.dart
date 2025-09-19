@@ -11,7 +11,9 @@ import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/custom_phone_field.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -21,20 +23,25 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late final TapGestureRecognizer _recognizerTap;
   int currentStep = 0;
+  String? _phoneNumber;
+  RegisterType registerType = RegisterType.email;
+  late TabController _tabController;
+  bool canMove = true;
 
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
     _recognizerTap = TapGestureRecognizer()
       ..onTap = () {
         AppNavigator.pushReplacement(
@@ -50,7 +57,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     firstNameController.dispose();
     lastNameController.dispose();
     usernameController.dispose();
-    phoneController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -75,6 +81,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             },
             process: (response) {
               hideLoader();
+              if (canMove) {
+                setState(() {
+                  currentStep = currentStep + 1;
+                });
+              }
             });
       },
       child: Scaffold(
@@ -109,13 +120,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                TabBar(
+                  indicatorColor: appPrimaryColor,
+                  labelColor: appPrimaryColor,
+                  controller: _tabController,
+                  onTap: (index) {
+                    setState(() {
+                      registerType = RegisterType.values.elementAt(index);
+                    });
+                  },
+                  tabs: [
+                    Tab(
+                      text: LocaleKeys.email.tr(),
+                    ),
+                    Tab(
+                      text: LocaleKeys.phoneNumber.tr(),
+                    )
+                  ],
+                ),
                 SizedBox(height: 28.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   spacing: 4.w,
                   children: [
                     Text(
-                      LocaleKeys.email.tr(),
+                      registerType == RegisterType.email
+                          ? LocaleKeys.email.tr()
+                          : LocaleKeys.phoneNumber.tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
@@ -130,13 +161,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: emailController,
-                  hintText: LocaleKeys.email.tr(),
-                  filled: true,
-                  validator: validateEmail,
-                  readOnly: currentStep != 0,
-                ),
+                if (registerType == RegisterType.email)
+                  CustomTextField(
+                    controller: emailController,
+                    hintText: LocaleKeys.email.tr(),
+                    filled: true,
+                    validator: validateEmail,
+                    readOnly: currentStep != 0,
+                  )
+                else
+                  CustomPhoneField(
+                    onChanged: (number) {
+                      _phoneNumber = number.completeNumber;
+                    },
+                  ),
                 SizedBox(height: 16.h),
                 if (currentStep == 0) _stepOne(),
                 if (currentStep == 1) _stepTwo(),
@@ -178,9 +216,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: PrimaryButton(
         onPress: () {
           if (formKey.currentState!.validate()) {
-            setState(() {
-              currentStep = currentStep + 1;
-            });
+            if (registerType == RegisterType.phone) {
+              if (_phoneNumber != null && _phoneNumber!.isNotEmpty) {
+                context.read<RegisterCubit>().getOtpCode(
+                      phone: _phoneNumber,
+                      type: registerType.name,
+                    );
+              }
+            } else {
+              context.read<RegisterCubit>().getOtpCode(
+                    email: emailController.text,
+                    type: registerType.name,
+                  );
+            }
           }
         },
         buttonText: LocaleKeys.startSignUp.tr(),
@@ -221,10 +269,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           height: 54.h,
           child: PrimaryButton(
             onPress: () {
+              setState(() {
+                canMove = true;
+              });
               if (formKey.currentState!.validate()) {
-                setState(() {
-                  currentStep = currentStep + 1;
-                });
+                if (registerType == RegisterType.email) {
+                  context.read<RegisterCubit>().verifyEmail(
+                        email: emailController.text,
+                        code: codeController.text,
+                        type: registerType.name,
+                      );
+                } else {
+                  context.read<RegisterCubit>().verifyEmail(
+                        phone: _phoneNumber,
+                        code: codeController.text,
+                        type: registerType.name,
+                      );
+                }
               }
             },
             buttonText: LocaleKeys.submitCode.tr(),
@@ -235,7 +296,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Align(
           alignment: Alignment.topRight,
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                canMove = false;
+              });
+              if (registerType == RegisterType.phone) {
+                if (_phoneNumber != null && _phoneNumber!.isNotEmpty) {
+                  context.read<RegisterCubit>().getOtpCode(
+                        phone: _phoneNumber,
+                        type: registerType.name,
+                      );
+                }
+              } else {
+                context.read<RegisterCubit>().getOtpCode(
+                      email: emailController.text,
+                      type: registerType.name,
+                    );
+              }
+            },
             child: Text(
               LocaleKeys.resendCode.tr(),
             ),
@@ -297,6 +375,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
         SizedBox(height: 16.h),
         Text(
+          LocaleKeys.username.tr(),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        CustomTextField(
+          controller: usernameController,
+          hintText: LocaleKeys.username.tr(),
+          filled: true,
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          !(registerType == RegisterType.email)
+              ? LocaleKeys.email.tr()
+              : LocaleKeys.phoneNumber.tr(),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 8.h),
+        if (registerType == RegisterType.phone)
+          CustomTextField(
+            controller: emailController,
+            hintText: LocaleKeys.email.tr(),
+            filled: true,
+            validator: validateEmailNoEmpty,
+          )
+        else
+          CustomPhoneField(
+            onChanged: (number) {
+              _phoneNumber = number.completeNumber;
+            },
+          ),
+        SizedBox(height: 16.h),
+        Text(
           LocaleKeys.password.tr(),
           style: TextStyle(
             fontSize: 16.sp,
@@ -328,7 +444,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         firstName: firstNameController.text,
                         lastName: lastNameController.text,
                         username: usernameController.text,
-                        phone: phoneController.text,
+                        phone: _phoneNumber ?? "",
                         password: passwordController.text,
                         email: emailController.text,
                       );
