@@ -320,5 +320,9 @@
   "or": "OU",
   "proceedWithGoogle": "Continuer avec Google",
   "proceedWithApple": "Continuer avec Apple",
-  "emailPhoneValidateDesc": "Un e-mail ou un numéro de téléphone doit être fourni."
+  "emailPhoneValidateDesc": "Un e-mail ou un numéro de téléphone doit être fourni.",
+  "logoutWarningTitle": "Données non synchronisées",
+  "logoutWarningMessage": "Vous avez des données non synchronisées qui seront perdues si vous vous déconnectez maintenant. Voulez-vous continuer ?",
+  "syncNow": "Synchroniser maintenant",
+  "logoutAnyway": "Se déconnecter quand même"
 }

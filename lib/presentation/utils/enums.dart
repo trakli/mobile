@@ -91,6 +91,11 @@ enum DialogType {
   negative,
 }
 
+enum ButtonLayout {
+  horizontal,
+  vertical,
+}
+
 enum PlanType {
   monthly,
   yearly;
