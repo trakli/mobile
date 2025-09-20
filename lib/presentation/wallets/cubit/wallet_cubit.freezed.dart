@@ -21,6 +21,7 @@ mixin _$WalletState {
   bool get isSaving => throw _privateConstructorUsedError;
   bool get isDeleting => throw _privateConstructorUsedError;
   Failure get failure => throw _privateConstructorUsedError;
+  int get currentSelectedWalletIndex => throw _privateConstructorUsedError;
 
   /// Create a copy of WalletState
   /// with the given fields replaced by the non-null parameter values.
@@ -40,7 +41,8 @@ abstract class $WalletStateCopyWith<$Res> {
       bool isLoading,
       bool isSaving,
       bool isDeleting,
-      Failure failure});
+      Failure failure,
+      int currentSelectedWalletIndex});
 
   $FailureCopyWith<$Res> get failure;
 }
@@ -65,6 +67,7 @@ class _$WalletStateCopyWithImpl<$Res, $Val extends WalletState>
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
+    Object? currentSelectedWalletIndex = null,
   }) {
     return _then(_value.copyWith(
       wallets: null == wallets
@@ -87,6 +90,10 @@ class _$WalletStateCopyWithImpl<$Res, $Val extends WalletState>
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
               as Failure,
+      currentSelectedWalletIndex: null == currentSelectedWalletIndex
+          ? _value.currentSelectedWalletIndex
+          : currentSelectedWalletIndex // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 
@@ -114,7 +121,8 @@ abstract class _$$WalletStateImplCopyWith<$Res>
       bool isLoading,
       bool isSaving,
       bool isDeleting,
-      Failure failure});
+      Failure failure,
+      int currentSelectedWalletIndex});
 
   @override
   $FailureCopyWith<$Res> get failure;
@@ -138,6 +146,7 @@ class __$$WalletStateImplCopyWithImpl<$Res>
     Object? isSaving = null,
     Object? isDeleting = null,
     Object? failure = null,
+    Object? currentSelectedWalletIndex = null,
   }) {
     return _then(_$WalletStateImpl(
       wallets: null == wallets
@@ -160,6 +169,10 @@ class __$$WalletStateImplCopyWithImpl<$Res>
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
               as Failure,
+      currentSelectedWalletIndex: null == currentSelectedWalletIndex
+          ? _value.currentSelectedWalletIndex
+          : currentSelectedWalletIndex // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -172,7 +185,8 @@ class _$WalletStateImpl implements _WalletState {
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
-      required this.failure})
+      required this.failure,
+      this.currentSelectedWalletIndex = 0})
       : _wallets = wallets;
 
   final List<WalletEntity> _wallets;
@@ -191,10 +205,13 @@ class _$WalletStateImpl implements _WalletState {
   final bool isDeleting;
   @override
   final Failure failure;
+  @override
+  @JsonKey()
+  final int currentSelectedWalletIndex;
 
   @override
   String toString() {
-    return 'WalletState(wallets: $wallets, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure)';
+    return 'WalletState(wallets: $wallets, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure, currentSelectedWalletIndex: $currentSelectedWalletIndex)';
   }
 
   @override
@@ -209,7 +226,11 @@ class _$WalletStateImpl implements _WalletState {
                 other.isSaving == isSaving) &&
             (identical(other.isDeleting, isDeleting) ||
                 other.isDeleting == isDeleting) &&
-            (identical(other.failure, failure) || other.failure == failure));
+            (identical(other.failure, failure) || other.failure == failure) &&
+            (identical(other.currentSelectedWalletIndex,
+                    currentSelectedWalletIndex) ||
+                other.currentSelectedWalletIndex ==
+                    currentSelectedWalletIndex));
   }
 
   @override
@@ -219,7 +240,8 @@ class _$WalletStateImpl implements _WalletState {
       isLoading,
       isSaving,
       isDeleting,
-      failure);
+      failure,
+      currentSelectedWalletIndex);
 
   /// Create a copy of WalletState
   /// with the given fields replaced by the non-null parameter values.
@@ -236,7 +258,8 @@ abstract class _WalletState implements WalletState {
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
-      required final Failure failure}) = _$WalletStateImpl;
+      required final Failure failure,
+      final int currentSelectedWalletIndex}) = _$WalletStateImpl;
 
   @override
   List<WalletEntity> get wallets;
@@ -248,6 +271,8 @@ abstract class _WalletState implements WalletState {
   bool get isDeleting;
   @override
   Failure get failure;
+  @override
+  int get currentSelectedWalletIndex;
 
   /// Create a copy of WalletState
   /// with the given fields replaced by the non-null parameter values.

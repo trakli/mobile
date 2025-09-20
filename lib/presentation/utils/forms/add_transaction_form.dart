@@ -29,12 +29,14 @@ class AddTransactionForm extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transactionCompleteEntity;
+  final WalletEntity? selectedWallet;
 
   const AddTransactionForm({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transactionCompleteEntity,
+    this.selectedWallet,
   });
 
   @override
@@ -62,10 +64,6 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final _formKey = GlobalKey<FormState>();
 
   setAmountController(Currency? currency) {
-    // amountController.text = convertAmountFromCurrencyWihContext(context,
-    //         widget.transactionCompleteEntity!.transaction.amount, currency)
-    //     .toStringAsFixed(decimalDigits);
-
     amountController.text =
         widget.transactionCompleteEntity!.transaction.amount.toString();
   }
@@ -91,6 +89,15 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
+
+      // Set the selected wallet if provided
+      if (widget.selectedWallet != null) {
+        selectedWallet = widget.selectedWallet;
+        walletController.text = selectedWallet!.name;
+      } else {
+        selectedWallet = widget.selectedWallet;
+        walletController.text = widget.selectedWallet?.name ?? '';
+      }
     }
   }
 

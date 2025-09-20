@@ -194,4 +194,18 @@ class WalletCubit extends Cubit<WalletState> {
       ),
     );
   }
+
+  void setCurrentSelectedWalletIndex(int index) {
+    if (index >= 0 && index < state.wallets.length) {
+      emit(state.copyWith(currentSelectedWalletIndex: index));
+    }
+  }
+
+  WalletEntity? get currentSelectedWallet {
+    if (state.wallets.isEmpty ||
+        state.currentSelectedWalletIndex >= state.wallets.length) {
+      return null;
+    }
+    return state.wallets[state.currentSelectedWalletIndex];
+  }
 }
