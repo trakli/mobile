@@ -13,6 +13,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
@@ -53,7 +54,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           InkWell(
             onTap: () {
-              AppNavigator.push(context, const AddTransactionScreen());
+              final selectedWallet =
+                  context.read<WalletCubit>().currentSelectedWallet;
+              AppNavigator.push(
+                context,
+                AddTransactionScreen(selectedWallet: selectedWallet),
+              );
             },
             child: Container(
               width: 42.r,

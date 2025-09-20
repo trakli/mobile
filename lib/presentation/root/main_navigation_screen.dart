@@ -15,6 +15,7 @@ import 'package:trakli/presentation/utils/bottom_nav.dart';
 import 'package:trakli/presentation/utils/custom_drawer.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class MainNavigationScreen extends StatelessWidget {
   MainNavigationScreen({super.key});
@@ -60,7 +61,12 @@ class MainNavigationScreen extends StatelessWidget {
                 shape: const CircleBorder(),
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () {
-                  AppNavigator.push(context, const AddTransactionScreen());
+                  final selectedWallet =
+                      context.read<WalletCubit>().currentSelectedWallet;
+                  AppNavigator.push(
+                    context,
+                    AddTransactionScreen(selectedWallet: selectedWallet),
+                  );
                 },
                 elevation: 0,
                 child: SvgPicture.asset(

@@ -6,14 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/history_screen.dart';
-import 'package:trakli/presentation/notification_screen.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -34,16 +36,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentWalletIndex = 0; // GroupEntity? group;
-
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<GroupCubit>().ensureDefaultGroup(
-    //         name: LocaleKeys.defaultGroupName.tr(),
-    //       );
-    // });
   }
 
   @override
@@ -74,8 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final bool walletMatches = transactionWalletId == currentWalletId;
       final bool groupMatches = transactionGroupId == selectedGroupId;
-      final bool isDefaultGroup =
-          transactionGroupId == null && selectedGroupId == defaultGroupId;
+      final bool isDefaultGroup = selectedGroupId == defaultGroupId;
 
       return walletMatches && (groupMatches || isDefaultGroup);
     }).toList();
@@ -83,7 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final wallets = context.watch<WalletCubit>().state.wallets;
+    final walletState = context.watch<WalletCubit>().state;
+    final wallets = walletState.wallets;
+    final currentWalletIndex = walletState.currentSelectedWalletIndex;
 
     final groups = context.watch<GroupCubit>().state.groups;
     final entity = context.watch<OnboardingCubit>().state.entity;
@@ -109,7 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           GestureDetector(
             onTap: () {
-              AppNavigator.push(context, const NotificationScreen());
+              final isAuthenticated =
+                  context.read<AuthCubit>().state.isAuthenticated;
+
+              if (isAuthenticated) {
+                getIt<SynchAppDatabase>().doSync();
+              }
             },
             child: Container(
               width: 42.r,
@@ -120,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               // padding: EdgeInsets.all(14.r),
               child: Icon(
-                Icons.notifications,
+                Icons.refresh,
                 size: 20.sp,
                 color: Theme.of(context).primaryColor,
               ),
@@ -172,9 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       enlargeCenterPage: true,
                       enlargeFactor: 0.2,
                       onPageChanged: (index, reason) {
-                        setState(() {
-                          currentWalletIndex = index;
-                        });
+                        context
+                            .read<WalletCubit>()
+                            .setCurrentSelectedWalletIndex(index);
                       },
                     ),
                     itemCount: wallets.length,

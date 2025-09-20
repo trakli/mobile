@@ -87,7 +87,6 @@ class TransactionCubit extends Cubit<TransactionState> {
     required DateTime datetime,
     required String walletClientId,
     String? partyClientId,
-    // String? groupClientId,
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(

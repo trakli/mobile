@@ -8,6 +8,7 @@ class WalletState with _$WalletState {
     required bool isSaving,
     required bool isDeleting,
     required Failure failure,
+    @Default(0) int currentSelectedWalletIndex,
   }) = _WalletState;
 
   factory WalletState.initial() => const WalletState(

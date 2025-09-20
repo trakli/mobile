@@ -30,12 +30,14 @@ class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transactionCompleteEntity;
+  final WalletEntity? selectedWallet;
 
   const AddTransactionFormCompactLayout({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transactionCompleteEntity,
+    this.selectedWallet,
   });
 
   @override
@@ -105,6 +107,12 @@ class _AddTransactionFormCompactLayoutState
 
       final onboardingEntity = context.read<OnboardingCubit>().state.entity;
       currentCurrency = onboardingEntity?.selectedCurrency ?? currentCurrency;
+
+      // Set the selected wallet if provided
+      if (widget.selectedWallet != null) {
+        _selectedWallet = widget.selectedWallet;
+        setCurrency(_selectedWallet);
+      }
     }
   }
 
@@ -193,6 +201,7 @@ class _AddTransactionFormCompactLayoutState
                               return CustomAutoCompleteSearch<WalletEntity>(
                                 label: LocaleKeys.wallet.tr(),
                                 accentColor: widget.accentColor,
+                                initialValue: _selectedWallet,
                                 optionsBuilder:
                                     (TextEditingValue textEditingValue) {
                                   if (textEditingValue.text.isEmpty) {

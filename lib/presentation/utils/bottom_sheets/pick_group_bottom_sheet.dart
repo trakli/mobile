@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
-import 'package:trakli/presentation/groups/add_group_screen.dart';
-import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/pick_group_tile.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
@@ -116,18 +114,6 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             ),
           ),
           SizedBox(height: 16.h),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              iconAlignment: IconAlignment.end,
-              onPressed: () {
-                AppNavigator.push(context, const AddGroupScreen());
-              },
-              label: Text(LocaleKeys.addGroup.tr()),
-              icon: const Icon(Icons.add),
-            ),
-          ),
-          SizedBox(height: 16.h),
           Row(
             spacing: 16.w,
             children: [
@@ -162,7 +148,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 30.h),
         ],
       ),
     );

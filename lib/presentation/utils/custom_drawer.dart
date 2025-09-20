@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +11,6 @@ import 'package:trakli/presentation/groups/my_groups_screen.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/parties/party_screen.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
-import 'package:trakli/presentation/savings/my_savings_screen.dart';
 import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
@@ -63,19 +61,6 @@ class CustomDrawer extends StatelessWidget {
                 ),
               ),
               title: Text(LocaleKeys.groups.tr()),
-            ),
-            ListTile(
-              onTap: () {
-                AppNavigator.push(context, const MySavingsScreen());
-              },
-              leading: SvgPicture.asset(
-                Assets.images.walletAdd,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
-                  BlendMode.srcIn,
-                ),
-              ),
-              title: Text(LocaleKeys.savings.tr()),
             ),
             ListTile(
               onTap: () {
@@ -143,7 +128,7 @@ class CustomDrawer extends StatelessWidget {
               ),
               title: Text(LocaleKeys.settings.tr()),
             ),
-            if (kDebugMode) ...[
+            ...[
               const Divider(),
               ListTile(
                 onTap: () {
