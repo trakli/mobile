@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/di/injection.dart';
+import 'package:trakli/domain/usecases/sync/check_pending_changes_usecase.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_info_screen.dart';
@@ -20,6 +24,63 @@ import 'package:trakli/presentation/utils/premium_tile.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _handleLogout(BuildContext context) async {
+    // Check for pending changes
+    final checkPendingChangesUsecase = getIt<CheckPendingChangesUsecase>();
+    final result = await checkPendingChangesUsecase(NoParams());
+
+    result.fold(
+      (failure) {
+        // If there's an error checking pending changes, show regular logout dialog
+        _showLogoutDialog(context);
+      },
+      (hasPendingChanges) {
+        if (!hasPendingChanges) {
+          // Show warning dialog with sync option
+          _showLogoutWarningDialog(context);
+        } else {
+          // No pending changes, show regular logout dialog
+          _showLogoutDialog(context);
+        }
+      },
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showCustomDialog(
+      widget: PopUpDialog(
+        title: LocaleKeys.logOut.tr(),
+        subTitle: LocaleKeys.logoutConfirm.tr(),
+        dialogType: DialogType.negative,
+        mainAction: () {
+          context.read<AuthCubit>().logout();
+        },
+      ),
+    );
+  }
+
+  void _showLogoutWarningDialog(BuildContext context) {
+    showCustomDialog(
+      widget: PopUpDialog(
+        title: LocaleKeys.logoutWarningTitle.tr(),
+        subTitle: LocaleKeys.logoutWarningMessage.tr(),
+        dialogType: DialogType.negative,
+        mainActionText: LocaleKeys.logoutAnyway.tr(),
+        secondaryActionText: LocaleKeys.syncNow.tr(),
+        buttonLayout: ButtonLayout.vertical,
+        mainAction: () {
+          // Logout anyway
+          context.read<AuthCubit>().logout();
+        },
+        secondaryAction: () {
+          // Sync now
+          getIt<SynchAppDatabase>().doSync();
+          AppNavigator.pop(context);
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +187,8 @@ class ProfileScreen extends StatelessWidget {
                     title: LocaleKeys.logOut.tr(),
                     iconPath: Assets.images.logout,
                     actionColor: Colors.red,
-                    onTap: () {
-                      showCustomDialog(
-                        widget: PopUpDialog(
-                          title: LocaleKeys.logOut.tr(),
-                          subTitle: LocaleKeys.logoutConfirm.tr(),
-                          dialogType: DialogType.negative,
-                          mainAction: () {
-                            context.read<AuthCubit>().logout();
-                          },
-                        ),
-                      );
+                    onTap: () async {
+                      await _handleLogout(context);
                     },
                   ),
                 ],

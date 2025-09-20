@@ -18,6 +18,7 @@ class PopUpDialog extends StatelessWidget {
   final String subTitle;
   final String? mainActionText;
   final String? secondaryActionText;
+  final ButtonLayout buttonLayout;
 
   const PopUpDialog({
     super.key,
@@ -30,7 +31,63 @@ class PopUpDialog extends StatelessWidget {
     this.iconPath,
     this.mainActionText,
     this.secondaryActionText,
+    this.buttonLayout = ButtonLayout.horizontal,
   });
+
+  Widget _buildActionButtons(BuildContext context) {
+    final secondaryButton = SizedBox(
+      height: 52.h,
+      child: ElevatedButton(
+        onPressed: secondaryAction ??
+            () {
+              AppNavigator.pop(context);
+            },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: neutralN40,
+          foregroundColor: neutralN900,
+        ),
+        child: Text(secondaryActionText ?? LocaleKeys.cancel.tr()),
+      ),
+    );
+
+    final mainButton = SizedBox(
+      height: 52.h,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: accentColor ??
+              (dialogType == DialogType.positive
+                  ? appPrimaryColor
+                  : appDangerColor),
+        ),
+        onPressed: mainAction ?? () {},
+        child: Text(mainActionText ?? LocaleKeys.confirm.tr()),
+      ),
+    );
+
+    if (buttonLayout == ButtonLayout.vertical) {
+      return Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: secondaryButton,
+          ),
+          SizedBox(height: 12.h),
+          SizedBox(
+            width: double.infinity,
+            child: mainButton,
+          ),
+        ],
+      );
+    } else {
+      return Row(
+        spacing: 16.w,
+        children: [
+          Expanded(child: secondaryButton),
+          Expanded(child: mainButton),
+        ],
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,43 +145,7 @@ class PopUpDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
-            Row(
-              spacing: 16.w,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 52.h,
-                    child: ElevatedButton(
-                      onPressed: secondaryAction ??
-                          () {
-                            AppNavigator.pop(context);
-                          },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: neutralN40,
-                        foregroundColor: neutralN900,
-                      ),
-                      child:
-                          Text(secondaryActionText ?? LocaleKeys.cancel.tr()),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 52.h,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor ??
-                            (dialogType == DialogType.positive
-                                ? appPrimaryColor
-                                : appDangerColor),
-                      ),
-                      onPressed: mainAction ?? () {},
-                      child: Text(mainActionText ?? LocaleKeys.confirm.tr()),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _buildActionButtons(context),
           ],
         ),
       ),

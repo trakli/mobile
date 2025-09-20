@@ -119,6 +119,7 @@ import '../domain/usecases/party/listen_to_parties_usecase.dart' as _i714;
 import '../domain/usecases/party/update_party_usecase.dart' as _i911;
 import '../domain/usecases/subscription/fetch_subscription_usecase.dart'
     as _i314;
+import '../domain/usecases/sync/check_pending_changes_usecase.dart' as _i662;
 import '../domain/usecases/transaction/create_transaction_usecase.dart'
     as _i669;
 import '../domain/usecases/transaction/delete_transaction_usecase.dart'
@@ -181,6 +182,8 @@ _i174.GetIt $initGetIt(
       () => _i529.FirebaseCrashlyticsService());
   gh.singleton<_i683.PreferenceManager>(
       () => _i683.PreferenceManagerImpl()..init());
+  gh.factory<_i662.CheckPendingChangesUsecase>(
+      () => _i662.CheckPendingChangesUsecase(gh<_i704.AppDatabase>()));
   gh.factory<_i655.PartyLocalDataSource>(
       () => _i655.PartyLocalDataSourceImpl(gh<_i704.AppDatabase>()));
   gh.factory<_i276.AuthLocalDataSource>(
