@@ -4,6 +4,7 @@ part of 'transaction_cubit.dart';
 class TransactionState with _$TransactionState {
   const factory TransactionState({
     required List<TransactionCompleteEntity> transactions,
+    required List<WalletEntity> wallets,
     required bool isLoading,
     required bool isSaving,
     required bool isDeleting,
@@ -13,6 +14,7 @@ class TransactionState with _$TransactionState {
 
   factory TransactionState.initial() => const TransactionState(
         transactions: [],
+        wallets: [],
         isLoading: false,
         isSaving: false,
         isDeleting: false,

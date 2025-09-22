@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TransactionState {
   List<TransactionCompleteEntity> get transactions =>
       throw _privateConstructorUsedError;
+  List<WalletEntity> get wallets => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isSaving => throw _privateConstructorUsedError;
   bool get isDeleting => throw _privateConstructorUsedError;
@@ -39,6 +40,7 @@ abstract class $TransactionStateCopyWith<$Res> {
   @useResult
   $Res call(
       {List<TransactionCompleteEntity> transactions,
+      List<WalletEntity> wallets,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -65,6 +67,7 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
   @override
   $Res call({
     Object? transactions = null,
+    Object? wallets = null,
     Object? isLoading = null,
     Object? isSaving = null,
     Object? isDeleting = null,
@@ -76,6 +79,10 @@ class _$TransactionStateCopyWithImpl<$Res, $Val extends TransactionState>
           ? _value.transactions
           : transactions // ignore: cast_nullable_to_non_nullable
               as List<TransactionCompleteEntity>,
+      wallets: null == wallets
+          ? _value.wallets
+          : wallets // ignore: cast_nullable_to_non_nullable
+              as List<WalletEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -134,6 +141,7 @@ abstract class _$$TransactionStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {List<TransactionCompleteEntity> transactions,
+      List<WalletEntity> wallets,
       bool isLoading,
       bool isSaving,
       bool isDeleting,
@@ -160,6 +168,7 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? transactions = null,
+    Object? wallets = null,
     Object? isLoading = null,
     Object? isSaving = null,
     Object? isDeleting = null,
@@ -171,6 +180,10 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
           ? _value._transactions
           : transactions // ignore: cast_nullable_to_non_nullable
               as List<TransactionCompleteEntity>,
+      wallets: null == wallets
+          ? _value._wallets
+          : wallets // ignore: cast_nullable_to_non_nullable
+              as List<WalletEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -200,12 +213,14 @@ class __$$TransactionStateImplCopyWithImpl<$Res>
 class _$TransactionStateImpl implements _TransactionState {
   const _$TransactionStateImpl(
       {required final List<TransactionCompleteEntity> transactions,
+      required final List<WalletEntity> wallets,
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
       required this.failure,
       this.selectedGroup})
-      : _transactions = transactions;
+      : _transactions = transactions,
+        _wallets = wallets;
 
   final List<TransactionCompleteEntity> _transactions;
   @override
@@ -213,6 +228,14 @@ class _$TransactionStateImpl implements _TransactionState {
     if (_transactions is EqualUnmodifiableListView) return _transactions;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_transactions);
+  }
+
+  final List<WalletEntity> _wallets;
+  @override
+  List<WalletEntity> get wallets {
+    if (_wallets is EqualUnmodifiableListView) return _wallets;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_wallets);
   }
 
   @override
@@ -228,7 +251,7 @@ class _$TransactionStateImpl implements _TransactionState {
 
   @override
   String toString() {
-    return 'TransactionState(transactions: $transactions, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure, selectedGroup: $selectedGroup)';
+    return 'TransactionState(transactions: $transactions, wallets: $wallets, isLoading: $isLoading, isSaving: $isSaving, isDeleting: $isDeleting, failure: $failure, selectedGroup: $selectedGroup)';
   }
 
   @override
@@ -238,6 +261,7 @@ class _$TransactionStateImpl implements _TransactionState {
             other is _$TransactionStateImpl &&
             const DeepCollectionEquality()
                 .equals(other._transactions, _transactions) &&
+            const DeepCollectionEquality().equals(other._wallets, _wallets) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.isSaving, isSaving) ||
@@ -253,6 +277,7 @@ class _$TransactionStateImpl implements _TransactionState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_transactions),
+      const DeepCollectionEquality().hash(_wallets),
       isLoading,
       isSaving,
       isDeleting,
@@ -272,6 +297,7 @@ class _$TransactionStateImpl implements _TransactionState {
 abstract class _TransactionState implements TransactionState {
   const factory _TransactionState(
       {required final List<TransactionCompleteEntity> transactions,
+      required final List<WalletEntity> wallets,
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
@@ -280,6 +306,8 @@ abstract class _TransactionState implements TransactionState {
 
   @override
   List<TransactionCompleteEntity> get transactions;
+  @override
+  List<WalletEntity> get wallets;
   @override
   bool get isLoading;
   @override

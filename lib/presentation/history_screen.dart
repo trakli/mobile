@@ -339,6 +339,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       bottomNavigationBar: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
+          final cubit = context.read<TransactionCubit>();
+          cubit.loadWallets();
           return IntrinsicHeight(
             child: Row(
               children: [
@@ -369,7 +371,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     context,
                     accentColor: appBlue,
                     mainText: LocaleKeys.totalBalance.tr(),
-                    amount: 70000,
+                    amount:
+                        state.wallets.fold<double>(0, (a, b) => a + b.balance),
                   ),
                 ),
               ],
