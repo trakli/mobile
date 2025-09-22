@@ -266,6 +266,7 @@ class WalletTile extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(height: 8.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

@@ -337,35 +337,45 @@ class _HistoryScreenState extends State<HistoryScreen> {
           );
         },
       ),
-      bottomNavigationBar: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appPrimaryColor,
-                mainText: LocaleKeys.totalIncome.tr(),
-                amount: 20111,
-              ),
+      bottomNavigationBar: BlocBuilder<TransactionCubit, TransactionState>(
+        builder: (context, state) {
+          return IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appPrimaryColor,
+                    mainText: LocaleKeys.totalIncome.tr(),
+                    amount: state.transactions.where((transaction) {
+                      return transaction.transaction.type ==
+                          TransactionType.income;
+                    }).fold<double>(0, (a, b) => a + b.transaction.amount),
+                  ),
+                ),
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appDangerColor,
+                    mainText: LocaleKeys.totalExpenses.tr(),
+                    amount: state.transactions.where((transaction) {
+                      return transaction.transaction.type ==
+                          TransactionType.expense;
+                    }).fold<double>(0, (a, b) => a + b.transaction.amount),
+                  ),
+                ),
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appBlue,
+                    mainText: LocaleKeys.totalBalance.tr(),
+                    amount: 70000,
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appDangerColor,
-                mainText: LocaleKeys.totalExpenses.tr(),
-                amount: 4220,
-              ),
-            ),
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appBlue,
-                mainText: LocaleKeys.totalBalance.tr(),
-                amount: 70000,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
