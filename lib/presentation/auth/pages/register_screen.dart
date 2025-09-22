@@ -124,11 +124,13 @@ class _RegisterScreenState extends State<RegisterScreen>
                   indicatorColor: appPrimaryColor,
                   labelColor: appPrimaryColor,
                   controller: _tabController,
-                  onTap: (index) {
-                    setState(() {
-                      registerType = RegisterType.values.elementAt(index);
-                    });
-                  },
+                  onTap: currentStep == 0
+                      ? (index) {
+                          setState(() {
+                            registerType = RegisterType.values.elementAt(index);
+                          });
+                        }
+                      : null,
                   tabs: [
                     Tab(
                       text: LocaleKeys.email.tr(),
@@ -335,7 +337,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    LocaleKeys.firstName.tr(),
+                    '${LocaleKeys.firstName.tr()} *',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
@@ -389,31 +391,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         ),
         SizedBox(height: 16.h),
         Text(
-          !(registerType == RegisterType.email)
-              ? LocaleKeys.email.tr()
-              : LocaleKeys.phoneNumber.tr(),
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        if (registerType == RegisterType.phone)
-          CustomTextField(
-            controller: emailController,
-            hintText: LocaleKeys.email.tr(),
-            filled: true,
-            validator: validateEmailNoEmpty,
-          )
-        else
-          CustomPhoneField(
-            onChanged: (number) {
-              _phoneNumber = number.completeNumber;
-            },
-          ),
-        SizedBox(height: 16.h),
-        Text(
-          LocaleKeys.password.tr(),
+          '${LocaleKeys.password.tr()} *',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
