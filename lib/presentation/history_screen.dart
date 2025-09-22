@@ -13,6 +13,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
@@ -36,6 +37,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   PickerDateRange? dateRange;
 
   @override
+  void initState() {
+    final cubit = context.read<TransactionCubit>();
+    cubit.loadWallets();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
@@ -46,7 +54,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           InkWell(
             onTap: () {
-              AppNavigator.push(context, const AddTransactionScreen());
+              final selectedWallet =
+                  context.read<WalletCubit>().currentSelectedWallet;
+              AppNavigator.push(
+                context,
+                AddTransactionScreen(selectedWallet: selectedWallet),
+              );
             },
             child: Container(
               width: 42.r,
@@ -337,35 +350,46 @@ class _HistoryScreenState extends State<HistoryScreen> {
           );
         },
       ),
-      bottomNavigationBar: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appPrimaryColor,
-                mainText: LocaleKeys.totalIncome.tr(),
-                amount: 20111,
-              ),
+      bottomNavigationBar: BlocBuilder<TransactionCubit, TransactionState>(
+        builder: (context, state) {
+          return IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appPrimaryColor,
+                    mainText: LocaleKeys.totalIncome.tr(),
+                    amount: state.transactions.where((transaction) {
+                      return transaction.transaction.type ==
+                          TransactionType.income;
+                    }).fold<double>(0, (a, b) => a + b.transaction.amount),
+                  ),
+                ),
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appDangerColor,
+                    mainText: LocaleKeys.totalExpenses.tr(),
+                    amount: state.transactions.where((transaction) {
+                      return transaction.transaction.type ==
+                          TransactionType.expense;
+                    }).fold<double>(0, (a, b) => a + b.transaction.amount),
+                  ),
+                ),
+                Expanded(
+                  child: _bottomTile(
+                    context,
+                    accentColor: appBlue,
+                    mainText: LocaleKeys.totalBalance.tr(),
+                    amount:
+                        state.wallets.fold<double>(0, (a, b) => a + b.balance),
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appDangerColor,
-                mainText: LocaleKeys.totalExpenses.tr(),
-                amount: 4220,
-              ),
-            ),
-            Expanded(
-              child: _bottomTile(
-                context,
-                accentColor: appBlue,
-                mainText: LocaleKeys.totalBalance.tr(),
-                amount: 70000,
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

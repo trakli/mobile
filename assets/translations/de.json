@@ -322,5 +322,9 @@
   "or": "ODER",
   "proceedWithGoogle": "Mit Google fortfahren",
   "proceedWithApple": "Mit Apple fortfahren",
-  "emailPhoneValidateDesc": "Entweder eine E-Mail oder eine Telefonnummer muss angegeben werden."
+  "emailPhoneValidateDesc": "Entweder eine E-Mail oder eine Telefonnummer muss angegeben werden.",
+  "logoutWarningTitle": "Nicht synchronisierte Daten",
+  "logoutWarningMessage": "Sie haben nicht synchronisierte Daten, die verloren gehen, wenn Sie sich jetzt abmelden. Möchten Sie fortfahren?",
+  "syncNow": "Jetzt synchronisieren",
+  "logoutAnyway": "Trotzdem abmelden"
 }

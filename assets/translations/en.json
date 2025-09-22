@@ -322,5 +322,9 @@
   "or": "OR",
   "proceedWithGoogle": "Proceed with Google",
   "proceedWithApple": "Proceed with Apple",
-  "emailPhoneValidateDesc": "Either email or phone must be provided."
+  "emailPhoneValidateDesc": "Either email or phone must be provided.",
+  "logoutWarningTitle": "Unsynchronized Data",
+  "logoutWarningMessage": "You have unsynchronized data that will be lost if you logout now. Do you want to continue?",
+  "syncNow": "Sync Now",
+  "logoutAnyway": "Logout Anyway"
 }
