@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
 
+env:
+  FLUTTER_CHANNEL: "stable"
+  FLUTTER_VERSION: "3.32.8"
+  RUBY_VERSION: "3.4.5"
+
 jobs:
   analyze:
     name: Analyze code (SAST)
@@ -93,14 +98,14 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.5"
+          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
           working-directory: "android"
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.8"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable"
           cache: true
 
