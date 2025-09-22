@@ -6,6 +6,8 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/domain/usecases/wallet/get_wallets_usecase.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
 
@@ -18,6 +20,7 @@ class TransactionCubit extends Cubit<TransactionState> {
   final CreateTransactionUseCase createTransactionUseCase;
   final UpdateTransactionUseCase updateTransactionUseCase;
   final DeleteTransactionUseCase deleteTransactionUseCase;
+  final GetWalletsUseCase getWalletsUseCase;
   final ListenToTransactionsUseCase listenToTransactionsUseCase;
   StreamSubscription? _transactionSubscription;
 
@@ -27,6 +30,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required this.updateTransactionUseCase,
     required this.deleteTransactionUseCase,
     required this.listenToTransactionsUseCase,
+    required this.getWalletsUseCase,
   }) : super(TransactionState.initial()) {
     listenForChanges();
   }
@@ -55,6 +59,21 @@ class TransactionCubit extends Cubit<TransactionState> {
       (transactions) => emit(state.copyWith(
         isLoading: false,
         transactions: transactions,
+        failure: const Failure.none(),
+      )),
+    );
+  }
+
+  Future<void> loadWallets() async {
+    final result = await getWalletsUseCase(NoParams());
+    result.fold(
+          (failure) => emit(state.copyWith(
+        isLoading: false,
+        failure: failure,
+      )),
+          (wallets) => emit(state.copyWith(
+        isLoading: false,
+        wallets: wallets,
         failure: const Failure.none(),
       )),
     );
