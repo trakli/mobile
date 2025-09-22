@@ -48,150 +48,79 @@ class WalletTile extends StatelessWidget {
               left: 16.w,
               right: 16.w,
               bottom: 12.h,
+              top: 12.h,
             ),
             child: Column(
-              spacing: 28.h,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      Text(
-                        LocaleKeys.totalBalance.tr(),
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white,
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${wallet.name} ${LocaleKeys.wallet.tr()}',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
-                      SizedBox(width: 8.w),
-                      SvgPicture.asset(
-                        height: 16.h,
-                        width: 16.w,
-                        Assets.images.arrowDown,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
+                    ),
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.r),
+                        color: walletGrey,
                       ),
-                    ],
-                  ),
-                  subtitle: Text(
-                    LocaleKeys.balanceAmountWithCurrency.tr(
-                      args: [
-                        CurrencyFormater.formatAmountWithSymbol(
-                          context,
-                          wallet.balance,
-                          currency: wallet.currency,
-                        )
-                      ],
-                    ),
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                  trailing: Container(
-                    width: 36.w,
-                    height: 36.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
-                      color: walletGrey,
-                    ),
-                    child: PopupMenuButton(
-                      icon: SvgPicture.asset(
-                        height: 20.h,
-                        width: 20.w,
-                        Assets.images.more,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).primaryColor,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      itemBuilder: (context) {
-                        return [
-                          PopupMenuItem(
-                            onTap: () {
-                              AppNavigator.push(
-                                context,
-                                AddWalletScreen(wallet: wallet),
-                              );
-                            },
-                            child: Row(
-                              spacing: 8.w,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Theme.of(context)
-                                        .primaryColor
-                                        .withAlpha(50),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.edit2,
-                                    colorFilter: ColorFilter.mode(
-                                      Theme.of(context).primaryColor,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
-                                Text(LocaleKeys.edit.tr()),
-                              ],
-                            ),
+                      child: PopupMenuButton(
+                        icon: SvgPicture.asset(
+                          height: 20.h,
+                          width: 20.w,
+                          Assets.images.more,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).primaryColor,
+                            BlendMode.srcIn,
                           ),
-                          PopupMenuItem(
-                            onTap: () {
-                              AppNavigator.push(
-                                context,
-                                const WalletTransferScreen(),
-                              );
-                            },
-                            height: 40.h,
-                            child: Row(
-                              spacing: 8.w,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.blueAccent.withAlpha(50),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.arrowUpDown,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.blueAccent,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
-                                Text(LocaleKeys.walletTransfer.tr()),
-                              ],
-                            ),
-                          ),
-                          if (canDelete)
+                        ),
+                        itemBuilder: (context) {
+                          return [
                             PopupMenuItem(
                               onTap: () {
-                                showCustomDialog(
-                                  widget: PopUpDialog(
-                                    dialogType: DialogType.negative,
-                                    title: LocaleKeys.deleteWallet.tr(),
-                                    subTitle: LocaleKeys.deleteWalletConfirm
-                                        .tr(namedArgs: {'name': wallet.name}),
-                                    mainAction: () {
-                                      context
-                                          .read<WalletCubit>()
-                                          .deleteWallet(wallet.clientId);
-                                      AppNavigator.pop(context);
-                                    },
-                                    mainActionText: LocaleKeys.delete.tr(),
-                                    secondaryActionText: LocaleKeys.cancel.tr(),
+                                AppNavigator.push(
+                                  context,
+                                  AddWalletScreen(wallet: wallet),
+                                );
+                              },
+                              child: Row(
+                                spacing: 8.w,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(50),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      height: 16.h,
+                                      width: 16.w,
+                                      Assets.images.edit2,
+                                      colorFilter: ColorFilter.mode(
+                                        Theme.of(context).primaryColor,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
                                   ),
+                                  Text(LocaleKeys.edit.tr()),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              onTap: () {
+                                AppNavigator.push(
+                                  context,
+                                  const WalletTransferScreen(),
                                 );
                               },
                               height: 40.h,
@@ -202,52 +131,140 @@ class WalletTile extends StatelessWidget {
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.redAccent.withAlpha(50),
+                                      color: Colors.blueAccent.withAlpha(50),
                                     ),
                                     child: SvgPicture.asset(
                                       height: 16.h,
                                       width: 16.w,
-                                      Assets.images.trash,
+                                      Assets.images.arrowUpDown,
                                       colorFilter: const ColorFilter.mode(
-                                        Colors.redAccent,
+                                        Colors.blueAccent,
                                         BlendMode.srcIn,
                                       ),
                                     ),
                                   ),
-                                  Text(LocaleKeys.delete.tr()),
+                                  Text(LocaleKeys.walletTransfer.tr()),
                                 ],
                               ),
                             ),
-                          PopupMenuItem(
-                            onTap: () {},
-                            height: 40.h,
-                            child: Row(
-                              spacing: 8.w,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.grey.withAlpha(50),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    height: 16.h,
-                                    width: 16.w,
-                                    Assets.images.documentCopy,
-                                    colorFilter: const ColorFilter.mode(
-                                      Colors.grey,
-                                      BlendMode.srcIn,
+                            if (canDelete)
+                              PopupMenuItem(
+                                onTap: () {
+                                  showCustomDialog(
+                                    widget: PopUpDialog(
+                                      dialogType: DialogType.negative,
+                                      title: LocaleKeys.deleteWallet.tr(),
+                                      subTitle: LocaleKeys.deleteWalletConfirm
+                                          .tr(namedArgs: {'name': wallet.name}),
+                                      mainAction: () {
+                                        context
+                                            .read<WalletCubit>()
+                                            .deleteWallet(wallet.clientId);
+                                        AppNavigator.pop(context);
+                                      },
+                                      mainActionText: LocaleKeys.delete.tr(),
+                                      secondaryActionText:
+                                          LocaleKeys.cancel.tr(),
+                                    ),
+                                  );
+                                },
+                                height: 40.h,
+                                child: Row(
+                                  spacing: 8.w,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.redAccent.withAlpha(50),
+                                      ),
+                                      child: SvgPicture.asset(
+                                        height: 16.h,
+                                        width: 16.w,
+                                        Assets.images.trash,
+                                        colorFilter: const ColorFilter.mode(
+                                          Colors.redAccent,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(LocaleKeys.delete.tr()),
+                                  ],
+                                ),
+                              ),
+                            PopupMenuItem(
+                              onTap: () {},
+                              height: 40.h,
+                              child: Row(
+                                spacing: 8.w,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey.withAlpha(50),
+                                    ),
+                                    child: SvgPicture.asset(
+                                      height: 16.h,
+                                      width: 16.w,
+                                      Assets.images.documentCopy,
+                                      colorFilter: const ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Text(LocaleKeys.duplicate.tr()),
-                              ],
+                                  Text(LocaleKeys.duplicate.tr()),
+                                ],
+                              ),
                             ),
-                          ),
-                        ];
-                      },
+                          ];
+                        },
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          LocaleKeys.totalBalance.tr(),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        SvgPicture.asset(
+                          height: 16.h,
+                          width: 16.w,
+                          Assets.images.arrowDown,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      LocaleKeys.balanceAmountWithCurrency.tr(
+                        args: [
+                          CurrencyFormater.formatAmountWithSymbol(
+                            context,
+                            wallet.balance,
+                            currency: wallet.currency,
+                          )
+                        ],
+                      ),
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
