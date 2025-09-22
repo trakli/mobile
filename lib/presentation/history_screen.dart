@@ -36,6 +36,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   PickerDateRange? dateRange;
 
   @override
+  void initState() {
+    final cubit = context.read<TransactionCubit>();
+    cubit.loadWallets();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
@@ -339,8 +346,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       bottomNavigationBar: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
-          final cubit = context.read<TransactionCubit>();
-          cubit.loadWallets();
           return IntrinsicHeight(
             child: Row(
               children: [
