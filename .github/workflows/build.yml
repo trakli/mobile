@@ -137,7 +137,7 @@ jobs:
       - name: Deploy to Firebase
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: "firebase"
+          lane: "release_play_store_using_firebase"
           subdirectory: android
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
