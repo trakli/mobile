@@ -9,7 +9,7 @@ on:
 env:
   FLUTTER_CHANNEL: "stable"
   FLUTTER_VERSION: "3.32.8"
-  RUBY_VERSION: "3.4.5"
+  RUBY_VERSION: "3.2.2"
 
 jobs:
   analyze:
