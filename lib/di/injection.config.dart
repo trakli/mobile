@@ -413,13 +413,6 @@ _i174.GetIt $initGetIt(
             gh<_i118.TransactionRepository>(),
             gh<_i1057.ExchangeRateRepository>(),
           ));
-  gh.factory<_i117.TransactionCubit>(() => _i117.TransactionCubit(
-        getAllTransactionsUseCase: gh<_i1022.GetAllTransactionsUseCase>(),
-        createTransactionUseCase: gh<_i1022.CreateTransactionUseCase>(),
-        updateTransactionUseCase: gh<_i1022.UpdateTransactionUseCase>(),
-        deleteTransactionUseCase: gh<_i1022.DeleteTransactionUseCase>(),
-        listenToTransactionsUseCase: gh<_i1022.ListenToTransactionsUseCase>(),
-      ));
   gh.factory<_i82.ListenToWalletsUseCase>(
       () => _i82.ListenToWalletsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i225.EnsureDefaultWalletExistsUseCase>(() =>
