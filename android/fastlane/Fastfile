@@ -82,9 +82,7 @@ platform :android do
         # Groups to distribute to
         groups: options[:groups] || "testers",
         # Individual testers - can be passed as option
-        debug: true,
-        # Explicitly set iOS app ID to nil to prevent iOS plist detection
-        ios_app_id: nil
+        debug: true
       )
     end
   end
