@@ -2,9 +2,6 @@ name: Check, Test and Build
 
 on:
   push:
-    tags:
-      - "v*"
-      - "v*-rc.*"
     branches:
       - main
   pull_request:
