@@ -15,7 +15,8 @@ class CheckPendingChangesUsecase implements UseCase<bool, NoParams> {
     try {
       final pendingChanges = await _appDatabase.getPendingLocalChanges();
       // Return true if there are pending changes (items need to be synchronized)
-      return Right(pendingChanges.isNotEmpty);
+      return Right(
+          pendingChanges.where((change) => change.error == null).isNotEmpty);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
