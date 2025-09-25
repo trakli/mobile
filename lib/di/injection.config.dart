@@ -22,6 +22,7 @@ import '../core/error/crash_reporting/user_context_service.dart' as _i481;
 import '../core/module/http_module.dart' as _i488;
 import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;
+import '../core/services/auth_service.dart' as _i377;
 import '../core/sync/drift_sync_crash_reporting_adapter.dart' as _i705;
 import '../core/sync/drift_sync_crash_reporting_service.dart' as _i545;
 import '../core/sync/sync_database.dart' as _i646;
@@ -178,6 +179,8 @@ _i174.GetIt $initGetIt(
     () => injectHttpClientModule.devHttpUrl,
     instanceName: 'HttpUrl',
   );
+  gh.factory<_i377.AuthService>(
+      () => _i377.AuthService(gh<_i483.TokenManager>()));
   gh.factory<_i414.CrashReportingInterface>(
       () => _i529.FirebaseCrashlyticsService());
   gh.singleton<_i683.PreferenceManager>(

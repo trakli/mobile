@@ -3,15 +3,12 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/network/interceptors/logger_interceptor.dart';
 import 'package:trakli/core/network/interceptors/remove_null_exceptions.dart';
 import 'package:trakli/core/network/interceptors/token_interceptor.dart';
+import 'package:trakli/core/services/auth_service.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
 import 'package:trakli/di/injection.dart';
 
 @module
 abstract class InjectHttpClientModule {
-  // InjectHttpClientModule({required this.tokenManager});
-
-  // late TokenManager tokenManager;
-
   @Named('HttpUrl')
   String get devHttpUrl => 'https://api.dev.trakli.app/api/v1/';
 
@@ -30,7 +27,7 @@ abstract class InjectHttpClientModule {
 
     dio.interceptors.addAll([
       RemoveNullValuesInterceptor(),
-      TokenInterceptor(getIt<TokenManager>()),
+      TokenInterceptor(getIt<TokenManager>(), getIt<AuthService>()),
       LoggerInterceptor()
     ]);
 
