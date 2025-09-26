@@ -20,11 +20,10 @@ class AuthService {
   Future<void> handleUnauthorized() async {
     try {
       // Clear the token first
-      await _tokenManager.clearToken();
+      // await _tokenManager.clearToken();
       await getIt<AuthRepository>().logout();
 
       // Trigger logout through the repository to ensure all auth state is cleared
-      // await _authRepository.logout();
 
       // Navigate to login screen
       _navigateToLogin();
@@ -50,7 +49,8 @@ class AuthService {
 
   /// Check if user is currently authenticated
   Future<bool> isAuthenticated() async {
-    return await _tokenManager.hasToken;
+    final hasToken = await _tokenManager.hasToken;
+    return hasToken;
   }
 
   /// Get the current auth token

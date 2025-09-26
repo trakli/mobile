@@ -23,7 +23,10 @@ class PartyRepositoryImpl
     required PartySyncHandler syncHandler,
     required this.localDataSource,
     required super.db,
-  }) : super(syncHandler: syncHandler);
+    required super.requestAuthorizationService,
+  }) : super(
+          syncHandler: syncHandler,
+        );
 
   @override
   Future<Either<Failure, List<PartyEntity>>> getAllParties() {

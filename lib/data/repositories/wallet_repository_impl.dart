@@ -25,6 +25,7 @@ class WalletRepositoryImpl
     required WalletSyncHandler syncHandler,
     required this.localDataSource,
     required super.db,
+    required super.requestAuthorizationService,
   }) : super(syncHandler: syncHandler);
 
   @override

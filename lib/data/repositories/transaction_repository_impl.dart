@@ -16,13 +16,16 @@ import 'package:trakli/data/sync/transaction_sync_handler.dart';
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     TransactionCompleteDto, String, int> implements TransactionRepository {
+  final TransactionLocalDataSource localDataSource;
+
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
     required this.localDataSource,
     required super.db,
-  }) : super(syncHandler: syncHandler);
-
-  final TransactionLocalDataSource localDataSource;
+    required super.requestAuthorizationService,
+  }) : super(
+          syncHandler: syncHandler,
+        );
 
   @override
   Future<Either<Failure, Unit>> updateTransaction(

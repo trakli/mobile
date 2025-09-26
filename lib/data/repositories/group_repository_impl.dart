@@ -22,10 +22,11 @@ class GroupRepositoryImpl
   final GroupLocalDataSource localDataSource;
 
   GroupRepositoryImpl({
-    required GroupSyncHandler syncHandler,
+    required GroupSyncHandler super.syncHandler,
     required this.localDataSource,
     required super.db,
-  }) : super(syncHandler: syncHandler);
+    required super.requestAuthorizationService,
+  });
 
   @override
   Future<Either<Failure, List<GroupEntity>>> getAllGroups() async {
