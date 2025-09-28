@@ -324,5 +324,6 @@
   "logoutWarningTitle": "Données non synchronisées",
   "logoutWarningMessage": "Vous avez des données non synchronisées qui seront perdues si vous vous déconnectez maintenant. Voulez-vous continuer ?",
   "syncNow": "Synchroniser maintenant",
-  "logoutAnyway": "Se déconnecter quand même"
+  "logoutAnyway": "Se déconnecter quand même",
+  "balanceWillBeSetToZero": "Le solde sera défini à 0"
 }

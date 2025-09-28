@@ -326,5 +326,6 @@
   "logoutWarningTitle": "Nicht synchronisierte Daten",
   "logoutWarningMessage": "Sie haben nicht synchronisierte Daten, die verloren gehen, wenn Sie sich jetzt abmelden. Möchten Sie fortfahren?",
   "syncNow": "Jetzt synchronisieren",
-  "logoutAnyway": "Trotzdem abmelden"
+  "logoutAnyway": "Trotzdem abmelden",
+  "balanceWillBeSetToZero": "Guthaben wird auf 0 gesetzt"
 }

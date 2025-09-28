@@ -23,6 +23,7 @@ mixin _$OnboardingModel {
   @CurrencyConverter()
   Currency? get selectedCurrency => throw _privateConstructorUsedError;
   String? get defaultGroup => throw _privateConstructorUsedError;
+  bool? get editWalletAmount => throw _privateConstructorUsedError;
 
   /// Serializes this OnboardingModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +42,9 @@ abstract class $OnboardingModelCopyWith<$Res> {
       _$OnboardingModelCopyWithImpl<$Res, OnboardingModel>;
   @useResult
   $Res call(
-      {@CurrencyConverter() Currency? selectedCurrency, String? defaultGroup});
+      {@CurrencyConverter() Currency? selectedCurrency,
+      String? defaultGroup,
+      bool? editWalletAmount});
 }
 
 /// @nodoc
@@ -61,6 +64,7 @@ class _$OnboardingModelCopyWithImpl<$Res, $Val extends OnboardingModel>
   $Res call({
     Object? selectedCurrency = freezed,
     Object? defaultGroup = freezed,
+    Object? editWalletAmount = freezed,
   }) {
     return _then(_value.copyWith(
       selectedCurrency: freezed == selectedCurrency
@@ -71,6 +75,10 @@ class _$OnboardingModelCopyWithImpl<$Res, $Val extends OnboardingModel>
           ? _value.defaultGroup
           : defaultGroup // ignore: cast_nullable_to_non_nullable
               as String?,
+      editWalletAmount: freezed == editWalletAmount
+          ? _value.editWalletAmount
+          : editWalletAmount // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -84,7 +92,9 @@ abstract class _$$OnboardingModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@CurrencyConverter() Currency? selectedCurrency, String? defaultGroup});
+      {@CurrencyConverter() Currency? selectedCurrency,
+      String? defaultGroup,
+      bool? editWalletAmount});
 }
 
 /// @nodoc
@@ -102,6 +112,7 @@ class __$$OnboardingModelImplCopyWithImpl<$Res>
   $Res call({
     Object? selectedCurrency = freezed,
     Object? defaultGroup = freezed,
+    Object? editWalletAmount = freezed,
   }) {
     return _then(_$OnboardingModelImpl(
       selectedCurrency: freezed == selectedCurrency
@@ -112,6 +123,10 @@ class __$$OnboardingModelImplCopyWithImpl<$Res>
           ? _value.defaultGroup
           : defaultGroup // ignore: cast_nullable_to_non_nullable
               as String?,
+      editWalletAmount: freezed == editWalletAmount
+          ? _value.editWalletAmount
+          : editWalletAmount // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -120,7 +135,9 @@ class __$$OnboardingModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$OnboardingModelImpl extends _OnboardingModel {
   const _$OnboardingModelImpl(
-      {@CurrencyConverter() this.selectedCurrency, this.defaultGroup})
+      {@CurrencyConverter() this.selectedCurrency,
+      this.defaultGroup,
+      this.editWalletAmount})
       : super._();
 
   factory _$OnboardingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -131,10 +148,12 @@ class _$OnboardingModelImpl extends _OnboardingModel {
   final Currency? selectedCurrency;
   @override
   final String? defaultGroup;
+  @override
+  final bool? editWalletAmount;
 
   @override
   String toString() {
-    return 'OnboardingModel(selectedCurrency: $selectedCurrency, defaultGroup: $defaultGroup)';
+    return 'OnboardingModel(selectedCurrency: $selectedCurrency, defaultGroup: $defaultGroup, editWalletAmount: $editWalletAmount)';
   }
 
   @override
@@ -145,12 +164,15 @@ class _$OnboardingModelImpl extends _OnboardingModel {
             (identical(other.selectedCurrency, selectedCurrency) ||
                 other.selectedCurrency == selectedCurrency) &&
             (identical(other.defaultGroup, defaultGroup) ||
-                other.defaultGroup == defaultGroup));
+                other.defaultGroup == defaultGroup) &&
+            (identical(other.editWalletAmount, editWalletAmount) ||
+                other.editWalletAmount == editWalletAmount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, selectedCurrency, defaultGroup);
+  int get hashCode => Object.hash(
+      runtimeType, selectedCurrency, defaultGroup, editWalletAmount);
 
   /// Create a copy of OnboardingModel
   /// with the given fields replaced by the non-null parameter values.
@@ -172,7 +194,8 @@ class _$OnboardingModelImpl extends _OnboardingModel {
 abstract class _OnboardingModel extends OnboardingModel {
   const factory _OnboardingModel(
       {@CurrencyConverter() final Currency? selectedCurrency,
-      final String? defaultGroup}) = _$OnboardingModelImpl;
+      final String? defaultGroup,
+      final bool? editWalletAmount}) = _$OnboardingModelImpl;
   const _OnboardingModel._() : super._();
 
   factory _OnboardingModel.fromJson(Map<String, dynamic> json) =
@@ -183,6 +206,8 @@ abstract class _OnboardingModel extends OnboardingModel {
   Currency? get selectedCurrency;
   @override
   String? get defaultGroup;
+  @override
+  bool? get editWalletAmount;
 
   /// Create a copy of OnboardingModel
   /// with the given fields replaced by the non-null parameter values.

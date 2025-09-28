@@ -12,7 +12,6 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/wallet_transfer_screen.dart';
 import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
@@ -117,12 +116,6 @@ class WalletTile extends StatelessWidget {
                               ),
                             ),
                             PopupMenuItem(
-                              onTap: () {
-                                AppNavigator.push(
-                                  context,
-                                  const WalletTransferScreen(),
-                                );
-                              },
                               height: 40.h,
                               child: Row(
                                 spacing: 8.w,

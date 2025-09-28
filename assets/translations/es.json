@@ -325,5 +325,6 @@
   "logoutWarningTitle": "Datos no sincronizados",
   "logoutWarningMessage": "Tienes datos no sincronizados que se perderán si cierras sesión ahora. ¿Quieres continuar?",
   "syncNow": "Sincronizar ahora",
-  "logoutAnyway": "Cerrar sesión de todos modos"
+  "logoutAnyway": "Cerrar sesión de todos modos",
+  "balanceWillBeSetToZero": "El saldo se establecerá en 0"
 }

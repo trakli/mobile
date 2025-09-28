@@ -24,6 +24,7 @@ class OnboardingModel with _$OnboardingModel {
   const factory OnboardingModel({
     @CurrencyConverter() Currency? selectedCurrency,
     String? defaultGroup,
+    bool? editWalletAmount,
   }) = _OnboardingModel;
 
   const OnboardingModel._();

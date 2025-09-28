@@ -331,5 +331,6 @@ abstract class  LocaleKeys {
   static const logoutWarningMessage = 'logoutWarningMessage';
   static const syncNow = 'syncNow';
   static const logoutAnyway = 'logoutAnyway';
+  static const balanceWillBeSetToZero = 'balanceWillBeSetToZero';
 
 }
