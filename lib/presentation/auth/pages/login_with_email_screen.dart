@@ -12,7 +12,9 @@ import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/custom_phone_field.dart';
 import 'package:trakli/presentation/utils/custom_text_field.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
@@ -22,14 +24,19 @@ class LoginWithEmailScreen extends StatefulWidget {
   State<LoginWithEmailScreen> createState() => _LoginWithEmailScreenState();
 }
 
-class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
+class _LoginWithEmailScreenState extends State<LoginWithEmailScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late final TapGestureRecognizer _recognizerTap;
+  late TabController _tabController;
+  RegisterType loginType = RegisterType.email;
+  String? _phoneNumber;
 
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
     _recognizerTap = TapGestureRecognizer()
       ..onTap = () {
         AppNavigator.pushReplacement(
@@ -44,6 +51,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    _tabController.dispose();
     _recognizerTap.dispose();
     super.dispose();
   }
@@ -102,21 +110,48 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                TabBar(
+                  indicatorColor: appPrimaryColor,
+                  labelColor: appPrimaryColor,
+                  controller: _tabController,
+                  onTap: (index) {
+                    setState(() {
+                      loginType = RegisterType.values.elementAt(index);
+                    });
+                  },
+                  tabs: [
+                    Tab(
+                      text: LocaleKeys.email.tr(),
+                    ),
+                    Tab(
+                      text: LocaleKeys.phoneNumber.tr(),
+                    )
+                  ],
+                ),
                 SizedBox(height: 28.h),
                 Text(
-                  LocaleKeys.email.tr(),
+                  loginType == RegisterType.email
+                      ? LocaleKeys.email.tr()
+                      : LocaleKeys.phoneNumber.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: emailController,
-                  hintText: LocaleKeys.email.tr(),
-                  filled: true,
-                  validator: validateEmail,
-                ),
+                if (loginType == RegisterType.email)
+                  CustomTextField(
+                    controller: emailController,
+                    hintText: LocaleKeys.email.tr(),
+                    filled: true,
+                    validator: validateEmail,
+                  )
+                else
+                  CustomPhoneField(
+                    onChanged: (number) {
+                      _phoneNumber = number.completeNumber;
+                    },
+                  ),
                 SizedBox(height: 16.h),
                 Text(
                   LocaleKeys.password.tr(),
@@ -141,10 +176,20 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     return PrimaryButton(
                       onPress: () {
                         if (formKey.currentState!.validate()) {
-                          context.read<LoginCubit>().loginWithEmailPassword(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              );
+                          if (loginType == RegisterType.email) {
+                            context.read<LoginCubit>().loginWithEmailPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                );
+                          } else {
+                            if (_phoneNumber != null &&
+                                _phoneNumber!.isNotEmpty) {
+                              context.read<LoginCubit>().loginWithPhonePassword(
+                                    phone: _phoneNumber!,
+                                    password: passwordController.text,
+                                  );
+                            }
+                          }
                         }
                       },
                       buttonText: LocaleKeys.login.tr(),

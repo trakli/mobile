@@ -30,7 +30,7 @@ class Transactions extends Table with SyncTable {
   TextColumn get description => text().nullable()();
 
   @JsonKey('datetime')
-  DateTimeColumn get datetime => dateTime()();
+  DateTimeColumn get datetime => dateTime().nullable()();
 
   // Server references
   @JsonKey('party_id')

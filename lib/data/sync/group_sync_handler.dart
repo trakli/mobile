@@ -89,6 +89,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
       icon: Value(entity.icon),
+      lastSyncedAt: Value(entity.lastSyncedAt),
     );
 
     await table.insertOne(group, mode: InsertMode.insertOrReplace);
@@ -114,6 +115,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
           createdAt: Value(entity.createdAt),
           updatedAt: Value(entity.updatedAt),
           icon: Value(entity.icon),
+          lastSyncedAt: Value(entity.lastSyncedAt),
         );
         await table.insertOnConflictUpdate(group);
       }

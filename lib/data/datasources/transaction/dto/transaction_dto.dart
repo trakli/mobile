@@ -14,7 +14,7 @@ class TransactionDTO {
   final double amount;
   final TransactionType type;
   final String? description;
-  final String datetime;
+  final String? datetime;
   @JsonKey(name: 'created_at')
   final String createdAt;
   @JsonKey(name: 'updated_at')
@@ -39,7 +39,7 @@ class TransactionDTO {
     required this.amount,
     required this.type,
     required this.description,
-    required this.datetime,
+    this.datetime,
     required this.createdAt,
     required this.updatedAt,
     required this.walletId,

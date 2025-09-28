@@ -405,9 +405,22 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
             }
             await handler.upsertAllLocal(changedItems);
 
+            // Find the maximum lastSyncedAt timestamp from all changed items
+            DateTime? maxLastSyncedAt;
+            for (final item in changedItems) {
+              final itemLastSyncedAt = handler.getlastSyncedAt(item);
+              if (itemLastSyncedAt != null) {
+                if (maxLastSyncedAt == null ||
+                    itemLastSyncedAt.isAfter(maxLastSyncedAt)) {
+                  maxLastSyncedAt = itemLastSyncedAt;
+                }
+              }
+            }
+
             await appDatabase.updateEnityLocalSyncMetadata(
-                entityType: handler.entityType,
-                lastSyncedAt: handler.getlastSyncedAt(changedItems.last));
+              entityType: handler.entityType,
+              lastSyncedAt: maxLastSyncedAt,
+            );
           });
 
           _dependencyManager.markSuccessfullySynced(handler);

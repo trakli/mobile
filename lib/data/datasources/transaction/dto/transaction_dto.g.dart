@@ -12,7 +12,7 @@ TransactionDTO _$TransactionDTOFromJson(Map<String, dynamic> json) =>
       amount: parseAmount(json['amount']),
       type: $enumDecode(_$TransactionTypeEnumMap, json['type']),
       description: json['description'] as String?,
-      datetime: json['datetime'] as String,
+      datetime: json['datetime'] as String?,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       walletId: (json['wallet_id'] as num).toInt(),

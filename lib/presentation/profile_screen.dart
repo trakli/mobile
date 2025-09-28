@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
         _showLogoutDialog(context);
       },
       (hasPendingChanges) {
-        if (!hasPendingChanges) {
+        if (hasPendingChanges) {
           // Show warning dialog with sync option
           _showLogoutWarningDialog(context);
         } else {

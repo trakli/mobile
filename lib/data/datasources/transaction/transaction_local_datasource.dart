@@ -255,7 +255,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             amount: amount,
             description: Value(description),
             type: type,
-            datetime: utcDatetime,
+            datetime: Value(utcDatetime),
             createdAt: Value(now),
             walletClientId: walletClientId,
             partyClientId: Value(partyClientId),
