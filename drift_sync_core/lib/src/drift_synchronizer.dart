@@ -9,10 +9,12 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     required this.appDatabase,
     required this.typeHandlers,
     required SyncDependencyManagerBase dependencyManager,
+    required RequestAuthorizationService requestAuthorizationService,
   })  : _typeHandlers = <String, SyncTypeHandler>{
           for (final th in typeHandlers) th.entityType: th,
         },
-        _dependencyManager = dependencyManager;
+        _dependencyManager = dependencyManager,
+        _requestAuthorizationService = requestAuthorizationService;
 
   SyncState _state = const SyncState.initial();
   SyncState get state => _state;
@@ -23,6 +25,9 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
   @protected
   final SyncDependencyManagerBase _dependencyManager;
+
+  @protected
+  final RequestAuthorizationService _requestAuthorizationService;
 
   /// Gets the Id of the latest available change from the server.
   @protected
@@ -119,6 +124,12 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   /// Returns a list of local changes that were discarded
   /// because of optimistic conflict
   Future<bool> uploadLocalChanges() async {
+    // Check authorization before attempting to upload
+    if (!await _requestAuthorizationService.canSync()) {
+      DriftSyncLogger.logger.info('Skipping upload - user not authenticated');
+      return false; // Don't upload if not authenticated
+    }
+
     final localChanges = await appDatabase.getPendingLocalChanges();
 
     for (final localChange in localChanges) {
@@ -394,9 +405,22 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
             }
             await handler.upsertAllLocal(changedItems);
 
+            // Find the maximum lastSyncedAt timestamp from all changed items
+            DateTime? maxLastSyncedAt;
+            for (final item in changedItems) {
+              final itemLastSyncedAt = handler.getlastSyncedAt(item);
+              if (itemLastSyncedAt != null) {
+                if (maxLastSyncedAt == null ||
+                    itemLastSyncedAt.isAfter(maxLastSyncedAt)) {
+                  maxLastSyncedAt = itemLastSyncedAt;
+                }
+              }
+            }
+
             await appDatabase.updateEnityLocalSyncMetadata(
-                entityType: handler.entityType,
-                lastSyncedAt: handler.getlastSyncedAt(changedItems.last));
+              entityType: handler.entityType,
+              lastSyncedAt: maxLastSyncedAt,
+            );
           });
 
           _dependencyManager.markSuccessfullySynced(handler);

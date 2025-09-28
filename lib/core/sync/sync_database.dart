@@ -16,6 +16,7 @@ class SynchAppDatabase extends DriftSynchronizer<AppDatabase>
     required super.dependencyManager,
     required Dio dio,
     required NetworkInfo networkInfo,
+    required super.requestAuthorizationService,
   }) {
     _dio = dio;
   }

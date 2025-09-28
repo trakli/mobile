@@ -49,7 +49,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       setState(() {});
     });
     final now = DateTime.now();
-    _endDate = DateTime(now.year, now.month, now.day);
+    _endDate = DateTime(now.year, now.month, now.day + 1);
     _startDate = DateTime(now.year, now.month, 1);
     super.initState();
   }

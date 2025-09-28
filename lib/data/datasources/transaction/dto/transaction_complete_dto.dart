@@ -133,7 +133,9 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       ...transaction.toJson(),
       'client_id': transaction.clientId,
       'type': transaction.type.serverKey,
-      'datetime': formatServerIsoDateTimeString(transaction.datetime),
+      'datetime': transaction.datetime != null
+          ? formatServerIsoDateTimeString(transaction.datetime!)
+          : null,
       'created_at': formatServerIsoDateTimeString(transaction.createdAt),
       'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
       'deleted_at': transaction.deletedAt != null
@@ -170,7 +172,9 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       createdAt: DateTime.parse(transactionDto.createdAt),
       updatedAt: DateTime.parse(transactionDto.updatedAt),
       type: transactionDto.type,
-      datetime: DateTime.parse(transactionDto.datetime),
+      datetime: transactionDto.datetime != null
+          ? DateTime.parse(transactionDto.datetime!)
+          : null,
       walletClientId: wallet.clientId,
       description: transactionDto.description,
       id: transactionDto.id,
@@ -178,6 +182,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       walletId: wallet.id,
       partyClientId: party?.clientId,
       groupClientId: group?.clientId,
+      lastSyncedAt: transactionDto.lastSyncedAt,
     );
 
     return TransactionCompleteDto(

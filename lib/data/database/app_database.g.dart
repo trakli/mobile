@@ -1705,8 +1705,8 @@ class $TransactionsTable extends Transactions
       type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<DateTime> datetime = GeneratedColumn<DateTime>(
-      'datetime', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      'datetime', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<int> partyId = GeneratedColumn<int>(
       'party_id', aliasedName, true,
@@ -1796,7 +1796,7 @@ class $TransactionsTable extends Transactions
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       datetime: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}datetime'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}datetime']),
       partyId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}party_id']),
       walletId: attachedDatabase.typeMapping
@@ -1833,7 +1833,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final double amount;
   final TransactionType type;
   final String? description;
-  final DateTime datetime;
+  final DateTime? datetime;
   final int? partyId;
   final int? walletId;
   final int? groupId;
@@ -1852,7 +1852,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       required this.amount,
       required this.type,
       this.description,
-      required this.datetime,
+      this.datetime,
       this.partyId,
       this.walletId,
       this.groupId,
@@ -1888,7 +1888,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['datetime'] = Variable<DateTime>(datetime);
+    if (!nullToAbsent || datetime != null) {
+      map['datetime'] = Variable<DateTime>(datetime);
+    }
     if (!nullToAbsent || partyId != null) {
       map['party_id'] = Variable<int>(partyId);
     }
@@ -1928,7 +1930,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      datetime: Value(datetime),
+      datetime: datetime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(datetime),
       partyId: partyId == null && nullToAbsent
           ? const Value.absent()
           : Value(partyId),
@@ -1964,7 +1968,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       type: $TransactionsTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
       description: serializer.fromJson<String?>(json['description']),
-      datetime: serializer.fromJson<DateTime>(json['datetime']),
+      datetime: serializer.fromJson<DateTime?>(json['datetime']),
       partyId: serializer.fromJson<int?>(json['party_id']),
       walletId: serializer.fromJson<int?>(json['wallet_id']),
       groupId: serializer.fromJson<int?>(json['group_id']),
@@ -1989,7 +1993,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'type': serializer
           .toJson<String>($TransactionsTable.$convertertype.toJson(type)),
       'description': serializer.toJson<String?>(description),
-      'datetime': serializer.toJson<DateTime>(datetime),
+      'datetime': serializer.toJson<DateTime?>(datetime),
       'party_id': serializer.toJson<int?>(partyId),
       'wallet_id': serializer.toJson<int?>(walletId),
       'group_id': serializer.toJson<int?>(groupId),
@@ -2011,7 +2015,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           double? amount,
           TransactionType? type,
           Value<String?> description = const Value.absent(),
-          DateTime? datetime,
+          Value<DateTime?> datetime = const Value.absent(),
           Value<int?> partyId = const Value.absent(),
           Value<int?> walletId = const Value.absent(),
           Value<int?> groupId = const Value.absent(),
@@ -2031,7 +2035,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         amount: amount ?? this.amount,
         type: type ?? this.type,
         description: description.present ? description.value : this.description,
-        datetime: datetime ?? this.datetime,
+        datetime: datetime.present ? datetime.value : this.datetime,
         partyId: partyId.present ? partyId.value : this.partyId,
         walletId: walletId.present ? walletId.value : this.walletId,
         groupId: groupId.present ? groupId.value : this.groupId,
@@ -2154,7 +2158,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<double> amount;
   final Value<TransactionType> type;
   final Value<String?> description;
-  final Value<DateTime> datetime;
+  final Value<DateTime?> datetime;
   final Value<int?> partyId;
   final Value<int?> walletId;
   final Value<int?> groupId;
@@ -2195,7 +2199,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     required double amount,
     required TransactionType type,
     this.description = const Value.absent(),
-    required DateTime datetime,
+    this.datetime = const Value.absent(),
     this.partyId = const Value.absent(),
     this.walletId = const Value.absent(),
     this.groupId = const Value.absent(),
@@ -2205,7 +2209,6 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.rowid = const Value.absent(),
   })  : amount = Value(amount),
         type = Value(type),
-        datetime = Value(datetime),
         walletClientId = Value(walletClientId);
   static Insertable<Transaction> custom({
     Expression<int>? id,
@@ -2263,7 +2266,7 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<double>? amount,
       Value<TransactionType>? type,
       Value<String?>? description,
-      Value<DateTime>? datetime,
+      Value<DateTime?>? datetime,
       Value<int?>? partyId,
       Value<int?>? walletId,
       Value<int?>? groupId,
@@ -5356,7 +5359,7 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
   required double amount,
   required TransactionType type,
   Value<String?> description,
-  required DateTime datetime,
+  Value<DateTime?> datetime,
   Value<int?> partyId,
   Value<int?> walletId,
   Value<int?> groupId,
@@ -5378,7 +5381,7 @@ typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
   Value<double> amount,
   Value<TransactionType> type,
   Value<String?> description,
-  Value<DateTime> datetime,
+  Value<DateTime?> datetime,
   Value<int?> partyId,
   Value<int?> walletId,
   Value<int?> groupId,
@@ -5821,7 +5824,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<double> amount = const Value.absent(),
             Value<TransactionType> type = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            Value<DateTime> datetime = const Value.absent(),
+            Value<DateTime?> datetime = const Value.absent(),
             Value<int?> partyId = const Value.absent(),
             Value<int?> walletId = const Value.absent(),
             Value<int?> groupId = const Value.absent(),
@@ -5863,7 +5866,7 @@ class $$TransactionsTableTableManager extends RootTableManager<
             required double amount,
             required TransactionType type,
             Value<String?> description = const Value.absent(),
-            required DateTime datetime,
+            Value<DateTime?> datetime = const Value.absent(),
             Value<int?> partyId = const Value.absent(),
             Value<int?> walletId = const Value.absent(),
             Value<int?> groupId = const Value.absent(),

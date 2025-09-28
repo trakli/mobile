@@ -98,6 +98,10 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
         selectedWallet = widget.selectedWallet;
         walletController.text = widget.selectedWallet?.name ?? '';
       }
+
+      if (widget.transactionCompleteEntity?.party != null) {
+        selectedParty = widget.transactionCompleteEntity!.party;
+      }
     }
   }
 

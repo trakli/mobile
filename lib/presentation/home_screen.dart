@@ -91,10 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentSelectedGroup =
         context.watch<TransactionCubit>().state.selectedGroup;
 
-    final selectedGroup =
-        currentSelectedGroup ?? defaultGroup ?? groups.firstOrNull;
+    var selectedGroup = currentSelectedGroup ?? defaultGroup;
 
     context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
+
+    selectedGroup = selectedGroup ?? groups.firstOrNull;
 
     return Scaffold(
       appBar: CustomAppBar(

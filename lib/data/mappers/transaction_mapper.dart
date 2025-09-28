@@ -15,7 +15,7 @@ class _TransactionMapper {
       description: row.description ?? '',
       lastSyncedAt: row.lastSyncedAt,
       createdAt: row.createdAt,
-      datetime: row.datetime,
+      datetime: row.datetime ?? row.createdAt,
       type: row.type,
       updatedAt: row.updatedAt,
       walletClientId: row.walletClientId,

@@ -1,6 +1,11 @@
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:meta/meta.dart';
 
+/// Abstract interface for request authorization service
+abstract class RequestAuthorizationService {
+  Future<bool> canSync();
+}
+
 enum DataSource { remote, local }
 
 enum Operation { put, delete }
@@ -15,10 +20,15 @@ enum DataDestination { local, both }
 /// online data with the fallback of the offline data.
 abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
     TEntity, TKey, TServerKey> {
-  const SyncEntityRepository({required this.syncHandler, required this.db});
+  const SyncEntityRepository({
+    required this.syncHandler,
+    required this.db,
+    required this.requestAuthorizationService,
+  });
 
   final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;
   final TAppDatabase db;
+  final RequestAuthorizationService requestAuthorizationService;
 
   @protected
   Future<TEntity?> getRemote(TServerKey id) async {
@@ -30,8 +40,11 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
   }
 
   Future<(TEntity, DataDestination)> put(TEntity entity) async {
+    // Check authorization before attempting remote operations
+    final canSync = await requestAuthorizationService.canSync();
     final serverId = syncHandler.getServerId(entity);
-    final remoteCreated = serverId != null ? await putRemote(entity) : null;
+    final remoteCreated =
+        (canSync && serverId != null) ? await putRemote(entity) : null;
     final created = remoteCreated ?? entity;
     final ds =
         remoteCreated == null ? DataDestination.local : DataDestination.both;
@@ -41,7 +54,9 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
   }
 
   Future<(TEntity, DataDestination)> post(TEntity entity) async {
-    final remoteCreated = await putRemote(entity);
+    // Check authorization before attempting remote operations
+    final canSync = await requestAuthorizationService.canSync();
+    final remoteCreated = canSync ? await putRemote(entity) : null;
     final created = remoteCreated ?? entity;
     final ds =
         remoteCreated == null ? DataDestination.local : DataDestination.both;
@@ -93,7 +108,9 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
   }
 
   Future<DataDestination> delete(TEntity entity) async {
-    final synced = await deleteRemote(entity);
+    // Check authorization before attempting remote operations
+    final canSync = await requestAuthorizationService.canSync();
+    final synced = canSync ? await deleteRemote(entity) : false;
     final ds = synced ? DataDestination.both : DataDestination.local;
 
     await _handleDeleteStorage(entity, synced);

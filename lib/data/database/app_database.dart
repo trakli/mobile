@@ -234,17 +234,10 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   @override
   Future<void> updateEnityLocalSyncMetadata(
       {required String entityType, DateTime? lastSyncedAt}) async {
-    final time = lastSyncedAt?.add(
-          const Duration(seconds: 2),
-        ) ??
-        DateTime.now().add(
-          const Duration(seconds: 2),
-        );
-
     await into(syncMetadata).insertOnConflictUpdate(
       SyncMetadataCompanion(
         entityType: Value(entityType),
-        lastSyncedAt: Value(time),
+        lastSyncedAt: Value(lastSyncedAt),
       ),
     );
   }

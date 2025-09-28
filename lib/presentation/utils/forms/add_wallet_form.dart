@@ -63,6 +63,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final walletCubit = context.read<WalletCubit>();
+      final onboardingEntity = context.read<OnboardingCubit>().state.entity;
 
       if (widget.wallet != null) {
         // Update existing wallet
@@ -70,7 +71,9 @@ class _AddWalletFormState extends State<AddWalletForm> {
           clientId: widget.wallet!.clientId,
           name: _nameController.text,
           type: _selectedType,
-          balance: double.parse(_balanceController.text),
+          balance: onboardingEntity?.editWalletAmount == true
+              ? double.parse(_balanceController.text)
+              : widget.wallet!.balance,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
@@ -89,7 +92,9 @@ class _AddWalletFormState extends State<AddWalletForm> {
         walletCubit.addWallet(
           name: _nameController.text,
           type: _selectedType,
-          balance: double.parse(_balanceController.text),
+          balance: onboardingEntity?.editWalletAmount == true
+              ? double.parse(_balanceController.text)
+              : 0.0,
           currency: currency!.code,
           description: _descriptionController.text.isEmpty
               ? null
@@ -103,6 +108,8 @@ class _AddWalletFormState extends State<AddWalletForm> {
 
   @override
   Widget build(BuildContext context) {
+    final onboardingEntity = context.read<OnboardingCubit>().state.entity;
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -161,43 +168,116 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
-            Text(
-              LocaleKeys.balance.tr(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
+            if (onboardingEntity?.editWalletAmount == true) ...[
+              SizedBox(height: 20.h),
+              Text(
+                LocaleKeys.balance.tr(),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).primaryColorDark,
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
-            IntrinsicHeight(
-              child: Row(
-                spacing: 16.w,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: 8.h),
+              IntrinsicHeight(
+                child: Row(
+                  spacing: 16.w,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _balanceController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: LocaleKeys.exampleAmount.tr(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return LocaleKeys.amountIsRequired.tr();
+                          }
+                          final number = double.tryParse(value);
+                          if (number == null) {
+                            return LocaleKeys.mustBeNumber.tr();
+                          }
+                          if (number == 0) {
+                            return LocaleKeys.amountMustNotBeZero.tr();
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: widget.wallet == null
+                          ? () async {
+                              showCurrencyPicker(
+                                context: context,
+                                theme: CurrencyPickerThemeData(
+                                    bottomSheetHeight: 0.7.sh,
+                                    backgroundColor: Colors.white,
+                                    flagSize: 24.sp,
+                                    subtitleTextStyle: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Theme.of(context).primaryColor,
+                                    )),
+                                onSelect: (Currency currencyValue) {
+                                  setState(() {
+                                    currency = currencyValue;
+                                  });
+                                },
+                              );
+                            }
+                          : null,
+                      child: Container(
+                        width: 60.w,
+                        constraints: BoxConstraints(
+                          maxHeight: 50.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDEE1E0),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(currency?.code ??
+                              widget.wallet?.currencyCode ??
+                              'XAF'),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ] else ...[
+              SizedBox(height: 20.h),
+              Text(
+                LocaleKeys.balance.tr(),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).primaryColorDark,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _balanceController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: LocaleKeys.exampleAmount.tr(),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDEE1E0),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return LocaleKeys.amountIsRequired.tr();
-                        }
-                        final number = double.tryParse(value);
-                        if (number == null) {
-                          return LocaleKeys.mustBeNumber.tr();
-                        }
-                        if (number == 0) {
-                          return LocaleKeys.amountMustNotBeZero.tr();
-                        }
-                        return null;
-                      },
+                      child: Text(
+                        LocaleKeys.balanceWillBeSetToZero.tr(),
+                        style: TextStyle(
+                          color: Theme.of(context)
+                              .primaryColorDark
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(width: 16.w),
                   GestureDetector(
                     onTap: widget.wallet == null
                         ? () async {
@@ -237,7 +317,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                   )
                 ],
               ),
-            ),
+            ],
             SizedBox(height: 20.h),
             Text(
               LocaleKeys.type.tr(),
@@ -300,7 +380,14 @@ class _AddWalletFormState extends State<AddWalletForm> {
                       ? null
                       : () {
                           hideKeyBoard();
-                          if (_formKey.currentState?.validate() ?? false) {
+                          final onboardingEntity =
+                              context.read<OnboardingCubit>().state.entity;
+                          if (onboardingEntity?.editWalletAmount == true) {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              _submitForm();
+                            }
+                          } else {
+                            // Skip form validation when balance editing is disabled
                             _submitForm();
                           }
                         },

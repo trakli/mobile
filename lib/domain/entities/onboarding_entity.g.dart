@@ -12,6 +12,7 @@ _$OnboardingEntityImpl _$$OnboardingEntityImplFromJson(
       selectedCurrency: _$JsonConverterFromJson<Map<String, dynamic>, Currency>(
           json['selectedCurrency'], const CurrencyConverter().fromJson),
       defaultGroup: json['defaultGroup'] as String?,
+      editWalletAmount: json['editWalletAmount'] as bool?,
     );
 
 Map<String, dynamic> _$$OnboardingEntityImplToJson(
@@ -20,6 +21,7 @@ Map<String, dynamic> _$$OnboardingEntityImplToJson(
       'selectedCurrency': _$JsonConverterToJson<Map<String, dynamic>, Currency>(
           instance.selectedCurrency, const CurrencyConverter().toJson),
       'defaultGroup': instance.defaultGroup,
+      'editWalletAmount': instance.editWalletAmount,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

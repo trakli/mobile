@@ -7,6 +7,7 @@ import 'package:trakli/presentation/utils/pick_group_tile.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
@@ -30,9 +31,22 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final groups = context.watch<GroupCubit>().state.groups;
+    final entity = context.watch<OnboardingCubit>().state.entity;
+    final defaultGroupId = entity?.defaultGroup;
 
-    if (selectedGroup == null && groups.isNotEmpty) {
-      selectedGroup = groups.first;
+    // Sort groups to put default group first
+    final sortedGroups = List<GroupEntity>.from(groups);
+    sortedGroups.sort((a, b) {
+      final aIsDefault = a.clientId == defaultGroupId;
+      final bIsDefault = b.clientId == defaultGroupId;
+
+      if (aIsDefault && !bIsDefault) return -1;
+      if (!aIsDefault && bIsDefault) return 1;
+      return 0; // Keep original order for non-default groups
+    });
+
+    if (selectedGroup == null && sortedGroups.isNotEmpty) {
+      selectedGroup = sortedGroups.first;
     }
     return SingleChildScrollView(
       // physics: const NeverScrollableScrollPhysics(),
@@ -95,9 +109,9 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             child: ListView.separated(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              itemCount: groups.length,
+              itemCount: sortedGroups.length,
               itemBuilder: (context, index) {
-                final group = groups[index];
+                final group = sortedGroups[index];
                 return PickGroupTile<GroupEntity?>(
                   value: group,
                   groupValue: selectedGroup,

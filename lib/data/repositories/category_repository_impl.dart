@@ -24,6 +24,7 @@ class CategoryRepositoryImpl
     required CategorySyncHandler syncHandler,
     required this.localDataSource,
     required super.db,
+    required super.requestAuthorizationService,
   }) : super(syncHandler: syncHandler);
 
   @override
