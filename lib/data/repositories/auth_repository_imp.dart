@@ -66,12 +66,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final userId = await _preferenceManager.getUserId();
     final hasToken = await _tokenManager.hasToken;
 
-    // Case 1: User ID exists but no token - logout user
     if (userId != null && !hasToken) {
       await _performLogout();
     }
 
-    // Case 2: Token exists but no user ID - logout user
     if (hasToken && userId == null) {
       await _performLogout();
     }
