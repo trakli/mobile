@@ -49,6 +49,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await _localDataSource.getUser(userId);
       if (user != null) {
         yield AuthStatus.authenticated;
+        validateAuthConsistency();
       } else {
         yield AuthStatus.unauthenticated;
       }
@@ -57,6 +58,33 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     yield* _authStatusController.stream;
+  }
+
+  /// Checks for token/userId mismatches and logs out user if needed
+  @override
+  Future<void> validateAuthConsistency() async {
+    final userId = await _preferenceManager.getUserId();
+    final hasToken = await _tokenManager.hasToken;
+
+    // Case 1: User ID exists but no token - logout user
+    if (userId != null && !hasToken) {
+      await _performLogout();
+    }
+
+    // Case 2: Token exists but no user ID - logout user
+    if (hasToken && userId == null) {
+      await _performLogout();
+    }
+  }
+
+  /// Shared logout logic
+  Future<void> _performLogout() async {
+    await _tokenManager.clearToken();
+    await _preferenceManager.clearAll();
+    await _localDataSource.deleteUser();
+    await _localDataSource.clearDatabase();
+    await _onboardingRepository.resetOnboarding();
+    _authStatusController.add(AuthStatus.unauthenticated);
   }
 
   Future<UserEntity> _handleAuthResponse(
@@ -129,13 +157,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, Unit>> logout() async {
     return RepositoryErrorHandler.handleApiCall<Unit>(() async {
-      await _tokenManager.clearToken();
-      await _preferenceManager.clearAll();
-      await _localDataSource.deleteUser();
-      await _localDataSource.clearDatabase();
-      await _onboardingRepository.resetOnboarding();
-      _authStatusController.add(AuthStatus.unauthenticated);
-
+      await _performLogout();
       return unit;
     });
   }

@@ -252,7 +252,7 @@ class WalletTile extends StatelessWidget {
                         ],
                       ),
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
@@ -307,7 +307,7 @@ class WalletTile extends StatelessWidget {
                               ],
                             ),
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.black,
                               fontWeight: FontWeight.w700,
                             ),
@@ -359,7 +359,7 @@ class WalletTile extends StatelessWidget {
                               ],
                             ),
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               color: Colors.black,
                               fontWeight: FontWeight.w700,
                             ),

@@ -59,4 +59,6 @@ abstract class AuthRepository {
   Future<Either<Failure, bool>> isOnboardingCompleted();
 
   Future<Either<Failure, Unit>> onboardingCompleted();
+
+  Future<void> validateAuthConsistency();
 }
