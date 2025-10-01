@@ -326,5 +326,20 @@
   "logoutWarningMessage": "Tienes datos no sincronizados que se perderán si cierras sesión ahora. ¿Quieres continuar?",
   "syncNow": "Sincronizar ahora",
   "logoutAnyway": "Cerrar sesión de todos modos",
-  "balanceWillBeSetToZero": "El saldo se establecerá en 0"
+  "balanceWillBeSetToZero": "El saldo se establecerá en 0",
+  "accountAndPrivacy": "Cuenta y Privacidad",
+  "data": "Datos",
+  "dataDeletionOptions": "Opciones de Eliminación de Datos",
+  "dataDeletionDescription": "Para eliminar todos los datos tanto local como remotamente, simplemente elimine todos los registros locales si la sincronización está habilitada.",
+  "dataDeletionRemoteDescription": "Para eliminar solo los datos remotos, use el botón \"Solicitar Eliminación de Datos\" a continuación. Esto abrirá su cliente de correo electrónico con los detalles de su cuenta pre-rellenados, facilitando el envío de su solicitud de eliminación a deletemydata@trakli.app",
+  "dataDeletionWarning": "⚠️ Nota: Una vez que sus datos sean eliminados, será desconectado automáticamente y todas las funciones de sincronización de dispositivos ya no estarán disponibles. Todas las eliminaciones realizadas son permanentes e irreversibles.",
+  "requestDataDeletion": "Solicitar Eliminación de Datos",
+  "dataDeletionEmailSubject": "Solicitud de Eliminación de Datos",
+  "dataDeletionEmailBody": "Hola Equipo Trakli,\n\nMe gustaría solicitar la eliminación de todos mis datos remotos asociados con mi cuenta Trakli.\n\nDetalles de la cuenta:\n- Nombre de usuario / Email: {username}\n\nEntiendo que una vez que mis datos sean eliminados:\n- Seré desconectado automáticamente.\n- Todas las funciones de sincronización de dispositivos se perderán.\n- La eliminación es permanente e irreversible.",
+  "dataDeletionFallbackTitle": "Cliente de correo no disponible",
+  "dataDeletionFallbackInstructions": "Por favor envíe un correo electrónico a:",
+  "dataDeletionFallbackEmailTo": "Por favor envíe un correo electrónico a:",
+  "dataDeletionFallbackSubjectLabel": "Asunto",
+  "dataDeletionFallbackBodyLabel": "Cuerpo",
+  "copiedToClipboard": "Copiado al portapapeles"
 }

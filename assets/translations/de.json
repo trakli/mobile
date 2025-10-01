@@ -327,5 +327,20 @@
   "logoutWarningMessage": "Sie haben nicht synchronisierte Daten, die verloren gehen, wenn Sie sich jetzt abmelden. Möchten Sie fortfahren?",
   "syncNow": "Jetzt synchronisieren",
   "logoutAnyway": "Trotzdem abmelden",
-  "balanceWillBeSetToZero": "Guthaben wird auf 0 gesetzt"
+  "balanceWillBeSetToZero": "Guthaben wird auf 0 gesetzt",
+  "accountAndPrivacy": "Konto und Datenschutz",
+  "data": "Daten",
+  "dataDeletionOptions": "Datenlöschungsoptionen",
+  "dataDeletionDescription": "Um alle Daten sowohl lokal als auch remote zu löschen, entfernen Sie einfach alle lokalen Datensätze, wenn die Synchronisation aktiviert ist.",
+  "dataDeletionRemoteDescription": "Um nur Remote-Daten zu löschen, verwenden Sie die Schaltfläche \"Datenlöschung anfordern\" unten. Dies öffnet Ihren E-Mail-Client mit vorausgefüllten Kontodaten, um Ihre Löschungsanfrage einfach an deletemydata@trakli.app zu senden",
+  "dataDeletionWarning": "⚠️ Hinweis: Sobald Ihre Daten gelöscht sind, werden Sie automatisch abgemeldet und alle Geräte-Sync-Funktionen sind nicht mehr verfügbar. Alle durchgeführten Löschungen sind dauerhaft und unumkehrbar.",
+  "requestDataDeletion": "Datenlöschung anfordern",
+  "dataDeletionEmailSubject": "Datenlöschungsanfrage",
+  "dataDeletionEmailBody": "Hallo Trakli Team,\n\nIch möchte die Löschung aller meiner Remote-Daten, die mit meinem Trakli-Konto verknüpft sind, beantragen.\n\nKontodetails:\n- Benutzername / E-Mail: {username}\n\nIch verstehe, dass sobald meine Daten gelöscht sind:\n- Ich automatisch abgemeldet werde.\n- Alle Geräte-Sync-Funktionen verloren gehen.\n- Die Löschung dauerhaft und unumkehrbar ist.",
+  "dataDeletionFallbackTitle": "E-Mail-Client nicht verfügbar",
+  "dataDeletionFallbackInstructions": "Bitte senden Sie eine E-Mail an:",
+  "dataDeletionFallbackEmailTo": "Bitte senden Sie eine E-Mail an:",
+  "dataDeletionFallbackSubjectLabel": "Betreff",
+  "dataDeletionFallbackBodyLabel": "Text",
+  "copiedToClipboard": "In die Zwischenablage kopiert"
 }

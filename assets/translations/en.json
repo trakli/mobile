@@ -327,5 +327,20 @@
   "logoutWarningMessage": "You have unsynchronized data that will be lost if you logout now. Do you want to continue?",
   "syncNow": "Sync Now",
   "logoutAnyway": "Logout Anyway",
-  "balanceWillBeSetToZero": "Balance will be set to 0"
+  "balanceWillBeSetToZero": "Balance will be set to 0",
+  "accountAndPrivacy": "Account and Privacy",
+  "data": "Data",
+  "dataDeletionOptions": "Data Deletion Options",
+  "dataDeletionDescription": "To delete all data both locally and remotely, simply remove all local records if synchronization is enabled.",
+  "dataDeletionRemoteDescription": "To delete only remote data, use the \"Request Data Deletion\" button below. This will open your email client with your account details pre-filled, making it easy to submit your deletion request to deletemydata@trakli.app",
+  "dataDeletionWarning": "⚠️ Note: Once your data is deleted, you will be automatically logged out and all device sync features will no longer be available. All fulfilled deletions are permanent and irreversible.",
+  "requestDataDeletion": "Request Data Deletion",
+  "dataDeletionEmailSubject": "Data Deletion Request",
+  "dataDeletionEmailBody": "Hello Trakli Team,\n\nI would like to request the deletion of all my remote data associated with my Trakli account.\n\nAccount details:\n- Username / Email: {username}\n\nI understand that once my data is deleted:\n- I will be automatically logged out.\n- All device sync features will be lost.\n- The deletion is permanent and irreversible.",
+  "dataDeletionFallbackTitle": "Email Client Not Available",
+  "dataDeletionFallbackInstructions": "Please send an email to:",
+  "dataDeletionFallbackEmailTo": "Please send an email to:",
+  "dataDeletionFallbackSubjectLabel": "Subject",
+  "dataDeletionFallbackBodyLabel": "Body",
+  "copiedToClipboard": "Copied to clipboard"
 }

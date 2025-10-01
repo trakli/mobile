@@ -325,5 +325,20 @@
   "logoutWarningMessage": "Vous avez des données non synchronisées qui seront perdues si vous vous déconnectez maintenant. Voulez-vous continuer ?",
   "syncNow": "Synchroniser maintenant",
   "logoutAnyway": "Se déconnecter quand même",
-  "balanceWillBeSetToZero": "Le solde sera défini à 0"
+  "balanceWillBeSetToZero": "Le solde sera défini à 0",
+  "accountAndPrivacy": "Compte et Confidentialité",
+  "data": "Données",
+  "dataDeletionOptions": "Options de Suppression de Données",
+  "dataDeletionDescription": "Pour supprimer toutes les données localement et à distance, supprimez simplement tous les enregistrements locaux si la synchronisation est activée.",
+  "dataDeletionRemoteDescription": "Pour supprimer uniquement les données distantes, utilisez le bouton \"Demander la Suppression de Données\" ci-dessous. Cela ouvrira votre client de messagerie avec vos détails de compte pré-remplis, facilitant l'envoi de votre demande de suppression à deletemydata@trakli.app",
+  "dataDeletionWarning": "⚠️ Note: Une fois vos données supprimées, vous serez automatiquement déconnecté et toutes les fonctionnalités de synchronisation d'appareil ne seront plus disponibles. Toutes les suppressions effectuées sont permanentes et irréversibles.",
+  "requestDataDeletion": "Demander la Suppression de Données",
+  "dataDeletionEmailSubject": "Demande de Suppression de Données",
+  "dataDeletionEmailBody": "Bonjour Équipe Trakli,\n\nJe souhaite demander la suppression de toutes mes données distantes associées à mon compte Trakli.\n\nDétails du compte:\n- Nom d'utilisateur / Email: {username}\n\nJe comprends qu'une fois mes données supprimées:\n- Je serai automatiquement déconnecté.\n- Toutes les fonctionnalités de synchronisation d'appareil seront perdues.\n- La suppression est permanente et irréversible.",
+  "dataDeletionFallbackTitle": "Client de messagerie non disponible",
+  "dataDeletionFallbackInstructions": "Veuillez envoyer un e-mail à :",
+  "dataDeletionFallbackEmailTo": "Veuillez envoyer un e-mail à :",
+  "dataDeletionFallbackSubjectLabel": "Objet",
+  "dataDeletionFallbackBodyLabel": "Corps",
+  "copiedToClipboard": "Copié dans le presse-papiers"
 }

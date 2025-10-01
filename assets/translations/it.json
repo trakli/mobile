@@ -327,5 +327,20 @@
   "logoutWarningMessage": "Hai dati non sincronizzati che andranno persi se esci ora. Vuoi continuare?",
   "syncNow": "Sincronizza ora",
   "logoutAnyway": "Esci comunque",
-  "balanceWillBeSetToZero": "Il saldo sarà impostato a 0"
+  "balanceWillBeSetToZero": "Il saldo sarà impostato a 0",
+  "accountAndPrivacy": "Account e Privacy",
+  "data": "Dati",
+  "dataDeletionOptions": "Opzioni di Eliminazione Dati",
+  "dataDeletionDescription": "Per eliminare tutti i dati sia localmente che da remoto, rimuovi semplicemente tutti i record locali se la sincronizzazione è abilitata.",
+  "dataDeletionRemoteDescription": "Per eliminare solo i dati remoti, usa il pulsante \"Richiedi Eliminazione Dati\" qui sotto. Questo aprirà il tuo client email con i dettagli del tuo account pre-compilati, rendendo facile inviare la tua richiesta di eliminazione a deletemydata@trakli.app",
+  "dataDeletionWarning": "⚠️ Nota: Una volta che i tuoi dati sono eliminati, sarai automaticamente disconnesso e tutte le funzionalità di sincronizzazione del dispositivo non saranno più disponibili. Tutte le eliminazioni effettuate sono permanenti e irreversibili.",
+  "requestDataDeletion": "Richiedi Eliminazione Dati",
+  "dataDeletionEmailSubject": "Richiesta di Eliminazione Dati",
+  "dataDeletionEmailBody": "Ciao Team Trakli,\n\nVorrei richiedere l'eliminazione di tutti i miei dati remoti associati al mio account Trakli.\n\nDettagli account:\n- Nome utente / Email: {username}\n\nComprendo che una volta che i miei dati sono eliminati:\n- Sarò automaticamente disconnesso.\n- Tutte le funzionalità di sincronizzazione del dispositivo andranno perse.\n- L'eliminazione è permanente e irreversibile.",
+  "dataDeletionFallbackTitle": "Client email non disponibile",
+  "dataDeletionFallbackInstructions": "Si prega di inviare un'email a:",
+  "dataDeletionFallbackEmailTo": "Si prega di inviare un'email a:",
+  "dataDeletionFallbackSubjectLabel": "Oggetto",
+  "dataDeletionFallbackBodyLabel": "Corpo",
+  "copiedToClipboard": "Copiato negli appunti"
 }
