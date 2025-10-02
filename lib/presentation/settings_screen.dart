@@ -22,7 +22,7 @@ import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:collection/collection.dart';
-import 'package:trakli/presentation/data_deletion_screen.dart';
+import 'package:trakli/presentation/account_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -247,43 +247,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     )
                   : null,
             ),
-
-            // Account and Privacy section
-            SizedBox(height: 24.h),
-            Text(
-              LocaleKeys.accountAndPrivacy.tr(),
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-            SizedBox(height: 16.h),
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {
-                AppNavigator.push(context, const DataDeletionScreen());
+                AppNavigator.push(context, const AccountSettingsScreen());
               },
               leading: Container(
                 width: 40.w,
                 height: 40.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
-                  color: Colors.red.withValues(alpha: 0.2),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 ),
-                child: const Icon(
-                  Icons.delete_forever,
-                  color: Colors.red,
-                ),
-              ),
-              title: Text(LocaleKeys.data.tr()),
-              subtitle: Text(
-                LocaleKeys.dataDeletionOptions.tr(),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey[600],
+                child: Icon(
+                  Icons.account_circle,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
+              title: Text(LocaleKeys.accountAndPrivacy.tr()),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
