@@ -332,5 +332,20 @@ abstract class  LocaleKeys {
   static const syncNow = 'syncNow';
   static const logoutAnyway = 'logoutAnyway';
   static const balanceWillBeSetToZero = 'balanceWillBeSetToZero';
+  static const accountAndPrivacy = 'accountAndPrivacy';
+  static const data = 'data';
+  static const dataDeletionOptions = 'dataDeletionOptions';
+  static const dataDeletionDescription = 'dataDeletionDescription';
+  static const dataDeletionRemoteDescription = 'dataDeletionRemoteDescription';
+  static const dataDeletionWarning = 'dataDeletionWarning';
+  static const requestDataDeletion = 'requestDataDeletion';
+  static const dataDeletionEmailSubject = 'dataDeletionEmailSubject';
+  static const dataDeletionEmailBody = 'dataDeletionEmailBody';
+  static const dataDeletionFallbackTitle = 'dataDeletionFallbackTitle';
+  static const dataDeletionFallbackInstructions = 'dataDeletionFallbackInstructions';
+  static const dataDeletionFallbackEmailTo = 'dataDeletionFallbackEmailTo';
+  static const dataDeletionFallbackSubjectLabel = 'dataDeletionFallbackSubjectLabel';
+  static const dataDeletionFallbackBodyLabel = 'dataDeletionFallbackBodyLabel';
+  static const copiedToClipboard = 'copiedToClipboard';
 
 }

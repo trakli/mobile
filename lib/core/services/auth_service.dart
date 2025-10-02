@@ -49,6 +49,7 @@ class AuthService {
 
   /// Check if user is currently authenticated
   Future<bool> isAuthenticated() async {
+    // await _tokenManager.logAllKeys();
     final hasToken = await _tokenManager.hasToken;
     return hasToken;
   }

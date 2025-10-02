@@ -22,6 +22,7 @@ import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:collection/collection.dart';
+import 'package:trakli/presentation/account_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -246,6 +247,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     )
                   : null,
             ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {
+                AppNavigator.push(context, const AccountSettingsScreen());
+              },
+              leading: Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+                child: Icon(
+                  Icons.account_circle,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              title: Text(LocaleKeys.accountAndPrivacy.tr()),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+              ),
+            ),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
