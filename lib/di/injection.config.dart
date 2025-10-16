@@ -23,6 +23,7 @@ import '../core/module/http_module.dart' as _i488;
 import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;
 import '../core/services/auth_service.dart' as _i377;
+import '../core/services/oauth_service.dart' as _i624;
 import '../core/services/request_authorization_service.dart' as _i1066;
 import '../core/sync/drift_sync_crash_reporting_adapter.dart' as _i705;
 import '../core/sync/drift_sync_crash_reporting_service.dart' as _i545;
@@ -167,6 +168,7 @@ _i174.GetIt $initGetIt(
   );
   final syncModule = _$SyncModule();
   final injectHttpClientModule = _$InjectHttpClientModule();
+  gh.factory<_i624.OAuthService>(() => _i624.OAuthService());
   gh.factory<_i1041.SyncCubit>(() => _i1041.SyncCubit());
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
   gh.lazySingleton<_i877.SyncDependencyManagerBase>(

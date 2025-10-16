@@ -63,6 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '212694832657',
     projectId: 'trakli',
     storageBucket: 'trakli.firebasestorage.app',
+    androidClientId:
+        '212694832657-0fefkea4n012n38qaoq9siakisdp1m9p.apps.googleusercontent.com',
+    iosClientId:
+        '212694832657-a38m8caoatmvgnlcdm900h5gu9a418i9.apps.googleusercontent.com',
     iosBundleId: 'com.whilesmart.trakli',
   );
 }

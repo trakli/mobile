@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/services/oauth_service.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
@@ -11,8 +13,105 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final OAuthService _oauthService = getIt<OAuthService>();
+  bool _isLoading = false;
+
+  /// Handle Google Sign-In
+  Future<void> _handleGoogleSignIn() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _oauthService.signInWithGoogle();
+
+      result.fold(
+        (failure) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Google Sign-In failed: ${failure.customMessage}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        (user) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Google Sign-In successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Navigate to main app or handle success
+            // Navigator.pushReplacementNamed(context, '/main');
+          }
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Handle Apple Sign-In
+  Future<void> _handleAppleSignIn() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _oauthService.signInWithApple();
+
+      result.fold(
+        (failure) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Apple Sign-In failed: ${failure.customMessage}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        (user) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Apple Sign-In successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            // Navigate to main app or handle success
+            // Navigator.pushReplacementNamed(context, '/main');
+          }
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +198,13 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               height: 54.h,
               child: PrimaryButton(
-                onPress: () {},
+                onPress: _isLoading ? null : _handleGoogleSignIn,
                 iconPath: Assets.images.google,
                 borderColor: const Color(0xFF79828E),
                 backgroundColor: Colors.white,
-                buttonText: LocaleKeys.proceedWithGoogle.tr(),
+                buttonText: _isLoading
+                    ? 'Signing in...'
+                    : LocaleKeys.proceedWithGoogle.tr(),
                 buttonTextColor: textColor,
               ),
             ),
@@ -111,11 +212,13 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               height: 54.h,
               child: PrimaryButton(
-                onPress: () {},
+                onPress: _isLoading ? null : _handleAppleSignIn,
                 iconPath: Assets.images.apple,
                 borderColor: const Color(0xFF79828E),
                 backgroundColor: Colors.white,
-                buttonText: LocaleKeys.proceedWithApple.tr(),
+                buttonText: _isLoading
+                    ? 'Signing in...'
+                    : LocaleKeys.proceedWithApple.tr(),
                 buttonTextColor: textColor,
               ),
             ),
