@@ -131,6 +131,8 @@ String getLanguageFromCode(Locale locale) {
       return LocaleKeys.langSpanish.tr();
     case "it":
       return LocaleKeys.langItalian.tr();
+    case "ru":
+      return LocaleKeys.langRussian.tr();
     default:
       return locale.languageCode;
   }
