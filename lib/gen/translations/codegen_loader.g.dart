@@ -154,6 +154,7 @@ abstract class  LocaleKeys {
   static const toExcel = 'toExcel';
   static const family = 'family';
   static const searchHint = 'searchHint';
+  static const totalIncome = 'totalIncome';
   static const displaySettings = 'displaySettings';
   static const transactionFormDisplayMode = 'transactionFormDisplayMode';
   static const themeMode = 'themeMode';
@@ -198,7 +199,6 @@ abstract class  LocaleKeys {
   static const exchangeRateHint = 'exchangeRateHint';
   static const valueRequired = 'valueRequired';
   static const transferMoney = 'transferMoney';
-  static const databaseViewer = 'databaseViewer';
   static const unknown = 'unknown';
   static const from = 'from';
   static const to = 'to';
@@ -266,7 +266,7 @@ abstract class  LocaleKeys {
   static const transactionsIn = 'transactionsIn';
   static const wallets = 'wallets';
   static const noData = 'noData';
-  static const totalIncome = 'totalIncome';
+  static const databaseViewer = 'databaseViewer';
   static const totalExpense = 'totalExpense';
   static const thisMonth = 'thisMonth';
   static const thisWeek = 'thisWeek';
@@ -283,6 +283,7 @@ abstract class  LocaleKeys {
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
   static const edit = 'edit';
+  static const defaultName = 'defaultName';
   static const officeElements = 'officeElements';
   static const officeElementsDesc = 'officeElementsDesc';
   static const monthly = 'monthly';
@@ -296,7 +297,6 @@ abstract class  LocaleKeys {
   static const deletePartyConfirm = 'deletePartyConfirm';
   static const general = 'general';
   static const pricePerMonth = 'pricePerMonth';
-  static const defaultName = 'defaultName';
   static const partyTypeIndividual = 'partyTypeIndividual';
   static const partyTypeOrganization = 'partyTypeOrganization';
   static const partyTypeBusiness = 'partyTypeBusiness';
@@ -347,5 +347,34 @@ abstract class  LocaleKeys {
   static const dataDeletionFallbackSubjectLabel = 'dataDeletionFallbackSubjectLabel';
   static const dataDeletionFallbackBodyLabel = 'dataDeletionFallbackBodyLabel';
   static const copiedToClipboard = 'copiedToClipboard';
+  static const emptyPartyTitle = 'emptyPartyTitle';
+  static const emptyPartyDescription = 'emptyPartyDescription';
+  static const emptyPartyStep1 = 'emptyPartyStep1';
+  static const emptyPartyStep2 = 'emptyPartyStep2';
+  static const emptyPartyStep3 = 'emptyPartyStep3';
+  static const emptyPartyButtonText = 'emptyPartyButtonText';
+  static const emptyPartyTipText = 'emptyPartyTipText';
+  static const emptyCategoryTitle = 'emptyCategoryTitle';
+  static const emptyCategoryDescription = 'emptyCategoryDescription';
+  static const emptyCategoryStep1 = 'emptyCategoryStep1';
+  static const emptyCategoryStep2 = 'emptyCategoryStep2';
+  static const emptyCategoryStep3 = 'emptyCategoryStep3';
+  static const emptyCategoryButtonText = 'emptyCategoryButtonText';
+  static const emptyCategoryTipText = 'emptyCategoryTipText';
+  static const emptyWalletTitle = 'emptyWalletTitle';
+  static const emptyWalletDescription = 'emptyWalletDescription';
+  static const emptyWalletStep1 = 'emptyWalletStep1';
+  static const emptyWalletStep2 = 'emptyWalletStep2';
+  static const emptyWalletStep3 = 'emptyWalletStep3';
+  static const emptyWalletButtonText = 'emptyWalletButtonText';
+  static const emptyWalletTipText = 'emptyWalletTipText';
+  static const emptyTransactionTitle = 'emptyTransactionTitle';
+  static const emptyTransactionDescription = 'emptyTransactionDescription';
+  static const emptyTransactionStep1 = 'emptyTransactionStep1';
+  static const emptyTransactionStep2 = 'emptyTransactionStep2';
+  static const emptyTransactionStep3 = 'emptyTransactionStep3';
+  static const emptyTransactionStep4 = 'emptyTransactionStep4';
+  static const emptyTransactionButtonText = 'emptyTransactionButtonText';
+  static const emptyTransactionTipText = 'emptyTransactionTipText';
 
 }
