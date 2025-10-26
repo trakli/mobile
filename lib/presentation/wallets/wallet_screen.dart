@@ -6,10 +6,12 @@ import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
-import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
+import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletScreen extends StatelessWidget {
@@ -71,59 +73,66 @@ class WalletScreen extends StatelessWidget {
           ),
           body: state.isLoading
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 16.h,
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        LocaleKeys.totalBalance.tr(),
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                        ),
+              : state.wallets.isEmpty
+                  ? InfoInterface(
+                      action: () {
+                        AppNavigator.push(context, const AddWalletScreen());
+                      },
+                      data: emptyWalletData,
+                    )
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
                       ),
-                      Text(
-                        LocaleKeys.balanceAmountWithCurrency.tr(
-                          args: [
-                            CurrencyFormater.formatAmountWithSymbol(
-                              context,
-                              totalBalance,
-                            )
-                          ],
-                        ),
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 16.h),
-                      Expanded(
-                        child: state.wallets.isEmpty
-                            ? Center(
-                                child: Text(
-                                  LocaleKeys.noWalletsYet.tr(),
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: Colors.grey,
+                      child: Column(
+                        children: [
+                          Text(
+                            LocaleKeys.totalBalance.tr(),
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          Text(
+                            LocaleKeys.balanceAmountWithCurrency.tr(
+                              args: [
+                                CurrencyFormater.formatAmountWithSymbol(
+                                  context,
+                                  totalBalance,
+                                )
+                              ],
+                            ),
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Expanded(
+                            child: state.wallets.isEmpty
+                                ? Center(
+                                    child: Text(
+                                      LocaleKeys.noWalletsYet.tr(),
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  )
+                                : ListView.separated(
+                                    itemBuilder: (context, index) {
+                                      final wallet = state.wallets[index];
+                                      return WalletTile(wallet: wallet);
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(height: 16.h);
+                                    },
+                                    itemCount: state.wallets.length,
                                   ),
-                                ),
-                              )
-                            : ListView.separated(
-                                itemBuilder: (context, index) {
-                                  final wallet = state.wallets[index];
-                                  return WalletTile(wallet: wallet);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return SizedBox(height: 16.h);
-                                },
-                                itemCount: state.wallets.length,
-                              ),
-                      )
-                    ],
-                  ),
-                ),
+                          )
+                        ],
+                      ),
+                    ),
         );
       },
     );

@@ -8,6 +8,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
 import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
@@ -41,6 +42,20 @@ class _CategoryScreenState extends State<CategoryScreen>
     super.dispose();
   }
 
+  void addAction() {
+    AppNavigator.push(
+      context,
+      AddCategoryScreen(
+        accentColor: (tabController.index == 0)
+            ? Theme.of(context).primaryColor
+            : const Color(0xFFEB5757),
+        type: (tabController.index == 0)
+            ? TransactionType.income
+            : TransactionType.expense,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,17 +67,7 @@ class _CategoryScreenState extends State<CategoryScreen>
         actions: [
           InkWell(
             onTap: () {
-              AppNavigator.push(
-                context,
-                AddCategoryScreen(
-                  accentColor: (tabController.index == 0)
-                      ? Theme.of(context).primaryColor
-                      : const Color(0xFFEB5757),
-                  type: (tabController.index == 0)
-                      ? TransactionType.income
-                      : TransactionType.expense,
-                ),
-              );
+              addAction();
             },
             child: Container(
               width: 40.w,
@@ -190,7 +195,12 @@ class _CategoryScreenState extends State<CategoryScreen>
     required Color accentColor,
   }) {
     if (categories.isEmpty) {
-      return const InfoInterface();
+      return InfoInterface(
+        action: () {
+          addAction();
+        },
+        data: emptyCategoryData,
+      );
     }
 
     return ListView.separated(
