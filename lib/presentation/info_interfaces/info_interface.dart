@@ -29,11 +29,11 @@ class InfoInterface extends StatelessWidget {
             children: [
               // Icon Section
               CircleAvatar(
-                radius: 36.sp,
+                radius: 30.sp,
                 backgroundColor: appPrimaryColor.withAlpha(30),
                 child: Icon(
                   data.icon,
-                  size: 36.sp,
+                  size: 28.sp,
                   color: appPrimaryColor,
                 ),
               ),
@@ -43,7 +43,7 @@ class InfoInterface extends StatelessWidget {
                 data.title.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 24.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
