@@ -371,5 +371,6 @@
   "emptyTransactionStep3": "Seleziona portafoglio e categoria",
   "emptyTransactionStep4": "Aggiungi importo e descrizione",
   "emptyTransactionButtonText": "Aggiungi la prima transazione",
-  "emptyTransactionTipText": "💡 Suggerimento: inizia aggiungendo le tue transazioni più recenti per creare l'abitudine!"
+  "emptyTransactionTipText": "💡 Suggerimento: inizia aggiungendo le tue transazioni più recenti per creare l'abitudine!",
+  "quickStart": "Avvio rapido"
 }

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 
@@ -74,7 +75,7 @@ class InfoInterface extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "QUICK START:",
+                      "${LocaleKeys.quickStart.tr().toUpperCase()}:",
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w700,

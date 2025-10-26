@@ -371,5 +371,6 @@
   "emptyTransactionStep3": "Wähle Wallet und Kategorie",
   "emptyTransactionStep4": "Füge Betrag und Beschreibung hinzu",
   "emptyTransactionButtonText": "Erste Transaktion hinzufügen",
-  "emptyTransactionTipText": "💡 Tipp: Fange an, deine neuesten Transaktionen hinzuzufügen, um eine Gewohnheit zu entwickeln!"
+  "emptyTransactionTipText": "💡 Tipp: Fange an, deine neuesten Transaktionen hinzuzufügen, um eine Gewohnheit zu entwickeln!",
+  "quickStart": "Schnellstart"
 }

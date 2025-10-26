@@ -376,5 +376,6 @@ abstract class  LocaleKeys {
   static const emptyTransactionStep4 = 'emptyTransactionStep4';
   static const emptyTransactionButtonText = 'emptyTransactionButtonText';
   static const emptyTransactionTipText = 'emptyTransactionTipText';
+  static const quickStart = 'quickStart';
 
 }

@@ -369,5 +369,6 @@
   "emptyTransactionStep3": "Sélectionnez le portefeuille et la catégorie",
   "emptyTransactionStep4": "Ajoutez le montant et la description",
   "emptyTransactionButtonText": "Ajouter la première transaction",
-  "emptyTransactionTipText": "💡 Astuce : commencez par ajouter vos transactions les plus récentes pour prendre l'habitude !"
+  "emptyTransactionTipText": "💡 Astuce : commencez par ajouter vos transactions les plus récentes pour prendre l'habitude !",
+  "quickStart": "Démarrage rapide"
 }

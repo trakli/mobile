@@ -371,5 +371,6 @@
   "emptyTransactionStep3": "Select wallet and category",
   "emptyTransactionStep4": "Add amount and description",
   "emptyTransactionButtonText": "Add First Transaction",
-  "emptyTransactionTipText": "💡 Pro tip: Start by adding your most recent transactions to get into the habit!"
+  "emptyTransactionTipText": "💡 Pro tip: Start by adding your most recent transactions to get into the habit!",
+  "quickStart": "Quick Start"
 }

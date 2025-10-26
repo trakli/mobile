@@ -370,5 +370,6 @@
   "emptyTransactionStep3": "Selecciona billetera y categoría",
   "emptyTransactionStep4": "Agrega monto y descripción",
   "emptyTransactionButtonText": "Agregar primera transacción",
-  "emptyTransactionTipText": "💡 Consejo: comienza agregando tus transacciones más recientes para crear el hábito!"
+  "emptyTransactionTipText": "💡 Consejo: comienza agregando tus transacciones más recientes para crear el hábito!",
+  "quickStart": "Inicio rápido"
 }
