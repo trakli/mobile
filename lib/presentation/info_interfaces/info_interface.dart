@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
@@ -38,7 +39,7 @@ class InfoInterface extends StatelessWidget {
               SizedBox(height: 20.h),
 
               Text(
-                data.title,
+                data.title.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24.sp,
@@ -50,7 +51,7 @@ class InfoInterface extends StatelessWidget {
 
               // Subtitle
               Text(
-                data.description,
+                data.description.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -84,7 +85,8 @@ class InfoInterface extends StatelessWidget {
                     for (int i = 0; i < data.quickStartSteps.length; i++)
                       Padding(
                         padding: EdgeInsets.only(bottom: 8.h),
-                        child: _buildStep("${i + 1}", data.quickStartSteps[i]),
+                        child: _buildStep(
+                            "${i + 1}", data.quickStartSteps[i].tr()),
                       ),
                   ],
                 ),
@@ -99,7 +101,7 @@ class InfoInterface extends StatelessWidget {
                   onPressed: action,
                   icon: const Icon(Icons.add),
                   label: Text(
-                    data.buttonText,
+                    data.buttonText.tr(),
                   ),
                 ),
               ),
@@ -126,7 +128,7 @@ class InfoInterface extends StatelessWidget {
                       SizedBox(width: 8.sp),
                       Expanded(
                         child: Text(
-                          data.tipText ?? "",
+                          data.tipText!.tr(),
                           style: TextStyle(
                             fontSize: 13.sp,
                             color: Colors.brown[700],
