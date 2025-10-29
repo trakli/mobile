@@ -4,13 +4,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/key_constants.dart';
+import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -26,6 +29,9 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   PageController pageController = PageController();
   List<Currency> currencies = [];
   Currency? selectedCurrency;
+
+  int _currentPage = 0;
+  final int _pageSize = 3;
 
   void nextPage() {
     pageController.nextPage(
@@ -76,14 +82,79 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.only(
-            top: 0.18.sh,
+            top: 0.08.sh,
             bottom: 16.h,
           ),
-          child: PageView(
-            controller: pageController,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              pageOne,
-              pageTwo,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      Assets.images.logoGreen,
+                      height: 38.h,
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      LocaleKeys.welcomeText.tr(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 1.h),
+                    Text(
+                      "Let's set up your account in just a few steps",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 14.sp, color: Colors.grey.shade700),
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
+                      spacing: 8.w,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadiusGeometry.circular(12.r),
+                            child: LinearProgressIndicator(
+                              value: (_currentPage + 1) / _pageSize,
+                              backgroundColor: Colors.grey,
+                              valueColor:
+                                  AlwaysStoppedAnimation(appPrimaryColor),
+                              minHeight: 6.h,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'Step ${_currentPage + 1} of $_pageSize',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Expanded(
+                child: PageView(
+                  controller: pageController,
+                  onPageChanged: ((index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  }),
+                  children: [
+                    pageOne,
+                    pageTwo,
+                    pageThree,
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -92,38 +163,53 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageOne {
-    return Padding(
+    return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
+        vertical: 16.h,
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: 16.w,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 36.h),
-          Icon(
-            Icons.language,
-            color: Theme.of(context).primaryColor,
-            size: 100.r,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            LocaleKeys.selectLanguage.tr(),
-            style: TextStyle(
-              fontSize: 20.sp,
-              color: Colors.grey.shade600,
+          SizedBox(height: 0.h),
+          CircleAvatar(
+            radius: 30.sp,
+            backgroundColor: appPrimaryColor.withAlpha(30),
+            child: Icon(
+              Icons.translate,
+              size: 28.sp,
+              color: appPrimaryColor,
             ),
           ),
           SizedBox(height: 16.h),
+          Text(
+            LocaleKeys.selectLanguage.tr(),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            "Select your preferred language for Trakli. You can change this later in settings.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+          ),
           Expanded(
-            child: ListView.builder(
+            child: GridView.builder(
               shrinkWrap: true,
               itemCount: supportedLanguages.length,
               itemBuilder: (context, index) {
                 final lang = supportedLanguages[index];
                 return Container(
-                  margin: EdgeInsets.only(
-                    bottom: 12.w,
-                  ),
                   decoration: BoxDecoration(
                     color: (lang.languageCode == context.locale.languageCode)
                         ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
@@ -147,10 +233,19 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                     ),
                     title: Text(
                       getLanguageFromCode(lang),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                      ),
                     ),
                   ),
                 );
               },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 3,
+                mainAxisSpacing: 8.h,
+                crossAxisSpacing: 8.w,
+              ),
             ),
           ),
           SizedBox(height: 10.h),
@@ -170,6 +265,70 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageTwo {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 16.h,
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: 16.w,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 0.h),
+          CircleAvatar(
+            radius: 30.sp,
+            backgroundColor: appPrimaryColor.withAlpha(30),
+            child: Icon(
+              Icons.wallet,
+              size: 28.sp,
+              color: appPrimaryColor,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            "Set up your wallet and currency",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            "Configure your default wallet and currency. Your wallet currency and default currency should match for accurate tracking.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+          ),
+          const Expanded(
+            child: Column(
+              children: [
+
+              ],
+            ),
+          ),
+          SizedBox(height: 10.h),
+          SizedBox(
+            height: 52.h,
+            width: double.infinity,
+            child: PrimaryButton(
+              onPress: () {
+                nextPage();
+              },
+              buttonText: LocaleKeys.next.tr(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget get pageThree {
     final state = context.watch<OnboardingCubit>().state;
 
     return MultiBlocListener(
