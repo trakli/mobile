@@ -8,14 +8,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/category/add_category_screen.dart';
+import 'package:trakli/presentation/category/category_screen.dart';
 import 'package:trakli/presentation/info_interfaces/data.dart';
 import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
-import 'package:trakli/presentation/parties/add_party_screen.dart';
+import 'package:trakli/presentation/parties/party_screen.dart';
+import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class EmptyHomeWidget extends StatefulWidget {
@@ -140,6 +139,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
   }
 
   Widget _buildPage(EmptyStateModel data) {
+    final cubit = context.read<MainNavigationCubit>();
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       child: Column(
@@ -210,7 +210,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
             SizedBox(
               width: double.infinity,
               height: 48.h,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: () {
                   switch (_currentIndex) {
                     case 0:
@@ -221,22 +221,18 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                         AddTransactionScreen(selectedWallet: selectedWallet),
                       );
                     case 1:
-                      AppNavigator.push(context, const AddWalletScreen());
+                      cubit.updateIndex(MainNavigationPageState.wallet);
                     case 2:
                       AppNavigator.push(
                         context,
-                        AddCategoryScreen(
-                          accentColor: Theme.of(context).primaryColor,
-                          type: TransactionType.income,
-                        ),
+                        const CategoryScreen(),
                       );
                     case 3:
-                      AppNavigator.push(context, const AddPartyScreen());
+                      AppNavigator.push(context, const PartyScreen());
                   }
                 },
-                icon: const Icon(Icons.add),
-                label: Text(
-                  data.buttonText.tr(),
+                child: Text(
+                  data.buttonText1?.tr() ?? "",
                 ),
               ),
             ),

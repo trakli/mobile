@@ -41,7 +41,7 @@ class InfoInterface extends StatelessWidget {
                 data.title.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 22.sp,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
@@ -159,7 +159,6 @@ class InfoInterface extends StatelessWidget {
             style: TextStyle(
               fontSize: 13.sp,
               color: Colors.black87,
-              height: 1.3,
             ),
           ),
         ),
