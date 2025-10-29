@@ -9,6 +9,7 @@ class EmptyStateModel {
   final List<String> quickStartSteps;
   final List<Steps>? quickSteps;
   final String buttonText;
+  final String? buttonText1;
   final String? tipText;
 
   const EmptyStateModel({
@@ -20,6 +21,7 @@ class EmptyStateModel {
     required this.quickStartSteps,
     this.quickSteps,
     required this.buttonText,
+    this.buttonText1,
     this.tipText,
   });
 }

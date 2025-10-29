@@ -399,5 +399,9 @@
   "youAllSetInfo2": "Start tracking on the go",
   "youAllSetInfo3": "Discover new insights about your money",
   "whyThisMatters": "Why this matters",
-  "financeInfo": "Here’s your financial overview for all time."
+  "financeInfo": "Here’s your financial overview for all time.",
+  "setupWallet": "Setup wallets",
+  "manageCategories": "Manage categories",
+  "addParties": "Add parties",
+  "startUsingTrakli": "Start using Trakli"
 }

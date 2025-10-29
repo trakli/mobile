@@ -29,6 +29,7 @@ const emptyPartyData = EmptyStateModel(
     ),
   ],
   buttonText: LocaleKeys.emptyPartyButtonText,
+  buttonText1: LocaleKeys.addParties,
   tipText: LocaleKeys.emptyPartyTipText,
 );
 
@@ -58,6 +59,7 @@ const emptyCategoryData = EmptyStateModel(
     ),
   ],
   buttonText: LocaleKeys.emptyCategoryButtonText,
+  buttonText1: LocaleKeys.manageCategories,
   tipText: LocaleKeys.emptyCategoryTipText,
 );
 
@@ -87,6 +89,7 @@ const emptyWalletData = EmptyStateModel(
     ),
   ],
   buttonText: LocaleKeys.emptyWalletButtonText,
+  buttonText1: LocaleKeys.setupWallet,
   tipText: LocaleKeys.emptyWalletTipText,
 );
 
@@ -117,6 +120,7 @@ const emptyTransactionData = EmptyStateModel(
     ),
   ],
   buttonText: LocaleKeys.emptyTransactionButtonText,
+  buttonText1: LocaleKeys.addTransaction,
   tipText: LocaleKeys.emptyTransactionTipText,
 );
 
@@ -140,4 +144,5 @@ const youAllSetData = EmptyStateModel(
     ),
   ],
   buttonText: "",
+  buttonText1: LocaleKeys.startUsingTrakli,
 );

@@ -404,5 +404,9 @@ abstract class  LocaleKeys {
   static const youAllSetInfo3 = 'youAllSetInfo3';
   static const whyThisMatters = 'whyThisMatters';
   static const financeInfo = 'financeInfo';
+  static const setupWallet = 'setupWallet';
+  static const manageCategories = 'manageCategories';
+  static const addParties = 'addParties';
+  static const startUsingTrakli = 'startUsingTrakli';
 
 }

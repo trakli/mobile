@@ -397,5 +397,9 @@
   "youAllSetInfo2": "Commencez à suivre en déplacement",
   "youAllSetInfo3": "Découvrez de nouvelles informations sur votre argent",
   "whyThisMatters": "Pourquoi c’est important",
-  "financeInfo": "Voici un aperçu de vos finances depuis le début."
+  "financeInfo": "Voici un aperçu de vos finances depuis le début.",
+  "setupWallet": "Configurer les portefeuilles",
+  "manageCategories": "Gérer les catégories",
+  "addParties": "Ajouter des parties",
+  "startUsingTrakli": "Commencez à utiliser Trakli"
 }
