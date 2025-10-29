@@ -1,4 +1,3 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +9,12 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/onboarding/widgets/language_setting_widget.dart';
+import 'package:trakli/presentation/onboarding/widgets/wallet_setup_widget.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
@@ -70,7 +70,6 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
       listener: (context, state) {
         final currency = state.entity?.selectedCurrency;
         if (currency != null) {
-          // Setup defaults when currency changes
           WidgetsBinding.instance.addPostFrameCallback((_) {
             setupDefaultGroupAndWallet(
               context: context,
@@ -163,169 +162,17 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageOne {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      margin: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 0.h),
-          CircleAvatar(
-            radius: 30.sp,
-            backgroundColor: appPrimaryColor.withAlpha(30),
-            child: Icon(
-              Icons.translate,
-              size: 28.sp,
-              color: appPrimaryColor,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            LocaleKeys.selectLanguage.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            "Select your preferred language for Trakli. You can change this later in settings.",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
-          ),
-          Expanded(
-            child: GridView.builder(
-              shrinkWrap: true,
-              itemCount: supportedLanguages.length,
-              itemBuilder: (context, index) {
-                final lang = supportedLanguages[index];
-                return Container(
-                  decoration: BoxDecoration(
-                    color: (lang.languageCode == context.locale.languageCode)
-                        ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: (lang.languageCode == context.locale.languageCode)
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey,
-                    ),
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      updateLanguage(context, lang);
-                    },
-                    leading: CountryFlag.fromLanguageCode(
-                      shape: RoundedRectangle(8.r),
-                      supportedLanguages.elementAt(index).languageCode,
-                      width: 24.w,
-                      height: 22.h,
-                    ),
-                    title: Text(
-                      getLanguageFromCode(lang),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3,
-                mainAxisSpacing: 8.h,
-                crossAxisSpacing: 8.w,
-              ),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          SizedBox(
-            height: 52.h,
-            width: double.infinity,
-            child: PrimaryButton(
-              onPress: () {
-                nextPage();
-              },
-              buttonText: LocaleKeys.next.tr(),
-            ),
-          )
-        ],
-      ),
+    return LanguageSettingWidget(
+      onTap: () {
+        nextPage();
+      },
     );
   }
 
   Widget get pageTwo {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      margin: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 0.h),
-          CircleAvatar(
-            radius: 30.sp,
-            backgroundColor: appPrimaryColor.withAlpha(30),
-            child: Icon(
-              Icons.wallet,
-              size: 28.sp,
-              color: appPrimaryColor,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            "Set up your wallet and currency",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            "Configure your default wallet and currency. Your wallet currency and default currency should match for accurate tracking.",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
-          ),
-          const Expanded(
-            child: Column(
-              children: [
-
-              ],
-            ),
-          ),
-          SizedBox(height: 10.h),
-          SizedBox(
-            height: 52.h,
-            width: double.infinity,
-            child: PrimaryButton(
-              onPress: () {
-                nextPage();
-              },
-              buttonText: LocaleKeys.next.tr(),
-            ),
-          )
-        ],
-      ),
-    );
+    return WalletSetupWidget(onTap: () {
+      nextPage();
+    });
   }
 
   Widget get pageThree {
