@@ -377,5 +377,32 @@ abstract class  LocaleKeys {
   static const emptyTransactionButtonText = 'emptyTransactionButtonText';
   static const emptyTransactionTipText = 'emptyTransactionTipText';
   static const quickStart = 'quickStart';
+  static const emptyTransactionTitleOne = 'emptyTransactionTitleOne';
+  static const emptyTransactionDescriptionOne = 'emptyTransactionDescriptionOne';
+  static const emptyTransactionInfo1 = 'emptyTransactionInfo1';
+  static const emptyTransactionInfo2 = 'emptyTransactionInfo2';
+  static const emptyTransactionInfo3 = 'emptyTransactionInfo3';
+  static const emptyWalletTitleOne = 'emptyWalletTitleOne';
+  static const emptyWalletDescriptionOne = 'emptyWalletDescriptionOne';
+  static const emptyWalletInfo1 = 'emptyWalletInfo1';
+  static const emptyWalletInfo2 = 'emptyWalletInfo2';
+  static const emptyWalletInfo3 = 'emptyWalletInfo3';
+  static const emptyCategoryTitleOne = 'emptyCategoryTitleOne';
+  static const emptyCategoryDescriptionOne = 'emptyCategoryDescriptionOne';
+  static const emptyCategoryInfo1 = 'emptyCategoryInfo1';
+  static const emptyCategoryInfo2 = 'emptyCategoryInfo2';
+  static const emptyCategoryInfo3 = 'emptyCategoryInfo3';
+  static const emptyPartyTitleOne = 'emptyPartyTitleOne';
+  static const emptyPartyDescriptionOne = 'emptyPartyDescriptionOne';
+  static const emptyPartyInfo1 = 'emptyPartyInfo1';
+  static const emptyPartyInfo2 = 'emptyPartyInfo2';
+  static const emptyPartyInfo3 = 'emptyPartyInfo3';
+  static const youAllSetTitleOne = 'youAllSetTitleOne';
+  static const youAllSetDescriptionOne = 'youAllSetDescriptionOne';
+  static const youAllSetInfo1 = 'youAllSetInfo1';
+  static const youAllSetInfo2 = 'youAllSetInfo2';
+  static const youAllSetInfo3 = 'youAllSetInfo3';
+  static const whyThisMatters = 'whyThisMatters';
+  static const financeInfo = 'financeInfo';
 
 }

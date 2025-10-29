@@ -8,14 +8,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/di/injection.dart';
-import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/history_screen.dart';
+import 'package:trakli/presentation/info_interfaces/empty_home_widget.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -155,6 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedGroup: selectedGroup,
             defaultGroup: defaultGroup,
           );
+
+          if (state.transactions.isEmpty) {
+            return const EmptyHomeWidget();
+          }
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
