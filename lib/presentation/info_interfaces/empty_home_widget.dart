@@ -1,12 +1,22 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/category/add_category_screen.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
+import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
+import 'package:trakli/presentation/parties/add_party_screen.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class EmptyHomeWidget extends StatefulWidget {
   const EmptyHomeWidget({super.key});
@@ -17,46 +27,42 @@ class EmptyHomeWidget extends StatefulWidget {
 
 class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
   final PageController _pageController = PageController();
+  late Timer _timer;
   int _currentIndex = 0;
+  final int _numPages = 5;
 
-  final List<_PageData> _pages = [
-    _PageData(
-      title: "Add Your First Transaction",
-      description:
-          "Start your financial journey by recording a transaction. This is the heart of expense tracking!",
-      points: [
-        "See your balance change in real-time",
-        "Get instant insights into your spending",
-        "Start building healthy money habits",
-      ],
-      icon: Icons.compare_arrows_outlined,
-      buttonText: "Add Transaction",
-    ),
-    _PageData(
-      title: "Set Your Budgets",
-      description:
-          "Plan your spending and stay in control by creating custom budgets for different categories.",
-      points: [
-        "Avoid overspending",
-        "Track category limits",
-        "Stay aligned with your goals",
-      ],
-      icon: Icons.pie_chart_outline,
-      buttonText: "Create Budget",
-    ),
-    _PageData(
-      title: "View Smart Reports",
-      description:
-          "Gain powerful insights into your finances with our visual analytics and charts.",
-      points: [
-        "Identify spending patterns",
-        "Spot growth opportunities",
-        "See where your money goes",
-      ],
-      icon: Icons.bar_chart_rounded,
-      buttonText: "View Reports",
-    ),
+  final List<EmptyStateModel> _pages = [
+    emptyTransactionData,
+    emptyWalletData,
+    emptyCategoryData,
+    emptyPartyData,
+    youAllSetData,
   ];
+
+  @override
+  void initState() {
+    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+      if (_currentIndex < _numPages - 1) {
+        _currentIndex++;
+      } else {
+        _currentIndex = 0;
+      }
+
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +74,16 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           padding: EdgeInsets.all(16.w),
           margin: EdgeInsets.symmetric(horizontal: 16.w),
           decoration: BoxDecoration(
-            color: appPrimaryColor.withAlpha(40),
+            color: appPrimaryColor.withAlpha(30),
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Row(
             children: [
-              Icon(Icons.waving_hand_outlined,
-                  color: Colors.green.shade700, size: 26.sp),
+              Icon(
+                Icons.waving_hand_outlined,
+                color: appPrimaryColor,
+                size: 28.sp,
+              ),
               SizedBox(width: 10.w),
               Expanded(
                 child: Column(
@@ -83,9 +92,9 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                     Text(
                       "${LocaleKeys.homeWelcome.tr()}, ${user?.firstName ?? ""}",
                       style: TextStyle(
-                        fontSize: 17.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.green.shade800,
+                        color: appPrimaryColor,
                       ),
                     ),
                     Text(
@@ -99,7 +108,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 18.h),
+          padding: EdgeInsets.only(top: 16.h),
           child: SmoothPageIndicator(
             controller: _pageController,
             count: _pages.length,
@@ -130,9 +139,9 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
     );
   }
 
-  Widget _buildPage(_PageData data) {
+  Widget _buildPage(EmptyStateModel data) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       child: Column(
         children: [
           CircleAvatar(
@@ -144,22 +153,22 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
               color: appPrimaryColor,
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 16.h),
           Text(
-            data.title,
+            data.title1?.tr() ?? data.title.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
           Text(
-            data.description,
+            data.description1?.tr() ?? data.description.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 20.h),
           Container(
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
@@ -178,7 +187,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Why This Matters:",
+                  "${LocaleKeys.whyThisMatters.tr()}:",
                   style: TextStyle(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w700,
@@ -186,27 +195,51 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                   ),
                 ),
                 SizedBox(height: 16.h),
-                ...data.points.map(
-                  (p) => _buildPoint(
-                    icon: FontAwesomeIcons.bullseye,
-                    text: p,
+                if (data.quickSteps != null)
+                  ...data.quickSteps!.map(
+                    (p) => _buildPoint(
+                      icon: p.icon,
+                      text: p.description.tr(),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
-          SizedBox(height: 40.h),
-          SizedBox(
-            width: double.infinity,
-            height: 48.h,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.add),
-              label: Text(
-                data.buttonText,
+          SizedBox(height: 20.h),
+          if (data.buttonText.isNotEmpty)
+            SizedBox(
+              width: double.infinity,
+              height: 48.h,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  switch (_currentIndex) {
+                    case 0:
+                      final selectedWallet =
+                          context.read<WalletCubit>().currentSelectedWallet;
+                      AppNavigator.push(
+                        context,
+                        AddTransactionScreen(selectedWallet: selectedWallet),
+                      );
+                    case 1:
+                      AppNavigator.push(context, const AddWalletScreen());
+                    case 2:
+                      AppNavigator.push(
+                        context,
+                        AddCategoryScreen(
+                          accentColor: Theme.of(context).primaryColor,
+                          type: TransactionType.income,
+                        ),
+                      );
+                    case 3:
+                      AppNavigator.push(context, const AddPartyScreen());
+                  }
+                },
+                icon: const Icon(Icons.add),
+                label: Text(
+                  data.buttonText.tr(),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -218,7 +251,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: Colors.green.shade600, size: 18.sp),
+          Icon(icon, color: appPrimaryColor, size: 20.sp),
           SizedBox(width: 10.w),
           Expanded(
             child: Text(
@@ -230,20 +263,4 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
       ),
     );
   }
-}
-
-class _PageData {
-  final String title;
-  final String description;
-  final List<String> points;
-  final IconData icon;
-  final String buttonText;
-
-  _PageData({
-    required this.title,
-    required this.description,
-    required this.points,
-    required this.icon,
-    required this.buttonText,
-  });
 }

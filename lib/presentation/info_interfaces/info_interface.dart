@@ -27,7 +27,6 @@ class InfoInterface extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon Section
               CircleAvatar(
                 radius: 30.sp,
                 backgroundColor: appPrimaryColor.withAlpha(30),
@@ -38,7 +37,6 @@ class InfoInterface extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-
               Text(
                 data.title.tr(),
                 textAlign: TextAlign.center,
@@ -49,8 +47,6 @@ class InfoInterface extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 10.sp),
-
-              // Subtitle
               Text(
                 data.description.tr(),
                 textAlign: TextAlign.center,
@@ -61,15 +57,12 @@ class InfoInterface extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.sp),
-
-              // Quick Start Card
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(16.sp),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12.sp),
-                  border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,9 +85,7 @@ class InfoInterface extends StatelessWidget {
                   ],
                 ),
               ),
-
               SizedBox(height: 28.h),
-
               SizedBox(
                 width: double.infinity,
                 height: 48.sp,
@@ -106,9 +97,7 @@ class InfoInterface extends StatelessWidget {
                   ),
                 ),
               ),
-
               SizedBox(height: 20.h),
-
               if (data.tipText != null)
                 Container(
                   padding:
