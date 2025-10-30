@@ -415,5 +415,6 @@
   "allSetDesc": "Großartige Arbeit! Sie haben Ihr Trakli-Konto erfolgreich eingerichtet. Sie können jetzt mit dem Verfolgen Ihrer Finanzen beginnen.",
   "goToDashboard": "Zum Dashboard gehen",
   "transaction": "Transaktion",
-  "wallets": "Wallets"
+  "wallets": "Wallets",
+  "stepCounter": "Schritt {} von {}"
 }

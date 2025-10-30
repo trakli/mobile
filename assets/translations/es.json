@@ -413,5 +413,6 @@
   "renameDefaultWallet": "Renombrar billetera predeterminada",
   "createNewWallet": "Crear nueva billetera",
   "allSetDesc": "¡Excelente trabajo! Has configurado tu cuenta de Trakli con éxito. Ya estás listo para empezar a seguir tus finanzas.",
-  "goToDashboard": "Ir al panel"
+  "goToDashboard": "Ir al panel",
+  "stepCounter": "Paso {} de {}"
 }

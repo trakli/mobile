@@ -152,7 +152,12 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
                           ),
                         ),
                         Text(
-                          'Step ${_currentPage + 1} of $_pageSize',
+                          LocaleKeys.stepCounter.tr(
+                            args: [
+                              (_currentPage + 1).toString(),
+                              _pageSize.toString(),
+                            ],
+                          ),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],

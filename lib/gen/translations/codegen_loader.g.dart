@@ -420,5 +420,6 @@ abstract class  LocaleKeys {
   static const createNewWallet = 'createNewWallet';
   static const allSetDesc = 'allSetDesc';
   static const goToDashboard = 'goToDashboard';
+  static const stepCounter = 'stepCounter';
 
 }

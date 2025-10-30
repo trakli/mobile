@@ -415,5 +415,6 @@
   "renameDefaultWallet": "Rename default wallet",
   "createNewWallet": "Create new wallet",
   "allSetDesc": "Great job! You've successfully set up your Trakli account. You're ready to start tracking your finances.",
-  "goToDashboard": "Go to dashboard"
+  "goToDashboard": "Go to dashboard",
+  "stepCounter": "Step {} of {}"
 }

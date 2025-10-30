@@ -415,5 +415,6 @@
   "renameDefaultWallet": "Rinomina portafoglio predefinito",
   "createNewWallet": "Crea nuovo portafoglio",
   "allSetDesc": "Ottimo lavoro! Hai configurato correttamente il tuo account Trakli. Ora sei pronto per iniziare a gestire le tue finanze.",
-  "goToDashboard": "Vai alla dashboard"
+  "goToDashboard": "Vai alla dashboard",
+  "stepCounter": "Passaggio {} di {}"
 }
