@@ -50,6 +50,7 @@ abstract class  LocaleKeys {
   static const transactionTracking = 'transactionTracking';
   static const support = 'support';
   static const transactions = 'transactions';
+  static const transaction = 'transaction';
   static const moneySpent = 'moneySpent';
   static const moneyReceived = 'moneyReceived';
   static const totalCompanies = 'totalCompanies';
@@ -127,6 +128,7 @@ abstract class  LocaleKeys {
   static const cancel = 'cancel';
   static const delete = 'delete';
   static const next = 'next';
+  static const prev = 'prev';
   static const done = 'done';
   static const selectCurrency = 'selectCurrency';
   static const defaultWalletName = 'defaultWalletName';

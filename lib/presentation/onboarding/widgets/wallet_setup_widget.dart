@@ -15,9 +15,14 @@ import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_type_popover.dart';
 
 class WalletSetupWidget extends StatefulWidget {
-  final VoidCallback onTap;
+  final VoidCallback onNext;
+  final VoidCallback onPrev;
 
-  const WalletSetupWidget({super.key, required this.onTap});
+  const WalletSetupWidget({
+    super.key,
+    required this.onNext,
+    required this.onPrev,
+  });
 
   @override
   State<WalletSetupWidget> createState() => _WalletSetupWidgetState();
@@ -141,7 +146,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                       onTap: () {
                         showCustomPopOver(
                           context,
-                          maxWidth: 0.6.sw,
+                          maxWidth: 0.8.sw,
                           widget: WalletTypePopover(
                             onSelect: (type) {
                               setState(() {
@@ -281,22 +286,29 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
               ),
             ),
             SizedBox(height: 10.h),
-            SizedBox(
-              height: 52.h,
-              width: double.infinity,
-              child: PrimaryButton(
-                onPress: () {
-                  if (defaultCurrency == null) {
-                    context.read<OnboardingCubit>().selectCurrency(xafCurrency);
-                  }
-                  if (_selectedWalletOption == WalletOption.useDefault ||
-                      (_formKey.currentState?.validate() ?? false)) {
-                    widget.onTap();
-                  }
-                },
-                buttonText: LocaleKeys.next.tr(),
-              ),
-            )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: widget.onPrev,
+                  child: Text(LocaleKeys.prev.tr()),
+                ),
+                PrimaryButton(
+                  onPress: () {
+                    if (defaultCurrency == null) {
+                      context
+                          .read<OnboardingCubit>()
+                          .selectCurrency(xafCurrency);
+                    }
+                    if (_selectedWalletOption == WalletOption.useDefault ||
+                        (_formKey.currentState?.validate() ?? false)) {
+                      widget.onNext();
+                    }
+                  },
+                  buttonText: LocaleKeys.next.tr(),
+                ),
+              ],
+            ),
           ],
         ),
       ),

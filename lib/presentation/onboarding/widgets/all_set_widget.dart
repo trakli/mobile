@@ -1,20 +1,30 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AllSetWidget extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback onPrev;
 
   const AllSetWidget({
     super.key,
     required this.onTap,
+    required this.onPrev,
   });
 
   @override
   Widget build(BuildContext context) {
+    final walletState = context.watch<WalletCubit>().state;
+    final cartState = context.watch<CategoryCubit>().state;
+    final transState = context.watch<TransactionCubit>().state;
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -56,22 +66,90 @@ class AllSetWidget extends StatelessWidget {
             style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
           ),
           SizedBox(height: 16.h),
-          const Expanded(
+          Expanded(
             child: Column(
-              children: [],
+              spacing: 16.h,
+              children: [
+                infoText(
+                  text: walletState.wallets.length == 1
+                      ? LocaleKeys.wallet.tr()
+                      : LocaleKeys.wallets.tr(),
+                  count: walletState.wallets.length,
+                  icon: Icons.wallet,
+                ),
+                infoText(
+                  text: cartState.categories.length == 1
+                      ? LocaleKeys.category.tr()
+                      : LocaleKeys.categories.tr(),
+                  count: cartState.categories.length,
+                  icon: Icons.label_outline,
+                ),
+                infoText(
+                  text: transState.transactions.length == 1
+                      ? LocaleKeys.transaction.tr()
+                      : LocaleKeys.transactions.tr(),
+                  count: transState.transactions.length,
+                  icon: Icons.compare_arrows_outlined,
+                ),
+              ],
             ),
           ),
           SizedBox(height: 10.h),
-          SizedBox(
-            height: 52.h,
-            width: double.infinity,
-            child: PrimaryButton(
-              onPress: onTap,
-              buttonText: LocaleKeys.goToDashboard.tr(),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: onPrev,
+                child: Text(LocaleKeys.prev.tr()),
+              ),
+              Builder(builder: (context) {
+                final onboardState = context.watch<OnboardingCubit>().state;
+
+                final isCurrencySelected =
+                    onboardState.entity?.selectedCurrency != null;
+                return PrimaryButton(
+                  onPress: !isCurrencySelected ? null : onTap,
+                  backgroundColor:
+                      isCurrencySelected ? null : Colors.grey.shade300,
+                  buttonText: LocaleKeys.goToDashboard.tr(),
+                );
+              }),
+            ],
           )
         ],
       ),
+    );
+  }
+
+  Widget infoText({
+    required String text,
+    required int count,
+    required IconData icon,
+  }) {
+    return Row(
+      spacing: 8.w,
+      children: [
+        Icon(
+          icon,
+          size: 20.sp,
+          color: appPrimaryColor,
+        ),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            text: count.toString(),
+            children: [
+              TextSpan(
+                text: " $text",
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

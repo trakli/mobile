@@ -123,6 +123,7 @@
   "cancel": "Abbrechen",
   "delete": "Löschen",
   "next": "Weiter",
+  "prev": "Zurück",
   "done": "Fertig",
   "selectCurrency": "Währung auswählen",
   "defaultWalletName": "Standard",
@@ -260,7 +261,6 @@
   "deleteCategoryConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
   "noDescription": "No description",
   "transactionsIn": "transactions in",
-  "wallets": "wallets",
   "noData": "No data",
   "totalIncome": "Total Income",
   "totalExpense": "Total Expense",
@@ -413,5 +413,7 @@
   "renameDefaultWallet": "Standard-Brieftasche umbenennen",
   "createNewWallet": "Neue Brieftasche erstellen",
   "allSetDesc": "Großartige Arbeit! Sie haben Ihr Trakli-Konto erfolgreich eingerichtet. Sie können jetzt mit dem Verfolgen Ihrer Finanzen beginnen.",
-  "goToDashboard": "Zum Dashboard gehen"
+  "goToDashboard": "Zum Dashboard gehen",
+  "transaction": "Transaktion",
+  "wallets": "Wallets"
 }
