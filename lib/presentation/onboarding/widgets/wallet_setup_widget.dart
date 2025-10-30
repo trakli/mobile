@@ -36,18 +36,18 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
   final GlobalKey gloKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
   Currency? currency;
-  late Currency xafCurrency;
+  late Currency usdCurrency;
   Currency? defaultCurrency;
 
   void _loadCurrencies() {
     setState(() {
-      const countryCode = KeyConstants.defaultCurrencyCode;
+      const countryCode = KeyConstants.usdCode;
       final allCurrencies = CurrencyService().getAll();
-      // Make XAF (Cameroon) the default
+      // Make XAF (USD) the default
       setState(() {
-        xafCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
+        usdCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
       });
-      _currencyController.text = "${xafCurrency.code} - ${xafCurrency.name}";
+      _currencyController.text = "${usdCurrency.code} - ${usdCurrency.name}";
     });
   }
 
@@ -276,7 +276,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
                             child: flagWidget(
-                          defaultCurrency ?? xafCurrency,
+                          defaultCurrency ?? usdCurrency,
                           fontSize: 20.sp,
                         )),
                       ),
@@ -298,7 +298,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                     if (defaultCurrency == null) {
                       context
                           .read<OnboardingCubit>()
-                          .selectCurrency(xafCurrency);
+                          .selectCurrency(usdCurrency);
                     }
                     if (_selectedWalletOption == WalletOption.useDefault ||
                         (_formKey.currentState?.validate() ?? false)) {

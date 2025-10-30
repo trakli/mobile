@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
@@ -28,7 +27,6 @@ class OnboardSettingsScreen extends StatefulWidget {
 class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   PageController pageController = PageController();
   List<Currency> currencies = [];
-  Currency? selectedCurrency;
 
   int _currentPage = 0;
   final int _pageSize = 3;
@@ -47,26 +45,9 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     );
   }
 
-  void _loadCurrencies() {
-    setState(() {
-      const countryCode = KeyConstants.defaultCurrencyCode;
-
-      final allCurrencies = CurrencyService().getAll();
-
-      // Make XAF (Cameroon) the first currency
-      final xafCurrency =
-          allCurrencies.firstWhere((c) => c.code == countryCode);
-      currencies = [xafCurrency];
-
-      // Add all other currencies except XAF
-      currencies.addAll(allCurrencies.where((c) => c.code != countryCode));
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _loadCurrencies();
   }
 
   @override
