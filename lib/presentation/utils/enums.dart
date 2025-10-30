@@ -151,9 +151,9 @@ enum WalletOption {
 
   String get customName {
     return switch (this) {
-      WalletOption.useDefault => 'Use default wallet',
-      WalletOption.renameDefault => 'Rename default wallet',
-      WalletOption.createNew => 'Create new wallet',
+      WalletOption.useDefault => LocaleKeys.useDefaultWallet,
+      WalletOption.renameDefault => LocaleKeys.renameDefaultWallet,
+      WalletOption.createNew => LocaleKeys.createNewWallet,
     };
   }
 }

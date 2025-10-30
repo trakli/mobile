@@ -403,5 +403,15 @@
   "setupWallet": "Wallets einrichten",
   "manageCategories": "Kategorien verwalten",
   "addParties": "Parteien hinzufügen",
-  "startUsingTrakli": "Beginnen Sie mit der Verwendung von Trakli"
+  "startUsingTrakli": "Beginnen Sie mit der Verwendung von Trakli",
+  "welcomeDesc": "Richten Sie Ihr Konto in nur wenigen Schritten ein",
+  "selectLangDesc": "Wählen Sie Ihre bevorzugte Sprache für Trakli. Sie können dies später in den Einstellungen ändern.",
+  "setupWalletTitle": "Richten Sie Ihre Brieftasche und Währung ein",
+  "setupWalletDesc": "Konfigurieren Sie Ihre Standard-Brieftasche und Währung. Beide sollten übereinstimmen, um genaue Nachverfolgung zu gewährleisten.",
+  "walletSetup": "Brieftaschen-Einrichtung",
+  "useDefaultWallet": "Standard-Brieftasche verwenden",
+  "renameDefaultWallet": "Standard-Brieftasche umbenennen",
+  "createNewWallet": "Neue Brieftasche erstellen",
+  "allSetDesc": "Großartige Arbeit! Sie haben Ihr Trakli-Konto erfolgreich eingerichtet. Sie können jetzt mit dem Verfolgen Ihrer Finanzen beginnen.",
+  "goToDashboard": "Zum Dashboard gehen"
 }

@@ -403,5 +403,15 @@
   "setupWallet": "Configura i portafogli",
   "manageCategories": "Gestisci le categorie",
   "addParties": "Aggiungi parti",
-  "startUsingTrakli": "Inizia a usare Trakli"
+  "startUsingTrakli": "Inizia a usare Trakli",
+  "welcomeDesc": "Configura il tuo account in pochi semplici passaggi",
+  "selectLangDesc": "Seleziona la tua lingua preferita per Trakli. Puoi cambiarla più tardi nelle impostazioni.",
+  "setupWalletTitle": "Configura il tuo portafoglio e la valuta",
+  "setupWalletDesc": "Configura il portafoglio e la valuta predefiniti. Devono corrispondere per un tracciamento accurato.",
+  "walletSetup": "Configurazione del portafoglio",
+  "useDefaultWallet": "Usa portafoglio predefinito",
+  "renameDefaultWallet": "Rinomina portafoglio predefinito",
+  "createNewWallet": "Crea nuovo portafoglio",
+  "allSetDesc": "Ottimo lavoro! Hai configurato correttamente il tuo account Trakli. Ora sei pronto per iniziare a gestire le tue finanze.",
+  "goToDashboard": "Vai alla dashboard"
 }

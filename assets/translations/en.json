@@ -403,5 +403,15 @@
   "setupWallet": "Setup wallets",
   "manageCategories": "Manage categories",
   "addParties": "Add parties",
-  "startUsingTrakli": "Start using Trakli"
+  "startUsingTrakli": "Start using Trakli",
+  "welcomeDesc": "Let's set up your account in just a few steps",
+  "selectLangDesc": "Select your preferred language for Trakli. You can change this later in settings.",
+  "setupWalletTitle": "Set up your wallet and currency",
+  "setupWalletDesc": "Configure your default wallet and currency. Your wallet currency and default currency should match for accurate tracking.",
+  "walletSetup": "Wallet setup",
+  "useDefaultWallet": "Use default wallet",
+  "renameDefaultWallet": "Rename default wallet",
+  "createNewWallet": "Create new wallet",
+  "allSetDesc": "Great job! You've successfully set up your Trakli account. You're ready to start tracking your finances.",
+  "goToDashboard": "Go to dashboard"
 }

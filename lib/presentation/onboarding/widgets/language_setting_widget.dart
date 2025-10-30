@@ -54,7 +54,7 @@ class LanguageSettingWidget extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           Text(
-            "Select your preferred language for Trakli. You can change this later in settings.",
+            LocaleKeys.selectLangDesc.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
           ),

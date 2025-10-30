@@ -408,5 +408,15 @@ abstract class  LocaleKeys {
   static const manageCategories = 'manageCategories';
   static const addParties = 'addParties';
   static const startUsingTrakli = 'startUsingTrakli';
+  static const welcomeDesc = 'welcomeDesc';
+  static const selectLangDesc = 'selectLangDesc';
+  static const setupWalletTitle = 'setupWalletTitle';
+  static const setupWalletDesc = 'setupWalletDesc';
+  static const walletSetup = 'walletSetup';
+  static const useDefaultWallet = 'useDefaultWallet';
+  static const renameDefaultWallet = 'renameDefaultWallet';
+  static const createNewWallet = 'createNewWallet';
+  static const allSetDesc = 'allSetDesc';
+  static const goToDashboard = 'goToDashboard';
 
 }

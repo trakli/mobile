@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
@@ -30,10 +31,24 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
   final GlobalKey gloKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
   Currency? currency;
+  late Currency xafCurrency;
   Currency? defaultCurrency;
+
+  void _loadCurrencies() {
+    setState(() {
+      const countryCode = KeyConstants.defaultCurrencyCode;
+      final allCurrencies = CurrencyService().getAll();
+      // Make XAF (Cameroon) the default
+      setState(() {
+        xafCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
+      });
+      _currencyController.text = "${xafCurrency.code} - ${xafCurrency.name}";
+    });
+  }
 
   @override
   void initState() {
+    _loadCurrencies();
     _optionController.text = _selectedWalletOption?.customName.tr() ?? "";
     super.initState();
   }
@@ -92,7 +107,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
             ),
             SizedBox(height: 16.h),
             Text(
-              "Set up your wallet and currency",
+              LocaleKeys.setupWalletTitle.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20.sp,
@@ -101,7 +116,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
             ),
             SizedBox(height: 8.h),
             Text(
-              "Configure your default wallet and currency. Your wallet currency and default currency should match for accurate tracking.",
+              LocaleKeys.setupWalletDesc.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
             ),
@@ -111,7 +126,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Wallet setup',
+                    LocaleKeys.walletSetup.tr(),
                     style: TextStyle(
                       fontSize: 16.5.sp,
                       fontWeight: FontWeight.bold,
@@ -212,7 +227,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                   ],
                   SizedBox(height: 16.h),
                   Text(
-                    'Default currency',
+                    LocaleKeys.defaultCurrency.tr(),
                     style: TextStyle(
                       fontSize: 16.5.sp,
                       fontWeight: FontWeight.bold,
@@ -252,16 +267,14 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                           Assets.images.arrowDown,
                         ),
                       ),
-                      prefixIcon: defaultCurrency != null
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                  child: flagWidget(
-                                defaultCurrency!,
-                                fontSize: 20.sp,
-                              )),
-                            )
-                          : null,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                            child: flagWidget(
+                          defaultCurrency ?? xafCurrency,
+                          fontSize: 20.sp,
+                        )),
+                      ),
                     ),
                   ),
                 ],
@@ -273,6 +286,9 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
               width: double.infinity,
               child: PrimaryButton(
                 onPress: () {
+                  if (defaultCurrency == null) {
+                    context.read<OnboardingCubit>().selectCurrency(xafCurrency);
+                  }
                   if (_selectedWalletOption == WalletOption.useDefault ||
                       (_formKey.currentState?.validate() ?? false)) {
                     widget.onTap();

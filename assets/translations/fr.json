@@ -401,5 +401,15 @@
   "setupWallet": "Configurer les portefeuilles",
   "manageCategories": "Gérer les catégories",
   "addParties": "Ajouter des parties",
-  "startUsingTrakli": "Commencez à utiliser Trakli"
+  "startUsingTrakli": "Commencez à utiliser Trakli",
+  "welcomeDesc": "Configurons votre compte en quelques étapes seulement",
+  "selectLangDesc": "Sélectionnez votre langue préférée pour Trakli. Vous pourrez la modifier plus tard dans les paramètres.",
+  "setupWalletTitle": "Configurez votre portefeuille et votre devise",
+  "setupWalletDesc": "Configurez votre portefeuille et votre devise par défaut. Ils doivent correspondre pour un suivi précis.",
+  "walletSetup": "Configuration du portefeuille",
+  "useDefaultWallet": "Utiliser le portefeuille par défaut",
+  "renameDefaultWallet": "Renommer le portefeuille par défaut",
+  "createNewWallet": "Créer un nouveau portefeuille",
+  "allSetDesc": "Excellent travail ! Vous avez configuré votre compte Trakli avec succès. Vous êtes prêt à commencer à suivre vos finances.",
+  "goToDashboard": "Aller au tableau de bord"
 }
