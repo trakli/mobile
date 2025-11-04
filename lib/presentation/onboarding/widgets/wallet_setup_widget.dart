@@ -13,6 +13,7 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_type_popover.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletSetupWidget extends StatefulWidget {
   final VoidCallback onNext;
@@ -292,9 +293,11 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                 TextButton(
                   onPressed: widget.onPrev,
                   child: Text(LocaleKeys.prev.tr()),
-                ),
+                ),  
                 PrimaryButton(
-                  onPress: () {
+                  onPress: () async {
+                    final walletCubit = context.read<WalletCubit>();
+                    // walletCubit.state.wallets
                     if (defaultCurrency == null) {
                       context
                           .read<OnboardingCubit>()
