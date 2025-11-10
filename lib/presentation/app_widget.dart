@@ -18,6 +18,7 @@ import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/linear_indicator.dart';
@@ -88,6 +89,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<BenefitsCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<ConfigCubit>(),
         ),
       ],
       child: const AppView(),

@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/onboarding/widgets/all_set_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/language_setting_widget.dart';
@@ -72,6 +73,17 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
         BlocListener<WalletCubit, WalletState>(
           listenWhen: (previous, current) =>
               previous.isSaving != current.isSaving,
+          listener: (context, state) {
+            if (state.isSaving) {
+              showLoader();
+            } else {
+              hideLoader();
+            }
+          },
+        ),
+        BlocListener<ConfigCubit, ConfigState>(
+          listenWhen: (previous, current) =>
+          previous.isSaving != current.isSaving,
           listener: (context, state) {
             if (state.isSaving) {
               showLoader();
