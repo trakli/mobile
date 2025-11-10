@@ -296,7 +296,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                 ),  
                 PrimaryButton(
                   onPress: () async {
-                    final walletCubit = context.read<WalletCubit>();
+                    // final walletCubit = context.read<WalletCubit>();
                     // walletCubit.state.wallets
                     if (defaultCurrency == null) {
                       context
