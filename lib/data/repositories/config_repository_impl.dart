@@ -17,7 +17,25 @@ class ConfigRepositoryImpl implements ConfigRepository {
   @override
   Future<Either<Failure, List<ConfigEntity>>> getConfigs() async {
     return RepositoryErrorHandler.handleApiCall(() async {
-      final response = await _remoteDataSource.getConfigs();
+      final response = await _remoteDataSource.fetchConfigs();
+      return response;
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> saveConfig({
+    required String key,
+    required String type,
+    required String clientId,
+    required dynamic value,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall(() async {
+      final response = await _remoteDataSource.saveConfig(
+        key: key,
+        type: type,
+        clientId: clientId,
+        value: value,
+      );
       return response;
     });
   }

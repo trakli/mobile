@@ -4,4 +4,11 @@ import 'package:trakli/domain/entities/config_entity.dart';
 
 abstract class ConfigRepository {
   Future<Either<Failure, List<ConfigEntity>>> getConfigs();
+
+  Future<Either<Failure, void>> saveConfig({
+    required String key,
+    required String type,
+    required String clientId,
+    required dynamic value,
+  });
 }
