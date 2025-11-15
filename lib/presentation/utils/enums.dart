@@ -143,3 +143,17 @@ enum DateFilterOption {
     };
   }
 }
+
+enum WalletOption {
+  useDefault,
+  renameDefault,
+  createNew;
+
+  String get customName {
+    return switch (this) {
+      WalletOption.useDefault => LocaleKeys.useDefaultWallet,
+      WalletOption.renameDefault => LocaleKeys.renameDefaultWallet,
+      WalletOption.createNew => LocaleKeys.createNewWallet,
+    };
+  }
+}

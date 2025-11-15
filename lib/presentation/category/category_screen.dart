@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
+import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
-import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -40,6 +42,20 @@ class _CategoryScreenState extends State<CategoryScreen>
     super.dispose();
   }
 
+  void addAction() {
+    AppNavigator.push(
+      context,
+      AddCategoryScreen(
+        accentColor: (tabController.index == 0)
+            ? Theme.of(context).primaryColor
+            : const Color(0xFFEB5757),
+        type: (tabController.index == 0)
+            ? TransactionType.income
+            : TransactionType.expense,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,17 +67,7 @@ class _CategoryScreenState extends State<CategoryScreen>
         actions: [
           InkWell(
             onTap: () {
-              AppNavigator.push(
-                context,
-                AddCategoryScreen(
-                  accentColor: (tabController.index == 0)
-                      ? Theme.of(context).primaryColor
-                      : const Color(0xFFEB5757),
-                  type: (tabController.index == 0)
-                      ? TransactionType.income
-                      : TransactionType.expense,
-                ),
-              );
+              addAction();
             },
             child: Container(
               width: 40.w,
@@ -189,14 +195,11 @@ class _CategoryScreenState extends State<CategoryScreen>
     required Color accentColor,
   }) {
     if (categories.isEmpty) {
-      return Center(
-        child: Text(
-          LocaleKeys.noCategoriesFound.tr(),
-          style: TextStyle(
-            fontSize: 16.sp,
-            color: Colors.grey,
-          ),
-        ),
+      return InfoInterface(
+        action: () {
+          addAction();
+        },
+        data: emptyCategoryData,
       );
     }
 

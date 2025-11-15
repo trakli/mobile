@@ -9,4 +9,5 @@ class KeyConstants {
   static const String userIdKey = 'user_id';
   static const String onboardingCompletedKey = 'onboarding_completed';
   static const String defaultCurrencyCode = 'XAF';
+  static const String usdCode = 'USD';
 }
