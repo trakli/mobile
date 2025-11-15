@@ -108,6 +108,7 @@ import '../domain/usecases/category/listen_to_categories_usecase.dart' as _i500;
 import '../domain/usecases/category/update_category_usecase.dart' as _i986;
 import '../domain/usecases/cloud_benefits/fetch_benefits_usecase.dart' as _i61;
 import '../domain/usecases/configs/get_configs_usecase.dart' as _i132;
+import '../domain/usecases/configs/save_config_usecase.dart' as _i833;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/group/add_group_usecase.dart' as _i353;
 import '../domain/usecases/group/delete_group_usecase.dart' as _i759;
@@ -428,6 +429,8 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i132.GetConfigsUseCase>(
       () => _i132.GetConfigsUseCase(gh<_i899.ConfigRepository>()));
+  gh.factory<_i833.SaveConfigUseCase>(
+      () => _i833.SaveConfigUseCase(gh<_i899.ConfigRepository>()));
   gh.factory<_i225.EnsureDefaultWalletExistsUseCase>(() =>
       _i225.EnsureDefaultWalletExistsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i82.ListenToWalletsUseCase>(
@@ -459,13 +462,15 @@ _i174.GetIt $initGetIt(
         gh<_i243.SaveOnboardingState>(),
         gh<_i332.GetOnboardingStateStream>(),
       ));
+  gh.factory<_i408.ConfigCubit>(() => _i408.ConfigCubit(
+        gh<_i132.GetConfigsUseCase>(),
+        gh<_i833.SaveConfigUseCase>(),
+      ));
   gh.factory<_i98.EnsureDefaultGroupExistsUseCase>(
       () => _i98.EnsureDefaultGroupExistsUseCase(
             gh<_i957.GroupRepository>(),
             gh<_i867.OnboardingRepository>(),
           ));
-  gh.factory<_i408.ConfigCubit>(
-      () => _i408.ConfigCubit(gh<_i132.GetConfigsUseCase>()));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(

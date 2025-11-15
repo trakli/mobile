@@ -15,9 +15,19 @@ class ConfigRepositoryImpl implements ConfigRepository {
   );
 
   @override
-  Future<Either<Failure, List<ConfigEntity>>> getConfigs() async {
+  Future<Either<Failure, List<ConfigEntity>>> fetchConfigs() async {
     return RepositoryErrorHandler.handleApiCall(() async {
       final response = await _remoteDataSource.fetchConfigs();
+      return response;
+    });
+  }
+
+  @override
+  Future<Either<Failure, ConfigEntity>> getConfig({
+    required String key,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall(() async {
+      final response = await _remoteDataSource.getConfig(key: key);
       return response;
     });
   }
@@ -40,3 +50,4 @@ class ConfigRepositoryImpl implements ConfigRepository {
     });
   }
 }
+

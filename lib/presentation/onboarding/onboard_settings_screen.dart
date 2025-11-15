@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/utils/id_helper.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
@@ -83,7 +84,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
         ),
         BlocListener<ConfigCubit, ConfigState>(
           listenWhen: (previous, current) =>
-          previous.isSaving != current.isSaving,
+              previous.isSaving != current.isSaving,
           listener: (context, state) {
             if (state.isSaving) {
               showLoader();
@@ -184,7 +185,9 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
 
   Widget get pageOne {
     return LanguageSettingWidget(
-      onTap: () {
+      onTap: () async {
+        final configCubit = context.read<ConfigCubit>();
+        await configCubit.saveConfig(clientId: await generateDeviceScopedId());
         nextPage();
       },
     );

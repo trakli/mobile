@@ -13,6 +13,6 @@ class GetConfigsUseCase implements UseCase<List<ConfigEntity>, NoParams> {
 
   @override
   Future<Either<Failure, List<ConfigEntity>>> call(NoParams param) async {
-    return await _repository.getConfigs();
+    return await _repository.fetchConfigs();
   }
 }
