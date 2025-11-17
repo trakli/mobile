@@ -43,7 +43,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
     setState(() {
       const countryCode = KeyConstants.usdCode;
       final allCurrencies = CurrencyService().getAll();
-      // Make XAF (USD) the default
+      // USD is currently set as the default for display
       setState(() {
         usdCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
       });
