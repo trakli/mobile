@@ -1,21 +1,26 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/di/injection.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/usecases/wallet/add_wallet_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/delete_wallet_usecase.dart';
+import 'package:trakli/domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/get_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/listen_to_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/update_wallet_usecase.dart';
-import 'package:trakli/domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 
-part 'wallet_state.dart';
 part 'wallet_cubit.freezed.dart';
+part 'wallet_state.dart';
 
 @injectable
 class WalletCubit extends Cubit<WalletState> {
@@ -112,10 +117,12 @@ class WalletCubit extends Cubit<WalletState> {
       ),
     );
     result.fold(
-      (failure) => emit(state.copyWith(
-        isSaving: false,
-        failure: failure,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          isSaving: false,
+          failure: failure,
+        ),
+      ),
       (_) => emit(
         state.copyWith(
           isSaving: false,
@@ -193,6 +200,43 @@ class WalletCubit extends Cubit<WalletState> {
         ),
       ),
     );
+  }
+
+  Future<void> createAndSaveDefaultWallet({
+    required String name,
+    required String currency,
+    String? description,
+    MediaEntity? icon,
+  }) async {
+    emit(state.copyWith(isSaving: true, failure: const Failure.none()));
+
+    final result = await addWalletUseCase(
+      AddWalletUseCaseParams(
+        name: name,
+        type: WalletType.cash,
+        balance: 0.0,
+        currency: currency,
+        description: description,
+        icon: icon,
+      ),
+    );
+    result.fold(
+        (failure) => emit(state.copyWith(
+              isSaving: false,
+              failure: failure,
+            )), (wallet) async {
+      await getIt<ConfigCubit>().saveConfig(
+        key: ConfigConstants.defaultWallet,
+        type: ConfigType.string,
+        value: wallet.clientId,
+      );
+      emit(
+        state.copyWith(
+          isSaving: false,
+          failure: const Failure.none(),
+        ),
+      );
+    });
   }
 
   void setCurrentSelectedWalletIndex(int index) {

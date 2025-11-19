@@ -6,31 +6,30 @@ import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
 
 @injectable
-class SaveConfigUseCase
-    implements UseCase<ConfigEntity, SaveConfigUseCaseParams> {
+class UpdateConfigUseCase implements UseCase<Unit, UpdateConfigUseCaseParams> {
   final ConfigRepository _repository;
 
-  SaveConfigUseCase(this._repository);
+  UpdateConfigUseCase(this._repository);
 
   @override
-  Future<Either<Failure, ConfigEntity>> call(
-      SaveConfigUseCaseParams params) async {
-    return await _repository.saveConfig(
-      key: params.key,
+  Future<Either<Failure, Unit>> call(UpdateConfigUseCaseParams params) async {
+    return await _repository.updateConfig(
+      params.key,
       type: params.type,
       value: params.value,
     );
   }
 }
 
-class SaveConfigUseCaseParams {
+class UpdateConfigUseCaseParams {
   final String key;
-  final ConfigType type;
+  final ConfigType? type;
   final dynamic value;
 
-  SaveConfigUseCaseParams({
+  UpdateConfigUseCaseParams({
     required this.key,
-    required this.type,
-    required this.value,
+    this.type,
+    this.value,
   });
 }
+

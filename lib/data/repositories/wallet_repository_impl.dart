@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'package:fpdart/fpdart.dart';
+
 import 'package:drift_sync_core/drift_sync_core.dart' as sync;
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
-import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/wallet/wallet_local_datasource.dart';
 import 'package:trakli/data/mappers/wallet_mapper.dart';
@@ -37,7 +38,7 @@ class WalletRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> insertWallet(
+  Future<Either<Failure, WalletEntity>> insertWallet(
     String name,
     WalletType type,
     double balance,
@@ -62,12 +63,12 @@ class WalletRepositoryImpl
       );
 
       unawaited(put(wallet));
-      return unit;
+      return WalletMapper.toDomain(wallet);
     });
   }
 
   @override
-  Future<Either<Failure, Unit>> updateWallet(
+  Future<Either<Failure, WalletEntity>> updateWallet(
     String clientId, {
     String? name,
     WalletType? type,
@@ -100,7 +101,7 @@ class WalletRepositoryImpl
       );
 
       unawaited(put(wallet));
-      return unit;
+      return WalletMapper.toDomain(wallet);
     });
   }
 

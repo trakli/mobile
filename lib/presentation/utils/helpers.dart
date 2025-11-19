@@ -393,6 +393,18 @@ Future<void> setupDefaultGroupAndWallet({
       );
 }
 
+Future<void> setupDefaultGroup({
+  required BuildContext context,
+  String? groupName,
+}) async {
+  // if (!context.mounted) return;
+
+  // Ensure default group exists
+  context.read<GroupCubit>().ensureDefaultGroup(
+    name: groupName ?? LocaleKeys.defaultGroupName.tr(),
+  );
+}
+
 /// Returns a datetime to use as a start date
 DateTime? getStartDateFromKey(String key) {
   final now = DateTime.now();

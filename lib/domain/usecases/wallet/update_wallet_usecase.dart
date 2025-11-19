@@ -3,17 +3,18 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/repositories/wallet_repository.dart';
 
 @injectable
-class UpdateWalletUseCase implements UseCase<Unit, UpdateWalletUseCaseParams> {
+class UpdateWalletUseCase implements UseCase<WalletEntity, UpdateWalletUseCaseParams> {
   final WalletRepository _repository;
 
   UpdateWalletUseCase(this._repository);
 
   @override
-  Future<Either<Failure, Unit>> call(UpdateWalletUseCaseParams params) async {
+  Future<Either<Failure, WalletEntity>> call(UpdateWalletUseCaseParams params) async {
     return await _repository.updateWallet(
       params.clientId,
       name: params.name,

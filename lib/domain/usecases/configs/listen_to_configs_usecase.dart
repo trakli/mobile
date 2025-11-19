@@ -6,13 +6,14 @@ import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
 
 @injectable
-class GetConfigsUseCase implements UseCase<List<ConfigEntity>, NoParams> {
+class ListenToConfigsUseCase
+    implements StreamUseCase<List<ConfigEntity>, NoParams> {
   final ConfigRepository _repository;
 
-  GetConfigsUseCase(this._repository);
+  ListenToConfigsUseCase(this._repository);
 
   @override
-  Future<Either<Failure, List<ConfigEntity>>> call(NoParams param) async {
-    return await _repository.getAllConfigs();
+  Stream<Either<Failure, List<ConfigEntity>>> call(NoParams params) {
+    return _repository.listenToConfigs();
   }
 }

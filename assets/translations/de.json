@@ -416,5 +416,8 @@
   "goToDashboard": "Zum Dashboard gehen",
   "transaction": "Transaktion",
   "wallets": "Wallets",
-  "stepCounter": "Schritt {} von {}"
+  "stepCounter": "Schritt {} von {}",
+  "createAutomatically": "Automatic",
+  "createManually": "Manual",
+  "selectFromWalletList": "Select wallet"
 }

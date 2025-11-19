@@ -414,5 +414,8 @@
   "createNewWallet": "Créer un nouveau portefeuille",
   "allSetDesc": "Excellent travail ! Vous avez configuré votre compte Trakli avec succès. Vous êtes prêt à commencer à suivre vos finances.",
   "goToDashboard": "Aller au tableau de bord",
-  "stepCounter": "Étape {} sur {}"
+  "stepCounter": "Étape {} sur {}",
+  "createAutomatically": "Automatic",
+  "createManually": "Manual",
+  "selectFromWalletList": "Select wallet"
 }

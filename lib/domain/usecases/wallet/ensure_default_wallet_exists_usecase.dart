@@ -3,18 +3,20 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/repositories/wallet_repository.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 @injectable
 class EnsureDefaultWalletExistsUseCase
-    implements UseCase<Unit, EnsureDefaultWalletParams> {
+    implements UseCase<WalletEntity?, EnsureDefaultWalletParams> {
   final WalletRepository repository;
 
   EnsureDefaultWalletExistsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, Unit>> call(EnsureDefaultWalletParams params) async {
+  Future<Either<Failure, WalletEntity?>> call(
+      EnsureDefaultWalletParams params) async {
     final hasWallet = await repository.hasAnyWallet();
 
     return hasWallet.fold(
@@ -30,7 +32,7 @@ class EnsureDefaultWalletExistsUseCase
             icon: params.icon,
           );
         }
-        return const Right(unit);
+        return const Right(null);
       },
     );
   }
