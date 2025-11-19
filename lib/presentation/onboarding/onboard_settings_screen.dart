@@ -212,6 +212,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     return AllSetWidget(
       onTap: () async {
         setOnboardingMode(false);
+        context.read<ConfigCubit>().saveConfig(
+              key: ConfigConstants.onboardingComplete,
+              type: ConfigType.boolType,
+              value: true,
+            );
         AppNavigator.removeAllPreviousAndPush(
           context,
           MainNavigationScreen(),
