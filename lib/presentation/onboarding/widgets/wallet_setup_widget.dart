@@ -248,7 +248,25 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                           .firstWhereOrNull(
                               (e) => e.clientId == sConfig?.value);
 
-                      return Text(wallet?.name ?? "");
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        spacing: 4.w,
+                        children: [
+                          Text(
+                            wallet?.name ?? "",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Text(
+                            wallet?.currencyCode ?? "",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: appPrimaryColor,
+                            ),
+                          ),
+                        ],
+                      );
                     }),
                   ],
                   SizedBox(height: 16.h),

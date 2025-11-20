@@ -33,6 +33,7 @@ import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
 import 'package:trakli/presentation/utils/theme.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -195,15 +196,29 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       getIt<SynchAppDatabase>().doSync();
 
-                      final entityResult = await getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.onboardingComplete);
+                      final langCode = await getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.defaultLang);
 
-                      final entity = entityResult.fold(
+                      final entityLang = langCode.fold(
                         (failure) => null,
                         (entity) => entity,
                       );
 
-                      if (entity?.value == true) {
+                      if (entityLang?.value != null) {
+                        if (context.mounted) {
+                          updateLanguage(context, Locale(entityLang?.value));
+                        }
+                      }
+
+                      final entityResult = await getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.onboardingComplete);
+
+                      final entityOnboard = entityResult.fold(
+                        (failure) => null,
+                        (entity) => entity,
+                      );
+
+                      if (entityOnboard?.value == true) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(

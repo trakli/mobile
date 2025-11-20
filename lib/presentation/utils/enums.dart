@@ -117,9 +117,9 @@ enum FilterType {
 
   String get filterName {
     return switch (this) {
-      FilterType.date => 'Date',
-      FilterType.category => 'Categories',
-      FilterType.wallet => 'Wallets',
+      FilterType.date => LocaleKeys.date,
+      FilterType.category => LocaleKeys.categories,
+      FilterType.wallet => LocaleKeys.wallets,
     };
   }
 }

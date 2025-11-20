@@ -53,7 +53,8 @@ class WalletTypePopover extends StatelessWidget {
                       await showCustomPopOver(context,
                           // maxWidth: filterType == FilterType.date ? 0.45.sw : null,
                           widget: WalletListPopover(
-                            label: FilterType.wallet.name,
+                            showCurrency: true,
+                            label: FilterType.wallet.filterName.tr(),
                             onSelect: (wallet) {
                               context.read<ConfigCubit>().saveConfig(
                                     key: ConfigConstants.defaultWallet,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,17 +10,17 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class WalletListPopover extends StatelessWidget {
   final String label;
   final ValueChanged<WalletEntity> onSelect;
-
+  final bool showCurrency;
 
   const WalletListPopover({
     super.key,
     required this.label,
     required this.onSelect,
+    this.showCurrency = false,
   });
 
   @override
@@ -84,6 +85,16 @@ class WalletListPopover extends StatelessWidget {
                             wallet.name,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          subtitle: showCurrency
+                              ? Text(
+                                  wallet.currencyCode,
+                                  style: TextStyle(
+                                    color: appPrimaryColor,
+                                    fontSize: 12.sp,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : null,
                           trailing: SvgPicture.asset(
                             Assets.images.arrowRight,
                           ),
