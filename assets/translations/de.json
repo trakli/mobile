@@ -417,7 +417,7 @@
   "transaction": "Transaktion",
   "wallets": "Wallets",
   "stepCounter": "Schritt {} von {}",
-  "createAutomatically": "Automatic",
-  "createManually": "Manual",
-  "selectFromWalletList": "Select wallet"
+  "createAutomatically": "Automatisch",
+  "createManually": "Manuell",
+  "selectFromWalletList": "Wallet auswählen"
 }

@@ -415,7 +415,7 @@
   "allSetDesc": "¡Excelente trabajo! Has configurado tu cuenta de Trakli con éxito. Ya estás listo para empezar a seguir tus finanzas.",
   "goToDashboard": "Ir al panel",
   "stepCounter": "Paso {} de {}",
-  "createAutomatically": "Automatic",
+  "createAutomatically": "Automático",
   "createManually": "Manual",
-  "selectFromWalletList": "Select wallet"
+  "selectFromWalletList": "Seleccionar billetera"
 }
