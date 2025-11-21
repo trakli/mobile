@@ -72,6 +72,13 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final configCubit = context.watch<ConfigCubit>();
+    final walletCubit = context.watch<WalletCubit>();
+    ConfigEntity? sConfig;
+    sConfig = configCubit.state.configs
+        .firstWhereOrNull((e) => e.key == ConfigConstants.defaultWallet);
+    WalletEntity? wallet = walletCubit.state.wallets
+        .firstWhereOrNull((e) => e.clientId == sConfig?.value);
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (BuildContext context, OnboardingState state) {
         state.when(
@@ -236,38 +243,28 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                     ),
                   ],
                   if (_selectedWalletOption ==
-                      WalletOption.selectFromWalletList) ...[
+                          WalletOption.selectFromWalletList &&
+                      wallet != null) ...[
                     SizedBox(height: 16.h),
-                    Builder(builder: (context) {
-                      final configCubit = context.watch<ConfigCubit>();
-                      final walletCubit = context.watch<WalletCubit>();
-                      ConfigEntity? sConfig;
-                      sConfig = configCubit.state.configs.firstWhereOrNull(
-                          (e) => e.key == ConfigConstants.defaultWallet);
-                      WalletEntity? wallet = walletCubit.state.wallets
-                          .firstWhereOrNull(
-                              (e) => e.clientId == sConfig?.value);
-
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        spacing: 4.w,
-                        children: [
-                          Text(
-                            wallet?.name ?? "",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                            ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      spacing: 4.w,
+                      children: [
+                        Text(
+                          wallet.name,
+                          style: TextStyle(
+                            fontSize: 16.sp,
                           ),
-                          Text(
-                            wallet?.currencyCode ?? "",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: appPrimaryColor,
-                            ),
+                        ),
+                        Text(
+                          wallet.currencyCode,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: appPrimaryColor,
                           ),
-                        ],
-                      );
-                    }),
+                        ),
+                      ],
+                    ),
                   ],
                   SizedBox(height: 16.h),
                   Text(
@@ -348,15 +345,16 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                       );
                       widget.onNext();
                     } else if (_selectedWalletOption ==
-                            WalletOption.createAutomatically ||
-                        (_formKey.currentState?.validate() ?? false)) {
+                        WalletOption.createAutomatically) {
                       await walletCubit.createAndSaveDefaultWallet(
                         name: LocaleKeys.defaultWalletName.tr(),
                         description: LocaleKeys.defaultWalletDescription.tr(),
                         currency: KeyConstants.defaultCurrencyCode,
                       );
                       widget.onNext();
-                    } else {
+                    } else if (_selectedWalletOption ==
+                            WalletOption.selectFromWalletList &&
+                        wallet != null) {
                       widget.onNext();
                     }
                   },

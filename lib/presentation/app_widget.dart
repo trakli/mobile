@@ -113,7 +113,6 @@ class _AppViewState extends State<AppView> {
   initState() {
     super.initState();
     clearKeychainValues();
-    // _setupOnboardingWatch();
   }
 
   Future<void> clearKeychainValues() async {
@@ -127,31 +126,6 @@ class _AppViewState extends State<AppView> {
     }
   }
 
-  // Future<void> _setupOnboardingWatch() async {
-  //   final entityResult =
-  //       await getIt<OnboardingRepository>().getOnboardingState();
-  //
-  //   final entity = entityResult.fold(
-  //     (failure) => null,
-  //     (entity) => entity,
-  //   );
-  //
-  //   if (entity?.isOnboardingComplete == true) {
-  //     final currency = entity?.selectedCurrency;
-  //
-  //     if (currency != null) {
-  //       // Setup default group and wallet with selected currency
-  //
-  //       if (mounted) {
-  //         await setupDefaultGroupAndWallet(
-  //           context: context,
-  //           currencyCode: currency.code,
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
       el.markNeedsBuild();
@@ -164,7 +138,6 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     rebuildAllChildren(context);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     return GlobalLoaderOverlay(
       duration: const Duration(seconds: 1),
