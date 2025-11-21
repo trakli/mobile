@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/id_helper.dart';
+import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
@@ -63,9 +64,8 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
             final currency = state.entity?.selectedCurrency;
             if (currency != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                setupDefaultGroupAndWallet(
+                setupDefaultGroup(
                   context: context,
-                  currencyCode: currency.code,
                 );
               });
             }
@@ -187,7 +187,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     return LanguageSettingWidget(
       onTap: () async {
         final configCubit = context.read<ConfigCubit>();
-        await configCubit.saveConfig(clientId: await generateDeviceScopedId());
+        await configCubit.saveConfig(
+          key: ConfigConstants.defaultLang,
+          type: ConfigType.string,
+          value: context.locale.languageCode,
+        );
         nextPage();
       },
     );
@@ -208,6 +212,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     return AllSetWidget(
       onTap: () async {
         setOnboardingMode(false);
+        context.read<ConfigCubit>().saveConfig(
+              key: ConfigConstants.onboardingComplete,
+              type: ConfigType.bool,
+              value: true,
+            );
         AppNavigator.removeAllPreviousAndPush(
           context,
           MainNavigationScreen(),

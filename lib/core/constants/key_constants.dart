@@ -8,6 +8,6 @@ class KeyConstants {
   static const String exchangeRatePrefix = 'exchange_rate_';
   static const String userIdKey = 'user_id';
   static const String onboardingCompletedKey = 'onboarding_completed';
-  static const String defaultCurrencyCode = 'XAF';
+  static const String defaultCurrencyCode = 'USD';
   static const String usdCode = 'USD';
 }

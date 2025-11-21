@@ -111,8 +111,12 @@ String? validateFirstName(String? value) {
   return null;
 }
 
-void updateLanguage(BuildContext context, Locale locale) {
-  context.setLocale(locale);
+void updateLanguage(BuildContext? context, Locale locale) {
+  if (context != null) {
+    context.setLocale(locale);
+  } else {
+    navigatorKey.currentState!.context.setLocale(locale);
+  }
 }
 
 String getLanguageFromCode(Locale locale) {
@@ -390,6 +394,18 @@ Future<void> setupDefaultGroupAndWallet({
         type: WalletType.cash,
         description:
             walletDescription ?? LocaleKeys.defaultWalletDescription.tr(),
+      );
+}
+
+Future<void> setupDefaultGroup({
+  required BuildContext context,
+  String? groupName,
+}) async {
+  // if (!context.mounted) return;
+
+  // Ensure default group exists
+  context.read<GroupCubit>().ensureDefaultGroup(
+        name: groupName ?? LocaleKeys.defaultGroupName.tr(),
       );
 }
 

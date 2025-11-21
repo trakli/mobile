@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,21 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/account_settings_screen.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
+import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
-import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:collection/collection.dart';
-import 'package:trakli/presentation/account_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -290,6 +293,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               (index) => CupertinoActionSheetAction(
                 onPressed: () {
                   updateLanguage(context, supportedLanguages.elementAt(index));
+                  final configCubit = context.read<ConfigCubit>();
+                  configCubit.saveConfig(
+                    key: ConfigConstants.defaultLang,
+                    type: ConfigType.string,
+                    value: context.locale.languageCode,
+                  );
                   Navigator.pop(context);
                 },
                 child: Text(

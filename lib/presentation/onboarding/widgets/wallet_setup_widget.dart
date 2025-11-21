@@ -1,18 +1,24 @@
+import 'package:collection/collection.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/constants/key_constants.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_type_popover.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletSetupWidget extends StatefulWidget {
   final VoidCallback onNext;
@@ -29,7 +35,7 @@ class WalletSetupWidget extends StatefulWidget {
 }
 
 class _WalletSetupWidgetState extends State<WalletSetupWidget> {
-  WalletOption? _selectedWalletOption = WalletOption.useDefault;
+  WalletOption? _selectedWalletOption = WalletOption.createAutomatically;
   final TextEditingController _optionController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _currencyController = TextEditingController();
@@ -43,7 +49,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
     setState(() {
       const countryCode = KeyConstants.usdCode;
       final allCurrencies = CurrencyService().getAll();
-      // Make XAF (USD) the default
+      // USD is currently set as the default for display
       setState(() {
         usdCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
       });
@@ -66,6 +72,13 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final configCubit = context.watch<ConfigCubit>();
+    final walletCubit = context.watch<WalletCubit>();
+    ConfigEntity? sConfig;
+    sConfig = configCubit.state.configs
+        .firstWhereOrNull((e) => e.key == ConfigConstants.defaultWallet);
+    WalletEntity? wallet = walletCubit.state.wallets
+        .firstWhereOrNull((e) => e.clientId == sConfig?.value);
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (BuildContext context, OnboardingState state) {
         state.when(
@@ -168,7 +181,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                       ),
                     );
                   }),
-                  if (_selectedWalletOption != WalletOption.useDefault) ...[
+                  if (_selectedWalletOption == WalletOption.createManually) ...[
                     SizedBox(height: 16.h),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,42 +204,65 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                             ),
                           ),
                         ),
-                        if (_selectedWalletOption == WalletOption.createNew)
-                          GestureDetector(
-                            onTap: () async {
-                              showCurrencyPicker(
-                                context: context,
-                                theme: CurrencyPickerThemeData(
-                                    bottomSheetHeight: 0.7.sh,
-                                    backgroundColor: Colors.white,
-                                    flagSize: 24.sp,
-                                    subtitleTextStyle: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Theme.of(context).primaryColor,
-                                    )),
-                                onSelect: (Currency currencyValue) {
-                                  setState(() {
-                                    currency = currencyValue;
-                                  });
-                                },
-                              );
-                            },
-                            child: Container(
-                              width: 60.w,
-                              constraints: BoxConstraints(
-                                maxHeight: 50.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDEE1E0),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  currency?.code ?? 'XAF',
-                                ),
+                        GestureDetector(
+                          onTap: () async {
+                            showCurrencyPicker(
+                              context: context,
+                              theme: CurrencyPickerThemeData(
+                                  bottomSheetHeight: 0.7.sh,
+                                  backgroundColor: Colors.white,
+                                  flagSize: 24.sp,
+                                  subtitleTextStyle: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Theme.of(context).primaryColor,
+                                  )),
+                              onSelect: (Currency currencyValue) {
+                                setState(() {
+                                  currency = currencyValue;
+                                });
+                              },
+                            );
+                          },
+                          child: Container(
+                            width: 60.w,
+                            constraints: BoxConstraints(
+                              maxHeight: 50.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDEE1E0),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                currency?.code ?? 'USD',
                               ),
                             ),
-                          )
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                  if (_selectedWalletOption ==
+                          WalletOption.selectFromWalletList &&
+                      wallet != null) ...[
+                    SizedBox(height: 16.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      spacing: 4.w,
+                      children: [
+                        Text(
+                          wallet.name,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        Text(
+                          wallet.currencyCode,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: appPrimaryColor,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -295,15 +331,30 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                 ),
                 PrimaryButton(
                   onPress: () async {
-                    // final walletCubit = context.read<WalletCubit>();
-                    // walletCubit.state.wallets
+                    final walletCubit = context.read<WalletCubit>();
                     if (defaultCurrency == null) {
                       context
                           .read<OnboardingCubit>()
                           .selectCurrency(usdCurrency);
                     }
-                    if (_selectedWalletOption == WalletOption.useDefault ||
+                    if (_selectedWalletOption == WalletOption.createManually &&
                         (_formKey.currentState?.validate() ?? false)) {
+                      await walletCubit.createAndSaveDefaultWallet(
+                        name: _nameController.text,
+                        currency: currency?.code ?? usdCurrency.code,
+                      );
+                      widget.onNext();
+                    } else if (_selectedWalletOption ==
+                        WalletOption.createAutomatically) {
+                      await walletCubit.createAndSaveDefaultWallet(
+                        name: LocaleKeys.defaultWalletName.tr(),
+                        description: LocaleKeys.defaultWalletDescription.tr(),
+                        currency: KeyConstants.defaultCurrencyCode,
+                      );
+                      widget.onNext();
+                    } else if (_selectedWalletOption ==
+                            WalletOption.selectFromWalletList &&
+                        wallet != null) {
                       widget.onNext();
                     }
                   },

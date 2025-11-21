@@ -40,7 +40,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
 
   @override
   void initState() {
-    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 7), (Timer timer) {
       if (_currentIndex < _numPages - 1) {
         _currentIndex++;
       } else {

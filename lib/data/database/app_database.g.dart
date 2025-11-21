@@ -2944,6 +2944,493 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   }
 }
 
+class $ConfigsTable extends Configs with TableInfo<$ConfigsTable, Config> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ConfigsTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+      'user_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> clientId = GeneratedColumn<String>(
+      'client_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(defaultClientId));
+  @override
+  late final GeneratedColumn<String> rev = GeneratedColumn<String>(
+      'rev', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('1'));
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+      'last_synced_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+      'key', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  @override
+  late final GeneratedColumnWithTypeConverter<ConfigType, String> type =
+      GeneratedColumn<String>('type', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<ConfigType>($ConfigsTable.$convertertype);
+  @override
+  late final GeneratedColumnWithTypeConverter<dynamic, String> value =
+      GeneratedColumn<String>('value', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<dynamic>($ConfigsTable.$convertervalue);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        userId,
+        clientId,
+        rev,
+        createdAt,
+        updatedAt,
+        deletedAt,
+        lastSyncedAt,
+        key,
+        type,
+        value
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'configs';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {clientId};
+  @override
+  Config map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Config(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}user_id']),
+      clientId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}client_id'])!,
+      rev: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}rev']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      key: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}key'])!,
+      type: $ConfigsTable.$convertertype.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])!),
+      value: $ConfigsTable.$convertervalue.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}value'])!),
+    );
+  }
+
+  @override
+  $ConfigsTable createAlias(String alias) {
+    return $ConfigsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<ConfigType, String, String> $convertertype =
+      const EnumNameConverter<ConfigType>(ConfigType.values);
+  static TypeConverter<dynamic, String> $convertervalue =
+      const ConfigValueConverter();
+}
+
+class Config extends DataClass implements Insertable<Config> {
+  final int? id;
+  final int? userId;
+  final String clientId;
+  final String? rev;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  final DateTime? lastSyncedAt;
+  final String key;
+  final ConfigType type;
+  final dynamic value;
+  const Config(
+      {this.id,
+      this.userId,
+      required this.clientId,
+      this.rev,
+      required this.createdAt,
+      required this.updatedAt,
+      this.deletedAt,
+      this.lastSyncedAt,
+      required this.key,
+      required this.type,
+      this.value});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
+    }
+    map['client_id'] = Variable<String>(clientId);
+    if (!nullToAbsent || rev != null) {
+      map['rev'] = Variable<String>(rev);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || lastSyncedAt != null) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    map['key'] = Variable<String>(key);
+    {
+      map['type'] = Variable<String>($ConfigsTable.$convertertype.toSql(type));
+    }
+    if (!nullToAbsent || value != null) {
+      map['value'] =
+          Variable<String>($ConfigsTable.$convertervalue.toSql(value));
+    }
+    return map;
+  }
+
+  ConfigsCompanion toCompanion(bool nullToAbsent) {
+    return ConfigsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      userId:
+          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
+      clientId: Value(clientId),
+      rev: rev == null && nullToAbsent ? const Value.absent() : Value(rev),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      lastSyncedAt: lastSyncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastSyncedAt),
+      key: Value(key),
+      type: Value(type),
+      value:
+          value == null && nullToAbsent ? const Value.absent() : Value(value),
+    );
+  }
+
+  factory Config.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Config(
+      id: serializer.fromJson<int?>(json['id']),
+      userId: serializer.fromJson<int?>(json['user_id']),
+      clientId: serializer.fromJson<String>(json['client_generated_id']),
+      rev: serializer.fromJson<String?>(json['rev']),
+      createdAt: serializer.fromJson<DateTime>(json['created_at']),
+      updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
+      lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      key: serializer.fromJson<String>(json['key']),
+      type: $ConfigsTable.$convertertype
+          .fromJson(serializer.fromJson<String>(json['type'])),
+      value: serializer.fromJson<dynamic>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int?>(id),
+      'user_id': serializer.toJson<int?>(userId),
+      'client_generated_id': serializer.toJson<String>(clientId),
+      'rev': serializer.toJson<String?>(rev),
+      'created_at': serializer.toJson<DateTime>(createdAt),
+      'updated_at': serializer.toJson<DateTime>(updatedAt),
+      'deleted_at': serializer.toJson<DateTime?>(deletedAt),
+      'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'key': serializer.toJson<String>(key),
+      'type':
+          serializer.toJson<String>($ConfigsTable.$convertertype.toJson(type)),
+      'value': serializer.toJson<dynamic>(value),
+    };
+  }
+
+  Config copyWith(
+          {Value<int?> id = const Value.absent(),
+          Value<int?> userId = const Value.absent(),
+          String? clientId,
+          Value<String?> rev = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          Value<DateTime?> deletedAt = const Value.absent(),
+          Value<DateTime?> lastSyncedAt = const Value.absent(),
+          String? key,
+          ConfigType? type,
+          Value<dynamic> value = const Value.absent()}) =>
+      Config(
+        id: id.present ? id.value : this.id,
+        userId: userId.present ? userId.value : this.userId,
+        clientId: clientId ?? this.clientId,
+        rev: rev.present ? rev.value : this.rev,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+        lastSyncedAt:
+            lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        key: key ?? this.key,
+        type: type ?? this.type,
+        value: value.present ? value.value : this.value,
+      );
+  Config copyWithCompanion(ConfigsCompanion data) {
+    return Config(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      clientId: data.clientId.present ? data.clientId.value : this.clientId,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
+      key: data.key.present ? data.key.value : this.key,
+      type: data.type.present ? data.type.value : this.type,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Config(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('clientId: $clientId, ')
+          ..write('rev: $rev, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('key: $key, ')
+          ..write('type: $type, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
+      updatedAt, deletedAt, lastSyncedAt, key, type, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Config &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.clientId == this.clientId &&
+          other.rev == this.rev &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.lastSyncedAt == this.lastSyncedAt &&
+          other.key == this.key &&
+          other.type == this.type &&
+          other.value == this.value);
+}
+
+class ConfigsCompanion extends UpdateCompanion<Config> {
+  final Value<int?> id;
+  final Value<int?> userId;
+  final Value<String> clientId;
+  final Value<String?> rev;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> lastSyncedAt;
+  final Value<String> key;
+  final Value<ConfigType> type;
+  final Value<dynamic> value;
+  final Value<int> rowid;
+  const ConfigsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+    this.key = const Value.absent(),
+    this.type = const Value.absent(),
+    this.value = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ConfigsCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.clientId = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+    required String key,
+    required ConfigType type,
+    required dynamic value,
+    this.rowid = const Value.absent(),
+  })  : key = Value(key),
+        type = Value(type),
+        value = Value(value);
+  static Insertable<Config> custom({
+    Expression<int>? id,
+    Expression<int>? userId,
+    Expression<String>? clientId,
+    Expression<String>? rev,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? lastSyncedAt,
+    Expression<String>? key,
+    Expression<String>? type,
+    Expression<String>? value,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (clientId != null) 'client_id': clientId,
+      if (rev != null) 'rev': rev,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (key != null) 'key': key,
+      if (type != null) 'type': type,
+      if (value != null) 'value': value,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ConfigsCompanion copyWith(
+      {Value<int?>? id,
+      Value<int?>? userId,
+      Value<String>? clientId,
+      Value<String?>? rev,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<DateTime?>? deletedAt,
+      Value<DateTime?>? lastSyncedAt,
+      Value<String>? key,
+      Value<ConfigType>? type,
+      Value<dynamic>? value,
+      Value<int>? rowid}) {
+    return ConfigsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      clientId: clientId ?? this.clientId,
+      rev: rev ?? this.rev,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      key: key ?? this.key,
+      type: type ?? this.type,
+      value: value ?? this.value,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (clientId.present) {
+      map['client_id'] = Variable<String>(clientId.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<String>(rev.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (type.present) {
+      map['type'] =
+          Variable<String>($ConfigsTable.$convertertype.toSql(type.value));
+    }
+    if (value.present) {
+      map['value'] =
+          Variable<String>($ConfigsTable.$convertervalue.toSql(value.value));
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConfigsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('clientId: $clientId, ')
+          ..write('rev: $rev, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('key: $key, ')
+          ..write('type: $type, ')
+          ..write('value: $value, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4207,6 +4694,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $GroupsTable groups = $GroupsTable(this);
   late final $TransactionsTable transactions = $TransactionsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
+  late final $ConfigsTable configs = $ConfigsTable(this);
   late final $UsersTable users = $UsersTable(this);
   late final $LocalChangesTable localChanges = $LocalChangesTable(this);
   late final $SyncMetadataTable syncMetadata = $SyncMetadataTable(this);
@@ -4221,6 +4709,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         groups,
         transactions,
         categories,
+        configs,
         users,
         localChanges,
         syncMetadata,
@@ -6360,6 +6849,266 @@ typedef $$CategoriesTableProcessedTableManager = ProcessedTableManager<
     (Category, $$CategoriesTableReferences),
     Category,
     PrefetchHooks Function({bool categorizablesRefs})>;
+typedef $$ConfigsTableCreateCompanionBuilder = ConfigsCompanion Function({
+  Value<int?> id,
+  Value<int?> userId,
+  Value<String> clientId,
+  Value<String?> rev,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<DateTime?> lastSyncedAt,
+  required String key,
+  required ConfigType type,
+  required dynamic value,
+  Value<int> rowid,
+});
+typedef $$ConfigsTableUpdateCompanionBuilder = ConfigsCompanion Function({
+  Value<int?> id,
+  Value<int?> userId,
+  Value<String> clientId,
+  Value<String?> rev,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<DateTime?> deletedAt,
+  Value<DateTime?> lastSyncedAt,
+  Value<String> key,
+  Value<ConfigType> type,
+  Value<dynamic> value,
+  Value<int> rowid,
+});
+
+class $$ConfigsTableFilterComposer
+    extends Composer<_$AppDatabase, $ConfigsTable> {
+  $$ConfigsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get clientId => $composableBuilder(
+      column: $table.clientId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get rev => $composableBuilder(
+      column: $table.rev, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+      column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get key => $composableBuilder(
+      column: $table.key, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<ConfigType, ConfigType, String> get type =>
+      $composableBuilder(
+          column: $table.type,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<dynamic, dynamic, String> get value =>
+      $composableBuilder(
+          column: $table.value,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+}
+
+class $$ConfigsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ConfigsTable> {
+  $$ConfigsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get userId => $composableBuilder(
+      column: $table.userId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get clientId => $composableBuilder(
+      column: $table.clientId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get rev => $composableBuilder(
+      column: $table.rev, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+      column: $table.lastSyncedAt,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get key => $composableBuilder(
+      column: $table.key, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get value => $composableBuilder(
+      column: $table.value, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ConfigsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ConfigsTable> {
+  $$ConfigsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get clientId =>
+      $composableBuilder(column: $table.clientId, builder: (column) => column);
+
+  GeneratedColumn<String> get rev =>
+      $composableBuilder(column: $table.rev, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+      column: $table.lastSyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get key =>
+      $composableBuilder(column: $table.key, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<ConfigType, String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<dynamic, String> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+}
+
+class $$ConfigsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ConfigsTable,
+    Config,
+    $$ConfigsTableFilterComposer,
+    $$ConfigsTableOrderingComposer,
+    $$ConfigsTableAnnotationComposer,
+    $$ConfigsTableCreateCompanionBuilder,
+    $$ConfigsTableUpdateCompanionBuilder,
+    (Config, BaseReferences<_$AppDatabase, $ConfigsTable, Config>),
+    Config,
+    PrefetchHooks Function()> {
+  $$ConfigsTableTableManager(_$AppDatabase db, $ConfigsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ConfigsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ConfigsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ConfigsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
+            Value<String> clientId = const Value.absent(),
+            Value<String?> rev = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String> key = const Value.absent(),
+            Value<ConfigType> type = const Value.absent(),
+            Value<dynamic> value = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ConfigsCompanion(
+            id: id,
+            userId: userId,
+            clientId: clientId,
+            rev: rev,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            lastSyncedAt: lastSyncedAt,
+            key: key,
+            type: type,
+            value: value,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            Value<int?> id = const Value.absent(),
+            Value<int?> userId = const Value.absent(),
+            Value<String> clientId = const Value.absent(),
+            Value<String?> rev = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            Value<DateTime?> lastSyncedAt = const Value.absent(),
+            required String key,
+            required ConfigType type,
+            required dynamic value,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ConfigsCompanion.insert(
+            id: id,
+            userId: userId,
+            clientId: clientId,
+            rev: rev,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            lastSyncedAt: lastSyncedAt,
+            key: key,
+            type: type,
+            value: value,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ConfigsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ConfigsTable,
+    Config,
+    $$ConfigsTableFilterComposer,
+    $$ConfigsTableOrderingComposer,
+    $$ConfigsTableAnnotationComposer,
+    $$ConfigsTableCreateCompanionBuilder,
+    $$ConfigsTableUpdateCompanionBuilder,
+    (Config, BaseReferences<_$AppDatabase, $ConfigsTable, Config>),
+    Config,
+    PrefetchHooks Function()>;
 typedef $$UsersTableCreateCompanionBuilder = UsersCompanion Function({
   Value<int> id,
   required String email,
@@ -7228,6 +7977,8 @@ class $AppDatabaseManager {
       $$TransactionsTableTableManager(_db, _db.transactions);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db, _db.categories);
+  $$ConfigsTableTableManager get configs =>
+      $$ConfigsTableTableManager(_db, _db.configs);
   $$UsersTableTableManager get users =>
       $$UsersTableTableManager(_db, _db.users);
   $$LocalChangesTableTableManager get localChanges =>
