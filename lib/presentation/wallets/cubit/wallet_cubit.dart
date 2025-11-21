@@ -6,17 +6,16 @@ import 'package:injectable/injectable.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/usecases/usecase.dart';
-import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/domain/usecases/configs/save_config_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/add_wallet_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/delete_wallet_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/ensure_default_wallet_exists_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/get_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/listen_to_wallets_usecase.dart';
 import 'package:trakli/domain/usecases/wallet/update_wallet_usecase.dart';
-import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 part 'wallet_cubit.freezed.dart';
@@ -30,6 +29,7 @@ class WalletCubit extends Cubit<WalletState> {
   final DeleteWalletUseCase deleteWalletUseCase;
   final ListenToWalletsUseCase listenToWalletsUseCase;
   final EnsureDefaultWalletExistsUseCase ensureDefaultWalletExistsUseCase;
+  final SaveConfigUseCase saveConfigUseCase;
   StreamSubscription? _walletSubscription;
 
   WalletCubit({
@@ -38,6 +38,7 @@ class WalletCubit extends Cubit<WalletState> {
     required this.updateWalletUseCase,
     required this.deleteWalletUseCase,
     required this.listenToWalletsUseCase,
+    required this.saveConfigUseCase,
     required this.ensureDefaultWalletExistsUseCase,
   }) : super(WalletState.initial()) {
     listenForChanges();
@@ -225,11 +226,19 @@ class WalletCubit extends Cubit<WalletState> {
               isSaving: false,
               failure: failure,
             )), (wallet) async {
-      await getIt<ConfigCubit>().saveConfig(
-        key: ConfigConstants.defaultWallet,
-        type: ConfigType.string,
-        value: wallet.clientId,
+      final saveWallet = await saveConfigUseCase(
+        SaveConfigUseCaseParams(
+          key: ConfigConstants.defaultWallet,
+          type: ConfigType.string,
+          value: wallet.clientId,
+        ),
       );
+      saveWallet.fold(
+          (failure) => emit(state.copyWith(
+                isSaving: false,
+                failure: failure,
+              )),
+          (saved) {});
       emit(
         state.copyWith(
           isSaving: false,

@@ -492,6 +492,16 @@ _i174.GetIt $initGetIt(
           ));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
+  gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
+        getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
+        addWalletUseCase: gh<_i80.AddWalletUseCase>(),
+        updateWalletUseCase: gh<_i418.UpdateWalletUseCase>(),
+        deleteWalletUseCase: gh<_i62.DeleteWalletUseCase>(),
+        listenToWalletsUseCase: gh<_i82.ListenToWalletsUseCase>(),
+        saveConfigUseCase: gh<_i833.SaveConfigUseCase>(),
+        ensureDefaultWalletExistsUseCase:
+            gh<_i225.EnsureDefaultWalletExistsUseCase>(),
+      ));
   gh.factory<_i872.AuthCubit>(() => _i872.AuthCubit(
         gh<_i444.StreamAuthStatus>(),
         gh<_i880.GetLoggedInUser>(),
@@ -508,15 +518,6 @@ _i174.GetIt $initGetIt(
       () => _i982.GetGroupsUseCase(gh<_i957.GroupRepository>()));
   gh.factory<_i146.ListenToGroupsUseCase>(
       () => _i146.ListenToGroupsUseCase(gh<_i957.GroupRepository>()));
-  gh.factory<_i1068.WalletCubit>(() => _i1068.WalletCubit(
-        getWalletsUseCase: gh<_i713.GetWalletsUseCase>(),
-        addWalletUseCase: gh<_i80.AddWalletUseCase>(),
-        updateWalletUseCase: gh<_i418.UpdateWalletUseCase>(),
-        deleteWalletUseCase: gh<_i62.DeleteWalletUseCase>(),
-        listenToWalletsUseCase: gh<_i82.ListenToWalletsUseCase>(),
-        ensureDefaultWalletExistsUseCase:
-            gh<_i225.EnsureDefaultWalletExistsUseCase>(),
-      ));
   gh.factory<_i408.ConfigCubit>(() => _i408.ConfigCubit(
         gh<_i132.GetConfigsUseCase>(),
         gh<_i933.GetConfigUseCase>(),
