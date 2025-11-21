@@ -196,20 +196,6 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       getIt<SynchAppDatabase>().doSync();
 
-                      final langCode = await getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.defaultLang);
-
-                      final entityLang = langCode.fold(
-                        (failure) => null,
-                        (entity) => entity,
-                      );
-
-                      if (entityLang?.value != null) {
-                        if (context.mounted) {
-                          updateLanguage(context, Locale(entityLang?.value));
-                        }
-                      }
-
                       final entityResult = await getIt<ConfigRepository>()
                           .getConfigByKey(ConfigConstants.onboardingComplete);
 
@@ -235,6 +221,19 @@ class _AppViewState extends State<AppView> {
                           (route) => false,
                         );
                       }
+
+                      getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.defaultLang)
+                          .then((langCode) {
+                        final entityLang = langCode.fold(
+                          (failure) => null,
+                          (entity) => entity,
+                        );
+
+                        if (entityLang?.value != null) {
+                          updateLanguage(null, Locale(entityLang?.value));
+                        }
+                      });
                     },
                     unauthenticated: () async {
                       getIt<SynchAppDatabase>().stopAllSync();

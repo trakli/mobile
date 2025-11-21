@@ -214,7 +214,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
         setOnboardingMode(false);
         context.read<ConfigCubit>().saveConfig(
               key: ConfigConstants.onboardingComplete,
-              type: ConfigType.boolType,
+              type: ConfigType.bool,
               value: true,
             );
         AppNavigator.removeAllPreviousAndPush(

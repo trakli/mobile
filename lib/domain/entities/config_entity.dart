@@ -4,10 +4,10 @@ import 'package:json_annotation/json_annotation.dart';
 enum ConfigType {
   string,
   @JsonValue('int')
-  intType,
+  int,
   float,
   @JsonValue('bool')
-  boolType,
+  bool,
   array,
   json,
   date,
@@ -18,11 +18,11 @@ extension ConfigTypeX on ConfigType {
     switch (this) {
       case ConfigType.string:
         return 'string';
-      case ConfigType.intType:
+      case ConfigType.int:
         return 'int';
       case ConfigType.float:
         return 'float';
-      case ConfigType.boolType:
+      case ConfigType.bool:
         return 'bool';
       case ConfigType.array:
         return 'array';
@@ -38,11 +38,11 @@ extension ConfigTypeX on ConfigType {
       case 'string':
         return ConfigType.string;
       case 'int':
-        return ConfigType.intType;
+        return ConfigType.int;
       case 'float':
         return ConfigType.float;
       case 'bool':
-        return ConfigType.boolType;
+        return ConfigType.bool;
       case 'array':
         return ConfigType.array;
       case 'json':

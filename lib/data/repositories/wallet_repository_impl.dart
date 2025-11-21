@@ -62,7 +62,7 @@ class WalletRepositoryImpl
         icon: media,
       );
 
-      unawaited(put(wallet));
+      unawaited(post(wallet));
       return WalletMapper.toDomain(wallet);
     });
   }
