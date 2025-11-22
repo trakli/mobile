@@ -16,6 +16,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/cubits/oauth/oauth_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
@@ -67,6 +68,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<RegisterCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<OAuthCubit>(),
         ),
         BlocProvider(
           create: (_) => getIt<OnboardingCubit>()..getOnboardingState(),

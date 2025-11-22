@@ -35,4 +35,26 @@ class RepositoryErrorHandler {
       return left(const UnknownFailure());
     }
   }
+
+  static ApiException mapFailureToException(Failure failure) {
+    return failure.map(
+      serverError: (ServerFailure f) => ServerException(f.message),
+      networkError: (_) => NetworkException('Network error occurred'),
+      cacheError: (CacheFailure f) => ServerException(f.message),
+      syncError: (SyncFailure f) => ServerException(f.message),
+      validationError: (ValidationFailure f) =>
+          ValidationException(f.message, errors: f.errors),
+      unauthorizedError: (_) => UnauthorizedException('Unauthorized'),
+      unknownError: (_) => UnknownException('Unknown error occurred'),
+      badRequest: (f) {
+        final error = f.error;
+        return BadRequestException(error ?? 'Bad request');
+      },
+      none: (_) => ServerException('No error'),
+      notFound: (_) => NotFoundException('Resource not found'),
+      duplicate: (DuplicateFailure f) => DuplicateException(f.message),
+    );
+  }
 }
+
+/// Maps Failure to appropriate exception for re-throwing.

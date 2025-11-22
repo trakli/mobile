@@ -258,9 +258,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                     File? pickedFile = await pickImageApp(
                       sourcePick: ImageSource.camera,
                     );
-                    if (pickedFile != null) {
-                      AppNavigator.pop(context, pickedFile);
-                    }
+                    AppNavigator.pop(context, pickedFile);
                   },
                   child: Container(
                     width: 50.w,
@@ -290,9 +288,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                 GestureDetector(
                   onTap: () async {
                     File? pickedFile = await pickImageApp();
-                    if (pickedFile != null) {
-                      AppNavigator.pop(context, pickedFile);
-                    }
+                    AppNavigator.pop(context, pickedFile);
                   },
                   child: Container(
                     width: 50.w,

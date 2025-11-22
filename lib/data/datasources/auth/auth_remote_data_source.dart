@@ -4,10 +4,20 @@ import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 
+enum SocialAuthType {
+  apple,
+  google,
+}
+
 abstract class AuthRemoteDataSource {
   Future<AuthResponseDto> loginWithEmailPassword({
     required String email,
     required String password,
+  });
+
+  Future<AuthResponseDto> loginAppleAndGoogle({
+    required String idToken,
+    required SocialAuthType type,
   });
 
   Future<AuthResponseDto> loginWithPhonePassword({
@@ -199,6 +209,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       final apiResponse = ApiResponse.fromJson(response.data);
       return apiResponse;
+    });
+  }
+
+  @override
+  Future<AuthResponseDto> loginAppleAndGoogle({
+    required String idToken,
+    required SocialAuthType type,
+  }) {
+    return ErrorHandler.handleApiCall(() async {
+      final response = await _dio.post(
+        '/oauth/firebase/${type.name}/callback',
+        data: {
+          'token': idToken,
+        },
+      );
+
+      final apiResponse = ApiResponse.fromJson(response.data);
+
+      return AuthResponseDto.fromJson(apiResponse.data);
     });
   }
 }
