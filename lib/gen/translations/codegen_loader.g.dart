@@ -17,6 +17,7 @@ abstract class  LocaleKeys {
   static const login = 'login';
   static const loginGoogle = 'loginGoogle';
   static const loginApple = 'loginApple';
+  static const signInSuccessful = 'signInSuccessful';
   static const go = 'go';
   static const createAccount = 'createAccount';
   static const loginDesc = 'loginDesc';
@@ -50,7 +51,6 @@ abstract class  LocaleKeys {
   static const transactionTracking = 'transactionTracking';
   static const support = 'support';
   static const transactions = 'transactions';
-  static const transaction = 'transaction';
   static const moneySpent = 'moneySpent';
   static const moneyReceived = 'moneyReceived';
   static const totalCompanies = 'totalCompanies';
@@ -156,7 +156,6 @@ abstract class  LocaleKeys {
   static const toExcel = 'toExcel';
   static const family = 'family';
   static const searchHint = 'searchHint';
-  static const totalIncome = 'totalIncome';
   static const displaySettings = 'displaySettings';
   static const transactionFormDisplayMode = 'transactionFormDisplayMode';
   static const themeMode = 'themeMode';
@@ -201,6 +200,7 @@ abstract class  LocaleKeys {
   static const exchangeRateHint = 'exchangeRateHint';
   static const valueRequired = 'valueRequired';
   static const transferMoney = 'transferMoney';
+  static const databaseViewer = 'databaseViewer';
   static const unknown = 'unknown';
   static const from = 'from';
   static const to = 'to';
@@ -266,9 +266,8 @@ abstract class  LocaleKeys {
   static const deleteCategoryConfirm = 'deleteCategoryConfirm';
   static const noDescription = 'noDescription';
   static const transactionsIn = 'transactionsIn';
-  static const wallets = 'wallets';
   static const noData = 'noData';
-  static const databaseViewer = 'databaseViewer';
+  static const totalIncome = 'totalIncome';
   static const totalExpense = 'totalExpense';
   static const thisMonth = 'thisMonth';
   static const thisWeek = 'thisWeek';
@@ -285,7 +284,6 @@ abstract class  LocaleKeys {
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
   static const edit = 'edit';
-  static const defaultName = 'defaultName';
   static const officeElements = 'officeElements';
   static const officeElementsDesc = 'officeElementsDesc';
   static const monthly = 'monthly';
@@ -299,6 +297,7 @@ abstract class  LocaleKeys {
   static const deletePartyConfirm = 'deletePartyConfirm';
   static const general = 'general';
   static const pricePerMonth = 'pricePerMonth';
+  static const defaultName = 'defaultName';
   static const partyTypeIndividual = 'partyTypeIndividual';
   static const partyTypeOrganization = 'partyTypeOrganization';
   static const partyTypeBusiness = 'partyTypeBusiness';
@@ -420,6 +419,8 @@ abstract class  LocaleKeys {
   static const createNewWallet = 'createNewWallet';
   static const allSetDesc = 'allSetDesc';
   static const goToDashboard = 'goToDashboard';
+  static const transaction = 'transaction';
+  static const wallets = 'wallets';
   static const stepCounter = 'stepCounter';
   static const createAutomatically = 'createAutomatically';
   static const createManually = 'createManually';

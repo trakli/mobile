@@ -163,6 +163,20 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, UserEntity>> loginAppleAndGoogle({
+    required String idToken,
+    required SocialAuthType type,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final authResponse = await _remoteDataSource.loginAppleAndGoogle(
+        idToken: idToken,
+        type: type,
+      );
+      return _handleAuthResponse(authResponse, shouldClearCache: true);
+    });
+  }
+
+  @override
   Future<Either<Failure, UserEntity>> createUser({
     required String firstName,
     String? lastName,
