@@ -62,6 +62,8 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
   @override
   void dispose() {
     _optionController.dispose();
+    _nameController.dispose();
+    _currencyController.dispose();
     super.dispose();
   }
 
