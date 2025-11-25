@@ -66,7 +66,7 @@ class PartyDisplayWidget extends StatelessWidget {
               color: const Color(0xFFF5F6F7),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Row(git
+            child: Row(
               spacing: 4.w,
               children: [
                 ImageWidget(
