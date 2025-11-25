@@ -110,6 +110,7 @@ class ConfigCubit extends Cubit<ConfigState> {
       (failure) => emit(state.copyWith(
         failure: failure,
         isSaving: false,
+        isLoading: false,
       )),
       (_) => emit(state.copyWith(
         failure: const Failure.none(),

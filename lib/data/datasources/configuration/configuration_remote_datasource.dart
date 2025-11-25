@@ -110,9 +110,8 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
   @override
   Future<Config> updateConfig(Config config) async {
     final response = await dio.put(
-      'configurations/${config.id}',
+      'configurations/${config.key}',
       data: {
-        'key': config.key,
         'type': config.type.serverKey,
         'value': config.value,
         'client_id': config.clientId,
