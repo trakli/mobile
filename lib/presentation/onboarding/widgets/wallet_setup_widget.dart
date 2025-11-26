@@ -45,25 +45,28 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
   late Currency usdCurrency;
   Currency? defaultCurrency;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadCurrencies();
-    _optionController.text = _selectedWalletOption?.customName.tr() ?? "";
+  void _loadCurrencies() {
+    setState(() {
+      const countryCode = KeyConstants.usdCode;
+      final allCurrencies = CurrencyService().getAll();
+      // USD is currently set as the default for display
+      setState(() {
+        usdCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
+      });
+      _currencyController.text = "${usdCurrency.code} - ${usdCurrency.name}";
+    });
   }
 
-  void _loadCurrencies() {
-    const countryCode = KeyConstants.usdCode;
-    final allCurrencies = CurrencyService().getAll();
-    usdCurrency = allCurrencies.firstWhere((c) => c.code == countryCode);
-    _currencyController.text = "${usdCurrency.code} - ${usdCurrency.name}";
+  @override
+  void initState() {
+    _loadCurrencies();
+    _optionController.text = _selectedWalletOption?.customName.tr() ?? "";
+    super.initState();
   }
 
   @override
   void dispose() {
     _optionController.dispose();
-    _nameController.dispose();
-    _currencyController.dispose();
     super.dispose();
   }
 

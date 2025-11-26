@@ -1,17 +1,15 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PartyDisplayWidget extends StatelessWidget {
-  final TransactionType type;
   final PartyEntity? party;
   final WalletEntity walletEntity;
   final int maxNameLength;
@@ -33,7 +31,6 @@ class PartyDisplayWidget extends StatelessWidget {
     this.toIconSize,
     this.maxToWidth,
     required this.walletEntity,
-    required this.type,
   });
 
   @override
@@ -47,9 +44,7 @@ class PartyDisplayWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            type == TransactionType.income
-                ? LocaleKeys.from.tr()
-                : LocaleKeys.to.tr(),
+            LocaleKeys.from.tr(),
             style: TextStyle(
               color: const Color(0xFF576760),
               fontSize: labelSize ?? 9.sp,
@@ -57,7 +52,6 @@ class PartyDisplayWidget extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 4.w),
             padding: EdgeInsets.symmetric(
               vertical: 1.h,
               horizontal: 1.w,
