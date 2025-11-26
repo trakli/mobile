@@ -122,6 +122,7 @@ class _TransactionTileState extends State<TransactionTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PartyDisplayWidget(
+                  type: transaction.type,
                   party: widget.transaction.party,
                   walletEntity: widget.transaction.wallet,
                 ),
