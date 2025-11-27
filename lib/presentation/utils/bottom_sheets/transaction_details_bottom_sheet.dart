@@ -37,7 +37,7 @@ class _TransactionDetailsBottomSheetState
     extends State<TransactionDetailsBottomSheet> {
   SelectIconType? selectedIconType;
 
-  DateFormat format = DateFormat('dd/MM/yyyy');
+  DateFormat format = DateFormat('dd/MM/yyyy HH:mm');
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +85,12 @@ class _TransactionDetailsBottomSheetState
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Align(
-                    alignment: Alignment.centerRight,
+                Align(
+                  alignment: Alignment.topRight,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
                     child: Container(
                       width: 36.w,
                       height: 36.h,
@@ -130,7 +130,7 @@ class _TransactionDetailsBottomSheetState
               format.format(transaction.datetime),
               style: TextStyle(
                 color: const Color(0xFF576760),
-                fontSize: 10.sp,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -147,6 +147,7 @@ class _TransactionDetailsBottomSheetState
               SizedBox(height: 12.h),
             ],
             PartyDisplayWidget(
+              type: widget.transaction.transaction.type,
               party: party,
               walletEntity: wallet,
               maxNameLength: 15,

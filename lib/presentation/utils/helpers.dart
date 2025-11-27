@@ -111,8 +111,12 @@ String? validateFirstName(String? value) {
   return null;
 }
 
-void updateLanguage(BuildContext context, Locale locale) {
-  context.setLocale(locale);
+void updateLanguage(BuildContext? context, Locale locale) {
+  if (context != null) {
+    context.setLocale(locale);
+  } else {
+    navigatorKey.currentState!.context.setLocale(locale);
+  }
 }
 
 String getLanguageFromCode(Locale locale) {
@@ -127,6 +131,8 @@ String getLanguageFromCode(Locale locale) {
       return LocaleKeys.langSpanish.tr();
     case "it":
       return LocaleKeys.langItalian.tr();
+    case "ru":
+      return LocaleKeys.langRussian.tr();
     default:
       return locale.languageCode;
   }
@@ -143,12 +149,21 @@ String getFormDisplayText(String displayMode) {
   }
 }
 
-Widget flagWidget(Currency currency) {
+Widget flagWidget(Currency currency, {double? fontSize}) {
+  if (currency.code == 'XAF') {
+    return Text(
+      "🇨🇲",
+      style: TextStyle(
+        fontSize: fontSize ?? 24.sp,
+      ),
+    );
+  }
   if (currency.flag == null) {
     return Image.asset(
-      'no_flag.png'.imagePath, // Make sure you have this image
+      'no_flag.png'.imagePath,
       package: 'currency_picker',
-      width: 27,
+      width: 27.w,
+      fit: BoxFit.cover,
     );
   }
 
@@ -156,14 +171,14 @@ Widget flagWidget(Currency currency) {
     return Image.asset(
       currency.flag!.imagePath,
       package: 'currency_picker',
-      width: 27,
+      width: 27.w,
     );
   }
 
   return Text(
     CurrencyUtils.currencyToEmoji(currency),
     style: TextStyle(
-      fontSize: 24.sp, // Or widget.theme?.flagSize ?? 25,
+      fontSize: fontSize ?? 24.sp,
     ),
   );
 }
@@ -176,13 +191,14 @@ Future<T?> showCustomPopOver<T>(
   context, {
   required Widget widget,
   double? maxWidth,
+  PopoverDirection? direction,
 }) async {
   return showPopover<T>(
     context: context,
     backgroundColor: Colors.white,
     transitionDuration: const Duration(milliseconds: 150),
     bodyBuilder: (context) => widget,
-    direction: PopoverDirection.bottom,
+    direction: direction ?? PopoverDirection.bottom,
     barrierColor: Colors.black.withAlpha(80),
     constraints: BoxConstraints(
       maxHeight: 0.6.sh,
@@ -383,6 +399,18 @@ Future<void> setupDefaultGroupAndWallet({
       );
 }
 
+Future<void> setupDefaultGroup({
+  required BuildContext context,
+  String? groupName,
+}) async {
+  // if (!context.mounted) return;
+
+  // Ensure default group exists
+  context.read<GroupCubit>().ensureDefaultGroup(
+        name: groupName ?? LocaleKeys.defaultGroupName.tr(),
+      );
+}
+
 /// Returns a datetime to use as a start date
 DateTime? getStartDateFromKey(String key) {
   final now = DateTime.now();
@@ -454,4 +482,3 @@ String? getIconPath(dynamic item) {
   }
   return null;
 }
-

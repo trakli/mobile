@@ -11,9 +11,10 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
+import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
@@ -23,6 +24,7 @@ import 'package:trakli/presentation/utils/popovers/category_list_popover.dart';
 import 'package:trakli/presentation/utils/popovers/date_list_popover.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_list_popover.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -127,6 +129,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     }
                   }).toList();
                 })();
+
+          if (state.transactions.isEmpty) {
+            return InfoInterface(
+              action: () {
+                final selectedWallet =
+                    context.read<WalletCubit>().currentSelectedWallet;
+                AppNavigator.push(
+                  context,
+                  AddTransactionScreen(selectedWallet: selectedWallet),
+                );
+              },
+              data: emptyTransactionData,
+            );
+          }
 
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
@@ -352,6 +368,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       bottomNavigationBar: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
+          if (state.transactions.isEmpty) {
+            return const SizedBox.shrink();
+          }
           return IntrinsicHeight(
             child: Row(
               children: [

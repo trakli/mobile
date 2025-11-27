@@ -6,14 +6,17 @@ import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/core/network/network_info.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/auth/auth_local_data_source.dart';
 import 'package:trakli/data/datasources/auth/auth_remote_data_source.dart';
 import 'package:trakli/data/datasources/auth/dto/auth_response_dto.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/data/datasources/auth/token_manager.dart';
+import 'package:trakli/data/datasources/configuration/configuration_remote_datasource.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/mappers/user_mapper.dart';
+import 'package:trakli/data/sync/config_sync_handler.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
@@ -26,6 +29,9 @@ class AuthRepositoryImpl implements AuthRepository {
   final TokenManager _tokenManager;
   final PreferenceManager _preferenceManager;
   final OnboardingRepository _onboardingRepository;
+  final ConfigRemoteDataSource _configRemoteDataSource;
+  final ConfigSyncHandler _configSyncHandler;
+  final AppDatabase _database;
   final _authStatusController = StreamController<AuthStatus>.broadcast();
 
   AuthRepositoryImpl({
@@ -35,11 +41,17 @@ class AuthRepositoryImpl implements AuthRepository {
     required TokenManager tokenManager,
     required PreferenceManager preferenceManager,
     required OnboardingRepository onboardingRepository,
+    required ConfigRemoteDataSource configRemoteDataSource,
+    required ConfigSyncHandler configSyncHandler,
+    required AppDatabase database,
   })  : _remoteDataSource = remoteDataSource,
         _localDataSource = localDataSource,
         _tokenManager = tokenManager,
         _preferenceManager = preferenceManager,
-        _onboardingRepository = onboardingRepository;
+        _onboardingRepository = onboardingRepository,
+        _configRemoteDataSource = configRemoteDataSource,
+        _configSyncHandler = configSyncHandler,
+        _database = database;
 
   @override
   Stream<AuthStatus> get authStatus async* {
@@ -98,8 +110,42 @@ class AuthRepositoryImpl implements AuthRepository {
     await _tokenManager.persistToken(authResponse.accessToken);
     await _localDataSource.saveUser(newUser);
     await _preferenceManager.saveUserId(newUser.id);
+
+    // Fetch and save configurations from remote BEFORE emitting authenticated state
+    // This ensures configs are available when onboarding checks run
+    // We wait for this to complete because onboarding depends on configs
+    await _fetchAndSaveConfigs();
+
     _authStatusController.add(AuthStatus.authenticated);
+
     return UserMapper.toDomain(newUser);
+  }
+
+  /// Fetches configurations from remote and saves them locally
+  /// This is called during login to ensure configs are available immediately
+  /// for onboarding checks. The sync system will handle future updates.
+  Future<void> _fetchAndSaveConfigs() async {
+    try {
+      // Fetch all configs from remote
+      final remoteConfigs = await _configRemoteDataSource.getAllConfigs();
+
+      if (remoteConfigs.isNotEmpty) {
+        // Upsert all configs locally using the sync handler
+        await _database.transaction(() async {
+          await _configSyncHandler.upsertAllLocal(remoteConfigs);
+        });
+
+        logger.i(
+            'Successfully fetched and saved ${remoteConfigs.length} configurations after login');
+      } else {
+        logger.d('No configurations found on server after login');
+      }
+    } catch (e, stackTrace) {
+      // Log error but don't fail the login process
+      // If configs fail to load, onboarding will use defaults
+      logger.w('Failed to fetch configurations after login: $e',
+          error: e, stackTrace: stackTrace);
+    }
   }
 
   @override
@@ -111,6 +157,20 @@ class AuthRepositoryImpl implements AuthRepository {
       final authResponse = await _remoteDataSource.loginWithEmailPassword(
         email: email,
         password: password,
+      );
+      return _handleAuthResponse(authResponse, shouldClearCache: true);
+    });
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> loginAppleAndGoogle({
+    required String idToken,
+    required SocialAuthType type,
+  }) async {
+    return RepositoryErrorHandler.handleApiCall<UserEntity>(() async {
+      final authResponse = await _remoteDataSource.loginAppleAndGoogle(
+        idToken: idToken,
+        type: type,
       );
       return _handleAuthResponse(authResponse, shouldClearCache: true);
     });

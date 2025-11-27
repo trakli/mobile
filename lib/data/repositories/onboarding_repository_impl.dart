@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
 import 'package:trakli/data/datasources/onboarding/onboarding_local_data_source.dart';
 import 'package:trakli/data/mappers/onboarding_mapper.dart';
+import 'package:trakli/di/injection.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/onboarding_entity.dart';
+import 'package:trakli/domain/repositories/config_repository.dart';
 import 'package:trakli/domain/repositories/exchange_rate_repository.dart';
 import 'package:trakli/domain/repositories/onboarding_repository.dart';
-import 'dart:async';
 
 @Singleton(as: OnboardingRepository)
 class OnboardingRepositoryImpl implements OnboardingRepository {
@@ -29,9 +34,23 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
           .saveOnboardingState(OnboardingMapper.toModel(entity));
 
       final code = entity.selectedCurrency?.code;
+      final defaultGroupId = entity.defaultGroup;
 
       if (code != null) {
         await _exchangeRateRepository.updateDefaultCurrency(code);
+        await getIt<ConfigRepository>().saveConfig(
+          key: ConfigConstants.defaultCurrency,
+          type: ConfigType.string,
+          value: code,
+        );
+      }
+
+      if (defaultGroupId != null) {
+        await getIt<ConfigRepository>().saveConfig(
+          key: ConfigConstants.defaultGroup,
+          type: ConfigType.string,
+          value: defaultGroupId,
+        );
       }
 
       if (!_onboardingStateController.isClosed) {

@@ -15,6 +15,7 @@ final List<Locale> supportedLanguages = [
   const Locale('de'),
   const Locale('es'),
   const Locale('it'),
+  const Locale('ru'),
 ];
 
 final List<String> supportedFormDisplays = [

@@ -1,23 +1,26 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/di/injection.dart';
+import 'package:trakli/domain/repositories/config_repository.dart';
 import 'package:trakli/domain/repositories/onboarding_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/login/login_cubit.dart';
+import 'package:trakli/presentation/auth/cubits/oauth/oauth_cubit.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/linear_indicator.dart';
@@ -33,6 +36,7 @@ import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
+import 'package:trakli/presentation/utils/theme.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 // Global flag to track if we're in onboarding mode
@@ -66,6 +70,9 @@ class AppWidget extends StatelessWidget {
           create: (_) => getIt<RegisterCubit>(),
         ),
         BlocProvider(
+          create: (_) => getIt<OAuthCubit>(),
+        ),
+        BlocProvider(
           create: (_) => getIt<OnboardingCubit>()..getOnboardingState(),
         ),
         BlocProvider(
@@ -89,6 +96,9 @@ class AppWidget extends StatelessWidget {
         BlocProvider(
           create: (_) => getIt<BenefitsCubit>(),
         ),
+        BlocProvider(
+          create: (_) => getIt<ConfigCubit>(),
+        ),
       ],
       child: const AppView(),
     );
@@ -107,7 +117,6 @@ class _AppViewState extends State<AppView> {
   initState() {
     super.initState();
     clearKeychainValues();
-    _setupOnboardingWatch();
   }
 
   Future<void> clearKeychainValues() async {
@@ -118,31 +127,6 @@ class _AppViewState extends State<AppView> {
       await storage.deleteAll();
 
       await prefs.setBool(KeyConstants.isFirstAppLaunch, false);
-    }
-  }
-
-  Future<void> _setupOnboardingWatch() async {
-    final entityResult =
-        await getIt<OnboardingRepository>().getOnboardingState();
-
-    final entity = entityResult.fold(
-      (failure) => null,
-      (entity) => entity,
-    );
-
-    if (entity?.isOnboardingComplete == true) {
-      final currency = entity?.selectedCurrency;
-
-      if (currency != null) {
-        // Setup default group and wallet with selected currency
-
-        if (mounted) {
-          await setupDefaultGroupAndWallet(
-            context: context,
-            currencyCode: currency.code,
-          );
-        }
-      }
     }
   }
 
@@ -158,7 +142,6 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     rebuildAllChildren(context);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     return GlobalLoaderOverlay(
       duration: const Duration(seconds: 1),
@@ -180,187 +163,7 @@ class _AppViewState extends State<AppView> {
         locale: context.locale,
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
-        theme: ThemeData(
-          primaryColor: const Color(0xFF047844),
-          primaryColorLight: const Color(0xFFDFE1E4),
-          primaryColorDark: const Color(0xFF1E2448),
-          hintColor: const Color(0xFFF7B600),
-          scaffoldBackgroundColor: const Color(0xFFEBEDEC),
-          brightness: Theme.of(context).brightness,
-          useMaterial3: true,
-          datePickerTheme: DatePickerThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            headerBackgroundColor: const Color(0xFF047844),
-            headerForegroundColor: Colors.white,
-            todayBackgroundColor: WidgetStatePropertyAll(appPrimaryColor),
-            todayForegroundColor: const WidgetStatePropertyAll(Colors.white),
-            cancelButtonStyle: ButtonStyle(
-              foregroundColor: WidgetStatePropertyAll(appPrimaryColor),
-            ),
-            confirmButtonStyle: ButtonStyle(
-              foregroundColor: WidgetStatePropertyAll(appPrimaryColor),
-            ),
-          ),
-          timePickerTheme: TimePickerThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            backgroundColor: Colors.white,
-            cancelButtonStyle: ButtonStyle(
-              foregroundColor: WidgetStatePropertyAll(appPrimaryColor),
-            ),
-            confirmButtonStyle: ButtonStyle(
-              foregroundColor: WidgetStatePropertyAll(appPrimaryColor),
-            ),
-            dayPeriodColor: appPrimaryColor.withAlpha(50),
-            dayPeriodBorderSide: BorderSide(
-              color: Colors.grey.shade500,
-            ),
-            dayPeriodShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            dialHandColor: appPrimaryColor,
-          ),
-          textTheme: TextTheme(
-            headlineMedium: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
-            ),
-            headlineSmall: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14.sp,
-            ),
-            labelSmall: TextStyle(
-              fontSize: 12.sp,
-              color: textColor,
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-              textStyle: WidgetStatePropertyAll(
-                TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16.sp,
-                ),
-              ),
-              backgroundColor: const WidgetStatePropertyAll(
-                Color(0xFF047844),
-              ),
-              foregroundColor: const WidgetStatePropertyAll(
-                Colors.white,
-              ),
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  ),
-                ),
-              ),
-              padding: WidgetStatePropertyAll(
-                EdgeInsets.symmetric(
-                  horizontal: 32.0.w,
-                  vertical: 12.h,
-                ),
-              ),
-            ),
-          ),
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              iconSize: 12.sp,
-              foregroundColor: textColor,
-              textStyle: TextStyle(
-                fontSize: 10.sp,
-                color: neutralN900,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              side: BorderSide(
-                color: appPrimaryColor,
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: 8.w,
-                vertical: 12.h,
-              ),
-            ),
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: const Color(0xFFF5F6F7),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 12.h,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              borderSide: const BorderSide(
-                color: Colors.transparent,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              borderSide: const BorderSide(
-                color: Color(0xFF047844),
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: Colors.transparent,
-              ),
-            ),
-            floatingLabelStyle: TextStyle(
-              color: appPrimaryColor,
-            ),
-          ),
-          iconButtonTheme: IconButtonThemeData(
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-            ),
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              foregroundColor: appPrimaryColor,
-            ),
-          ),
-          popupMenuTheme: PopupMenuThemeData(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              side: const BorderSide(
-                color: Color(0xFFE6E8E9),
-              ),
-            ),
-            menuPadding: EdgeInsets.symmetric(
-              vertical: 8.h,
-              horizontal: 0,
-            ),
-            position: PopupMenuPosition.under,
-            labelTextStyle: WidgetStatePropertyAll(
-              TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0XFF00171F),
-              ),
-            ),
-          ),
-          searchBarTheme: SearchBarThemeData(
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-            ),
-          ),
-        ),
+        theme: lightTheme,
         builder: (context, child) {
           return Stack(
             children: [
@@ -370,15 +173,15 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       getIt<SynchAppDatabase>().doSync();
 
-                      final entityResult = await getIt<OnboardingRepository>()
-                          .getOnboardingState();
+                      final entityResult = await getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.onboardingComplete);
 
-                      final entity = entityResult.fold(
+                      final entityOnboard = entityResult.fold(
                         (failure) => null,
                         (entity) => entity,
                       );
 
-                      if (entity?.isOnboardingComplete == true) {
+                      if (entityOnboard?.value == true) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -395,6 +198,19 @@ class _AppViewState extends State<AppView> {
                           (route) => false,
                         );
                       }
+
+                      getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.defaultLang)
+                          .then((langCode) {
+                        final entityLang = langCode.fold(
+                          (failure) => null,
+                          (entity) => entity,
+                        );
+
+                        if (entityLang?.value != null) {
+                          updateLanguage(null, Locale(entityLang?.value));
+                        }
+                      });
                     },
                     unauthenticated: () async {
                       getIt<SynchAppDatabase>().stopAllSync();

@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:trakli/data/database/converters/media_converter.dart';
 import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
 import 'package:trakli/data/database/tables/categories.dart';
+import 'package:trakli/data/database/tables/configs.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/local_changes.dart';
 import 'package:trakli/core/utils/services/logger.dart';
@@ -15,6 +16,7 @@ import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/users.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 import 'package:trakli/data/models/media.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/wallet_stats.dart';
@@ -28,6 +30,7 @@ part 'app_database.g.dart';
   Transactions,
   Parties,
   Categories,
+  Configs,
   Users,
   Groups,
   Wallets,
@@ -247,6 +250,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     await users.deleteAll();
     await transactions.deleteAll();
     await categories.deleteAll();
+    await configs.deleteAll();
     await parties.deleteAll();
     await groups.deleteAll();
     await wallets.deleteAll();

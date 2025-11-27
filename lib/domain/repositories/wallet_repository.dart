@@ -8,7 +8,7 @@ import 'dart:async';
 abstract class WalletRepository {
   Future<Either<Failure, List<WalletEntity>>> getAllWallets();
 
-  Future<Either<Failure, Unit>> insertWallet(
+  Future<Either<Failure, WalletEntity>> insertWallet(
     String name,
     WalletType type,
     double balance,
@@ -17,7 +17,7 @@ abstract class WalletRepository {
     MediaEntity? icon,
   });
 
-  Future<Either<Failure, Unit>> updateWallet(
+  Future<Either<Failure, WalletEntity>> updateWallet(
     String clientId, {
     String? name,
     WalletType? type,

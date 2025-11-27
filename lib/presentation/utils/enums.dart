@@ -117,9 +117,9 @@ enum FilterType {
 
   String get filterName {
     return switch (this) {
-      FilterType.date => 'Date',
-      FilterType.category => 'Categories',
-      FilterType.wallet => 'Wallets',
+      FilterType.date => LocaleKeys.date,
+      FilterType.category => LocaleKeys.categories,
+      FilterType.wallet => LocaleKeys.wallets,
     };
   }
 }
@@ -140,6 +140,20 @@ enum DateFilterOption {
       DateFilterOption.last6Months => LocaleKeys.lastSixMonths,
       DateFilterOption.thisYear => LocaleKeys.thisYear,
       DateFilterOption.custom => LocaleKeys.custom,
+    };
+  }
+}
+
+enum WalletOption {
+  createAutomatically,
+  createManually,
+  selectFromWalletList;
+
+  String get customName {
+    return switch (this) {
+      WalletOption.createAutomatically => LocaleKeys.createAutomatically,
+      WalletOption.createManually => LocaleKeys.createManually,
+      WalletOption.selectFromWalletList => LocaleKeys.selectFromWalletList,
     };
   }
 }

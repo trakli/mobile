@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/info_interfaces/data.dart';
+import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -10,8 +12,17 @@ import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/party_tile.dart';
 
-class PartyScreen extends StatelessWidget {
+class PartyScreen extends StatefulWidget {
   const PartyScreen({super.key});
+
+  @override
+  State<PartyScreen> createState() => _PartyScreenState();
+}
+
+class _PartyScreenState extends State<PartyScreen> {
+  void addAction() {
+    AppNavigator.push(context, const AddPartyScreen());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +37,7 @@ class PartyScreen extends StatelessWidget {
             actions: [
               InkWell(
                 onTap: () {
-                  AppNavigator.push(context, const AddPartyScreen());
+                  addAction();
                 },
                 child: Container(
                   width: 42.r,
@@ -48,27 +59,28 @@ class PartyScreen extends StatelessWidget {
               SizedBox(width: 16.w),
             ],
           ),
-          body: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
-            ),
-            child: state.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : state.parties.isEmpty
-                    ? Center(
-                        child: Text(LocaleKeys.partyNoParties.tr()),
-                      )
-                    : ListView.separated(
-                        itemCount: state.parties.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 8.h),
-                        itemBuilder: (context, index) {
-                          final party = state.parties[index];
-                          return PartyTile(party: party);
-                        },
+          body: state.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : state.parties.isEmpty
+                  ? InfoInterface(
+                      action: () {
+                        addAction();
+                      },
+                      data: emptyPartyData,
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
                       ),
-          ),
+                      itemCount: state.parties.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 8.h),
+                      itemBuilder: (context, index) {
+                        final party = state.parties[index];
+                        return PartyTile(party: party);
+                      },
+                    ),
         );
       },
     );

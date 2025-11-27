@@ -64,9 +64,16 @@ class _AddTransactionFormCompactLayoutState
   Currency? currentCurrency;
   final pieData = StatisticsProvider().getPieData;
 
-  setCurrency(WalletEntity? wallet) {
+  setCurrencyFromWallet(WalletEntity? wallet) {
     setState(() {
       currentCurrency = wallet?.currency ?? currentCurrency;
+    });
+  }
+
+  setCurrency(Currency currency) {
+    setState(() {
+      _selectedWallet = null;
+      currentCurrency = currency;
     });
   }
 
@@ -76,7 +83,7 @@ class _AddTransactionFormCompactLayoutState
 
     if (widget.transactionCompleteEntity != null) {
       final wallet = widget.transactionCompleteEntity?.wallet;
-      setCurrency(wallet);
+      setCurrencyFromWallet(wallet);
 
       amountController.text =
           widget.transactionCompleteEntity!.transaction.amount.toString();
@@ -111,7 +118,7 @@ class _AddTransactionFormCompactLayoutState
       // Set the selected wallet if provided
       if (widget.selectedWallet != null) {
         _selectedWallet = widget.selectedWallet;
-        setCurrency(_selectedWallet);
+        setCurrencyFromWallet(_selectedWallet);
       }
     }
   }
@@ -166,17 +173,36 @@ class _AddTransactionFormCompactLayoutState
                             },
                           ),
                         ),
-                        Container(
-                          width: 60.w,
-                          constraints: BoxConstraints(
-                            maxHeight: 50.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFDEE1E0),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text(currentCurrency?.code ?? "XAF"),
+                        GestureDetector(
+                          onTap: () {
+                            showCurrencyPicker(
+                              context: context,
+                              theme: CurrencyPickerThemeData(
+                                bottomSheetHeight: 0.7.sh,
+                                backgroundColor: Colors.white,
+                                flagSize: 24.sp,
+                                subtitleTextStyle: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              onSelect: (Currency currencyValue) {
+                                setCurrency(currencyValue);
+                              },
+                            );
+                          },
+                          child: Container(
+                            width: 60.w,
+                            constraints: BoxConstraints(
+                              maxHeight: 50.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDEE1E0),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(currentCurrency?.code ?? "XAF"),
+                            ),
                           ),
                         )
                       ],
@@ -204,13 +230,24 @@ class _AddTransactionFormCompactLayoutState
                                 initialValue: _selectedWallet,
                                 optionsBuilder:
                                     (TextEditingValue textEditingValue) {
-                                  if (textEditingValue.text.isEmpty) {
-                                    return state.wallets;
+                                  Iterable<WalletEntity> filteredWallets =
+                                      state.wallets;
+                                  if (currentCurrency != null) {
+                                    filteredWallets =
+                                        filteredWallets.where((wallet) {
+                                      return wallet.currencyCode ==
+                                          currentCurrency!.code;
+                                    });
                                   }
-                                  return state.wallets.where((category) {
-                                    return category.name.toLowerCase().contains(
-                                        textEditingValue.text.toLowerCase());
-                                  });
+
+                                  if (textEditingValue.text.isNotEmpty) {
+                                    filteredWallets =
+                                        filteredWallets.where((wallet) {
+                                      return wallet.name.toLowerCase().contains(
+                                          textEditingValue.text.toLowerCase());
+                                    });
+                                  }
+                                  return filteredWallets;
                                 },
                                 displayStringForOption: (WalletEntity option) {
                                   return option.name.capitalizeFirst();
@@ -218,7 +255,7 @@ class _AddTransactionFormCompactLayoutState
                                 onSelected: (value) {
                                   setState(() {
                                     _selectedWallet = value;
-                                    setCurrency(value);
+                                    setCurrencyFromWallet(value);
                                   });
                                 },
                                 validator: (value) {
@@ -227,7 +264,6 @@ class _AddTransactionFormCompactLayoutState
                                   }
                                   return null;
                                 },
-                                // selectedItem: _selectedCategory,
                               );
                             },
                           ),
