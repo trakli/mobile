@@ -35,14 +35,17 @@ class AboutAppBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextButton(
-                onPressed: () {
-                  openUrl(url: "https://trakli.app/privacy");
-                },
-                child: Text(
-                  LocaleKeys.privacyPolicy.tr(),
-                  style: const TextStyle(
-                    color: Colors.blue,
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    openUrl(url: "https://trakli.app/privacy");
+                  },
+                  child: Text(
+                    LocaleKeys.privacyPolicy.tr(),
+                    style: const TextStyle(
+                      color: Colors.blue,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),
@@ -50,14 +53,17 @@ class AboutAppBottomSheet extends StatelessWidget {
                 Icons.circle,
                 size: 6.r,
               ),
-              TextButton(
-                onPressed: () {
-                  openUrl(url: "https://trakli.app/terms");
-                },
-                child: Text(
-                  LocaleKeys.termsAndConditions.tr(),
-                  style: const TextStyle(
-                    color: Colors.blue,
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    openUrl(url: "https://trakli.app/terms");
+                  },
+                  child: Text(
+                    LocaleKeys.termsAndConditions.tr(),
+                    style: const TextStyle(
+                      color: Colors.blue,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),

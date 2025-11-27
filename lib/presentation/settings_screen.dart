@@ -175,32 +175,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              onTap: () {
-                showCustomBottomSheet(
-                  context,
-                  widget: const AboutAppBottomSheet(),
-                );
-              },
-              leading: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                ),
-                child: Icon(
-                  Icons.info,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              title: Text(LocaleKeys.about.tr()),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                size: 16.sp,
-              ),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
               leading: Container(
                 padding: EdgeInsets.all(8.h),
                 width: 40.w,
@@ -268,6 +242,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               title: Text(LocaleKeys.accountAndPrivacy.tr()),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+              ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {
+                showCustomBottomSheet(
+                  context,
+                  widget: const AboutAppBottomSheet(),
+                );
+              },
+              leading: Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+                child: Icon(
+                  Icons.info,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              title: Text(LocaleKeys.about.tr()),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
