@@ -11,7 +11,6 @@ import 'package:trakli/domain/usecases/group/delete_group_usecase.dart';
 import 'package:trakli/domain/usecases/group/update_group_usecase.dart';
 import 'package:trakli/domain/usecases/group/get_groups_usecase.dart';
 import 'package:trakli/domain/usecases/group/listen_to_groups_usecase.dart';
-import 'package:trakli/domain/usecases/group/ensure_default_group_exists_usecase.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 
 part 'group_state.dart';
@@ -24,7 +23,6 @@ class GroupCubit extends Cubit<GroupState> {
   final UpdateGroupUseCase _updateGroupUseCase;
   final DeleteGroupUseCase _deleteGroupUseCase;
   final ListenToGroupsUseCase _listenToGroupsUseCase;
-  final EnsureDefaultGroupExistsUseCase _ensureDefaultWalletExistsUseCase;
   StreamSubscription? _subscription;
 
   GroupCubit(
@@ -33,7 +31,6 @@ class GroupCubit extends Cubit<GroupState> {
     this._updateGroupUseCase,
     this._deleteGroupUseCase,
     this._listenToGroupsUseCase,
-    this._ensureDefaultWalletExistsUseCase,
   ) : super(const GroupState()) {
     _listenToGroups();
   }
@@ -89,26 +86,6 @@ class GroupCubit extends Cubit<GroupState> {
     final result = await _updateGroupUseCase(
       UpdateGroupUseCaseParams(
         clientId: clientId,
-        name: name,
-        description: description,
-        icon: media,
-      ),
-    );
-    result.fold(
-      (failure) => emit(state.copyWith(failure: failure, isSaving: false)),
-      (_) =>
-          emit(state.copyWith(failure: const Failure.none(), isSaving: false)),
-    );
-  }
-
-  Future<void> ensureDefaultGroup({
-    required String name,
-    String? description,
-    MediaEntity? media,
-  }) async {
-    emit(state.copyWith(isSaving: true));
-    final result = await _ensureDefaultWalletExistsUseCase(
-      EnsureDefaultGroupParams(
         name: name,
         description: description,
         icon: media,

@@ -1,10 +1,13 @@
+import 'package:collection/collection.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trakli/domain/entities/exchange_rate_entity.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 
 const decimalDigits = 2;
 
@@ -18,7 +21,8 @@ class CurrencyFormater {
     bool useDefaultCurrency = false,
   }) {
     currency = currency ??
-        context.watch<OnboardingCubit>().state.entity?.selectedCurrency;
+        _getCurrencyFromConfig(context) ??
+        context.watch<CurrencyCubit>().state.currency;
 
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
@@ -70,7 +74,8 @@ class CurrencyFormater {
     Currency? currency,
   }) {
     currency = currency ??
-        context.watch<OnboardingCubit>().state.entity?.selectedCurrency;
+        _getCurrencyFromConfig(context) ??
+        context.watch<CurrencyCubit>().state.currency;
 
     final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
@@ -109,6 +114,19 @@ class CurrencyFormater {
     final amountInBaseCurrency = amount / exchangeRate;
     return amountInBaseCurrency;
   }
+}
+
+Currency? _getCurrencyFromConfig(BuildContext context) {
+  final configState = context.watch<ConfigCubit>().state;
+  final defaultCurrencyConfig =
+      configState.getConfigByKey(ConfigConstants.defaultCurrency);
+  final code = defaultCurrencyConfig?.value as String?;
+  if (code == null) {
+    return null;
+  }
+
+  final currencies = CurrencyService().getAll();
+  return currencies.firstWhereOrNull((c) => c.code == code);
 }
 
 double convertAmountToDefault(

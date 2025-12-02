@@ -16,9 +16,9 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
@@ -38,8 +38,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final groups = context.watch<GroupCubit>().state.groups;
-    final defaultGroupId =
-        context.watch<OnboardingCubit>().state.entity?.defaultGroup;
+    final configState = context.watch<ConfigCubit>().state;
+    final defaultGroupConfig =
+        configState.getConfigByKey(ConfigConstants.defaultGroup);
+    final defaultGroupId = defaultGroupConfig?.value as String?;
     final group =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 
@@ -83,8 +85,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 size: 16.sp,
               ),
             ),
-            BlocBuilder<OnboardingCubit, OnboardingState>(
-              builder: (context, state) {
+            BlocBuilder<CurrencyCubit, CurrencyState>(
+              builder: (context, currencyState) {
+                final currency = currencyState.currency;
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () {
@@ -101,8 +104,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       onSelect: (Currency currencyValue) {
                         context
-                            .read<OnboardingCubit>()
-                            .selectCurrency(currencyValue);
+                            .read<CurrencyCubit>()
+                            .setCurrency(currencyValue);
                       },
                     );
                   },
@@ -120,9 +123,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   title: Text(LocaleKeys.defaultCurrency.tr()),
-                  subtitle: state.entity?.selectedCurrency != null
+                  subtitle: currency != null
                       ? Text(
-                          state.entity?.selectedCurrency?.code ?? "",
+                          currency.code,
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(context).primaryColor,
@@ -208,12 +211,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           group: group,
                         ),
                       );
-                      if (pickedGroup != null) {
-                        if (context.mounted) {
-                          context
-                              .read<OnboardingCubit>()
-                              .setDefaultGroup(pickedGroup.clientId);
-                        }
+                      if (pickedGroup != null && context.mounted) {
+                        context.read<ConfigCubit>().saveConfig(
+                              key: ConfigConstants.defaultGroup,
+                              type: ConfigType.string,
+                              value: pickedGroup.clientId,
+                            );
                       }
                     }
                   : null,

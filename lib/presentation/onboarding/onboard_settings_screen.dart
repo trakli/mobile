@@ -13,7 +13,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/widgets/all_set_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/language_setting_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/wallet_setup_widget.dart';
@@ -80,7 +80,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   void _loadCurrencyFromConfig() {
     final currency = getDefaultCurrencyFromConfig(context);
     if (currency != null) {
-      context.read<OnboardingCubit>().selectCurrency(currency);
+      context.read<CurrencyCubit>().setCurrency(currency);
     }
   }
 
@@ -199,18 +199,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   Widget _buildContent(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<OnboardingCubit, OnboardingState>(
+        BlocListener<CurrencyCubit, CurrencyState>(
           listenWhen: (previous, current) =>
-              previous.currencySymbol != current.currencySymbol,
+              previous.currency != current.currency,
           listener: (context, state) {
-            final currency = state.entity?.selectedCurrency;
-            if (currency != null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                setupDefaultGroup(
-                  context: context,
-                );
-              });
-            }
+            // Currency selection is now handled via config
           },
         ),
         BlocListener<WalletCubit, WalletState>(

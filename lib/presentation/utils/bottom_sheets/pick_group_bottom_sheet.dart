@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/pick_group_tile.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
@@ -31,8 +32,10 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final groups = context.watch<GroupCubit>().state.groups;
-    final entity = context.watch<OnboardingCubit>().state.entity;
-    final defaultGroupId = entity?.defaultGroup;
+    final configState = context.watch<ConfigCubit>().state;
+    final defaultGroupConfig =
+        configState.getConfigByKey(ConfigConstants.defaultGroup);
+    final defaultGroupId = defaultGroupConfig?.value as String?;
 
     // Sort groups to put default group first
     final sortedGroups = List<GroupEntity>.from(groups);

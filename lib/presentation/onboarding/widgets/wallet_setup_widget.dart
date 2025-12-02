@@ -12,7 +12,7 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -67,7 +67,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
       setState(() {
         defaultCurrency = currency;
       });
-      context.read<OnboardingCubit>().selectCurrency(currency);
+      context.read<CurrencyCubit>().setCurrency(currency);
     }
   }
 
@@ -88,14 +88,14 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
         .firstWhereOrNull((e) => e.key == ConfigConstants.defaultWallet);
     WalletEntity? wallet = walletCubit.state.wallets
         .firstWhereOrNull((e) => e.clientId == sConfig?.value);
-    return BlocListener<OnboardingCubit, OnboardingState>(
-      listener: (BuildContext context, OnboardingState state) {
+    return BlocListener<CurrencyCubit, CurrencyState>(
+      listener: (BuildContext context, CurrencyState state) {
         state.when(
           initial: () {},
           loading: () {
             showLoader();
           },
-          success: (user) {
+          loaded: (currency) {
             hideLoader();
           },
           error: (failure) {
@@ -301,9 +301,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                         onSelect: (Currency currency) {
                           setState(() {
                             defaultCurrency = currency;
-                            context
-                                .read<OnboardingCubit>()
-                                .selectCurrency(currency);
+                            context.read<CurrencyCubit>().setCurrency(currency);
                           });
                           _currencyController.text =
                               "${currency.code} - ${currency.name}";
@@ -345,9 +343,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                     if (!hasDefaultWallet) {
                       final walletCubit = context.read<WalletCubit>();
                       if (defaultCurrency == null) {
-                        context
-                            .read<OnboardingCubit>()
-                            .selectCurrency(usdCurrency);
+                        context.read<CurrencyCubit>().setCurrency(usdCurrency);
                       }
                       if (_selectedWalletOption ==
                               WalletOption.createManually &&

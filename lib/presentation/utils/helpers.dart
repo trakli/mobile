@@ -4,7 +4,6 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,12 +16,10 @@ import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart'
-    show PlanType, WalletType, DateFilterOption;
+    show PlanType, DateFilterOption;
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<File?> pickFile() async {
@@ -370,45 +367,6 @@ getPlanType(String interval) {
     default:
       return PlanType.monthly;
   }
-}
-
-/// Sets up default group and wallet with the given currency
-/// This function is reusable across different parts of the app
-Future<void> setupDefaultGroupAndWallet({
-  required BuildContext context,
-  required String currencyCode,
-  String? groupName,
-  String? walletName,
-  String? walletDescription,
-}) async {
-  // if (!context.mounted) return;
-
-  // Ensure default group exists
-  context.read<GroupCubit>().ensureDefaultGroup(
-        name: groupName ?? LocaleKeys.defaultGroupName.tr(),
-      );
-
-  // Check if context is still mounted before proceeding
-  // Create default wallet with selected currency
-  await context.read<WalletCubit>().ensureDefaultWallet(
-        currencyCode: currencyCode,
-        name: walletName ?? LocaleKeys.defaultWalletName.tr(),
-        type: WalletType.cash,
-        description:
-            walletDescription ?? LocaleKeys.defaultWalletDescription.tr(),
-      );
-}
-
-Future<void> setupDefaultGroup({
-  required BuildContext context,
-  String? groupName,
-}) async {
-  // if (!context.mounted) return;
-
-  // Ensure default group exists
-  context.read<GroupCubit>().ensureDefaultGroup(
-        name: groupName ?? LocaleKeys.defaultGroupName.tr(),
-      );
 }
 
 /// Returns a datetime to use as a start date

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -103,10 +103,9 @@ class AllSetWidget extends StatelessWidget {
                 child: Text(LocaleKeys.prev.tr()),
               ),
               Builder(builder: (context) {
-                final onboardState = context.watch<OnboardingCubit>().state;
+                final currencyState = context.watch<CurrencyCubit>().state;
 
-                final isCurrencySelected =
-                    onboardState.entity?.selectedCurrency != null;
+                final isCurrencySelected = currencyState.currency != null;
 
                 return PrimaryButton(
                   onPress: !isCurrencySelected ? null : onTap,

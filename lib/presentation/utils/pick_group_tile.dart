@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/gen/assets.gen.dart' show Assets;
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,8 +25,10 @@ class PickGroupTile<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultGroup =
-        context.watch<OnboardingCubit>().state.entity?.defaultGroup;
+    final configState = context.watch<ConfigCubit>().state;
+    final defaultGroupConfig =
+        configState.getConfigByKey(ConfigConstants.defaultGroup);
+    final defaultGroup = defaultGroupConfig?.value as String?;
 
     String? groupName;
     String? groupDescription;

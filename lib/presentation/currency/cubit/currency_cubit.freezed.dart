@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'onboarding_cubit.dart';
+part of 'currency_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,12 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$OnboardingState {
+mixin _$CurrencyState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OnboardingEntity entity) success,
+    required TResult Function(Currency currency) loaded,
     required TResult Function(Failure failure) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +28,7 @@ mixin _$OnboardingState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OnboardingEntity entity)? success,
+    TResult? Function(Currency currency)? loaded,
     TResult? Function(Failure failure)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +36,7 @@ mixin _$OnboardingState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OnboardingEntity entity)? success,
+    TResult Function(Currency currency)? loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) =>
@@ -45,7 +45,7 @@ mixin _$OnboardingState {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Success value) success,
+    required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ mixin _$OnboardingState {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Success value)? success,
+    TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -61,7 +61,7 @@ mixin _$OnboardingState {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Success value)? success,
+    TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -69,23 +69,23 @@ mixin _$OnboardingState {
 }
 
 /// @nodoc
-abstract class $OnboardingStateCopyWith<$Res> {
-  factory $OnboardingStateCopyWith(
-          OnboardingState value, $Res Function(OnboardingState) then) =
-      _$OnboardingStateCopyWithImpl<$Res, OnboardingState>;
+abstract class $CurrencyStateCopyWith<$Res> {
+  factory $CurrencyStateCopyWith(
+          CurrencyState value, $Res Function(CurrencyState) then) =
+      _$CurrencyStateCopyWithImpl<$Res, CurrencyState>;
 }
 
 /// @nodoc
-class _$OnboardingStateCopyWithImpl<$Res, $Val extends OnboardingState>
-    implements $OnboardingStateCopyWith<$Res> {
-  _$OnboardingStateCopyWithImpl(this._value, this._then);
+class _$CurrencyStateCopyWithImpl<$Res, $Val extends CurrencyState>
+    implements $CurrencyStateCopyWith<$Res> {
+  _$CurrencyStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -98,13 +98,13 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$OnboardingStateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$CurrencyStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -115,7 +115,7 @@ class _$InitialImpl extends _Initial {
 
   @override
   String toString() {
-    return 'OnboardingState.initial()';
+    return 'CurrencyState.initial()';
   }
 
   @override
@@ -132,7 +132,7 @@ class _$InitialImpl extends _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OnboardingEntity entity) success,
+    required TResult Function(Currency currency) loaded,
     required TResult Function(Failure failure) error,
   }) {
     return initial();
@@ -143,7 +143,7 @@ class _$InitialImpl extends _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OnboardingEntity entity)? success,
+    TResult? Function(Currency currency)? loaded,
     TResult? Function(Failure failure)? error,
   }) {
     return initial?.call();
@@ -154,7 +154,7 @@ class _$InitialImpl extends _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OnboardingEntity entity)? success,
+    TResult Function(Currency currency)? loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -169,7 +169,7 @@ class _$InitialImpl extends _Initial {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Success value) success,
+    required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -180,7 +180,7 @@ class _$InitialImpl extends _Initial {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Success value)? success,
+    TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -191,7 +191,7 @@ class _$InitialImpl extends _Initial {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Success value)? success,
+    TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -202,7 +202,7 @@ class _$InitialImpl extends _Initial {
   }
 }
 
-abstract class _Initial extends OnboardingState {
+abstract class _Initial extends CurrencyState {
   const factory _Initial() = _$InitialImpl;
   const _Initial._() : super._();
 }
@@ -216,13 +216,13 @@ abstract class _$$LoadingImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$OnboardingStateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$CurrencyStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -233,7 +233,7 @@ class _$LoadingImpl extends _Loading {
 
   @override
   String toString() {
-    return 'OnboardingState.loading()';
+    return 'CurrencyState.loading()';
   }
 
   @override
@@ -250,7 +250,7 @@ class _$LoadingImpl extends _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OnboardingEntity entity) success,
+    required TResult Function(Currency currency) loaded,
     required TResult Function(Failure failure) error,
   }) {
     return loading();
@@ -261,7 +261,7 @@ class _$LoadingImpl extends _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OnboardingEntity entity)? success,
+    TResult? Function(Currency currency)? loaded,
     TResult? Function(Failure failure)? error,
   }) {
     return loading?.call();
@@ -272,7 +272,7 @@ class _$LoadingImpl extends _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OnboardingEntity entity)? success,
+    TResult Function(Currency currency)? loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -287,7 +287,7 @@ class _$LoadingImpl extends _Loading {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Success value) success,
+    required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -298,7 +298,7 @@ class _$LoadingImpl extends _Loading {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Success value)? success,
+    TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -309,7 +309,7 @@ class _$LoadingImpl extends _Loading {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Success value)? success,
+    TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -320,97 +320,86 @@ class _$LoadingImpl extends _Loading {
   }
 }
 
-abstract class _Loading extends OnboardingState {
+abstract class _Loading extends CurrencyState {
   const factory _Loading() = _$LoadingImpl;
   const _Loading._() : super._();
 }
 
 /// @nodoc
-abstract class _$$SuccessImplCopyWith<$Res> {
-  factory _$$SuccessImplCopyWith(
-          _$SuccessImpl value, $Res Function(_$SuccessImpl) then) =
-      __$$SuccessImplCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({OnboardingEntity entity});
-
-  $OnboardingEntityCopyWith<$Res> get entity;
+  $Res call({Currency currency});
 }
 
 /// @nodoc
-class __$$SuccessImplCopyWithImpl<$Res>
-    extends _$OnboardingStateCopyWithImpl<$Res, _$SuccessImpl>
-    implements _$$SuccessImplCopyWith<$Res> {
-  __$$SuccessImplCopyWithImpl(
-      _$SuccessImpl _value, $Res Function(_$SuccessImpl) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$CurrencyStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? entity = null,
+    Object? currency = null,
   }) {
-    return _then(_$SuccessImpl(
-      null == entity
-          ? _value.entity
-          : entity // ignore: cast_nullable_to_non_nullable
-              as OnboardingEntity,
+    return _then(_$LoadedImpl(
+      null == currency
+          ? _value.currency
+          : currency // ignore: cast_nullable_to_non_nullable
+              as Currency,
     ));
-  }
-
-  /// Create a copy of OnboardingState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $OnboardingEntityCopyWith<$Res> get entity {
-    return $OnboardingEntityCopyWith<$Res>(_value.entity, (value) {
-      return _then(_value.copyWith(entity: value));
-    });
   }
 }
 
 /// @nodoc
 
-class _$SuccessImpl extends _Success {
-  const _$SuccessImpl(this.entity) : super._();
+class _$LoadedImpl extends _Loaded {
+  const _$LoadedImpl(this.currency) : super._();
 
   @override
-  final OnboardingEntity entity;
+  final Currency currency;
 
   @override
   String toString() {
-    return 'OnboardingState.success(entity: $entity)';
+    return 'CurrencyState.loaded(currency: $currency)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SuccessImpl &&
-            (identical(other.entity, entity) || other.entity == entity));
+            other is _$LoadedImpl &&
+            (identical(other.currency, currency) ||
+                other.currency == currency));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, entity);
+  int get hashCode => Object.hash(runtimeType, currency);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SuccessImplCopyWith<_$SuccessImpl> get copyWith =>
-      __$$SuccessImplCopyWithImpl<_$SuccessImpl>(this, _$identity);
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OnboardingEntity entity) success,
+    required TResult Function(Currency currency) loaded,
     required TResult Function(Failure failure) error,
   }) {
-    return success(entity);
+    return loaded(currency);
   }
 
   @override
@@ -418,10 +407,10 @@ class _$SuccessImpl extends _Success {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OnboardingEntity entity)? success,
+    TResult? Function(Currency currency)? loaded,
     TResult? Function(Failure failure)? error,
   }) {
-    return success?.call(entity);
+    return loaded?.call(currency);
   }
 
   @override
@@ -429,12 +418,12 @@ class _$SuccessImpl extends _Success {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OnboardingEntity entity)? success,
+    TResult Function(Currency currency)? loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
-    if (success != null) {
-      return success(entity);
+    if (loaded != null) {
+      return loaded(currency);
     }
     return orElse();
   }
@@ -444,10 +433,10 @@ class _$SuccessImpl extends _Success {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Success value) success,
+    required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
-    return success(this);
+    return loaded(this);
   }
 
   @override
@@ -455,10 +444,10 @@ class _$SuccessImpl extends _Success {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Success value)? success,
+    TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
-    return success?.call(this);
+    return loaded?.call(this);
   }
 
   @override
@@ -466,27 +455,27 @@ class _$SuccessImpl extends _Success {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Success value)? success,
+    TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (success != null) {
-      return success(this);
+    if (loaded != null) {
+      return loaded(this);
     }
     return orElse();
   }
 }
 
-abstract class _Success extends OnboardingState {
-  const factory _Success(final OnboardingEntity entity) = _$SuccessImpl;
-  const _Success._() : super._();
+abstract class _Loaded extends CurrencyState {
+  const factory _Loaded(final Currency currency) = _$LoadedImpl;
+  const _Loaded._() : super._();
 
-  OnboardingEntity get entity;
+  Currency get currency;
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SuccessImplCopyWith<_$SuccessImpl> get copyWith =>
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -503,13 +492,13 @@ abstract class _$$ErrorImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$ErrorImplCopyWithImpl<$Res>
-    extends _$OnboardingStateCopyWithImpl<$Res, _$ErrorImpl>
+    extends _$CurrencyStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
   __$$ErrorImplCopyWithImpl(
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -524,7 +513,7 @@ class __$$ErrorImplCopyWithImpl<$Res>
     ));
   }
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -545,7 +534,7 @@ class _$ErrorImpl extends _Error {
 
   @override
   String toString() {
-    return 'OnboardingState.error(failure: $failure)';
+    return 'CurrencyState.error(failure: $failure)';
   }
 
   @override
@@ -559,7 +548,7 @@ class _$ErrorImpl extends _Error {
   @override
   int get hashCode => Object.hash(runtimeType, failure);
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -572,7 +561,7 @@ class _$ErrorImpl extends _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(OnboardingEntity entity) success,
+    required TResult Function(Currency currency) loaded,
     required TResult Function(Failure failure) error,
   }) {
     return error(failure);
@@ -583,7 +572,7 @@ class _$ErrorImpl extends _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(OnboardingEntity entity)? success,
+    TResult? Function(Currency currency)? loaded,
     TResult? Function(Failure failure)? error,
   }) {
     return error?.call(failure);
@@ -594,7 +583,7 @@ class _$ErrorImpl extends _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(OnboardingEntity entity)? success,
+    TResult Function(Currency currency)? loaded,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -609,7 +598,7 @@ class _$ErrorImpl extends _Error {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
-    required TResult Function(_Success value) success,
+    required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -620,7 +609,7 @@ class _$ErrorImpl extends _Error {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
-    TResult? Function(_Success value)? success,
+    TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -631,7 +620,7 @@ class _$ErrorImpl extends _Error {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
-    TResult Function(_Success value)? success,
+    TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -642,13 +631,13 @@ class _$ErrorImpl extends _Error {
   }
 }
 
-abstract class _Error extends OnboardingState {
+abstract class _Error extends CurrencyState {
   const factory _Error(final Failure failure) = _$ErrorImpl;
   const _Error._() : super._();
 
   Failure get failure;
 
-  /// Create a copy of OnboardingState
+  /// Create a copy of CurrencyState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>

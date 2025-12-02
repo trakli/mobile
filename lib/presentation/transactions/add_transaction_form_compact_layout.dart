@@ -14,7 +14,7 @@ import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
@@ -112,8 +112,8 @@ class _AddTransactionFormCompactLayoutState
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
 
-      final onboardingEntity = context.read<OnboardingCubit>().state.entity;
-      currentCurrency = onboardingEntity?.selectedCurrency ?? currentCurrency;
+      final currencyState = context.read<CurrencyCubit>().state;
+      currentCurrency = currencyState.currency ?? currentCurrency;
 
       // Set the selected wallet if provided
       if (widget.selectedWallet != null) {

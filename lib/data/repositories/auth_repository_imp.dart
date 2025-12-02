@@ -20,7 +20,6 @@ import 'package:trakli/data/sync/config_sync_handler.dart';
 import 'package:trakli/domain/entities/auth_status.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/domain/repositories/auth_repository.dart';
-import 'package:trakli/domain/repositories/onboarding_repository.dart';
 
 @Singleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -28,7 +27,6 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthLocalDataSource _localDataSource;
   final TokenManager _tokenManager;
   final PreferenceManager _preferenceManager;
-  final OnboardingRepository _onboardingRepository;
   final ConfigRemoteDataSource _configRemoteDataSource;
   final ConfigSyncHandler _configSyncHandler;
   final AppDatabase _database;
@@ -40,7 +38,6 @@ class AuthRepositoryImpl implements AuthRepository {
     required NetworkInfo networkInfo,
     required TokenManager tokenManager,
     required PreferenceManager preferenceManager,
-    required OnboardingRepository onboardingRepository,
     required ConfigRemoteDataSource configRemoteDataSource,
     required ConfigSyncHandler configSyncHandler,
     required AppDatabase database,
@@ -48,7 +45,6 @@ class AuthRepositoryImpl implements AuthRepository {
         _localDataSource = localDataSource,
         _tokenManager = tokenManager,
         _preferenceManager = preferenceManager,
-        _onboardingRepository = onboardingRepository,
         _configRemoteDataSource = configRemoteDataSource,
         _configSyncHandler = configSyncHandler,
         _database = database;
@@ -94,7 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
     await _preferenceManager.clearAll();
     await _localDataSource.deleteUser();
     await _localDataSource.clearDatabase();
-    await _onboardingRepository.resetOnboarding();
+    // Onboarding is now managed via ConfigRepository
     _authStatusController.add(AuthStatus.unauthenticated);
   }
 
