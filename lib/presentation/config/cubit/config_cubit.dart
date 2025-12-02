@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -37,13 +38,16 @@ class ConfigCubit extends Cubit<ConfigState> {
   }
 
   void _listenToConfigs() {
+    emit(state.copyWith(isLoading: true));
+
     _subscription?.cancel();
     _subscription = _listenToConfigsUseCase(NoParams()).listen(
       (result) => result.fold(
-        (failure) => emit(state.copyWith(failure: failure)),
+        (failure) => emit(state.copyWith(failure: failure, isLoading: false)),
         (configs) => emit(state.copyWith(
           configs: configs,
           failure: const Failure.none(),
+          isLoading: false,
         )),
       ),
     );

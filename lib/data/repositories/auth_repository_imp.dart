@@ -76,6 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> validateAuthConsistency() async {
     final userId = await _preferenceManager.getUserId();
+
     final hasToken = await _tokenManager.hasToken;
 
     if (userId != null && !hasToken) {

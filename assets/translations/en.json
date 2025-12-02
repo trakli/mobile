@@ -21,6 +21,7 @@
   "password": "Password",
   "forgotPassword": "Forgot password",
   "reset": "Reset",
+  "retry": "Retry",
   "noAccountYet": "Don't have an account yet?",
   "otpDesc": "Enter the OTP code sent to email",
   "continueT": "Continue",

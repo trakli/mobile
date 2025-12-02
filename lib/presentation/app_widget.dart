@@ -11,7 +11,6 @@ import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
-import 'package:trakli/domain/repositories/onboarding_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
@@ -181,7 +180,7 @@ class _AppViewState extends State<AppView> {
                         (entity) => entity,
                       );
 
-                      if (entityOnboard?.value == true) {
+                      if (entityOnboard?.value == false) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -216,15 +215,23 @@ class _AppViewState extends State<AppView> {
                       getIt<SynchAppDatabase>().stopAllSync();
                       context.read<TransactionCubit>().setCurrentGroup(null);
 
-                      final entityResult = await getIt<OnboardingRepository>()
-                          .getOnboardingState();
+                      // final entityResult = await getIt<OnboardingRepository>()
+                      //     .getOnboardingState();
 
-                      final entity = entityResult.fold(
+                      // final entity = entityResult.fold(
+                      //   (failure) => null,
+                      //   (entity) => entity,
+                      // );
+
+                      final entityResult = await getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.onboardingComplete);
+
+                      final entityOnboard = entityResult.fold(
                         (failure) => null,
                         (entity) => entity,
                       );
 
-                      if (entity?.isOnboardingComplete == true) {
+                      if (entityOnboard?.value == true) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(

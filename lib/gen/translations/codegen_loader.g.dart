@@ -25,6 +25,7 @@ abstract class  LocaleKeys {
   static const password = 'password';
   static const forgotPassword = 'forgotPassword';
   static const reset = 'reset';
+  static const retry = 'retry';
   static const noAccountYet = 'noAccountYet';
   static const otpDesc = 'otpDesc';
   static const continueT = 'continueT';

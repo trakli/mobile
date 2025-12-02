@@ -107,6 +107,7 @@ class AllSetWidget extends StatelessWidget {
 
                 final isCurrencySelected =
                     onboardState.entity?.selectedCurrency != null;
+
                 return PrimaryButton(
                   onPress: !isCurrencySelected ? null : onTap,
                   backgroundColor:

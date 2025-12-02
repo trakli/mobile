@@ -21,6 +21,7 @@
   "password": "Contraseña",
   "forgotPassword": "Olvidé mi contraseña",
   "reset": "Restablecer",
+  "retry": "Reintentar",
   "noAccountYet": "¿Aún no tienes una cuenta?",
   "otpDesc": "Introduce el código OTP enviado al correo electrónico",
   "continueT": "Continuar",

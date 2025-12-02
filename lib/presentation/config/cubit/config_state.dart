@@ -11,10 +11,18 @@ class ConfigState with _$ConfigState {
   }) = _ConfigState;
 
   factory ConfigState.initial() => const ConfigState(
-    configs: [],
-    isLoading: false,
-    isSaving: false,
-    isDeleting: false,
-    failure: Failure.none(),
-  );
+        configs: [],
+        isLoading: false,
+        isSaving: false,
+        isDeleting: false,
+        failure: Failure.none(),
+      );
+
+  const ConfigState._();
+
+  ConfigEntity? getConfigByKey(String key) =>
+      configs.firstWhereOrNull((config) => config.key == key);
+
+  // Check if a config exists
+  bool hasConfig(String key) => getConfigByKey(key) != null;
 }
