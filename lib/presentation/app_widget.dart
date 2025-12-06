@@ -8,6 +8,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
@@ -129,6 +130,46 @@ class _AppViewState extends State<AppView> {
     }
   }
 
+  /// Checks if onboarding is complete 
+  /// It verifies all required defaults are set
+  /// Flags checked are (onboarding completed flag, default currency, default group, default wallet)
+  Future<bool> _isOnboardingCompleteWithDefaults() async {
+    try {
+      final configRepo = getIt<ConfigRepository>();
+
+      // Fetch all configs at once for efficiency
+      final allConfigsResult = await configRepo.getAllConfigs();
+
+      final allConfigs = allConfigsResult.fold(
+        (failure) => <dynamic>[],
+        (configs) => configs,
+      );
+
+      if (allConfigs.isEmpty) return false;
+
+      final configMap = <String, dynamic>{};
+      for (final config in allConfigs) {
+        configMap[config.key] = config.value;
+      }
+
+      final hasOnboardingComplete =
+          configMap[ConfigConstants.onboardingComplete] == true;
+      final hasCurrency = configMap[ConfigConstants.defaultCurrency] != null &&
+          configMap[ConfigConstants.defaultCurrency]
+              .toString()
+              .isNotEmpty;
+      final hasGroup = configMap[ConfigConstants.defaultGroup] != null &&
+          configMap[ConfigConstants.defaultGroup].toString().isNotEmpty;
+      final hasWallet = configMap[ConfigConstants.defaultWallet] != null &&
+          configMap[ConfigConstants.defaultWallet].toString().isNotEmpty;
+
+      return hasOnboardingComplete && hasCurrency && hasGroup && hasWallet;
+    } catch (e) {
+      logger.w('Error checking onboarding completion with defaults: $e');
+      return false;
+    }
+  }
+
   void rebuildAllChildren(BuildContext context) {
     void rebuild(Element el) {
       el.markNeedsBuild();
@@ -172,15 +213,9 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       getIt<SynchAppDatabase>().doSync();
 
-                      final entityResult = await getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.onboardingComplete);
+                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
 
-                      final entityOnboard = entityResult.fold(
-                        (failure) => null,
-                        (entity) => entity,
-                      );
-
-                      if (entityOnboard?.value == false) {
+                      if (isOnboardingComplete) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -215,23 +250,9 @@ class _AppViewState extends State<AppView> {
                       getIt<SynchAppDatabase>().stopAllSync();
                       context.read<TransactionCubit>().setCurrentGroup(null);
 
-                      // final entityResult = await getIt<OnboardingRepository>()
-                      //     .getOnboardingState();
+                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
 
-                      // final entity = entityResult.fold(
-                      //   (failure) => null,
-                      //   (entity) => entity,
-                      // );
-
-                      final entityResult = await getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.onboardingComplete);
-
-                      final entityOnboard = entityResult.fold(
-                        (failure) => null,
-                        (entity) => entity,
-                      );
-
-                      if (entityOnboard?.value == true) {
+                      if (isOnboardingComplete) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(

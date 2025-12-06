@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/home/fuhaustin/fvm/versions/3.32.8"
-export "FLUTTER_APPLICATION_PATH=/home/fuhaustin/projects/trakli/mobile"
+export "FLUTTER_ROOT=/home/fuh-austin/fvm/versions/3.32.8"
+export "FLUTTER_APPLICATION_PATH=/home/fuh-austin/projects/whilesmart/trakli/mobile"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=0.1.2"

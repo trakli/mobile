@@ -52,6 +52,7 @@ abstract class  LocaleKeys {
   static const transactionTracking = 'transactionTracking';
   static const support = 'support';
   static const transactions = 'transactions';
+  static const transaction = 'transaction';
   static const moneySpent = 'moneySpent';
   static const moneyReceived = 'moneyReceived';
   static const totalCompanies = 'totalCompanies';
@@ -172,12 +173,7 @@ abstract class  LocaleKeys {
   static const anonymous = 'anonymous';
   static const logOut = 'logOut';
   static const logoutConfirm = 'logoutConfirm';
-  static const alreadyHaveAccount = 'alreadyHaveAccount';
   static const dontHaveAccount = 'dontHaveAccount';
-  static const editCategory = 'editCategory';
-  static const addCategory = 'addCategory';
-  static const noCategoriesFound = 'noCategoriesFound';
-  static const noGroupsFound = 'noGroupsFound';
   static const benefitsAccount = 'benefitsAccount';
   static const createAccountNow = 'createAccountNow';
   static const pickWallet = 'pickWallet';
@@ -203,6 +199,7 @@ abstract class  LocaleKeys {
   static const exchangeRateHint = 'exchangeRateHint';
   static const valueRequired = 'valueRequired';
   static const transferMoney = 'transferMoney';
+  static const databaseViewer = 'databaseViewer';
   static const unknown = 'unknown';
   static const from = 'from';
   static const to = 'to';
@@ -212,6 +209,10 @@ abstract class  LocaleKeys {
   static const attachment = 'attachment';
   static const date = 'date';
   static const time = 'time';
+  static const editCategory = 'editCategory';
+  static const addCategory = 'addCategory';
+  static const noCategoriesFound = 'noCategoriesFound';
+  static const noGroupsFound = 'noGroupsFound';
   static const editWallet = 'editWallet';
   static const addWallet = 'addWallet';
   static const name = 'name';
@@ -220,6 +221,7 @@ abstract class  LocaleKeys {
   static const pleaseSelectCurrency = 'pleaseSelectCurrency';
   static const confirm = 'confirm';
   static const categories = 'categories';
+  static const edit = 'edit';
   static const savings = 'savings';
   static const addSaving = 'addSaving';
   static const snapPicture = 'snapPicture';
@@ -268,9 +270,8 @@ abstract class  LocaleKeys {
   static const deleteCategoryConfirm = 'deleteCategoryConfirm';
   static const noDescription = 'noDescription';
   static const transactionsIn = 'transactionsIn';
+  static const wallets = 'wallets';
   static const noData = 'noData';
-  static const databaseViewer = 'databaseViewer';
-  static const totalExpense = 'totalExpense';
   static const thisMonth = 'thisMonth';
   static const thisWeek = 'thisWeek';
   static const lastThreeMonths = 'lastThreeMonths';
@@ -285,7 +286,6 @@ abstract class  LocaleKeys {
   static const categoryNameAlreadyExists = 'categoryNameAlreadyExists';
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
-  static const edit = 'edit';
   static const defaultName = 'defaultName';
   static const officeElements = 'officeElements';
   static const officeElementsDesc = 'officeElementsDesc';
@@ -421,11 +421,14 @@ abstract class  LocaleKeys {
   static const createNewWallet = 'createNewWallet';
   static const allSetDesc = 'allSetDesc';
   static const goToDashboard = 'goToDashboard';
-  static const transaction = 'transaction';
-  static const wallets = 'wallets';
   static const stepCounter = 'stepCounter';
   static const createAutomatically = 'createAutomatically';
   static const createManually = 'createManually';
   static const selectFromWalletList = 'selectFromWalletList';
+  static const groupSetup = 'groupSetup';
+  static const setupGroupTitle = 'setupGroupTitle';
+  static const setupGroupDesc = 'setupGroupDesc';
+  static const alreadyHaveAccount = 'alreadyHaveAccount';
+  static const totalExpense = 'totalExpense';
 
 }

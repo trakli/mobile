@@ -15,11 +15,13 @@ import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/widgets/all_set_widget.dart';
+import 'package:trakli/presentation/onboarding/widgets/group_setup_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/language_setting_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/wallet_setup_widget.dart';
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -100,17 +102,24 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     final hasDefaultCurrency = entityConfigs
         .any((config) => config.key == ConfigConstants.defaultCurrency);
 
+    final hasDefaultGroup = entityConfigs
+        .any((config) => config.key == ConfigConstants.defaultGroup);
+
     final List<Widget> nextPages = [];
 
     if (!hasDefaultLang) {
       nextPages.add(pageOne);
     }
 
-    if (!hasDefaultWallet || !hasDefaultCurrency) {
+    if (!hasDefaultGroup) {
       nextPages.add(pageTwo);
     }
 
-    nextPages.add(pageThree);
+    if (!hasDefaultWallet || !hasDefaultCurrency) {
+      nextPages.add(pageThree);
+    }
+
+    nextPages.add(pageFour);
 
     final shouldShow = nextPages.length >= 2;
 
@@ -207,6 +216,17 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
           },
         ),
         BlocListener<WalletCubit, WalletState>(
+          listenWhen: (previous, current) =>
+              previous.isSaving != current.isSaving,
+          listener: (context, state) {
+            if (state.isSaving) {
+              showLoader();
+            } else {
+              hideLoader();
+            }
+          },
+        ),
+        BlocListener<GroupCubit, GroupState>(
           listenWhen: (previous, current) =>
               previous.isSaving != current.isSaving,
           listener: (context, state) {
@@ -343,7 +363,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageTwo {
-    return WalletSetupWidget(
+    return GroupSetupWidget(
       onNext: () {
         nextPage();
       },
@@ -354,6 +374,17 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
   }
 
   Widget get pageThree {
+    return WalletSetupWidget(
+      onNext: () {
+        nextPage();
+      },
+      onPrev: () {
+        prevPage();
+      },
+    );
+  }
+
+  Widget get pageFour {
     return AllSetWidget(
       onTap: () async {
         setOnboardingMode(false);

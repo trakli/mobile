@@ -422,5 +422,8 @@
   "stepCounter": "Schritt {} von {}",
   "createAutomatically": "Automatisch",
   "createManually": "Manuell",
-  "selectFromWalletList": "Wallet auswählen"
+  "selectFromWalletList": "Wallet auswählen",
+  "groupSetup": "Gruppeneinrichtung",
+  "setupGroupTitle": "Richten Sie Ihre erste Gruppe ein",
+  "setupGroupDesc": "Gruppen helfen Ihnen, Ihre Finanzen zu organisieren."
 }

@@ -414,6 +414,9 @@
   "setupWalletTitle": "Set up your wallet and currency",
   "setupWalletDesc": "Configure your default wallet and currency. Your wallet currency and default currency should match for accurate tracking.",
   "walletSetup": "Wallet setup",
+  "setupGroupTitle": "Set up your default group",
+  "setupGroupDesc": "Configure your default group for organizing transactions.",
+  "groupSetup": "Group setup",
   "useDefaultWallet": "Use default wallet",
   "renameDefaultWallet": "Rename default wallet",
   "createNewWallet": "Create new wallet",
@@ -423,4 +426,5 @@
   "createAutomatically": "Automatic",
   "createManually": "Manual",
   "selectFromWalletList": "Select wallet"
+  
 }

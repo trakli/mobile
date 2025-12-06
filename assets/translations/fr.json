@@ -420,5 +420,10 @@
   "stepCounter": "Étape {} sur {}",
   "createAutomatically": "Automatique",
   "createManually": "Manuel",
-  "selectFromWalletList": "Sélectionner un portefeuille"
+  "selectFromWalletList": "Sélectionner un portefeuille",
+  "groupSetup": "Configuration du groupe",
+  "setupGroupTitle": "Configurez votre premier groupe",
+  "setupGroupDesc": "Les groupes vous aident à organiser vos finances.",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "totalExpense": "Dépense totale"
 }

@@ -422,5 +422,8 @@
   "stepCounter": "Шаг {} из {}",
   "createAutomatically": "Автоматически",
   "createManually": "Вручную",
-  "selectFromWalletList": "Выбрать кошелек"
+  "selectFromWalletList": "Выбрать кошелек",
+  "groupSetup": "Настройка группы",
+ "setupGroupTitle": "Настройте свою первую группу",
+  "setupGroupDesc": "Группы помогают вам организовать свои финансы."
 }
