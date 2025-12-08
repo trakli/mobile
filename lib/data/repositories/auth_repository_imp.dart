@@ -118,8 +118,7 @@ class AuthRepositoryImpl implements AuthRepository {
     await _tokenManager.persistToken(authResponse.accessToken);
 
     // Fetch and save configurations from remote BEFORE emitting authenticated state
-    // This ensures configs are available when onboarding checks run
-    // We wait for this to complete because onboarding depends on configs
+    // This will ensure configs are available when onboarding checks run
     await _fetchAndSaveConfigs();
 
 
@@ -152,7 +151,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final walletClientIds = remoteWallets.map((w) => w.clientId).toSet();
 
       // Identify any default-group/default-wallet configs that reference
-      // non-existent groups or wallets. We'll delete those configs remotely
+      // non-existent groups or wallets. We will delete those configs remotely
       // so the app can create/set new defaults.
       final invalidDefaultConfigs = <Config>[];
       final filteredConfigs = <Config>[];

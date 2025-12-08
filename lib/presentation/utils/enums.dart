@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -154,6 +155,20 @@ enum WalletOption {
       WalletOption.createAutomatically => LocaleKeys.createAutomatically,
       WalletOption.createManually => LocaleKeys.createManually,
       WalletOption.selectFromWalletList => LocaleKeys.selectFromWalletList,
+    };
+  }
+}
+
+enum GroupOption {
+  createAutomatically,
+  createManually,
+  selectFromGroupList;
+
+  String get customName {
+    return switch (this) {
+      GroupOption.createAutomatically => LocaleKeys.createAutomatically,
+      GroupOption.createManually => LocaleKeys.createManually,
+      GroupOption.selectFromGroupList => LocaleKeys.selectFromGroupList,
     };
   }
 }

@@ -425,6 +425,7 @@ abstract class  LocaleKeys {
   static const createAutomatically = 'createAutomatically';
   static const createManually = 'createManually';
   static const selectFromWalletList = 'selectFromWalletList';
+  static const selectFromGroupList = 'selectFromGroupList';
   static const groupSetup = 'groupSetup';
   static const setupGroupTitle = 'setupGroupTitle';
   static const setupGroupDesc = 'setupGroupDesc';

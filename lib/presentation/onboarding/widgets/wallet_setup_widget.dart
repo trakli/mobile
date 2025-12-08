@@ -14,7 +14,6 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
-import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -328,52 +327,52 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                 ],
               ),
             ),
-            SizedBox(height: 10.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: widget.onPrev,
-                  child: Text(LocaleKeys.prev.tr()),
-                ),
-                PrimaryButton(
-                  onPress: () async {
-                    final hasDefaultWallet = configCubit.state
-                        .hasConfig(ConfigConstants.defaultWallet);
-                    if (!hasDefaultWallet) {
-                      final walletCubit = context.read<WalletCubit>();
-                      if (defaultCurrency == null) {
-                        context.read<CurrencyCubit>().setCurrency(usdCurrency);
-                      }
-                      if (_selectedWalletOption ==
-                              WalletOption.createManually &&
-                          (_formKey.currentState?.validate() ?? false)) {
-                        await walletCubit.createAndSaveDefaultWallet(
-                          name: _nameController.text,
-                          currency: currency?.code ?? usdCurrency.code,
-                        );
-                        widget.onNext();
-                      } else if (_selectedWalletOption ==
-                          WalletOption.createAutomatically) {
-                        await walletCubit.createAndSaveDefaultWallet(
-                          name: LocaleKeys.defaultWalletName.tr(),
-                          description: LocaleKeys.defaultWalletDescription.tr(),
-                          currency: KeyConstants.defaultCurrencyCode,
-                        );
-                        widget.onNext();
-                      } else if (_selectedWalletOption ==
-                              WalletOption.selectFromWalletList &&
-                          wallet != null) {
-                        widget.onNext();
-                      }
-                    } else {
-                      widget.onNext();
-                    }
-                  },
-                  buttonText: LocaleKeys.next.tr(),
-                ),
-              ],
-            ),
+            // SizedBox(height: 10.h),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     TextButton(
+            //       onPressed: widget.onPrev,
+            //       child: Text(LocaleKeys.prev.tr()),
+            //     ),
+            //     PrimaryButton(
+            //       onPress: () async {
+            //         final hasDefaultWallet = configCubit.state
+            //             .hasConfig(ConfigConstants.defaultWallet);
+            //         if (!hasDefaultWallet) {
+            //           final walletCubit = context.read<WalletCubit>();
+            //           if (defaultCurrency == null) {
+            //             context.read<CurrencyCubit>().setCurrency(usdCurrency);
+            //           }
+            //           if (_selectedWalletOption ==
+            //                   WalletOption.createManually &&
+            //               (_formKey.currentState?.validate() ?? false)) {
+            //             await walletCubit.createAndSaveDefaultWallet(
+            //               name: _nameController.text,
+            //               currency: currency?.code ?? usdCurrency.code,
+            //             );
+            //             widget.onNext();
+            //           } else if (_selectedWalletOption ==
+            //               WalletOption.createAutomatically) {
+            //             await walletCubit.createAndSaveDefaultWallet(
+            //               name: LocaleKeys.defaultWalletName.tr(),
+            //               description: LocaleKeys.defaultWalletDescription.tr(),
+            //               currency: KeyConstants.defaultCurrencyCode,
+            //             );
+            //             widget.onNext();
+            //           } else if (_selectedWalletOption ==
+            //                   WalletOption.selectFromWalletList &&
+            //               wallet != null) {
+            //             widget.onNext();
+            //           }
+            //         } else {
+            //           widget.onNext();
+            //         }
+            //       },
+            //       buttonText: LocaleKeys.next.tr(),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

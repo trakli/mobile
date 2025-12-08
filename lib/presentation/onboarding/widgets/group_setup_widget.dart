@@ -15,7 +15,8 @@ import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/utils/popovers/wallet_type_popover.dart';
+import 'package:trakli/presentation/utils/popovers/group_type_popover.dart';
+import 'package:trakli/presentation/utils/popovers/group_list_popover.dart';
 
 class GroupSetupWidget extends StatefulWidget {
   final VoidCallback onNext;
@@ -32,11 +33,12 @@ class GroupSetupWidget extends StatefulWidget {
 }
 
 class _GroupSetupWidgetState extends State<GroupSetupWidget> {
-  WalletOption? _selectedGroupOption = WalletOption.createAutomatically;
+  GroupOption? _selectedGroupOption = GroupOption.createAutomatically;
   final TextEditingController _optionController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final GlobalKey gloKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
+  GroupEntity? _selectedGroup;
 
   @override
   void initState() {
@@ -137,7 +139,7 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                         showCustomPopOver(
                           context,
                           maxWidth: 0.8.sw,
-                          widget: WalletTypePopover(
+                          widget: GroupTypePopover(
                             onSelect: (type) {
                               setState(() {
                                 _selectedGroupOption = type;
@@ -158,7 +160,7 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                       ),
                     );
                   }),
-                  if (_selectedGroupOption == WalletOption.createManually) ...[
+                  if (_selectedGroupOption == GroupOption.createManually) ...[
                     SizedBox(height: 16.h),
                     Form(
                       key: _formKey,
@@ -177,15 +179,28 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                     ),
                   ],
                   if (_selectedGroupOption ==
-                          WalletOption.selectFromWalletList &&
-                      group != null) ...[
+                      GroupOption.selectFromGroupList) ...[
                     SizedBox(height: 16.h),
-                    Text(
-                      group.name,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                      ),
-                    ),
+Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, ),
+                            alignment: Alignment.centerLeft,
+                            constraints: BoxConstraints(
+                              maxHeight: 50.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDEE1E0).withValues(alpha: 0.4),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                (_selectedGroup ?? group)?.name ?? '',
+                                style: TextStyle(fontSize: 16.sp),
+                              ),
+                            ),
+                          ),
+                
                   ],
                 ],
               ),
@@ -205,27 +220,29 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                     if (!hasDefaultGroup) {
                       final groupCubit = context.read<GroupCubit>();
                       if (_selectedGroupOption ==
-                              WalletOption.createManually &&
+                              GroupOption.createManually &&
                           (_formKey.currentState?.validate() ?? false)) {
                         await groupCubit.createAndSaveDefaultGroup(
                           name: _nameController.text,
                         );
                         widget.onNext();
                       } else if (_selectedGroupOption ==
-                          WalletOption.createAutomatically) {
+                          GroupOption.createAutomatically) {
                         await groupCubit.createAndSaveDefaultGroup(
                           name: LocaleKeys.defaultGroupName.tr(),
                         );
                         widget.onNext();
                       } else if (_selectedGroupOption ==
-                              WalletOption.selectFromWalletList &&
-                          group != null) {
-                        // Save existing group as default
-                        await configCubit.saveConfig(
-                          key: ConfigConstants.defaultGroup,
-                          type: ConfigType.string,
-                          value: group.clientId,
-                        );
+                          GroupOption.selectFromGroupList) {
+                        // If user selected a new group, save it
+                        if (_selectedGroup != null) {
+                          await configCubit.saveConfig(
+                            key: ConfigConstants.defaultGroup,
+                            type: ConfigType.string,
+                            value: _selectedGroup!.clientId,
+                          );
+                        }
+                        // If group is already saved via config (group != null), just proceed
                         widget.onNext();
                       }
                     } else {

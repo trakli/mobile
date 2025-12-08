@@ -421,6 +421,7 @@
   "createAutomatically": "Automatique",
   "createManually": "Manuel",
   "selectFromWalletList": "Sélectionner un portefeuille",
+  "selectFromGroupList": "Sélectionner un groupe",
   "groupSetup": "Configuration du groupe",
   "setupGroupTitle": "Configurez votre premier groupe",
   "setupGroupDesc": "Les groupes vous aident à organiser vos finances.",

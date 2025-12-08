@@ -423,6 +423,7 @@
   "createAutomatically": "Automatisch",
   "createManually": "Manuell",
   "selectFromWalletList": "Wallet auswählen",
+  "selectFromGroupList": "Gruppe auswählen",
   "groupSetup": "Gruppeneinrichtung",
   "setupGroupTitle": "Richten Sie Ihre erste Gruppe ein",
   "setupGroupDesc": "Gruppen helfen Ihnen, Ihre Finanzen zu organisieren."

@@ -425,6 +425,6 @@
   "stepCounter": "Step {} of {}",
   "createAutomatically": "Automatic",
   "createManually": "Manual",
-  "selectFromWalletList": "Select wallet"
-  
+  "selectFromWalletList": "Select wallet",
+  "selectFromGroupList": "Select group"
 }

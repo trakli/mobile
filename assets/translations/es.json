@@ -421,6 +421,7 @@
   "createAutomatically": "Automático",
   "createManually": "Manual",
   "selectFromWalletList": "Seleccionar billetera",
+  "selectFromGroupList": "Seleccionar grupo",
   "groupSetup": "Configuración del grupo",
   "setupGroupTitle": "Configura tu primer grupo",
   "setupGroupDesc": "Los grupos te ayudan a organizar tus finanzas."

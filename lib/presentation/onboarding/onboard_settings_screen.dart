@@ -107,11 +107,12 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
 
     final List<Widget> nextPages = [];
 
+
     if (!hasDefaultLang) {
       nextPages.add(pageOne);
     }
 
-    if (!hasDefaultGroup) {
+   if (!hasDefaultGroup) {
       nextPages.add(pageTwo);
     }
 
