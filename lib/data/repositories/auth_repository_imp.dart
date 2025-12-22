@@ -55,8 +55,8 @@ class AuthRepositoryImpl implements AuthRepository {
         _preferenceManager = preferenceManager,
         _configRemoteDataSource = configRemoteDataSource,
         _configSyncHandler = configSyncHandler,
-      _groupSyncHandler = groupSyncHandler,
-      _walletSyncHandler = walletSyncHandler,
+        _groupSyncHandler = groupSyncHandler,
+        _walletSyncHandler = walletSyncHandler,
         _database = database;
 
   @override
@@ -120,7 +120,6 @@ class AuthRepositoryImpl implements AuthRepository {
     // Fetch and save configurations from remote BEFORE emitting authenticated state
     // This will ensure configs are available when onboarding checks run
     await _fetchAndSaveConfigs();
-
 
     await _localDataSource.saveUser(newUser);
     await _preferenceManager.saveUserId(newUser.id);
@@ -220,10 +219,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await _preferenceManager.clearAll();
       await _localDataSource.deleteUser();
       await _localDataSource.clearDatabase();
-      
+
       logger.e('Failed to fetch configurations after login: $e',
           error: e, stackTrace: stackTrace);
-      
+
       // Rethrow so login completely fails and user is not authenticated
       rethrow;
     }

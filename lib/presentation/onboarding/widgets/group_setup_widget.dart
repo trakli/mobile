@@ -36,6 +36,7 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
   GroupOption? _selectedGroupOption = GroupOption.createAutomatically;
   final TextEditingController _optionController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _groupController = TextEditingController();
   final GlobalKey gloKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
   GroupEntity? _selectedGroup;
@@ -50,6 +51,7 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
   void dispose() {
     _optionController.dispose();
     _nameController.dispose();
+    _groupController.dispose();
     super.dispose();
   }
 
@@ -62,7 +64,16 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
         .firstWhereOrNull((e) => e.key == ConfigConstants.defaultGroup);
     GroupEntity? group = groupCubit.state.groups
         .firstWhereOrNull((e) => e.clientId == sConfig?.value);
-    
+
+    // Keep the select-group field in sync without creating controllers in build().
+    final selectedGroupName = (_selectedGroup ?? group)?.name ?? '';
+    if (_groupController.text != selectedGroupName) {
+      _groupController.value = TextEditingValue(
+        text: selectedGroupName,
+        selection: TextSelection.collapsed(offset: selectedGroupName.length),
+      );
+    }
+
     return BlocListener<GroupCubit, GroupState>(
       listener: (BuildContext context, GroupState state) {
         if (state.isSaving) {
@@ -77,50 +88,50 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
           );
         }
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 16.h,
-        ),
-        margin: EdgeInsets.symmetric(
-          horizontal: 16.w,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 0.h),
-            CircleAvatar(
-              radius: 30.sp,
-              backgroundColor: appPrimaryColor.withAlpha(30),
-              child: Icon(
-                Icons.group,
-                size: 28.sp,
-                color: appPrimaryColor,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 16.h,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 0.h),
+              CircleAvatar(
+                radius: 30.sp,
+                backgroundColor: appPrimaryColor.withAlpha(30),
+                child: Icon(
+                  Icons.group,
+                  size: 28.sp,
+                  color: appPrimaryColor,
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              LocaleKeys.setupGroupTitle.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 16.h),
+              Text(
+                LocaleKeys.setupGroupTitle.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              LocaleKeys.setupGroupDesc.tr(),
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
-            ),
-            SizedBox(height: 16.h),
-            Expanded(
-              child: Column(
+              SizedBox(height: 8.h),
+              Text(
+                LocaleKeys.setupGroupDesc.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+              ),
+              SizedBox(height: 16.h),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     LocaleKeys.groupSetup.tr(),
@@ -181,82 +192,88 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                   if (_selectedGroupOption ==
                       GroupOption.selectFromGroupList) ...[
                     SizedBox(height: 16.h),
-Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, ),
-                            alignment: Alignment.centerLeft,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0).withValues(alpha: 0.4),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                (_selectedGroup ?? group)?.name ?? '',
-                                style: TextStyle(fontSize: 16.sp),
-                              ),
-                            ),
+                    TextFormField(
+                      controller: _groupController,
+                      readOnly: true,
+                      onTap: () {
+                        showCustomPopOver(
+                          context,
+                          maxWidth: 0.8.sw,
+                          widget: GroupListPopover(
+                            label: LocaleKeys.pickGroup.tr(),
+                            onSelect: (selectedGroup) {
+                              setState(() {
+                                _selectedGroup = selectedGroup;
+                              });
+                            },
                           ),
-                
+                        );
+                      },
+                      decoration: InputDecoration(
+                        hintText: LocaleKeys.pickGroup.tr(),
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.all(10.sp),
+                          child: SvgPicture.asset(
+                            Assets.images.arrowDown,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ],
               ),
-            ),
-            SizedBox(height: 10.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: widget.onPrev,
-                  child: Text(LocaleKeys.prev.tr()),
-                ),
-                PrimaryButton(
-                  onPress: () async {
-                    final hasDefaultGroup = configCubit.state
-                        .hasConfig(ConfigConstants.defaultGroup);
-                    if (!hasDefaultGroup) {
-                      final groupCubit = context.read<GroupCubit>();
-                      if (_selectedGroupOption ==
-                              GroupOption.createManually &&
-                          (_formKey.currentState?.validate() ?? false)) {
-                        await groupCubit.createAndSaveDefaultGroup(
-                          name: _nameController.text,
-                        );
-                        widget.onNext();
-                      } else if (_selectedGroupOption ==
-                          GroupOption.createAutomatically) {
-                        await groupCubit.createAndSaveDefaultGroup(
-                          name: LocaleKeys.defaultGroupName.tr(),
-                        );
-                        widget.onNext();
-                      } else if (_selectedGroupOption ==
-                          GroupOption.selectFromGroupList) {
-                        // If user selected a new group, save it
-                        if (_selectedGroup != null) {
-                          await configCubit.saveConfig(
-                            key: ConfigConstants.defaultGroup,
-                            type: ConfigType.string,
-                            value: _selectedGroup!.clientId,
+              SizedBox(height: 10.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: widget.onPrev,
+                    child: Text(LocaleKeys.prev.tr()),
+                  ),
+                  PrimaryButton(
+                    onPress: () async {
+                      final hasDefaultGroup = configCubit.state
+                          .hasConfig(ConfigConstants.defaultGroup);
+                      if (!hasDefaultGroup) {
+                        final groupCubit = context.read<GroupCubit>();
+                        if (_selectedGroupOption ==
+                                GroupOption.createManually &&
+                            (_formKey.currentState?.validate() ?? false)) {
+                          await groupCubit.createAndSaveDefaultGroup(
+                            name: _nameController.text,
                           );
+                          widget.onNext();
+                        } else if (_selectedGroupOption ==
+                            GroupOption.createAutomatically) {
+                          await groupCubit.createAndSaveDefaultGroup(
+                            name: LocaleKeys.defaultGroupName.tr(),
+                          );
+                          widget.onNext();
+                        } else if (_selectedGroupOption ==
+                            GroupOption.selectFromGroupList) {
+                          // If user selected a new group, save it
+                          if (_selectedGroup != null) {
+                            await configCubit.saveConfig(
+                              key: ConfigConstants.defaultGroup,
+                              type: ConfigType.string,
+                              value: _selectedGroup!.clientId,
+                            );
+                          }
+                          // If group is already saved via config (group != null), just proceed
+                          widget.onNext();
                         }
-                        // If group is already saved via config (group != null), just proceed
+                      } else {
                         widget.onNext();
                       }
-                    } else {
-                      widget.onNext();
-                    }
-                  },
-                  buttonText: LocaleKeys.next.tr(),
-                ),
-              ],
-            ),
-          ],
+                    },
+                    buttonText: LocaleKeys.next.tr(),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

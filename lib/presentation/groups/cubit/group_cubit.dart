@@ -121,7 +121,7 @@ class GroupCubit extends Cubit<GroupState> {
     MediaEntity? media,
   }) async {
     emit(state.copyWith(isSaving: true));
-    
+
     final result = await _addGroupUseCase(
       AddGroupUseCaseParams(
         name: name,
@@ -129,7 +129,7 @@ class GroupCubit extends Cubit<GroupState> {
         icon: media,
       ),
     );
-    
+
     result.fold(
       (failure) => emit(state.copyWith(
         failure: failure,

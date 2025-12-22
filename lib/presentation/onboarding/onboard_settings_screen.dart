@@ -79,6 +79,15 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     _loadCurrencyFromConfig();
   }
 
+  @override
+  void dispose() {
+    // Safety: ensure we never leave a global loader overlay showing
+    // when navigating away from onboarding.
+    hideLoader();
+    pageController.dispose();
+    super.dispose();
+  }
+
   void _loadCurrencyFromConfig() {
     final currency = getDefaultCurrencyFromConfig(context);
     if (currency != null) {
@@ -389,7 +398,7 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     return AllSetWidget(
       onTap: () async {
         setOnboardingMode(false);
-        context.read<ConfigCubit>().saveConfig(
+        await context.read<ConfigCubit>().saveConfig(
               key: ConfigConstants.onboardingComplete,
               type: ConfigType.bool,
               value: true,
