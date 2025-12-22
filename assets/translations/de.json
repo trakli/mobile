@@ -21,6 +21,7 @@
   "password": "Passwort",
   "forgotPassword": "Passwort vergessen",
   "reset": "Zurücksetzen",
+  "retry": "Wiederholen",
   "noAccountYet": "Noch kein Konto?",
   "otpDesc": "Gib den OTP-Code ein, der an die E-Mail gesendet wurde",
   "continueT": "Weiter",
@@ -421,5 +422,9 @@
   "stepCounter": "Schritt {} von {}",
   "createAutomatically": "Automatisch",
   "createManually": "Manuell",
-  "selectFromWalletList": "Wallet auswählen"
+  "selectFromWalletList": "Wallet auswählen",
+  "selectFromGroupList": "Gruppe auswählen",
+  "groupSetup": "Gruppeneinrichtung",
+  "setupGroupTitle": "Richten Sie Ihre erste Gruppe ein",
+  "setupGroupDesc": "Gruppen helfen Ihnen, Ihre Finanzen zu organisieren."
 }

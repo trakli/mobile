@@ -54,7 +54,8 @@ class ConfigSyncHandler extends SyncTypeHandler<Config, String, int>
 
   @override
   Future<Config?> restGetRemote(int id) async {
-    return await remoteDataSource.getConfig(id);
+      // return await remoteDataSource.getConfig(id);
+    return await remoteDataSource.getConfig(id.toString());
   }
 
   @override
@@ -68,10 +69,8 @@ class ConfigSyncHandler extends SyncTypeHandler<Config, String, int>
 
   @override
   Future<void> restDeleteRemote(Config entity) async {
-    if (entity.id != null) {
-      await remoteDataSource.deleteConfig(entity.id!);
+    await remoteDataSource.deleteConfig(entity.key);
     }
-  }
 
   @override
   String getClientId(Config entity) => entity.clientId;

@@ -278,8 +278,11 @@ class $AssetsTranslationsGen {
   /// File path: assets/translations/it.json
   String get it => 'assets/translations/it.json';
 
+  /// File path: assets/translations/ru.json
+  String get ru => 'assets/translations/ru.json';
+
   /// List of all assets
-  List<String> get values => [de, en, es, fr, it];
+  List<String> get values => [de, en, es, fr, it, ru];
 }
 
 class Assets {

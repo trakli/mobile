@@ -17,7 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -464,9 +464,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   }
 
   Widget statTwo({required List<TransactionCompleteEntity> transactions}) {
-    final onboardingState = context.watch<OnboardingCubit>().state;
-    final currencySymbol =
-        onboardingState.entity?.selectedCurrency?.symbol ?? 'XAF';
+    final currencyState = context.watch<CurrencyCubit>().state;
+    final currencySymbol = currencyState.currency?.symbol ?? 'XAF';
 
     double totalIncome = 0;
     double totalExpense = 0;

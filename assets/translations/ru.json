@@ -21,6 +21,7 @@
   "password": "Пароль",
   "forgotPassword": "Забыли пароль",
   "reset": "Сбросить",
+  "retry": "Повторить",
   "noAccountYet": "Еще нет аккаунта?",
   "otpDesc": "Введите OTP-код, отправленный на электронную почту",
   "continueT": "Продолжить",
@@ -421,5 +422,9 @@
   "stepCounter": "Шаг {} из {}",
   "createAutomatically": "Автоматически",
   "createManually": "Вручную",
-  "selectFromWalletList": "Выбрать кошелек"
+  "selectFromWalletList": "Выбрать кошелек",
+  "selectFromGroupList": "Выбрать группу",
+  "groupSetup": "Настройка группы",
+ "setupGroupTitle": "Настройте свою первую группу",
+  "setupGroupDesc": "Группы помогают вам организовать свои финансы."
 }

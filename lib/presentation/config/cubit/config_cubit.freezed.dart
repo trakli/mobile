@@ -166,14 +166,15 @@ class __$$ConfigStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ConfigStateImpl implements _ConfigState {
+class _$ConfigStateImpl extends _ConfigState {
   const _$ConfigStateImpl(
       {required final List<ConfigEntity> configs,
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
       required this.failure})
-      : _configs = configs;
+      : _configs = configs,
+        super._();
 
   final List<ConfigEntity> _configs;
   @override
@@ -230,13 +231,14 @@ class _$ConfigStateImpl implements _ConfigState {
       __$$ConfigStateImplCopyWithImpl<_$ConfigStateImpl>(this, _$identity);
 }
 
-abstract class _ConfigState implements ConfigState {
+abstract class _ConfigState extends ConfigState {
   const factory _ConfigState(
       {required final List<ConfigEntity> configs,
       required final bool isLoading,
       required final bool isSaving,
       required final bool isDeleting,
       required final Failure failure}) = _$ConfigStateImpl;
+  const _ConfigState._() : super._();
 
   @override
   List<ConfigEntity> get configs;

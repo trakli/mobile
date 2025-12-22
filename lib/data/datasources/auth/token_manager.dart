@@ -1,5 +1,5 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class TokenManager {
   /// Gets the current auth token (nullable)
@@ -23,29 +23,43 @@ class TokenManagerImpl implements TokenManager {
   static const _tokenKey = 'auth_token';
   static const _refreshTokenKey = 'auth_refresh_token';
 
-  static const _storage = FlutterSecureStorage();
+  SharedPreferences? _prefsInstance;
 
-  const TokenManagerImpl();
+  TokenManagerImpl();
+
+  Future<SharedPreferences> get _sharedPrefs async {
+    _prefsInstance ??= await SharedPreferences.getInstance();
+    return _prefsInstance!;
+  }
 
   @override
-  Future<String?> get token => _storage.read(key: _tokenKey);
+  Future<String?> get token async {
+    final prefs = await _sharedPrefs;
+    return prefs.getString(_tokenKey);
+  }
 
   @override
   Future<void> persistToken(String token) async {
-    await _storage.write(key: _tokenKey, value: token);
+    final prefs = await _sharedPrefs;
+    await prefs.setString(_tokenKey, token);
   }
 
   @override
   Future<void> clearToken() async {
-    await _storage.delete(key: _tokenKey);
-    await _storage.delete(key: _refreshTokenKey);
+    final prefs = await _sharedPrefs;
+    await prefs.remove(_tokenKey);
+    await prefs.remove(_refreshTokenKey);
   }
 
   @override
   Future<void> persistRefreshToken(String token) async {
-    await _storage.write(key: _refreshTokenKey, value: token);
+    final prefs = await _sharedPrefs;
+    await prefs.setString(_refreshTokenKey, token);
   }
 
   @override
-  Future<bool> get hasToken => _storage.containsKey(key: _tokenKey);
+  Future<bool> get hasToken async {
+    final prefs = await _sharedPrefs;
+    return prefs.containsKey(_tokenKey);
+  }
 }

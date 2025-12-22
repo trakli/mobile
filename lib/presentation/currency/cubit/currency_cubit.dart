@@ -1,0 +1,112 @@
+import 'dart:async';
+import 'package:collection/collection.dart';
+import 'package:currency_picker/currency_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/usecases/configs/get_config_usecase.dart';
+import 'package:trakli/domain/usecases/configs/listen_to_configs_usecase.dart';
+import 'package:trakli/domain/usecases/configs/save_config_usecase.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
+
+part 'currency_state.dart';
+part 'currency_cubit.freezed.dart';
+
+@injectable
+class CurrencyCubit extends Cubit<CurrencyState> {
+  final GetConfigUseCase _getConfigUseCase;
+  final SaveConfigUseCase _saveConfigUseCase;
+  final ListenToConfigsUseCase _listenToConfigsUseCase;
+  StreamSubscription? _subscription;
+
+  CurrencyCubit(
+    this._getConfigUseCase,
+    this._saveConfigUseCase,
+    this._listenToConfigsUseCase,
+  ) : super(const CurrencyState.initial()) {
+    _listenToCurrency();
+  }
+
+  void _listenToCurrency() {
+    _subscription?.cancel();
+    _subscription = _listenToConfigsUseCase(NoParams()).listen(
+      (result) => result.fold(
+        (failure) => emit(CurrencyState.error(failure)),
+        (configs) {
+          final currencyConfig = configs.firstWhereOrNull(
+            (config) => config.key == ConfigConstants.defaultCurrency,
+          );
+          if (currencyConfig != null && currencyConfig.value != null) {
+            final currencyCode = currencyConfig.value as String;
+            final currency = _getCurrencyFromCode(currencyCode);
+            if (currency != null) {
+              emit(CurrencyState.loaded(currency));
+            } else {
+              emit(const CurrencyState.initial());
+            }
+          } else {
+            emit(const CurrencyState.initial());
+          }
+        },
+      ),
+    );
+  }
+
+  Currency? _getCurrencyFromCode(String code) {
+    try {
+      final allCurrencies = CurrencyService().getAll();
+      return allCurrencies.firstWhereOrNull(
+        (c) => c.code == code,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> loadCurrency() async {
+    emit(const CurrencyState.loading());
+    final result = await _getConfigUseCase(
+      GetConfigUseCaseParams(key: ConfigConstants.defaultCurrency),
+    );
+    result.fold(
+      (failure) => emit(CurrencyState.error(failure)),
+      (config) {
+        if (config.value != null) {
+          final currencyCode = config.value as String;
+          final currency = _getCurrencyFromCode(currencyCode);
+          if (currency != null) {
+            emit(CurrencyState.loaded(currency));
+          } else {
+            emit(const CurrencyState.initial());
+          }
+        } else {
+          emit(const CurrencyState.initial());
+        }
+      },
+    );
+  }
+
+  Future<void> setCurrency(Currency currency) async {
+    emit(const CurrencyState.loading());
+    final result = await _saveConfigUseCase(
+      SaveConfigUseCaseParams(
+        key: ConfigConstants.defaultCurrency,
+        type: ConfigType.string,
+        value: currency.code,
+      ),
+    );
+    result.fold(
+      (failure) => emit(CurrencyState.error(failure)),
+      (_) => emit(CurrencyState.loaded(currency)),
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
+  }
+}

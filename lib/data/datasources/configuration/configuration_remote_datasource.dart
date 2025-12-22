@@ -14,38 +14,16 @@ abstract class ConfigRemoteDataSource {
     bool? noClientId,
   });
 
-  Future<Config?> getConfig(int id);
+  Future<Config?> getConfig(String id);
 
   Future<Config> insertConfig(Config config);
 
   Future<Config> updateConfig(Config config);
 
-  Future<void> deleteConfig(int id);
+  Future<void> deleteConfig(String id);
 
   // Legacy methods for backward compatibility
   Future<List<ConfigEntity>> fetchConfigs();
-
-  Future<ConfigEntity> getConfigByKey({
-    required String key,
-  });
-
-  Future<void> saveConfig({
-    required String key,
-    required String type,
-    required String clientId,
-    required dynamic value,
-  });
-
-  Future<void> updateConfigByKey({
-    required String key,
-    required String type,
-    required String clientId,
-    required dynamic value,
-  });
-
-  Future<void> deleteConfigByKey({
-    required String key,
-  });
 }
 
 @Injectable(as: ConfigRemoteDataSource)
@@ -83,7 +61,7 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
   }
 
   @override
-  Future<Config?> getConfig(int id) async {
+  Future<Config?> getConfig( String id) async {
     final response = await dio.get('configurations/$id');
     if (response.data == null) return null;
 
@@ -123,7 +101,7 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
   }
 
   @override
-  Future<void> deleteConfig(int id) async {
+  Future<void> deleteConfig(String id) async {
     await dio.delete('configurations/$id');
   }
 
@@ -134,74 +112,4 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
     return ConfigMapper.toDomainList(configs);
   }
 
-  @override
-  Future<ConfigEntity> getConfigByKey({
-    required String key,
-  }) async {
-    final response = await dio.get(
-      'configurations',
-      queryParameters: {
-        'key': key,
-      },
-    );
-
-    final apiResponse = ApiResponse.fromJson(response.data);
-    final config = Config.fromJson(
-      JsonDefaultsHelper.addDefaults(apiResponse.data as Map<String, dynamic>),
-    );
-    return ConfigMapper.toDomain(config);
-  }
-
-  @override
-  Future<void> saveConfig({
-    required String key,
-    required String type,
-    required String clientId,
-    required dynamic value,
-  }) async {
-    await dio.post(
-      'configurations',
-      data: {
-        'key': key,
-        'value': value,
-        'type': type,
-        'client_id': clientId,
-      },
-    );
-    return;
-  }
-
-  @override
-  Future<void> updateConfigByKey({
-    required String key,
-    required String type,
-    required String clientId,
-    required dynamic value,
-  }) async {
-    await dio.put(
-      'configurations',
-      queryParameters: {
-        'key': key,
-      },
-      data: {
-        'value': value,
-        'type': type,
-        'client_id': clientId,
-      },
-    );
-    return;
-  }
-
-  @override
-  Future<void> deleteConfigByKey({
-    required String key,
-  }) async {
-    await dio.delete(
-      'configurations',
-      queryParameters: {
-        'key': key,
-      },
-    );
-    return;
-  }
 }

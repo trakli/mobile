@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
@@ -14,10 +15,10 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/info_interfaces/empty_home_widget.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
@@ -57,23 +58,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool hasWallets =
         wallets.isNotEmpty && currentWalletIndex < wallets.length;
 
-    final String? currentWalletId =
-        hasWallets ? wallets[currentWalletIndex].clientId : null;
+    if (!hasWallets) return <TransactionCompleteEntity>[];
+
+    final String currentWalletId = wallets[currentWalletIndex].clientId;
     final String? selectedGroupId = selectedGroup?.clientId;
     final String? defaultGroupId = defaultGroup?.clientId;
 
-    if (!hasWallets) return <TransactionCompleteEntity>[];
+    final filterdTransactions = transactions.where((transaction) {
+      // Filter by wallet first
+      if (transaction.wallet.clientId != currentWalletId) {
+        return false;
+      }
 
-    return transactions.where((transaction) {
-      final String transactionWalletId = transaction.wallet.clientId;
       final String? transactionGroupId = transaction.group?.clientId;
 
-      final bool walletMatches = transactionWalletId == currentWalletId;
+      // Include transaction if:
       final bool groupMatches = transactionGroupId == selectedGroupId;
-      final bool isDefaultGroup = selectedGroupId == defaultGroupId;
+      final bool shouldUseDefaultGroup = transactionGroupId == null &&
+          selectedGroupId == defaultGroupId &&
+          defaultGroupId != null;
 
-      return walletMatches && (groupMatches || isDefaultGroup);
+      return groupMatches || shouldUseDefaultGroup;
     }).toList();
+
+    return filterdTransactions;
   }
 
   @override
@@ -83,9 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentWalletIndex = walletState.currentSelectedWalletIndex;
 
     final groups = context.watch<GroupCubit>().state.groups;
-    final entity = context.watch<OnboardingCubit>().state.entity;
-    final defaultGroupId = entity?.defaultGroup;
-
+    // Default group is tracked via configuration
+    final configState = context.watch<ConfigCubit>().state;
+    final defaultGroupConfig =
+        configState.getConfigByKey(ConfigConstants.defaultGroup);
+    final defaultGroupId = defaultGroupConfig?.value as String?;
     final defaultGroup =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 

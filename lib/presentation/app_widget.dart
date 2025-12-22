@@ -8,10 +8,10 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/datasources/auth/preference_manager.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
-import 'package:trakli/domain/repositories/onboarding_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
@@ -21,10 +21,10 @@ import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/linear_indicator.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/onboarding/onboarding_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
@@ -73,9 +73,6 @@ class AppWidget extends StatelessWidget {
           create: (_) => getIt<OAuthCubit>(),
         ),
         BlocProvider(
-          create: (_) => getIt<OnboardingCubit>()..getOnboardingState(),
-        ),
-        BlocProvider(
           create: (_) => getIt<ExchangeRateCubit>(),
         ),
         BlocProvider(
@@ -98,6 +95,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<ConfigCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<CurrencyCubit>()..loadCurrency(),
         ),
       ],
       child: const AppView(),
@@ -127,6 +127,46 @@ class _AppViewState extends State<AppView> {
       await storage.deleteAll();
 
       await prefs.setBool(KeyConstants.isFirstAppLaunch, false);
+    }
+  }
+
+  /// Checks if onboarding is complete 
+  /// It verifies all required defaults are set
+  /// Flags checked are (onboarding completed flag, default currency, default group, default wallet)
+  Future<bool> _isOnboardingCompleteWithDefaults() async {
+    try {
+      final configRepo = getIt<ConfigRepository>();
+
+      // Fetch all configs at once for efficiency
+      final allConfigsResult = await configRepo.getAllConfigs();
+
+      final allConfigs = allConfigsResult.fold(
+        (failure) => <dynamic>[],
+        (configs) => configs,
+      );
+
+      if (allConfigs.isEmpty) return false;
+
+      final configMap = <String, dynamic>{};
+      for (final config in allConfigs) {
+        configMap[config.key] = config.value;
+      }
+
+      final hasOnboardingComplete =
+          configMap[ConfigConstants.onboardingComplete] == true;
+      final hasCurrency = configMap[ConfigConstants.defaultCurrency] != null &&
+          configMap[ConfigConstants.defaultCurrency]
+              .toString()
+              .isNotEmpty;
+      final hasGroup = configMap[ConfigConstants.defaultGroup] != null &&
+          configMap[ConfigConstants.defaultGroup].toString().isNotEmpty;
+      final hasWallet = configMap[ConfigConstants.defaultWallet] != null &&
+          configMap[ConfigConstants.defaultWallet].toString().isNotEmpty;
+
+      return hasOnboardingComplete && hasCurrency && hasGroup && hasWallet;
+    } catch (e) {
+      logger.w('Error checking onboarding completion with defaults: $e');
+      return false;
     }
   }
 
@@ -173,15 +213,9 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       getIt<SynchAppDatabase>().doSync();
 
-                      final entityResult = await getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.onboardingComplete);
+                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
 
-                      final entityOnboard = entityResult.fold(
-                        (failure) => null,
-                        (entity) => entity,
-                      );
-
-                      if (entityOnboard?.value == true) {
+                      if (isOnboardingComplete) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -216,15 +250,9 @@ class _AppViewState extends State<AppView> {
                       getIt<SynchAppDatabase>().stopAllSync();
                       context.read<TransactionCubit>().setCurrentGroup(null);
 
-                      final entityResult = await getIt<OnboardingRepository>()
-                          .getOnboardingState();
+                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
 
-                      final entity = entityResult.fold(
-                        (failure) => null,
-                        (entity) => entity,
-                      );
-
-                      if (entity?.isOnboardingComplete == true) {
+                      if (isOnboardingComplete) {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
@@ -297,3 +325,5 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+

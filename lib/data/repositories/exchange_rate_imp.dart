@@ -7,18 +7,19 @@ import 'package:trakli/core/constants/key_constants.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/error/repository_error_handler.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/data/datasources/exchange-rate/exchange_rate_local_datasource.dart';
 import 'package:trakli/data/datasources/exchange-rate/exchange_rate_remote_datasource.dart';
-import 'package:trakli/data/datasources/onboarding/onboarding_local_data_source.dart';
 import 'package:trakli/data/mappers/exchange_rate_mapper.dart';
 import 'package:trakli/domain/entities/exchange_rate_entity.dart';
+import 'package:trakli/domain/repositories/config_repository.dart';
 import 'package:trakli/domain/repositories/exchange_rate_repository.dart';
 
 @Singleton(as: ExchangeRateRepository)
 class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   final ExchangeRateLocalDataSource localDataSource;
   final ExchangeRateRemoteDataSource remoteDataSource;
-  final OnboardingLocalDataSource onboardingLocalDataSource;
+  final ConfigRepository configRepository;
 
   final _exchangeRateController =
       StreamController<ExchangeRateEntity>.broadcast();
@@ -28,7 +29,7 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   ExchangeRateRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
-    required this.onboardingLocalDataSource,
+    required this.configRepository,
   });
 
   @override
@@ -37,12 +38,19 @@ class ExchangeRateRepositoryImpl extends ExchangeRateRepository {
   }
 
   Stream<ExchangeRateEntity> _getAndEmitExchangeRate() async* {
-    final formalModel = await onboardingLocalDataSource.getOnboardingState();
     String currencyCode = defaultCurrencyCode;
 
-    if (formalModel != null) {
-      currencyCode = formalModel.selectedCurrency?.code ?? defaultCurrencyCode;
-    }
+    final configResult = await configRepository.getConfigByKey(
+      ConfigConstants.defaultCurrency,
+    );
+    configResult.fold(
+      (_) {},
+      (config) {
+        if (config.value != null) {
+          currencyCode = config.value as String;
+        }
+      },
+    );
 
     final exchangeRate = await localDataSource.getExchangeRate(currencyCode);
 

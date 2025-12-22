@@ -8,7 +8,7 @@ import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/onboarding/cubit/onboarding_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -41,7 +41,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
   void initState() {
     super.initState();
     _selectedType = widget.wallet?.type ?? WalletType.cash;
-    currency = context.read<OnboardingCubit>().state.entity?.selectedCurrency;
+    currency = context.read<CurrencyCubit>().state.currency;
 
     if (widget.wallet != null) {
       _nameController.text = widget.wallet!.name;
@@ -63,7 +63,11 @@ class _AddWalletFormState extends State<AddWalletForm> {
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final walletCubit = context.read<WalletCubit>();
-      final onboardingEntity = context.read<OnboardingCubit>().state.entity;
+
+      // Parse balance with default value of 0.0 if empty
+      final balanceText = _balanceController.text.trim();
+      final balance =
+          balanceText.isEmpty ? 0.0 : (double.tryParse(balanceText) ?? 0.0);
 
       if (widget.wallet != null) {
         // Update existing wallet
@@ -71,9 +75,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
           clientId: widget.wallet!.clientId,
           name: _nameController.text,
           type: _selectedType,
-          balance: onboardingEntity?.editWalletAmount == true
-              ? double.parse(_balanceController.text)
-              : widget.wallet!.balance,
+          balance: balance,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
@@ -92,9 +94,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
         walletCubit.addWallet(
           name: _nameController.text,
           type: _selectedType,
-          balance: onboardingEntity?.editWalletAmount == true
-              ? double.parse(_balanceController.text)
-              : 0.0,
+          balance: balance,
           currency: currency!.code,
           description: _descriptionController.text.isEmpty
               ? null
@@ -108,8 +108,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingEntity = context.read<OnboardingCubit>().state.entity;
-
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -168,7 +166,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 ),
               ],
             ),
-            if (onboardingEntity?.editWalletAmount == true) ...[
+            ...[
               SizedBox(height: 20.h),
               Text(
                 LocaleKeys.balance.tr(),
@@ -192,15 +190,12 @@ class _AddWalletFormState extends State<AddWalletForm> {
                           hintText: LocaleKeys.exampleAmount.tr(),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return LocaleKeys.amountIsRequired.tr();
+                          if (value == null || value.trim().isEmpty) {
+                            return null;
                           }
-                          final number = double.tryParse(value);
+                          final number = double.tryParse(value.trim());
                           if (number == null) {
                             return LocaleKeys.mustBeNumber.tr();
-                          }
-                          if (number == 0) {
-                            return LocaleKeys.amountMustNotBeZero.tr();
                           }
                           return null;
                         },
@@ -246,7 +241,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                   ],
                 ),
               ),
-            ] else ...[
               SizedBox(height: 20.h),
               Text(
                 LocaleKeys.balance.tr(),
@@ -380,14 +374,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                       ? null
                       : () {
                           hideKeyBoard();
-                          final onboardingEntity =
-                              context.read<OnboardingCubit>().state.entity;
-                          if (onboardingEntity?.editWalletAmount == true) {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              _submitForm();
-                            }
-                          } else {
-                            // Skip form validation when balance editing is disabled
+                          if (_formKey.currentState?.validate() ?? false) {
                             _submitForm();
                           }
                         },

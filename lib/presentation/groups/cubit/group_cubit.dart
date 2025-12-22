@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
 import 'package:trakli/domain/usecases/group/add_group_usecase.dart';
@@ -11,7 +13,7 @@ import 'package:trakli/domain/usecases/group/delete_group_usecase.dart';
 import 'package:trakli/domain/usecases/group/update_group_usecase.dart';
 import 'package:trakli/domain/usecases/group/get_groups_usecase.dart';
 import 'package:trakli/domain/usecases/group/listen_to_groups_usecase.dart';
-import 'package:trakli/domain/usecases/group/ensure_default_group_exists_usecase.dart';
+import 'package:trakli/domain/usecases/configs/save_config_usecase.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 
 part 'group_state.dart';
@@ -24,7 +26,7 @@ class GroupCubit extends Cubit<GroupState> {
   final UpdateGroupUseCase _updateGroupUseCase;
   final DeleteGroupUseCase _deleteGroupUseCase;
   final ListenToGroupsUseCase _listenToGroupsUseCase;
-  final EnsureDefaultGroupExistsUseCase _ensureDefaultWalletExistsUseCase;
+  final SaveConfigUseCase _saveConfigUseCase;
   StreamSubscription? _subscription;
 
   GroupCubit(
@@ -33,7 +35,7 @@ class GroupCubit extends Cubit<GroupState> {
     this._updateGroupUseCase,
     this._deleteGroupUseCase,
     this._listenToGroupsUseCase,
-    this._ensureDefaultWalletExistsUseCase,
+    this._saveConfigUseCase,
   ) : super(const GroupState()) {
     _listenToGroups();
   }
@@ -101,26 +103,6 @@ class GroupCubit extends Cubit<GroupState> {
     );
   }
 
-  Future<void> ensureDefaultGroup({
-    required String name,
-    String? description,
-    MediaEntity? media,
-  }) async {
-    emit(state.copyWith(isSaving: true));
-    final result = await _ensureDefaultWalletExistsUseCase(
-      EnsureDefaultGroupParams(
-        name: name,
-        description: description,
-        icon: media,
-      ),
-    );
-    result.fold(
-      (failure) => emit(state.copyWith(failure: failure, isSaving: false)),
-      (_) =>
-          emit(state.copyWith(failure: const Failure.none(), isSaving: false)),
-    );
-  }
-
   Future<void> deleteGroup(String clientId) async {
     emit(state.copyWith(isDeleting: true));
     final result = await _deleteGroupUseCase(
@@ -130,6 +112,48 @@ class GroupCubit extends Cubit<GroupState> {
       (failure) => emit(state.copyWith(failure: failure, isDeleting: false)),
       (_) => emit(
           state.copyWith(failure: const Failure.none(), isDeleting: false)),
+    );
+  }
+
+  Future<void> createAndSaveDefaultGroup({
+    required String name,
+    String? description,
+    MediaEntity? media,
+  }) async {
+    emit(state.copyWith(isSaving: true));
+
+    final result = await _addGroupUseCase(
+      AddGroupUseCaseParams(
+        name: name,
+        description: description,
+        icon: media,
+      ),
+    );
+
+    result.fold(
+      (failure) => emit(state.copyWith(
+        failure: failure,
+        isSaving: false,
+      )),
+      (group) async {
+        final saveGroup = await _saveConfigUseCase(
+          SaveConfigUseCaseParams(
+            key: ConfigConstants.defaultGroup,
+            type: ConfigType.string,
+            value: group.clientId,
+          ),
+        );
+        saveGroup.fold(
+          (failure) => emit(state.copyWith(
+            failure: failure,
+            isSaving: false,
+          )),
+          (_) => emit(state.copyWith(
+            failure: const Failure.none(),
+            isSaving: false,
+          )),
+        );
+      },
     );
   }
 

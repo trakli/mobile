@@ -157,3 +157,17 @@ enum WalletOption {
     };
   }
 }
+
+enum GroupOption {
+  createAutomatically,
+  createManually,
+  selectFromGroupList;
+
+  String get customName {
+    return switch (this) {
+      GroupOption.createAutomatically => LocaleKeys.createAutomatically,
+      GroupOption.createManually => LocaleKeys.createManually,
+      GroupOption.selectFromGroupList => LocaleKeys.selectFromGroupList,
+    };
+  }
+}
