@@ -58,25 +58,27 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool hasWallets =
         wallets.isNotEmpty && currentWalletIndex < wallets.length;
 
-    final String? currentWalletId =
-        hasWallets ? wallets[currentWalletIndex].clientId : null;
+    if (!hasWallets) return <TransactionCompleteEntity>[];
+
+    final String currentWalletId = wallets[currentWalletIndex].clientId;
     final String? selectedGroupId = selectedGroup?.clientId;
     final String? defaultGroupId = defaultGroup?.clientId;
 
-    if (!hasWallets) return <TransactionCompleteEntity>[];
-
     final filterdTransactions = transactions.where((transaction) {
-      final String transactionWalletId = transaction.wallet.clientId;
+      // Filter by wallet first
+      if (transaction.wallet.clientId != currentWalletId) {
+        return false;
+      }
+
       final String? transactionGroupId = transaction.group?.clientId;
 
-      final bool walletMatches = transactionWalletId == currentWalletId;
+      // Include transaction if:
       final bool groupMatches = transactionGroupId == selectedGroupId;
-      final bool isDefaultGroup = selectedGroupId == defaultGroupId;
       final bool shouldUseDefaultGroup = transactionGroupId == null &&
-          isDefaultGroup &&
+          selectedGroupId == defaultGroupId &&
           defaultGroupId != null;
 
-      return walletMatches && (groupMatches || shouldUseDefaultGroup);
+      return groupMatches || shouldUseDefaultGroup;
     }).toList();
 
     return filterdTransactions;

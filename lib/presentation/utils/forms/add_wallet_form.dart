@@ -64,13 +64,18 @@ class _AddWalletFormState extends State<AddWalletForm> {
     if (_formKey.currentState?.validate() ?? false) {
       final walletCubit = context.read<WalletCubit>();
 
+      // Parse balance with default value of 0.0 if empty
+      final balanceText = _balanceController.text.trim();
+      final balance =
+          balanceText.isEmpty ? 0.0 : (double.tryParse(balanceText) ?? 0.0);
+
       if (widget.wallet != null) {
         // Update existing wallet
         walletCubit.updateWallet(
           clientId: widget.wallet!.clientId,
           name: _nameController.text,
           type: _selectedType,
-          balance: double.parse(_balanceController.text),
+          balance: balance,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
@@ -89,7 +94,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
         walletCubit.addWallet(
           name: _nameController.text,
           type: _selectedType,
-          balance: double.parse(_balanceController.text),
+          balance: balance,
           currency: currency!.code,
           description: _descriptionController.text.isEmpty
               ? null
@@ -185,15 +190,12 @@ class _AddWalletFormState extends State<AddWalletForm> {
                           hintText: LocaleKeys.exampleAmount.tr(),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return LocaleKeys.amountIsRequired.tr();
+                          if (value == null || value.trim().isEmpty) {
+                            return null;
                           }
-                          final number = double.tryParse(value);
+                          final number = double.tryParse(value.trim());
                           if (number == null) {
                             return LocaleKeys.mustBeNumber.tr();
-                          }
-                          if (number == 0) {
-                            return LocaleKeys.amountMustNotBeZero.tr();
                           }
                           return null;
                         },

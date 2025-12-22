@@ -44,9 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           error: (failure) {
             hideLoader();
-            //An error occured
             showSnackBar(
-              message: LocaleKeys.unknownErrorDesc.tr(),
+              message: failure.customMessage,
               borderRadius: 8.r,
               backgroundColor: appDangerColor,
               isFloating: false,
