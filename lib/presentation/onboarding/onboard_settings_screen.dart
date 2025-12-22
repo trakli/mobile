@@ -116,12 +116,11 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
 
     final List<Widget> nextPages = [];
 
-
     if (!hasDefaultLang) {
       nextPages.add(pageOne);
     }
 
-   if (!hasDefaultGroup) {
+    if (!hasDefaultGroup) {
       nextPages.add(pageTwo);
     }
 
@@ -403,10 +402,13 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               type: ConfigType.bool,
               value: true,
             );
-        AppNavigator.removeAllPreviousAndPush(
-          context,
-          MainNavigationScreen(),
-        );
+
+        if (mounted) {
+          AppNavigator.removeAllPreviousAndPush(
+            context,
+            MainNavigationScreen(),
+          );
+        }
       },
       onPrev: () {
         prevPage();
