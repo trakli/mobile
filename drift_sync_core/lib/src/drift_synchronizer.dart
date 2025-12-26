@@ -132,7 +132,10 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
     final localChanges = await appDatabase.getPendingLocalChanges();
 
-    for (final localChange in localChanges) {
+    // Sort changes by dependency order - entities with no dependencies first
+    final sortedChanges = _sortByDependencyOrder(localChanges);
+
+    for (final localChange in sortedChanges) {
       if (_state.cancelRequested) {
         break;
       }
@@ -222,6 +225,32 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       );
     }
     return handler;
+  }
+
+  List<PendingLocalChange> _sortByDependencyOrder(
+      List<PendingLocalChange> changes) {
+    // Get dependency depth for each entity type (0 = no deps, higher = more deps)
+    int getDependencyDepth(String entityType) {
+      final deps = _dependencyManager.getDependenciesByType(entityType);
+      if (deps.isEmpty) return 0;
+      // Recursively calculate max depth
+      int maxDepth = 0;
+      for (final dep in deps) {
+        final depDepth = getDependencyDepth(dep);
+        if (depDepth + 1 > maxDepth) {
+          maxDepth = depDepth + 1;
+        }
+      }
+      return maxDepth;
+    }
+
+    final sorted = List<PendingLocalChange>.from(changes);
+    sorted.sort((a, b) {
+      final depthA = getDependencyDepth(a.entityType);
+      final depthB = getDependencyDepth(b.entityType);
+      return depthA.compareTo(depthB);
+    });
+    return sorted;
   }
 
   /**********************************
