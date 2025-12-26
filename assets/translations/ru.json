@@ -426,5 +426,15 @@
   "selectFromGroupList": "Выбрать группу",
   "groupSetup": "Настройка группы",
  "setupGroupTitle": "Настройте свою первую группу",
-  "setupGroupDesc": "Группы помогают вам организовать свои финансы."
+  "setupGroupDesc": "Группы помогают вам организовать свои финансы.",
+  "advanced": "Расширенные",
+  "synchronization": "Синхронизация",
+  "syncHistoryDesc": "Просмотр статуса синхронизации и ожидающих изменений",
+  "lastSyncStatus": "Последний статус синхронизации",
+  "noSyncHistory": "История синхронизации недоступна",
+  "pendingChanges": "Ожидающие изменения",
+  "noPendingChanges": "Нет ожидающих изменений",
+  "failedChanges": "Неудачные изменения",
+  "noFailedChanges": "Нет неудачных изменений",
+  "dismiss": "Отклонить"
 }

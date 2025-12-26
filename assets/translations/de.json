@@ -426,5 +426,15 @@
   "selectFromGroupList": "Gruppe auswählen",
   "groupSetup": "Gruppeneinrichtung",
   "setupGroupTitle": "Richten Sie Ihre erste Gruppe ein",
-  "setupGroupDesc": "Gruppen helfen Ihnen, Ihre Finanzen zu organisieren."
+  "setupGroupDesc": "Gruppen helfen Ihnen, Ihre Finanzen zu organisieren.",
+  "advanced": "Erweitert",
+  "synchronization": "Synchronisation",
+  "syncHistoryDesc": "Synchronisationsstatus und ausstehende Änderungen anzeigen",
+  "lastSyncStatus": "Letzter Synchronisationsstatus",
+  "noSyncHistory": "Kein Synchronisationsverlauf verfügbar",
+  "pendingChanges": "Ausstehende Änderungen",
+  "noPendingChanges": "Keine ausstehenden Änderungen",
+  "failedChanges": "Fehlgeschlagene Änderungen",
+  "noFailedChanges": "Keine fehlgeschlagenen Änderungen",
+  "dismiss": "Verwerfen"
 }

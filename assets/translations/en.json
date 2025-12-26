@@ -426,5 +426,15 @@
   "createAutomatically": "Automatic",
   "createManually": "Manual",
   "selectFromWalletList": "Select wallet",
-  "selectFromGroupList": "Select group"
+  "selectFromGroupList": "Select group",
+  "advanced": "Advanced",
+  "synchronization": "Synchronization",
+  "syncHistoryDesc": "View sync status and pending changes",
+  "lastSyncStatus": "Last sync status",
+  "noSyncHistory": "No sync history available",
+  "pendingChanges": "Pending changes",
+  "noPendingChanges": "No pending changes",
+  "failedChanges": "Failed changes",
+  "noFailedChanges": "No failed changes",
+  "dismiss": "Dismiss"
 }
