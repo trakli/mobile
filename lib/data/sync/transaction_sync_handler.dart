@@ -186,17 +186,31 @@ class TransactionSyncHandler
             mode: InsertMode.insertOrReplace);
       }
 
-      await db.wallets
-          .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
+      // Only insert related entities if they don't exist locally
+      // This prevents overwriting more recent local changes
+      final existingWallet = await (db.select(db.wallets)
+            ..where((w) => w.clientId.equals(entity.wallet.clientId)))
+          .getSingleOrNull();
+      if (existingWallet == null) {
+        await db.wallets.insertOne(entity.wallet, mode: InsertMode.insert);
+      }
 
       if (entity.party != null) {
-        await db.parties
-            .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
+        final existingParty = await (db.select(db.parties)
+              ..where((p) => p.clientId.equals(entity.party!.clientId)))
+            .getSingleOrNull();
+        if (existingParty == null) {
+          await db.parties.insertOne(entity.party!, mode: InsertMode.insert);
+        }
       }
 
       if (entity.group != null) {
-        await db.groups
-            .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
+        final existingGroup = await (db.select(db.groups)
+              ..where((g) => g.clientId.equals(entity.group!.clientId)))
+            .getSingleOrNull();
+        if (existingGroup == null) {
+          await db.groups.insertOne(entity.group!, mode: InsertMode.insert);
+        }
       }
     });
   }
