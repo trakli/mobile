@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
@@ -17,6 +18,7 @@ import 'package:trakli/data/sync/transaction_sync_handler.dart';
 class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     TransactionCompleteDto, String, int> implements TransactionRepository {
   final TransactionLocalDataSource localDataSource;
+  final Logger _logger = Logger();
 
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
@@ -26,6 +28,18 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
   }) : super(
           syncHandler: syncHandler,
         );
+
+  void _syncWithErrorHandling(Future<dynamic> Function() syncOperation) {
+    unawaited(
+      syncOperation().catchError((error, stackTrace) {
+        _logger.e(
+          'Sync operation failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }),
+    );
+  }
 
   @override
   Future<Either<Failure, Unit>> updateTransaction(
@@ -50,7 +64,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         groupClientId: groupClientId,
       );
 
-      unawaited(put(transaction));
+      _syncWithErrorHandling(() => put(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
@@ -62,7 +76,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     try {
       final transaction = await localDataSource.deleteTransaction(id);
 
-      unawaited(delete(transaction));
+      _syncWithErrorHandling(() => delete(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
@@ -92,7 +106,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         groupClientId: groupClientId,
       );
 
-      unawaited(post(transaction));
+      _syncWithErrorHandling(() => post(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
