@@ -191,9 +191,9 @@ class TransactionSyncHandler
       final existingWalletByClientId = await (db.select(db.wallets)
             ..where((w) => w.clientId.equals(entity.wallet.clientId)))
           .getSingleOrNull();
-      final existingWalletById = entity.wallet.id != null
-          ? await (db.select(db.wallets)
-                ..where((w) => w.id.equals(entity.wallet.id)))
+      final walletId = entity.wallet.id;
+      final existingWalletById = walletId != null
+          ? await (db.select(db.wallets)..where((w) => w.id.equals(walletId)))
               .getSingleOrNull()
           : null;
       if (existingWalletByClientId == null && existingWalletById == null) {
@@ -205,9 +205,9 @@ class TransactionSyncHandler
         final existingPartyByClientId = await (db.select(db.parties)
               ..where((p) => p.clientId.equals(entity.party!.clientId)))
             .getSingleOrNull();
-        final existingPartyById = entity.party!.id != null
-            ? await (db.select(db.parties)
-                  ..where((p) => p.id.equals(entity.party!.id)))
+        final partyId = entity.party!.id;
+        final existingPartyById = partyId != null
+            ? await (db.select(db.parties)..where((p) => p.id.equals(partyId)))
                 .getSingleOrNull()
             : null;
         if (existingPartyByClientId == null && existingPartyById == null) {
@@ -220,9 +220,9 @@ class TransactionSyncHandler
         final existingGroupByClientId = await (db.select(db.groups)
               ..where((g) => g.clientId.equals(entity.group!.clientId)))
             .getSingleOrNull();
-        final existingGroupById = entity.group!.id != null
-            ? await (db.select(db.groups)
-                  ..where((g) => g.id.equals(entity.group!.id)))
+        final groupId = entity.group!.id;
+        final existingGroupById = groupId != null
+            ? await (db.select(db.groups)..where((g) => g.id.equals(groupId)))
                 .getSingleOrNull()
             : null;
         if (existingGroupByClientId == null && existingGroupById == null) {

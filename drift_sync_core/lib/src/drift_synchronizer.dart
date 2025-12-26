@@ -193,9 +193,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         await handler.deleteRemote(entity);
       }
     } else {
-      // For put operations, try to use server ID if available
-      final serverId = handler.getServerId(entity);
-
+      // For put operations
       if (!handler.shouldPersistRemote(entity)) {
         DriftSyncLogger.logger.info(
           'Skipping sync for ${handler.entityType}:${handler.getClientId(entity)} - dependencies not ready',
@@ -203,14 +201,8 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         return;
       }
 
-      if (serverId != null) {
-        final updated = await handler.putRemote(entity);
-        await handler.upsertLocal(updated);
-      } else {
-        // If no server ID, this is a new entity
-        final updated = await handler.putRemote(entity);
-        await handler.upsertLocal(updated);
-      }
+      final updated = await handler.putRemote(entity);
+      await handler.upsertLocal(updated);
     }
 
     await appDatabase.concludeLocalChange(localChange, persistedToRemote: true);
@@ -229,10 +221,19 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
   List<PendingLocalChange> _sortByDependencyOrder(
       List<PendingLocalChange> changes) {
+    final memoizedDepths = <String, int>{};
+
     // Get dependency depth for each entity type (0 = no deps, higher = more deps)
     int getDependencyDepth(String entityType) {
+      if (memoizedDepths.containsKey(entityType)) {
+        return memoizedDepths[entityType]!;
+      }
+
       final deps = _dependencyManager.getDependenciesByType(entityType);
-      if (deps.isEmpty) return 0;
+      if (deps.isEmpty) {
+        memoizedDepths[entityType] = 0;
+        return 0;
+      }
       // Recursively calculate max depth
       int maxDepth = 0;
       for (final dep in deps) {
@@ -241,6 +242,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
           maxDepth = depDepth + 1;
         }
       }
+      memoizedDepths[entityType] = maxDepth;
       return maxDepth;
     }
 
