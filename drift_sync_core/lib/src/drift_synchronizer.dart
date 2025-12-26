@@ -398,12 +398,24 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
             continue;
           }
 
-          // 3. Upsert those items locally (optionally in a transaction)
+          // 3. Upsert items first, then delete stale items (safer order)
+          // This ensures we don't lose data if upsert fails
           await appDatabase.transaction(() async {
-            if (isFull == true) {
-              await handler.deleteAllLocal();
-            }
+            // First upsert all changed items
             await handler.upsertAllLocal(changedItems);
+
+            // For full sync, delete items not in the response
+            // This is safer than deleting first because we preserve data on failure
+            if (isFull == true) {
+              final remoteClientIds = <String>{};
+              for (final item in changedItems) {
+                final clientId = handler.getClientId(item);
+                if (clientId.isNotEmpty) {
+                  remoteClientIds.add(clientId);
+                }
+              }
+              await handler.deleteLocalNotIn(remoteClientIds);
+            }
 
             // Find the maximum lastSyncedAt timestamp from all changed items
             DateTime? maxLastSyncedAt;

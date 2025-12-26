@@ -85,6 +85,14 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   }
 
   @override
+  Future<void> deleteLocalNotIn(Set<String> clientIds) async {
+    if (clientIds.isEmpty) return;
+    await (db.delete(table)
+          ..where((t) => t.clientId.isNotIn(clientIds)))
+        .go();
+  }
+
+  @override
   Future<void> deleteLocal(Category entity) async {
     await table.deleteWhere((t) => t.clientId.equals(entity.clientId));
   }

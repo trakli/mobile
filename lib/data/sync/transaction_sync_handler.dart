@@ -227,6 +227,14 @@ class TransactionSyncHandler
   }
 
   @override
+  Future<void> deleteLocalNotIn(Set<String> clientIds) async {
+    if (clientIds.isEmpty) return;
+    await (db.delete(table)
+          ..where((t) => t.clientId.isNotIn(clientIds)))
+        .go();
+  }
+
+  @override
   String getClientId(TransactionCompleteDto entity) {
     return entity.transaction.clientId;
   }

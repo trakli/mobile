@@ -128,6 +128,14 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
   }
 
   @override
+  Future<void> deleteLocalNotIn(Set<String> clientIds) async {
+    if (clientIds.isEmpty) return;
+    await (db.delete(table)
+          ..where((t) => t.clientId.isNotIn(clientIds)))
+        .go();
+  }
+
+  @override
   String getClientId(Group entity) => entity.clientId;
 
   @override

@@ -103,6 +103,14 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
   }
 
   @override
+  Future<void> deleteLocalNotIn(Set<String> clientIds) async {
+    if (clientIds.isEmpty) return;
+    await (db.delete(table)
+          ..where((t) => t.clientId.isNotIn(clientIds)))
+        .go();
+  }
+
+  @override
   String getClientId(Party entity) {
     return entity.clientId;
   }

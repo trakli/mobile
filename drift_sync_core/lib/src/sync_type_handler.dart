@@ -28,6 +28,7 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
 
   Future<void> deleteLocal(TEntity entity);
   Future<void> deleteAllLocal();
+  Future<void> deleteLocalNotIn(Set<String> clientIds);
 
   // Get remote entity by server ID
   //Future<TEntity?> getRemote(TKey id);
