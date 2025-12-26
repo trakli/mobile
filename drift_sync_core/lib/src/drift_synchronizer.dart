@@ -194,6 +194,9 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       final serverId = handler.getServerId(entity);
 
       if (!handler.shouldPersistRemote(entity)) {
+        DriftSyncLogger.logger.info(
+          'Skipping sync for ${handler.entityType}:${handler.getClientId(entity)} - dependencies not ready',
+        );
         return;
       }
 
