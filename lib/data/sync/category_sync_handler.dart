@@ -144,11 +144,13 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
 
   @override
   Future<Category> getLocalByClientId(String clientId) async {
-    try {
-      return await getLocalByClientId(clientId);
-    } catch (e) {
+    final row = await (db.select(table)
+          ..where((t) => t.clientId.equals(clientId)))
+        .getSingleOrNull();
+    if (row == null) {
       throw Exception('Category not found');
     }
+    return row;
   }
 
   @override

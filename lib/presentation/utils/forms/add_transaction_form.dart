@@ -64,8 +64,10 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final _formKey = GlobalKey<FormState>();
 
   setAmountController(Currency? currency) {
-    amountController.text =
-        widget.transactionCompleteEntity!.transaction.amount.toString();
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+    }
   }
 
   @override
