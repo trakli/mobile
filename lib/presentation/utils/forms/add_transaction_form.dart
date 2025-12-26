@@ -175,6 +175,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           setState(() {
                             currency = currencyValue;
                             setAmountController(currency);
+                            if (selectedWallet != null &&
+                                selectedWallet!.currencyCode != currencyValue.code) {
+                              selectedWallet = null;
+                              walletController.text = '';
+                            }
                           });
                         },
                       );
@@ -220,8 +225,13 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           context,
                           widget: BlocBuilder<WalletCubit, WalletState>(
                             builder: (context, state) {
+                              final filteredWallets = currency != null
+                                  ? state.wallets
+                                      .where((w) => w.currencyCode == currency!.code)
+                                      .toList()
+                                  : state.wallets;
                               return SelectWalletBottomSheet(
-                                wallets: state.wallets,
+                                wallets: filteredWallets,
                                 onSelect: (wallet) {
                                   setState(() {
                                     selectedWallet = wallet;
