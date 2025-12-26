@@ -25,6 +25,7 @@ import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/core/sync/sync_database.dart';
 
 // Reusable helper to resolve the default currency from configs
 Currency? getDefaultCurrencyFromConfig(BuildContext context) {
@@ -402,6 +403,8 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
               type: ConfigType.bool,
               value: true,
             );
+
+        getIt<SynchAppDatabase>().doSync();
 
         if (mounted) {
           AppNavigator.removeAllPreviousAndPush(
