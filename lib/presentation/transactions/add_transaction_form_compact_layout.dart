@@ -270,7 +270,25 @@ class _AddTransactionFormCompactLayoutState
                         ),
                         GestureDetector(
                           onTap: () async {
-                            AppNavigator.push(context, const AddWalletScreen());
+                            final walletsBefore =
+                                context.read<WalletCubit>().state.wallets;
+                            await AppNavigator.push(
+                                context, const AddWalletScreen());
+                            if (!context.mounted) return;
+                            final walletsAfter =
+                                context.read<WalletCubit>().state.wallets;
+                            if (walletsAfter.length > walletsBefore.length) {
+                              final newWallet = walletsAfter
+                                  .where((w) => !walletsBefore
+                                      .any((prev) => prev.clientId == w.clientId))
+                                  .firstOrNull;
+                              if (newWallet != null) {
+                                setState(() {
+                                  _selectedWallet = newWallet;
+                                  setCurrencyFromWallet(newWallet);
+                                });
+                              }
+                            }
                           },
                           child: Container(
                             width: 60.w,
@@ -420,7 +438,24 @@ class _AddTransactionFormCompactLayoutState
                         ),
                         GestureDetector(
                           onTap: () async {
-                            AppNavigator.push(context, const AddPartyScreen());
+                            final partiesBefore =
+                                context.read<PartyCubit>().state.parties;
+                            await AppNavigator.push(
+                                context, const AddPartyScreen());
+                            if (!context.mounted) return;
+                            final partiesAfter =
+                                context.read<PartyCubit>().state.parties;
+                            if (partiesAfter.length > partiesBefore.length) {
+                              final newParty = partiesAfter
+                                  .where((p) => !partiesBefore
+                                      .any((prev) => prev.clientId == p.clientId))
+                                  .firstOrNull;
+                              if (newParty != null) {
+                                setState(() {
+                                  _selectedParty = newParty;
+                                });
+                              }
+                            }
                           },
                           child: Container(
                             width: 60.w,
@@ -492,13 +527,30 @@ class _AddTransactionFormCompactLayoutState
                         ),
                         GestureDetector(
                           onTap: () async {
-                            AppNavigator.push(
+                            final categoriesBefore =
+                                context.read<CategoryCubit>().state.categories;
+                            await AppNavigator.push(
                               context,
                               AddCategoryScreen(
                                 accentColor: widget.accentColor,
                                 type: widget.transactionType,
                               ),
                             );
+                            if (!context.mounted) return;
+                            final categoriesAfter =
+                                context.read<CategoryCubit>().state.categories;
+                            if (categoriesAfter.length >
+                                categoriesBefore.length) {
+                              final newCategory = categoriesAfter
+                                  .where((c) => !categoriesBefore
+                                      .any((prev) => prev.clientId == c.clientId))
+                                  .firstOrNull;
+                              if (newCategory != null) {
+                                setState(() {
+                                  _selectedCategory = newCategory;
+                                });
+                              }
+                            }
                           },
                           child: Container(
                             width: 60.w,
