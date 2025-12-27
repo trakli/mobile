@@ -186,49 +186,17 @@ class TransactionSyncHandler
             mode: InsertMode.insertOrReplace);
       }
 
-      // Only insert related entities if they don't exist locally by clientId or serverId
-      // This prevents overwriting more recent local changes and avoids constraint errors
-      final existingWalletByClientId = await (db.select(db.wallets)
-            ..where((w) => w.clientId.equals(entity.wallet.clientId)))
-          .getSingleOrNull();
-      final walletId = entity.wallet.id;
-      final existingWalletById = walletId != null
-          ? await (db.select(db.wallets)..where((w) => w.id.equals(walletId)))
-              .getSingleOrNull()
-          : null;
-      if (existingWalletByClientId == null && existingWalletById == null) {
-        await db.wallets
-            .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
-      }
+      await db.wallets
+          .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
 
       if (entity.party != null) {
-        final existingPartyByClientId = await (db.select(db.parties)
-              ..where((p) => p.clientId.equals(entity.party!.clientId)))
-            .getSingleOrNull();
-        final partyId = entity.party!.id;
-        final existingPartyById = partyId != null
-            ? await (db.select(db.parties)..where((p) => p.id.equals(partyId)))
-                .getSingleOrNull()
-            : null;
-        if (existingPartyByClientId == null && existingPartyById == null) {
-          await db.parties
-              .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
-        }
+        await db.parties
+            .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
       }
 
       if (entity.group != null) {
-        final existingGroupByClientId = await (db.select(db.groups)
-              ..where((g) => g.clientId.equals(entity.group!.clientId)))
-            .getSingleOrNull();
-        final groupId = entity.group!.id;
-        final existingGroupById = groupId != null
-            ? await (db.select(db.groups)..where((g) => g.id.equals(groupId)))
-                .getSingleOrNull()
-            : null;
-        if (existingGroupByClientId == null && existingGroupById == null) {
-          await db.groups
-              .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
-        }
+        await db.groups
+            .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
       }
     });
   }

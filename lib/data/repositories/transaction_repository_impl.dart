@@ -18,7 +18,7 @@ import 'package:trakli/data/sync/transaction_sync_handler.dart';
 class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     TransactionCompleteDto, String, int> implements TransactionRepository {
   final TransactionLocalDataSource localDataSource;
-  final Logger _logger = Logger();
+  static final Logger _logger = Logger();
 
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
@@ -27,19 +27,10 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     required super.requestAuthorizationService,
   }) : super(
           syncHandler: syncHandler,
+          errorLogger: (message, error, stackTrace) {
+            _logger.e(message, error: error, stackTrace: stackTrace);
+          },
         );
-
-  void _syncWithErrorHandling(Future<dynamic> Function() syncOperation) {
-    unawaited(
-      syncOperation().catchError((error, stackTrace) {
-        _logger.e(
-          'Sync operation failed',
-          error: error,
-          stackTrace: stackTrace,
-        );
-      }),
-    );
-  }
 
   @override
   Future<Either<Failure, Unit>> updateTransaction(
@@ -64,7 +55,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         groupClientId: groupClientId,
       );
 
-      _syncWithErrorHandling(() => put(transaction));
+      unawaited(put(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
@@ -76,7 +67,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     try {
       final transaction = await localDataSource.deleteTransaction(id);
 
-      _syncWithErrorHandling(() => delete(transaction));
+      unawaited(delete(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));
@@ -106,7 +97,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         groupClientId: groupClientId,
       );
 
-      _syncWithErrorHandling(() => post(transaction));
+      unawaited(post(transaction));
       return const Right(unit);
     } catch (e) {
       return Left(Failure.cacheError(e.toString()));

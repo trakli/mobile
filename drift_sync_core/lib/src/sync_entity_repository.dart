@@ -1,6 +1,12 @@
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:meta/meta.dart';
 
+typedef SyncErrorLogger = void Function(
+  String message,
+  Object error,
+  StackTrace stackTrace,
+);
+
 /// Abstract interface for request authorization service
 abstract class RequestAuthorizationService {
   Future<bool> canSync();
@@ -24,11 +30,13 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
     required this.syncHandler,
     required this.db,
     required this.requestAuthorizationService,
+    this.errorLogger,
   });
 
   final SyncTypeHandler<TEntity, TKey, TServerKey> syncHandler;
   final TAppDatabase db;
   final RequestAuthorizationService requestAuthorizationService;
+  final SyncErrorLogger? errorLogger;
 
   @protected
   Future<TEntity?> getRemote(TServerKey id) async {
@@ -104,6 +112,9 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
       return null;
     } on UnavailableException {
       return null;
+    } catch (error, stackTrace) {
+      errorLogger?.call('putRemote failed', error, stackTrace);
+      return null;
     }
   }
 
@@ -151,6 +162,9 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
       await syncHandler.deleteRemote(entity);
       return true;
     } on UnavailableException {
+      return false;
+    } catch (error, stackTrace) {
+      errorLogger?.call('deleteRemote failed', error, stackTrace);
       return false;
     }
   }
