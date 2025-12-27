@@ -431,5 +431,15 @@ abstract class  LocaleKeys {
   static const setupGroupDesc = 'setupGroupDesc';
   static const alreadyHaveAccount = 'alreadyHaveAccount';
   static const totalExpense = 'totalExpense';
+  static const advanced = 'advanced';
+  static const synchronization = 'synchronization';
+  static const syncHistoryDesc = 'syncHistoryDesc';
+  static const lastSyncStatus = 'lastSyncStatus';
+  static const noSyncHistory = 'noSyncHistory';
+  static const pendingChanges = 'pendingChanges';
+  static const noPendingChanges = 'noPendingChanges';
+  static const failedChanges = 'failedChanges';
+  static const noFailedChanges = 'noFailedChanges';
+  static const dismiss = 'dismiss';
 
 }

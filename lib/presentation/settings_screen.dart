@@ -15,6 +15,7 @@ import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
+import 'package:trakli/presentation/advanced_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
@@ -245,6 +246,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               title: Text(LocaleKeys.accountAndPrivacy.tr()),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+              ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {
+                AppNavigator.push(context, const AdvancedSettingsScreen());
+              },
+              leading: Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+                child: Icon(
+                  Icons.tune,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              title: Text(LocaleKeys.advanced.tr()),
               trailing: Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,

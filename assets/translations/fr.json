@@ -426,5 +426,15 @@
   "setupGroupTitle": "Configurez votre premier groupe",
   "setupGroupDesc": "Les groupes vous aident à organiser vos finances.",
   "alreadyHaveAccount": "Vous avez déjà un compte ?",
-  "totalExpense": "Dépense totale"
+  "totalExpense": "Dépense totale",
+  "advanced": "Avancé",
+  "synchronization": "Synchronisation",
+  "syncHistoryDesc": "Voir l'état de synchronisation et les modifications en attente",
+  "lastSyncStatus": "Dernier état de synchronisation",
+  "noSyncHistory": "Aucun historique de synchronisation disponible",
+  "pendingChanges": "Modifications en attente",
+  "noPendingChanges": "Aucune modification en attente",
+  "failedChanges": "Modifications échouées",
+  "noFailedChanges": "Aucune modification échouée",
+  "dismiss": "Ignorer"
 }
