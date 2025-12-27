@@ -67,3 +67,6 @@ android/key.jks
 
 # Android vendor folder (generated files)
 android/vendor/
+
+# macOS generated files
+**/macos/Flutter/ephemeral/
