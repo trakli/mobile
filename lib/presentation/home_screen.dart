@@ -38,6 +38,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final CarouselSliderController _carouselController =
+      CarouselSliderController();
+  int? _previousWalletsLength;
+  String? _previousDefaultWalletId;
+  int _previousTransactionCount = 0;
+  bool _wasSaving = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _navigateToWallet(String walletId, List<WalletEntity> wallets) {
+    final walletIndex = wallets.indexWhere(
+      (wallet) => wallet.clientId == walletId,
+    );
+
+    if (walletIndex != -1 && mounted) {
+      context.read<WalletCubit>().setCurrentSelectedWalletIndex(walletIndex);
+      _carouselController.animateToPage(walletIndex);
+    }
   }
 
   List<TransactionCompleteEntity> filterTransactions({
@@ -99,6 +117,36 @@ class _HomeScreenState extends State<HomeScreen> {
     final defaultGroup =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 
+    // Get default wallet and set initial index
+    final defaultWalletConfig =
+        configState.getConfigByKey(ConfigConstants.defaultWallet);
+    final defaultWalletId = defaultWalletConfig?.value as String?;
+
+    // Calculate the default wallet index
+    final int defaultWalletIndex = wallets.isNotEmpty && defaultWalletId != null
+        ? wallets.indexWhere((wallet) => wallet.clientId == defaultWalletId)
+        : -1;
+
+    // When wallets are loaded or changed, set to default wallet if available
+    if (wallets.isNotEmpty &&
+        defaultWalletIndex != -1 &&
+        _previousWalletsLength != wallets.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context
+              .read<WalletCubit>()
+              .setCurrentSelectedWalletIndex(defaultWalletIndex);
+          _carouselController.animateToPage(defaultWalletIndex);
+        }
+      });
+      _previousWalletsLength = wallets.length;
+    }
+
+    // Calculate the initial page for carousel (default wallet or current index)
+    final int carouselInitialPage = defaultWalletIndex != -1
+        ? defaultWalletIndex
+        : (currentWalletIndex < wallets.length ? currentWalletIndex : 0);
+
     final currentSelectedGroup =
         context.watch<TransactionCubit>().state.selectedGroup;
 
@@ -107,6 +155,20 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
 
     selectedGroup = selectedGroup ?? groups.firstOrNull;
+
+    // Listen for default wallet changes
+    if (defaultWalletId != null &&
+        defaultWalletId != _previousDefaultWalletId &&
+        wallets.isNotEmpty &&
+        defaultWalletIndex != -1) {
+      final walletId = defaultWalletId;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _navigateToWallet(walletId, wallets);
+        }
+      });
+      _previousDefaultWalletId = defaultWalletId;
+    }
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -143,15 +205,46 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: BlocConsumer<TransactionCubit, TransactionState>(
-        listenWhen: (previous, current) => previous.failure != current.failure,
+        listenWhen: (previous, current) {
+          // Listen for transaction saves and failures
+          return previous.failure != current.failure ||
+              previous.isSaving != current.isSaving ||
+              previous.transactions.length != current.transactions.length;
+        },
         listener: (BuildContext context, TransactionState state) {
           if (state.failure.hasError) {
             showSnackBar(
               message: state.failure.customMessage,
             );
           }
+
+          // Detect when a transaction is saved (isSaving goes from true to false)
+          if (_wasSaving && !state.isSaving && state.transactions.isNotEmpty) {
+            // Check if a new transaction was added
+            if (state.transactions.length > _previousTransactionCount) {
+              // Get the most recent transaction by datetime
+              final mostRecentTransaction = state.transactions.reduce((a, b) =>
+                  a.transaction.datetime.isAfter(b.transaction.datetime)
+                      ? a
+                      : b);
+              final transactionWalletId = mostRecentTransaction.wallet.clientId;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && wallets.isNotEmpty) {
+                  _navigateToWallet(transactionWalletId, wallets);
+                }
+              });
+            }
+            _previousTransactionCount = state.transactions.length;
+          }
+
+          _wasSaving = state.isSaving;
         },
         builder: (context, state) {
+          // Initialize transaction count if not set
+          if (_previousTransactionCount == 0 && state.transactions.isNotEmpty) {
+            _previousTransactionCount = state.transactions.length;
+          }
+
           if (state.isLoading) {
             return Center(
               child: CircularProgressIndicator.adaptive(
@@ -182,12 +275,14 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 if (wallets.isNotEmpty) ...[
                   CarouselSlider.builder(
+                    carouselController: _carouselController,
                     options: CarouselOptions(
                       enableInfiniteScroll: false,
                       height: 190.h,
                       viewportFraction: 1,
                       enlargeCenterPage: true,
                       enlargeFactor: 0.2,
+                      initialPage: carouselInitialPage,
                       onPageChanged: (index, reason) {
                         context
                             .read<WalletCubit>()
