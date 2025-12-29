@@ -116,8 +116,10 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
         return LocaleKeys.party.tr();
       case 'group':
         return LocaleKeys.group.tr();
+      case 'config':
+        return LocaleKeys.settings.tr();
       default:
-        return LocaleKeys.unknown.tr();
+        return entityType;
     }
   }
 

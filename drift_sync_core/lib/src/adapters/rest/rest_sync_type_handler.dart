@@ -32,6 +32,12 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
         });
       }
       rethrow;
+    } catch (error, stackTrace) {
+      // Handle non-Dio exceptions (e.g., parsing errors, type errors, etc.)
+      _logNonDioError('getRemote', error, stackTrace, {
+        'server_id': serverId.toString(),
+      });
+      rethrow;
     }
   }
 
@@ -63,6 +69,13 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
         });
       }
       rethrow;
+    } catch (error, stackTrace) {
+      // Handle non-Dio exceptions (e.g., parsing errors, type errors, etc.)
+      _logNonDioError('getAllRemote', error, stackTrace, {
+        'synced_since': syncedSince?.toIso8601String(),
+        'no_client_id': noClientId?.toString(),
+      });
+      rethrow;
     }
   }
 
@@ -87,6 +100,10 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
         _logUnhandledError('putRemote', exception, stackTrace, {});
       }
       rethrow;
+    } catch (error, stackTrace) {
+      // Handle non-Dio exceptions (e.g., parsing errors, type errors, etc.)
+      _logNonDioError('putRemote', error, stackTrace, {});
+      rethrow;
     }
   }
 
@@ -110,6 +127,10 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
       } else {
         _logUnhandledError('deleteRemote', exception, stackTrace, {});
       }
+      rethrow;
+    } catch (error, stackTrace) {
+      // Handle non-Dio exceptions (e.g., parsing errors, type errors, etc.)
+      _logNonDioError('deleteRemote', error, stackTrace, {});
       rethrow;
     }
   }
@@ -170,6 +191,22 @@ mixin RestSyncTypeHandler<TEntity, TKey, TServerKey>
         'endpoint': exception.requestOptions.uri,
         'request_method': exception.requestOptions.method,
         'response_data': exception.response?.data,
+        ...context,
+      },
+    );
+  }
+
+  void _logNonDioError(String methodName, Object error, StackTrace stackTrace,
+      Map<String, dynamic> context) {
+    DriftSyncLogger.error(
+      'REST non-Dio exception in $methodName',
+      error,
+      stackTrace,
+      'rest_non_dio_error',
+      {
+        'entity_type': TEntity.toString(),
+        'error_type': error.runtimeType.toString(),
+        'error_message': error.toString(),
         ...context,
       },
     );

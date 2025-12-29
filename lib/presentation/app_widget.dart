@@ -211,7 +211,7 @@ class _AppViewState extends State<AppView> {
                 listener: (context, state) {
                   state.maybeWhen(
                     authenticated: (user) async {
-                      getIt<SynchAppDatabase>().doSync();
+                      await getIt<SynchAppDatabase>().doSync();
 
                       final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
 

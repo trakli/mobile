@@ -211,6 +211,33 @@ class WalletCubit extends Cubit<WalletState> {
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
 
+    final normalizedName = name.toLowerCase().trim();
+    final normalizedCurrency = currency.toUpperCase().trim();
+    final existingWallet = state.wallets.cast<WalletEntity?>().firstWhere(
+          (w) =>
+              w?.name.toLowerCase().trim() == normalizedName &&
+              w?.currencyCode.toUpperCase().trim() == normalizedCurrency,
+          orElse: () => null,
+        );
+
+    if (existingWallet != null) {
+      final saveResult = await saveConfigUseCase(
+        SaveConfigUseCaseParams(
+          key: ConfigConstants.defaultWallet,
+          type: ConfigType.string,
+          value: existingWallet.clientId,
+        ),
+      );
+      saveResult.fold(
+        (failure) => emit(state.copyWith(isSaving: false, failure: failure)),
+        (_) => emit(state.copyWith(
+          isSaving: false,
+          failure: const Failure.none(),
+        )),
+      );
+      return;
+    }
+
     final result = await addWalletUseCase(
       AddWalletUseCaseParams(
         name: name,

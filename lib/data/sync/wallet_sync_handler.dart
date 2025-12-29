@@ -68,6 +68,14 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
   }
 
   @override
+  Future<void> deleteLocalNotIn(Set<String> clientIds) async {
+    if (clientIds.isEmpty) return;
+    await (db.delete(table)
+          ..where((t) => t.clientId.isNotIn(clientIds)))
+        .go();
+  }
+
+  @override
   Future<void> deleteLocal(Wallet entity) async {
     await (db.delete(table)..where((t) => t.clientId.equals(entity.clientId)))
         .go();

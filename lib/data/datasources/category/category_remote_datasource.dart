@@ -26,24 +26,40 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   @override
   Future<List<Category>> getAllCategories(
       {DateTime? syncedSince, bool? noClientId}) async {
-    final queryParams = <String, dynamic>{};
-    if (syncedSince != null) {
-      queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+    final allItems = <Category>[];
+    int currentPage = 1;
+
+    while (true) {
+      final queryParams = <String, dynamic>{
+        'page': currentPage,
+      };
+      if (syncedSince != null) {
+        queryParams['synced_since'] =
+            formatServerIsoDateTimeString(syncedSince);
+      }
+      if (noClientId != null) {
+        queryParams['no_client_id'] = noClientId;
+      }
+
+      final response =
+          await dio.get('categories', queryParameters: queryParams);
+      final apiResponse = ApiResponse.fromJson(response.data);
+
+      final paginatedResponse = PaginationResponse.fromJson(
+        apiResponse.data as Map<String, dynamic>,
+        (Object? json) => Category.fromJson(
+            JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+      );
+
+      allItems.addAll(paginatedResponse.data);
+
+      if (!paginatedResponse.hasMore) {
+        break;
+      }
+      currentPage++;
     }
-    if (noClientId != null) {
-      queryParams['no_client_id'] = noClientId;
-    }
-    final response = await dio.get('categories', queryParameters: queryParams);
 
-    final apiResponse = ApiResponse.fromJson(response.data);
-
-    final paginatedResponse = PaginationResponse.fromJson(
-      apiResponse.data as Map<String, dynamic>,
-      (Object? json) => Category.fromJson(
-          JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
-    );
-
-    return paginatedResponse.data;
+    return allItems;
   }
 
   @override

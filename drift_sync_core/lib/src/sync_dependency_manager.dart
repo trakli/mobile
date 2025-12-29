@@ -5,6 +5,9 @@ abstract class SyncDependencyManagerBase {
   /// Get dependencies for a specific handler type
   Set<String> getDependencies<T extends SyncTypeHandler>(T handler);
 
+  /// Get dependencies by entity type name
+  Set<String> getDependenciesByType(String entityType);
+
   /// Check if a handler type can be synced (all dependencies met)
   bool canSync<T extends SyncTypeHandler>(T handler);
 
@@ -31,6 +34,11 @@ class DefaultSyncDependencyManager extends SyncDependencyManagerBase {
   @override
   Set<String> getDependencies<T extends SyncTypeHandler>(T handler) {
     return dependencies[handler.entityType] ?? {};
+  }
+
+  @override
+  Set<String> getDependenciesByType(String entityType) {
+    return dependencies[entityType] ?? {};
   }
 
   @override

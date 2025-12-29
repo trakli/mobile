@@ -64,8 +64,10 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
   final _formKey = GlobalKey<FormState>();
 
   setAmountController(Currency? currency) {
-    amountController.text =
-        widget.transactionCompleteEntity!.transaction.amount.toString();
+    if (widget.transactionCompleteEntity != null) {
+      amountController.text =
+          widget.transactionCompleteEntity!.transaction.amount.toString();
+    }
   }
 
   @override
@@ -175,6 +177,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           setState(() {
                             currency = currencyValue;
                             setAmountController(currency);
+                            if (selectedWallet != null &&
+                                selectedWallet!.currencyCode != currencyValue.code) {
+                              selectedWallet = null;
+                              walletController.text = '';
+                            }
                           });
                         },
                       );
@@ -220,8 +227,13 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                           context,
                           widget: BlocBuilder<WalletCubit, WalletState>(
                             builder: (context, state) {
+                              final filteredWallets = currency != null
+                                  ? state.wallets
+                                      .where((w) => w.currencyCode == currency!.code)
+                                      .toList()
+                                  : state.wallets;
                               return SelectWalletBottomSheet(
-                                wallets: state.wallets,
+                                wallets: filteredWallets,
                                 onSelect: (wallet) {
                                   setState(() {
                                     selectedWallet = wallet;
@@ -262,8 +274,26 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      AppNavigator.push(context, const AddWalletScreen());
+                    onTap: () async {
+                      final walletsBefore =
+                          context.read<WalletCubit>().state.wallets;
+                      await AppNavigator.push(context, const AddWalletScreen());
+                      if (!context.mounted) return;
+                      final walletsAfter =
+                          context.read<WalletCubit>().state.wallets;
+                      if (walletsAfter.length > walletsBefore.length) {
+                        final newWallet = walletsAfter
+                            .where((w) => !walletsBefore
+                                .any((prev) => prev.clientId == w.clientId))
+                            .firstOrNull;
+                        if (newWallet != null) {
+                          setState(() {
+                            selectedWallet = newWallet;
+                            walletController.text = newWallet.name;
+                            currency = newWallet.currency;
+                          });
+                        }
+                      }
                     },
                     child: Container(
                       width: 60.w,
@@ -435,12 +465,28 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      final partiesBefore =
+                          context.read<PartyCubit>().state.parties;
                       await showDialog(
                         context: context,
                         builder: (context) {
                           return const AddPartyDialog();
                         },
                       );
+                      if (!context.mounted) return;
+                      final partiesAfter =
+                          context.read<PartyCubit>().state.parties;
+                      if (partiesAfter.length > partiesBefore.length) {
+                        final newParty = partiesAfter
+                            .where((p) => !partiesBefore
+                                .any((prev) => prev.clientId == p.clientId))
+                            .firstOrNull;
+                        if (newParty != null) {
+                          setState(() {
+                            selectedParty = newParty;
+                          });
+                        }
+                      }
                     },
                     child: Container(
                       width: 60.w,
@@ -555,13 +601,30 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      AppNavigator.push(
+                      final categoriesBefore =
+                          context.read<CategoryCubit>().state.categories;
+                      await AppNavigator.push(
                         context,
                         AddCategoryScreen(
                           accentColor: widget.accentColor,
                           type: widget.transactionType,
                         ),
                       );
+                      if (!context.mounted) return;
+                      final categoriesAfter =
+                          context.read<CategoryCubit>().state.categories;
+                      if (categoriesAfter.length > categoriesBefore.length) {
+                        final newCategory = categoriesAfter
+                            .where((c) => !categoriesBefore
+                                .any((prev) => prev.clientId == c.clientId))
+                            .firstOrNull;
+                        if (newCategory != null) {
+                          setState(() {
+                            selectedCategory = newCategory;
+                            categoryController.text = newCategory.name;
+                          });
+                        }
+                      }
                     },
                     child: Container(
                       width: 60.w,

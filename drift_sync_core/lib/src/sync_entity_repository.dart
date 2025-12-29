@@ -103,8 +103,10 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
       }
       return null;
     } on UnavailableException {
+      // Graceful fallback to local storage when network is unavailable
       return null;
     }
+    // All other exceptions are logged by the adapter and will propagate
   }
 
   Future<DataDestination> delete(TEntity entity) async {
@@ -151,7 +153,9 @@ abstract class SyncEntityRepository<TAppDatabase extends SynchronizerDb,
       await syncHandler.deleteRemote(entity);
       return true;
     } on UnavailableException {
+      // Graceful fallback to local storage when network is unavailable
       return false;
     }
+    // All other exceptions are logged by the adapter and will propagate
   }
 }

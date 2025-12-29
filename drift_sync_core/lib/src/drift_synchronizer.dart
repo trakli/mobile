@@ -132,7 +132,10 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
 
     final localChanges = await appDatabase.getPendingLocalChanges();
 
-    for (final localChange in localChanges) {
+    // Sort changes by dependency order - entities with no dependencies first
+    final sortedChanges = _sortByDependencyOrder(localChanges);
+
+    for (final localChange in sortedChanges) {
       if (_state.cancelRequested) {
         break;
       }
@@ -190,21 +193,16 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         await handler.deleteRemote(entity);
       }
     } else {
-      // For put operations, try to use server ID if available
-      final serverId = handler.getServerId(entity);
-
+      // For put operations
       if (!handler.shouldPersistRemote(entity)) {
+        DriftSyncLogger.logger.info(
+          'Skipping sync for ${handler.entityType}:${handler.getClientId(entity)} - dependencies not ready',
+        );
         return;
       }
 
-      if (serverId != null) {
-        final updated = await handler.putRemote(entity);
-        await handler.upsertLocal(updated);
-      } else {
-        // If no server ID, this is a new entity
-        final updated = await handler.putRemote(entity);
-        await handler.upsertLocal(updated);
-      }
+      final updated = await handler.putRemote(entity);
+      await handler.upsertLocal(updated);
     }
 
     await appDatabase.concludeLocalChange(localChange, persistedToRemote: true);
@@ -219,6 +217,42 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       );
     }
     return handler;
+  }
+
+  List<PendingLocalChange> _sortByDependencyOrder(
+      List<PendingLocalChange> changes) {
+    final memoizedDepths = <String, int>{};
+
+    // Get dependency depth for each entity type (0 = no deps, higher = more deps)
+    int getDependencyDepth(String entityType) {
+      if (memoizedDepths.containsKey(entityType)) {
+        return memoizedDepths[entityType]!;
+      }
+
+      final deps = _dependencyManager.getDependenciesByType(entityType);
+      if (deps.isEmpty) {
+        memoizedDepths[entityType] = 0;
+        return 0;
+      }
+      // Recursively calculate max depth
+      int maxDepth = 0;
+      for (final dep in deps) {
+        final depDepth = getDependencyDepth(dep);
+        if (depDepth + 1 > maxDepth) {
+          maxDepth = depDepth + 1;
+        }
+      }
+      memoizedDepths[entityType] = maxDepth;
+      return maxDepth;
+    }
+
+    final sorted = List<PendingLocalChange>.from(changes);
+    sorted.sort((a, b) {
+      final depthA = getDependencyDepth(a.entityType);
+      final depthB = getDependencyDepth(b.entityType);
+      return depthA.compareTo(depthB);
+    });
+    return sorted;
   }
 
   /**********************************
@@ -398,12 +432,24 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
             continue;
           }
 
-          // 3. Upsert those items locally (optionally in a transaction)
+          // 3. Upsert items first, then delete stale items (safer order)
+          // This ensures we don't lose data if upsert fails
           await appDatabase.transaction(() async {
-            if (isFull == true) {
-              await handler.deleteAllLocal();
-            }
+            // First upsert all changed items
             await handler.upsertAllLocal(changedItems);
+
+            // For full sync, delete items not in the response
+            // This is safer than deleting first because we preserve data on failure
+            if (isFull == true) {
+              final remoteClientIds = <String>{};
+              for (final item in changedItems) {
+                final clientId = handler.getClientId(item);
+                if (clientId.isNotEmpty) {
+                  remoteClientIds.add(clientId);
+                }
+              }
+              await handler.deleteLocalNotIn(remoteClientIds);
+            }
 
             // Find the maximum lastSyncedAt timestamp from all changed items
             DateTime? maxLastSyncedAt;

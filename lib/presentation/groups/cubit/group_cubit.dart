@@ -122,6 +122,30 @@ class GroupCubit extends Cubit<GroupState> {
   }) async {
     emit(state.copyWith(isSaving: true));
 
+    final normalizedName = name.toLowerCase().trim();
+    final existingGroup = state.groups.cast<GroupEntity?>().firstWhere(
+          (g) => g?.name.toLowerCase().trim() == normalizedName,
+          orElse: () => null,
+        );
+
+    if (existingGroup != null) {
+      final saveResult = await _saveConfigUseCase(
+        SaveConfigUseCaseParams(
+          key: ConfigConstants.defaultGroup,
+          type: ConfigType.string,
+          value: existingGroup.clientId,
+        ),
+      );
+      saveResult.fold(
+        (failure) => emit(state.copyWith(failure: failure, isSaving: false)),
+        (_) => emit(state.copyWith(
+          failure: const Failure.none(),
+          isSaving: false,
+        )),
+      );
+      return;
+    }
+
     final result = await _addGroupUseCase(
       AddGroupUseCaseParams(
         name: name,
