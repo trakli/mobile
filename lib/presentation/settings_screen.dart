@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -11,19 +10,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
-import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
 import 'package:trakli/presentation/advanced_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/defaults_settings_screen.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
-import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
-import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
@@ -38,14 +35,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    final groups = context.watch<GroupCubit>().state.groups;
-    final configState = context.watch<ConfigCubit>().state;
-    final defaultGroupConfig =
-        configState.getConfigByKey(ConfigConstants.defaultGroup);
-    final defaultGroupId = defaultGroupConfig?.value as String?;
-    final group =
-        groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
-
     return Scaffold(
       appBar: CustomAppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -179,6 +168,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
+              onTap: () {
+                AppNavigator.push(context, const DefaultsSettingsScreen());
+              },
               leading: Container(
                 padding: EdgeInsets.all(8.h),
                 width: 40.w,
@@ -195,38 +187,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
-              title: Text(LocaleKeys.switchDefaultGroup.tr()),
+              title: Text(LocaleKeys.defaults.tr()),
               subtitle: Text(
-                group?.name ?? "",
+                LocaleKeys.defaultSettingsDesc.tr(),
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              onTap: groups.length > 1
-                  ? () async {
-                      final pickedGroup =
-                          await showCustomBottomSheet<GroupEntity>(
-                        context,
-                        widget: PickGroupBottomSheet(
-                          group: group,
-                        ),
-                      );
-                      if (pickedGroup != null && context.mounted) {
-                        context.read<ConfigCubit>().saveConfig(
-                              key: ConfigConstants.defaultGroup,
-                              type: ConfigType.string,
-                              value: pickedGroup.clientId,
-                            );
-                      }
-                    }
-                  : null,
-              trailing: groups.length > 1
-                  ? Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16.sp,
-                    )
-                  : null,
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+              ),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,

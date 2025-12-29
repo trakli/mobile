@@ -181,6 +181,9 @@ abstract class  LocaleKeys {
   static const allWallets = 'allWallets';
   static const display = 'display';
   static const defaultCurrency = 'defaultCurrency';
+  static const defaults = 'defaults';
+  static const defaultSettingsDesc = 'defaultSettingsDesc';
+  static const defaultWallet = 'defaultWallet';
   static const about = 'about';
   static const switchDefaultGroup = 'switchDefaultGroup';
   static const walletTransfer = 'walletTransfer';
