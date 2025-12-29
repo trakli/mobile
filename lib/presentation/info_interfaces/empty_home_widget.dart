@@ -15,7 +15,6 @@ import 'package:trakli/presentation/parties/party_screen.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class EmptyHomeWidget extends StatefulWidget {
   const EmptyHomeWidget({super.key});
@@ -214,11 +213,9 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                 onPressed: () {
                   switch (_currentIndex) {
                     case 0:
-                      final selectedWallet =
-                          context.read<WalletCubit>().currentSelectedWallet;
                       AppNavigator.push(
                         context,
-                        AddTransactionScreen(selectedWallet: selectedWallet),
+                        const AddTransactionScreen(),
                       );
                     case 1:
                       cubit.updateIndex(MainNavigationPageState.wallet);

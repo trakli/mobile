@@ -12,8 +12,11 @@ import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:collection/collection.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
@@ -30,14 +33,12 @@ class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transactionCompleteEntity;
-  final WalletEntity? selectedWallet;
 
   const AddTransactionFormCompactLayout({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transactionCompleteEntity,
-    this.selectedWallet,
   });
 
   @override
@@ -115,10 +116,22 @@ class _AddTransactionFormCompactLayoutState
       final currencyState = context.read<CurrencyCubit>().state;
       currentCurrency = currencyState.currency ?? currentCurrency;
 
-      // Set the selected wallet if provided
-      if (widget.selectedWallet != null) {
-        _selectedWallet = widget.selectedWallet;
-        setCurrencyFromWallet(_selectedWallet);
+      // Always use default wallet from config
+      final configState = context.read<ConfigCubit>().state;
+      final defaultWalletConfig =
+          configState.getConfigByKey(ConfigConstants.defaultWallet);
+      final defaultWalletId = defaultWalletConfig?.value as String?;
+
+      if (defaultWalletId != null) {
+        final walletState = context.read<WalletCubit>().state;
+        final defaultWallet = walletState.wallets.firstWhereOrNull(
+          (wallet) => wallet.clientId == defaultWalletId,
+        );
+
+        if (defaultWallet != null) {
+          _selectedWallet = defaultWallet;
+          setCurrencyFromWallet(defaultWallet);
+        }
       }
     }
   }

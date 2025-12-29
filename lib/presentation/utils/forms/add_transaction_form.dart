@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -29,14 +32,12 @@ class AddTransactionForm extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transactionCompleteEntity;
-  final WalletEntity? selectedWallet;
 
   const AddTransactionForm({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transactionCompleteEntity,
-    this.selectedWallet,
   });
 
   @override
@@ -86,19 +87,31 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       if (widget.transactionCompleteEntity?.wallet != null) {
         selectedWallet = widget.transactionCompleteEntity!.wallet;
         walletController.text = selectedWallet!.name;
+        // Set currency from wallet
+        currency = selectedWallet!.currency;
       }
     } else {
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
 
-      // Set the selected wallet if provided
-      if (widget.selectedWallet != null) {
-        selectedWallet = widget.selectedWallet;
-        walletController.text = selectedWallet!.name;
-      } else {
-        selectedWallet = widget.selectedWallet;
-        walletController.text = widget.selectedWallet?.name ?? '';
+      // Always use default wallet from config
+      final configState = context.read<ConfigCubit>().state;
+      final defaultWalletConfig =
+          configState.getConfigByKey(ConfigConstants.defaultWallet);
+      final defaultWalletId = defaultWalletConfig?.value as String?;
+
+      if (defaultWalletId != null) {
+        final walletState = context.read<WalletCubit>().state;
+        final defaultWallet = walletState.wallets.firstWhereOrNull(
+          (wallet) => wallet.clientId == defaultWalletId,
+        );
+
+        if (defaultWallet != null) {
+          selectedWallet = defaultWallet;
+          walletController.text = defaultWallet.name;
+          currency = defaultWallet.currency;
+        }
       }
 
       if (widget.transactionCompleteEntity?.party != null) {
@@ -238,6 +251,8 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
                                   setState(() {
                                     selectedWallet = wallet;
                                     walletController.text = wallet.name;
+                                    // Update currency when wallet changes
+                                    currency = wallet.currency;
                                   });
                                   Navigator.pop(context);
                                 },
