@@ -195,7 +195,7 @@ class ProfileScreen extends StatelessWidget {
               )
             else
               const BenefitsWidget(),
-            SizedBox(height: 62.h),
+            SizedBox(height: 0.2.sh),
           ],
         ),
       ),
