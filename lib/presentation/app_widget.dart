@@ -130,7 +130,7 @@ class _AppViewState extends State<AppView> {
     }
   }
 
-  /// Checks if onboarding is complete 
+  /// Checks if onboarding is complete
   /// It verifies all required defaults are set
   /// Flags checked are (onboarding completed flag, default currency, default group, default wallet)
   Future<bool> _isOnboardingCompleteWithDefaults() async {
@@ -155,9 +155,7 @@ class _AppViewState extends State<AppView> {
       final hasOnboardingComplete =
           configMap[ConfigConstants.onboardingComplete] == true;
       final hasCurrency = configMap[ConfigConstants.defaultCurrency] != null &&
-          configMap[ConfigConstants.defaultCurrency]
-              .toString()
-              .isNotEmpty;
+          configMap[ConfigConstants.defaultCurrency].toString().isNotEmpty;
       final hasGroup = configMap[ConfigConstants.defaultGroup] != null &&
           configMap[ConfigConstants.defaultGroup].toString().isNotEmpty;
       final hasWallet = configMap[ConfigConstants.defaultWallet] != null &&
@@ -168,6 +166,16 @@ class _AppViewState extends State<AppView> {
       logger.w('Error checking onboarding completion with defaults: $e');
       return false;
     }
+  }
+
+  Future<bool> _wasAnyConfigSet() async {
+    final configRepo = getIt<ConfigRepository>();
+    final allConfigsResult = await configRepo.getAllConfigs();
+    final allConfigs = allConfigsResult.fold(
+      (failure) => <dynamic>[],
+      (configs) => configs,
+    );
+    return allConfigs.isNotEmpty;
   }
 
   void rebuildAllChildren(BuildContext context) {
@@ -213,7 +221,8 @@ class _AppViewState extends State<AppView> {
                     authenticated: (user) async {
                       await getIt<SynchAppDatabase>().doSync();
 
-                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
+                      final isOnboardingComplete =
+                          await _isOnboardingCompleteWithDefaults();
 
                       if (isOnboardingComplete) {
                         setOnboardingMode(false);
@@ -250,7 +259,8 @@ class _AppViewState extends State<AppView> {
                       getIt<SynchAppDatabase>().stopAllSync();
                       context.read<TransactionCubit>().setCurrentGroup(null);
 
-                      final isOnboardingComplete = await _isOnboardingCompleteWithDefaults();
+                      final isOnboardingComplete =
+                          await _isOnboardingCompleteWithDefaults();
 
                       if (isOnboardingComplete) {
                         setOnboardingMode(false);
@@ -261,13 +271,25 @@ class _AppViewState extends State<AppView> {
                           (route) => false,
                         );
                       } else {
-                        setOnboardingMode(true);
-                        navigatorKey.currentState?.pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const OnboardingScreen(),
-                          ),
-                          (route) => false,
-                        );
+                        final wasAnyConfigSet = await _wasAnyConfigSet();
+                        if (wasAnyConfigSet) {
+                          setOnboardingMode(false);
+                          navigatorKey.currentState?.pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const OnboardSettingsScreen(),
+                            ),
+                            (route) => false,
+                          );
+                        } else {
+                          setOnboardingMode(true);
+                          navigatorKey.currentState?.pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const OnboardingScreen(),
+                            ),
+                            (route) => true,
+                          );
+                        }
                       }
                     },
                     orElse: () {},
@@ -325,5 +347,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
