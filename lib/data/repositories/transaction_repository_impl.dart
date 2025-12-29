@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
@@ -18,7 +17,6 @@ import 'package:trakli/data/sync/transaction_sync_handler.dart';
 class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     TransactionCompleteDto, String, int> implements TransactionRepository {
   final TransactionLocalDataSource localDataSource;
-  static final Logger _logger = Logger();
 
   TransactionRepositoryImpl({
     required TransactionSyncHandler syncHandler,
@@ -27,9 +25,6 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     required super.requestAuthorizationService,
   }) : super(
           syncHandler: syncHandler,
-          errorLogger: (message, error, stackTrace) {
-            _logger.e(message, error: error, stackTrace: stackTrace);
-          },
         );
 
   @override
