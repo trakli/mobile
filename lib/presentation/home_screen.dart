@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _previousDefaultWalletId;
   int _previousTransactionCount = 0;
   bool _wasSaving = false;
+  bool _carouselBuilt = false;
 
   @override
   void initState() {
@@ -60,9 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
       (wallet) => wallet.clientId == walletId,
     );
 
-    if (walletIndex != -1 && mounted) {
+    if (walletIndex != -1 && mounted && _carouselBuilt) {
       context.read<WalletCubit>().setCurrentSelectedWalletIndex(walletIndex);
-      _carouselController.animateToPage(walletIndex);
+      try {
+        _carouselController.animateToPage(walletIndex);
+      } catch (e) {
+        // Carousel controller not ready yet, ignore
+      }
     }
   }
 
@@ -131,12 +136,17 @@ class _HomeScreenState extends State<HomeScreen> {
     if (wallets.isNotEmpty &&
         defaultWalletIndex != -1 &&
         _previousWalletsLength != wallets.length) {
+      _carouselBuilt = false; // Reset flag when wallets change
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
+        if (mounted && _carouselBuilt) {
           context
               .read<WalletCubit>()
               .setCurrentSelectedWalletIndex(defaultWalletIndex);
-          _carouselController.animateToPage(defaultWalletIndex);
+          try {
+            _carouselController.animateToPage(defaultWalletIndex);
+          } catch (e) {
+            // Carousel controller not ready yet, ignore
+          }
         }
       });
       _previousWalletsLength = wallets.length;
@@ -274,26 +284,40 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (wallets.isNotEmpty) ...[
-                  CarouselSlider.builder(
-                    carouselController: _carouselController,
-                    options: CarouselOptions(
-                      enableInfiniteScroll: false,
-                      height: 190.h,
-                      viewportFraction: 1,
-                      enlargeCenterPage: true,
-                      enlargeFactor: 0.2,
-                      initialPage: carouselInitialPage,
-                      onPageChanged: (index, reason) {
-                        context
-                            .read<WalletCubit>()
-                            .setCurrentSelectedWalletIndex(index);
-                      },
-                    ),
-                    itemCount: wallets.length,
-                    itemBuilder: (context, index, pageViewIndex) {
-                      return WalletTile(
-                        wallet: wallets[index],
-                        canDelete: false,
+                  Builder(
+                    builder: (context) {
+                      // Mark carousel as built when widget is in tree
+                      if (!_carouselBuilt) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            setState(() {
+                              _carouselBuilt = true;
+                            });
+                          }
+                        });
+                      }
+                      return CarouselSlider.builder(
+                        carouselController: _carouselController,
+                        options: CarouselOptions(
+                          enableInfiniteScroll: false,
+                          height: 190.h,
+                          viewportFraction: 1,
+                          enlargeCenterPage: true,
+                          enlargeFactor: 0.2,
+                          initialPage: carouselInitialPage,
+                          onPageChanged: (index, reason) {
+                            context
+                                .read<WalletCubit>()
+                                .setCurrentSelectedWalletIndex(index);
+                          },
+                        ),
+                        itemCount: wallets.length,
+                        itemBuilder: (context, index, pageViewIndex) {
+                          return WalletTile(
+                            wallet: wallets[index],
+                            canDelete: false,
+                          );
+                        },
                       );
                     },
                   ),
