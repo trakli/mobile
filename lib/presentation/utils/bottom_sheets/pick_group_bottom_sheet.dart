@@ -112,6 +112,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             child: ListView.separated(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.zero,
               itemCount: sortedGroups.length,
               itemBuilder: (context, index) {
                 final group = sortedGroups[index];
@@ -130,7 +131,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               },
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 32.h),
           Row(
             spacing: 16.w,
             children: [
@@ -165,7 +166,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               ),
             ],
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 40.h),
         ],
       ),
     );
