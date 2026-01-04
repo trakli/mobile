@@ -227,7 +227,7 @@ Future<T?> showCustomDialog<T>({
   required Widget widget,
 }) async {
   return showDialog<T>(
-    context: scaffoldKey.currentContext!,
+    context: navigatorKey.currentContext!,
     barrierDismissible: barrierDismissible,
     builder: (context) {
       return widget;

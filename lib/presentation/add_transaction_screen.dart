@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
-import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/transactions/add_transaction_form_compact_layout.dart';
@@ -17,14 +16,12 @@ class AddTransactionScreen extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transaction;
-  final WalletEntity? selectedWallet;
 
   const AddTransactionScreen({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transaction,
-    this.selectedWallet,
   });
 
   @override
@@ -158,13 +155,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                           transactionType: TransactionType.expense,
                           accentColor: Theme.of(context).primaryColor,
                           transactionCompleteEntity: widget.transaction,
-                          selectedWallet: widget.selectedWallet,
                         )
                       : AddTransactionFormCompactLayout(
                           transactionType: TransactionType.expense,
                           accentColor: Theme.of(context).primaryColor,
                           transactionCompleteEntity: widget.transaction,
-                          selectedWallet: widget.selectedWallet,
                         )),
                 if (widget.transaction == null ||
                     widget.transaction!.transaction.type ==
@@ -173,12 +168,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                       ? AddTransactionForm(
                           accentColor: Theme.of(context).primaryColor,
                           transactionCompleteEntity: widget.transaction,
-                          selectedWallet: widget.selectedWallet,
                         )
                       : AddTransactionFormCompactLayout(
                           accentColor: Theme.of(context).primaryColor,
                           transactionCompleteEntity: widget.transaction,
-                          selectedWallet: widget.selectedWallet,
                         )),
               ],
             ),

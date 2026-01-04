@@ -8,14 +8,22 @@ import 'package:trakli/core/utils/currency_formater.dart';
 class GraphWidget extends StatelessWidget {
   final List<ChartStatistics> chartData;
   final double totalIncome;
-  const GraphWidget(
-      {super.key, required this.chartData, required this.totalIncome});
+  final double totalExpense;
+  const GraphWidget({
+    super.key,
+    required this.chartData,
+    required this.totalIncome,
+    required this.totalExpense,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Calculate balance (income - expense), allow negative values
+    final balance = totalIncome - totalExpense;
+
     return SfCartesianChart(
       title: ChartTitle(
-        text: CurrencyFormater.formatAmountWithSymbol(context, totalIncome),
+        text: CurrencyFormater.formatAmountWithSymbol(context, balance),
         alignment: ChartAlignment.near,
         textStyle: TextStyle(
           fontSize: 20.sp,

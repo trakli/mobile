@@ -1,30 +1,38 @@
-import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_nav.dart';
 import 'package:trakli/presentation/utils/custom_drawer.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
-class MainNavigationScreen extends StatelessWidget {
-  MainNavigationScreen({super.key});
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
 
+  @override
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> screens =
       NavigationScreen.values.map((e) => e.screen).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset the scaffold key to avoid duplicate key errors
+    resetScaffoldKey();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,19 +72,9 @@ class MainNavigationScreen extends StatelessWidget {
                 shape: const CircleBorder(),
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () {
-                  final defaultWalletClientId = context
-                      .read<ConfigCubit>()
-                      .state
-                      .getConfigByKey(ConfigConstants.defaultWallet)
-                      ?.value as String?;
-                  final wallets = context.read<WalletCubit>().state.wallets;
-                  final selectedWallet = defaultWalletClientId != null
-                      ? wallets.firstWhereOrNull(
-                          (w) => w.clientId == defaultWalletClientId)
-                      : wallets.firstOrNull;
                   AppNavigator.push(
                     context,
-                    AddTransactionScreen(selectedWallet: selectedWallet),
+                    const AddTransactionScreen(),
                   );
                 },
                 elevation: 0,

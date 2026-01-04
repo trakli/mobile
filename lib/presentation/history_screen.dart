@@ -24,7 +24,6 @@ import 'package:trakli/presentation/utils/popovers/category_list_popover.dart';
 import 'package:trakli/presentation/utils/popovers/date_list_popover.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_list_popover.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -56,11 +55,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         actions: [
           InkWell(
             onTap: () {
-              final selectedWallet =
-                  context.read<WalletCubit>().currentSelectedWallet;
               AppNavigator.push(
                 context,
-                AddTransactionScreen(selectedWallet: selectedWallet),
+                const AddTransactionScreen(),
               );
             },
             child: Container(
@@ -133,11 +130,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
           if (state.transactions.isEmpty) {
             return InfoInterface(
               action: () {
-                final selectedWallet =
-                    context.read<WalletCubit>().currentSelectedWallet;
                 AppNavigator.push(
                   context,
-                  AddTransactionScreen(selectedWallet: selectedWallet),
+                  const AddTransactionScreen(),
                 );
               },
               data: emptyTransactionData,

@@ -15,6 +15,7 @@ import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/widgets/all_set_widget.dart';
+import 'package:trakli/presentation/onboarding/widgets/category_setup_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/group_setup_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/language_setting_widget.dart';
 import 'package:trakli/presentation/onboarding/widgets/wallet_setup_widget.dart';
@@ -96,6 +97,14 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     }
   }
 
+  Future<void> _saveOnboardingComplete() async {
+    context.read<ConfigCubit>().saveConfig(
+          key: ConfigConstants.onboardingComplete,
+          type: ConfigType.bool,
+          value: true,
+        );
+  }
+
   Future<void> _determineSteps() async {
     final entityResult = await getIt<ConfigRepository>().getAllConfigs();
     final entityConfigs = entityResult.fold(
@@ -129,16 +138,20 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
       nextPages.add(pageThree);
     }
 
+    // Add category setup page
+    nextPages.add(pageFive);
+
     nextPages.add(pageFour);
 
     final shouldShow = nextPages.length >= 2;
 
     if (!shouldShow) {
+      await _saveOnboardingComplete();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         AppNavigator.removeAllPreviousAndPush(
           context,
-          MainNavigationScreen(),
+          const MainNavigationScreen(),
         );
       });
     } else {
@@ -394,22 +407,29 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
     );
   }
 
+  Widget get pageFive {
+    return CategorySetupWidget(
+      onNext: () {
+        nextPage();
+      },
+      onPrev: () {
+        prevPage();
+      },
+    );
+  }
+
   Widget get pageFour {
     return AllSetWidget(
       onTap: () async {
         setOnboardingMode(false);
-        await context.read<ConfigCubit>().saveConfig(
-              key: ConfigConstants.onboardingComplete,
-              type: ConfigType.bool,
-              value: true,
-            );
+        await _saveOnboardingComplete();
 
         getIt<SynchAppDatabase>().doSync();
 
         if (mounted) {
           AppNavigator.removeAllPreviousAndPush(
             context,
-            MainNavigationScreen(),
+            const MainNavigationScreen(),
           );
         }
       },

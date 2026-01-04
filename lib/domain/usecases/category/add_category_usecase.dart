@@ -18,7 +18,6 @@ class AddCategoryUseCase implements UseCase<Unit, AddCategoryUseCaseParams> {
       params.name,
       params.slug,
       params.type,
-      params.userId,
       description: params.description,
       media: params.media,
     );
@@ -29,7 +28,6 @@ class AddCategoryUseCaseParams {
   final String name;
   final String slug;
   final TransactionType type;
-  final int userId;
   final String? description;
   final MediaEntity? media;
 
@@ -37,7 +35,6 @@ class AddCategoryUseCaseParams {
     required this.name,
     required this.slug,
     required this.type,
-    required this.userId,
     this.description,
     this.media,
   });

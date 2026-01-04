@@ -12,8 +12,11 @@ import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:collection/collection.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
@@ -30,14 +33,12 @@ class AddTransactionFormCompactLayout extends StatefulWidget {
   final TransactionType transactionType;
   final Color accentColor;
   final TransactionCompleteEntity? transactionCompleteEntity;
-  final WalletEntity? selectedWallet;
 
   const AddTransactionFormCompactLayout({
     super.key,
     this.transactionType = TransactionType.income,
     this.accentColor = const Color(0xFFEB5757),
     this.transactionCompleteEntity,
-    this.selectedWallet,
   });
 
   @override
@@ -115,651 +116,637 @@ class _AddTransactionFormCompactLayoutState
       final currencyState = context.read<CurrencyCubit>().state;
       currentCurrency = currencyState.currency ?? currentCurrency;
 
-      // Set the selected wallet if provided
-      if (widget.selectedWallet != null) {
-        _selectedWallet = widget.selectedWallet;
-        setCurrencyFromWallet(_selectedWallet);
+      // Always use default wallet from config
+      final configState = context.read<ConfigCubit>().state;
+      final defaultWalletConfig =
+          configState.getConfigByKey(ConfigConstants.defaultWallet);
+      final defaultWalletId = defaultWalletConfig?.value as String?;
+
+      if (defaultWalletId != null) {
+        final walletState = context.read<WalletCubit>().state;
+        final defaultWallet = walletState.wallets.firstWhereOrNull(
+          (wallet) => wallet.clientId == defaultWalletId,
+        );
+
+        if (defaultWallet != null) {
+          _selectedWallet = defaultWallet;
+          setCurrencyFromWallet(defaultWallet);
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Row(
-                      spacing: 16.w,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: amountController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              hintText: LocaleKeys.exampleAmount.tr(),
-                              labelText: LocaleKeys.transactionAmount.tr(),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: widget.accentColor,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return LocaleKeys.amountIsRequired.tr();
-                              }
-                              final number = double.tryParse(value);
-                              if (number == null) {
-                                return LocaleKeys.mustBeNumber.tr();
-                              }
-                              if (number == 0) {
-                                return LocaleKeys.amountMustNotBeZero.tr();
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showCurrencyPicker(
-                              context: context,
-                              theme: CurrencyPickerThemeData(
-                                bottomSheetHeight: 0.7.sh,
-                                backgroundColor: Colors.white,
-                                flagSize: 24.sp,
-                                subtitleTextStyle: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                              onSelect: (Currency currencyValue) {
-                                setCurrency(currencyValue);
-                              },
-                            );
-                          },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(currentCurrency?.code ?? "XAF"),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Row(
-                      spacing: 16.w,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: BlocBuilder<WalletCubit, WalletState>(
-                            builder: (context, state) {
-                              return CustomAutoCompleteSearch<WalletEntity>(
-                                label: LocaleKeys.wallet.tr(),
-                                accentColor: widget.accentColor,
-                                initialValue: _selectedWallet,
-                                optionsBuilder:
-                                    (TextEditingValue textEditingValue) {
-                                  Iterable<WalletEntity> filteredWallets =
-                                      state.wallets;
-                                  if (currentCurrency != null) {
-                                    filteredWallets =
-                                        filteredWallets.where((wallet) {
-                                      return wallet.currencyCode ==
-                                          currentCurrency!.code;
-                                    });
-                                  }
-
-                                  if (textEditingValue.text.isNotEmpty) {
-                                    filteredWallets =
-                                        filteredWallets.where((wallet) {
-                                      return wallet.name.toLowerCase().contains(
-                                          textEditingValue.text.toLowerCase());
-                                    });
-                                  }
-                                  return filteredWallets;
-                                },
-                                displayStringForOption: (WalletEntity option) {
-                                  return option.name.capitalizeFirst();
-                                },
-                                onSelected: (value) {
-                                  setState(() {
-                                    _selectedWallet = value;
-                                    setCurrencyFromWallet(value);
-                                  });
-                                },
-                                validator: (value) {
-                                  if (_selectedWallet == null) {
-                                    return LocaleKeys.walletIsRequired.tr();
-                                  }
-                                  return null;
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            final walletsBefore =
-                                context.read<WalletCubit>().state.wallets;
-                            await AppNavigator.push(
-                                context, const AddWalletScreen());
-                            if (!context.mounted) return;
-                            final walletsAfter =
-                                context.read<WalletCubit>().state.wallets;
-                            if (walletsAfter.length > walletsBefore.length) {
-                              final newWallet = walletsAfter
-                                  .where((w) => !walletsBefore
-                                      .any((prev) => prev.clientId == w.clientId))
-                                  .firstOrNull;
-                              if (newWallet != null) {
-                                setState(() {
-                                  _selectedWallet = newWallet;
-                                  setCurrencyFromWallet(newWallet);
-                                });
-                              }
-                            }
-                          },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                Assets.images.add,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    readOnly: true,
-                    controller: dateController,
-                    decoration: InputDecoration(
-                      labelText: LocaleKeys.date.tr(),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: SvgPicture.asset(
-                          Assets.images.calendar,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: widget.accentColor,
-                        ),
-                      ),
-                    ),
-                    onTap: () async {
-                      final selectDate = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime.now().subtract(
-                          const Duration(days: 1000),
-                        ),
-                        lastDate: DateTime.now().add(
-                          const Duration(days: 1000),
-                        ),
-                      );
-                      if (selectDate != null) {
-                        setState(() {
-                          date = selectDate;
-                          dateController.text = dateFormat.format(date);
-                        });
-                      }
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    readOnly: true,
-                    controller: timeController,
-                    decoration: InputDecoration(
-                      labelText: LocaleKeys.time.tr(),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: SvgPicture.asset(
-                          Assets.images.clock,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: widget.accentColor,
-                        ),
-                      ),
-                    ),
-                    onTap: () async {
-                      final selectTime = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (selectTime != null) {
-                        setState(() {
-                          time = selectTime;
-                          date = DateTime(
-                            date.year,
-                            date.month,
-                            date.day,
-                            selectTime.hour,
-                            selectTime.minute,
-                          );
-                          timeController.text = timeFormat.format(date);
-                        });
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Row(
-                      spacing: 16.w,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: BlocBuilder<PartyCubit, PartyState>(
-                            builder: (context, state) {
-                              return CustomAutoCompleteSearch<PartyEntity>(
-                                label: LocaleKeys.transactionParty.tr(),
-                                accentColor: widget.accentColor,
-                                optionsBuilder:
-                                    (TextEditingValue textEditingValue) {
-                                  if (textEditingValue.text.isEmpty) {
-                                    return state.parties;
-                                  }
-                                  return state.parties.where((category) {
-                                    return category.name.toLowerCase().contains(
-                                        textEditingValue.text.toLowerCase());
-                                  });
-                                },
-                                displayStringForOption: (PartyEntity option) {
-                                  return option.name.capitalizeFirst();
-                                },
-                                onSelected: (value) {
-                                  setState(() {
-                                    debugPrint(value.name);
-                                    _selectedParty = value;
-                                  });
-                                },
-                                // selectedItem: _selectedCategory,
-                              );
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            final partiesBefore =
-                                context.read<PartyCubit>().state.parties;
-                            await AppNavigator.push(
-                                context, const AddPartyScreen());
-                            if (!context.mounted) return;
-                            final partiesAfter =
-                                context.read<PartyCubit>().state.parties;
-                            if (partiesAfter.length > partiesBefore.length) {
-                              final newParty = partiesAfter
-                                  .where((p) => !partiesBefore
-                                      .any((prev) => prev.clientId == p.clientId))
-                                  .firstOrNull;
-                              if (newParty != null) {
-                                setState(() {
-                                  _selectedParty = newParty;
-                                });
-                              }
-                            }
-                          },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                Assets.images.add,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: IntrinsicHeight(
-                    child: Row(
-                      spacing: 16.w,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: BlocBuilder<CategoryCubit, CategoryState>(
-                            builder: (context, state) {
-                              //Category by transaction type
-                              final searchCategories = state.categories.where(
-                                  (element) =>
-                                      element.type == widget.transactionType);
-
-                              return CustomAutoCompleteSearch<CategoryEntity>(
-                                label: LocaleKeys.transactionCategory.tr(),
-                                accentColor: widget.accentColor,
-                                optionsBuilder:
-                                    (TextEditingValue textEditingValue) {
-                                  if (textEditingValue.text.isEmpty) {
-                                    return searchCategories;
-                                  }
-                                  return searchCategories.where((category) {
-                                    return category.name.toLowerCase().contains(
-                                        textEditingValue.text.toLowerCase());
-                                  });
-                                },
-                                displayStringForOption:
-                                    (CategoryEntity option) {
-                                  return option.name.capitalizeFirst();
-                                },
-                                onSelected: (value) {
-                                  setState(() {
-                                    debugPrint(value.name);
-                                    _selectedCategory = value;
-                                  });
-                                },
-                                // selectedItem: _selectedCategory,
-                              );
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            final categoriesBefore =
-                                context.read<CategoryCubit>().state.categories;
-                            await AppNavigator.push(
-                              context,
-                              AddCategoryScreen(
-                                accentColor: widget.accentColor,
-                                type: widget.transactionType,
-                              ),
-                            );
-                            if (!context.mounted) return;
-                            final categoriesAfter =
-                                context.read<CategoryCubit>().state.categories;
-                            if (categoriesAfter.length >
-                                categoriesBefore.length) {
-                              final newCategory = categoriesAfter
-                                  .where((c) => !categoriesBefore
-                                      .any((prev) => prev.clientId == c.clientId))
-                                  .firstOrNull;
-                              if (newCategory != null) {
-                                setState(() {
-                                  _selectedCategory = newCategory;
-                                });
-                              }
-                            }
-                          },
-                          child: Container(
-                            width: 60.w,
-                            constraints: BoxConstraints(
-                              maxHeight: 50.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDEE1E0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                Assets.images.add,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            TextFormField(
-              controller: descriptionController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                labelText: LocaleKeys.transactionDescription.tr(),
-                hintText: LocaleKeys.transactionTypeHere.tr(),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: widget.accentColor,
-                  ),
-                ),
-              ),
-              onTap: () async {},
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      pickImageApp(
-                        sourcePick: ImageSource.camera,
-                      );
-                    },
-                    child: Container(
-                      height: 52.h,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                      ),
+    return BlocListener<TransactionCubit, TransactionState>(
+      listenWhen: (previous, current) {
+        // Listen when saving completes (isSaving goes from true to false)
+        return previous.isSaving && !current.isSaving;
+      },
+      listener: (context, state) {
+        // Only navigate if save was successful (no error)
+        if (!state.failure.hasError && mounted) {
+          Navigator.pop(context);
+        }
+      },
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+          vertical: 16.h,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: IntrinsicHeight(
                       child: Row(
-                        spacing: 4.w,
-                        mainAxisSize: MainAxisSize.min,
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(
-                            Assets.images.camera,
-                            colorFilter: ColorFilter.mode(
-                              widget.accentColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          Text(
-                            LocaleKeys.snapPicture.tr(),
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      pickFile();
-                    },
-                    child: Container(
-                      height: 52.h,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                      ),
-                      child: Row(
-                        spacing: 4.w,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            Assets.images.documentUpload,
-                            colorFilter: ColorFilter.mode(
-                              widget.accentColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  LocaleKeys.uploadAttachment.tr(),
-                                  style: TextStyle(
+                            child: TextFormField(
+                              controller: amountController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: LocaleKeys.exampleAmount.tr(),
+                                labelText: LocaleKeys.transactionAmount.tr(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(
+                                    color: widget.accentColor,
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return LocaleKeys.amountIsRequired.tr();
+                                }
+                                final number = double.tryParse(value);
+                                if (number == null) {
+                                  return LocaleKeys.mustBeNumber.tr();
+                                }
+                                if (number == 0) {
+                                  return LocaleKeys.amountMustNotBeZero.tr();
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showCurrencyPicker(
+                                context: context,
+                                theme: CurrencyPickerThemeData(
+                                  bottomSheetHeight: 0.7.sh,
+                                  backgroundColor: Colors.white,
+                                  flagSize: 24.sp,
+                                  subtitleTextStyle: TextStyle(
                                     fontSize: 12.sp,
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                 ),
-                                Text(
-                                  LocaleKeys.transactionFileType.tr(),
-                                  style: TextStyle(
-                                    fontSize: 8.sp,
-                                    color: Colors.grey.shade500,
-                                  ),
+                                onSelect: (Currency currencyValue) {
+                                  setCurrency(currencyValue);
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: 60.w,
+                              constraints: BoxConstraints(
+                                maxHeight: 50.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDEE1E0),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(currentCurrency?.code ?? "XAF"),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Row(
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: BlocBuilder<WalletCubit, WalletState>(
+                              builder: (context, state) {
+                                return CustomAutoCompleteSearch<WalletEntity>(
+                                  key: ValueKey(
+                                      'wallet_${currentCurrency?.code ?? 'none'}'),
+                                  label: LocaleKeys.wallet.tr(),
+                                  accentColor: widget.accentColor,
+                                  initialValue: _selectedWallet,
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    Iterable<WalletEntity> filteredWallets =
+                                        state.wallets;
+                                    if (currentCurrency != null) {
+                                      filteredWallets =
+                                          filteredWallets.where((wallet) {
+                                        return wallet.currencyCode ==
+                                            currentCurrency!.code;
+                                      });
+                                    }
+
+                                    if (textEditingValue.text.isNotEmpty) {
+                                      filteredWallets =
+                                          filteredWallets.where((wallet) {
+                                        return wallet.name
+                                            .toLowerCase()
+                                            .contains(textEditingValue.text
+                                                .toLowerCase());
+                                      });
+                                    }
+                                    return filteredWallets;
+                                  },
+                                  displayStringForOption:
+                                      (WalletEntity option) {
+                                    return option.name.capitalizeFirst();
+                                  },
+                                  onSelected: (value) {
+                                    setState(() {
+                                      _selectedWallet = value;
+                                      setCurrencyFromWallet(value);
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (_selectedWallet == null) {
+                                      return LocaleKeys.walletIsRequired.tr();
+                                    }
+                                    return null;
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              AppNavigator.push(
+                                  context, const AddWalletScreen());
+                            },
+                            child: Container(
+                              width: 60.w,
+                              constraints: BoxConstraints(
+                                maxHeight: 50.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDEE1E0),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  Assets.images.add,
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            SizedBox(
-              height: 54.h,
-              width: double.infinity,
-              child: Builder(
-                builder: (context) {
-                  return ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(widget.accentColor),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final amount = double.parse(amountController.text);
-                        final description = descriptionController.text;
-
-                        if (widget.transactionCompleteEntity != null) {
-                          context.read<TransactionCubit>().updateTransaction(
-                                id: widget.transactionCompleteEntity!
-                                    .transaction.clientId,
-                                amount: amount,
-                                description: description,
-                                datetime: date,
-                                categoryIds: _selectedCategory != null
-                                    ? [_selectedCategory!.clientId]
-                                    : [],
-                                partyClientId: _selectedParty?.clientId,
-                              );
-                        } else {
-                          context.read<TransactionCubit>().addTransaction(
-                                amount: amount,
-                                description: description,
-                                categoryIds: _selectedCategory != null
-                                    ? [_selectedCategory!.clientId]
-                                    : [],
-                                type: widget.transactionType,
-                                datetime: date,
-                                walletClientId: _selectedWallet?.clientId ?? '',
-                                partyClientId: _selectedParty?.clientId,
-                              );
-                        }
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Row(
-                      spacing: 8.w,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.transactionCompleteEntity != null
-                              ? (widget.transactionType ==
-                                      TransactionType.income
-                                  ? LocaleKeys.updateIncome.tr()
-                                  : LocaleKeys.updateExpenses.tr())
-                              : widget.transactionType == TransactionType.income
-                                  ? LocaleKeys.transactionRecordIncome.tr()
-                                  : LocaleKeys.transactionRecordExpenses.tr(),
-                        ),
-                        SvgPicture.asset(
-                          Assets.images.add,
-                          width: 24,
-                          height: 24,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
+                ],
               ),
-            ),
-            SizedBox(height: 20.h),
-          ],
+              SizedBox(height: 16.h),
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: dateController,
+                      decoration: InputDecoration(
+                        labelText: LocaleKeys.date.tr(),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: SvgPicture.asset(
+                            Assets.images.calendar,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: widget.accentColor,
+                          ),
+                        ),
+                      ),
+                      onTap: () async {
+                        final selectDate = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime.now().subtract(
+                            const Duration(days: 1000),
+                          ),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 1000),
+                          ),
+                        );
+                        if (selectDate != null) {
+                          setState(() {
+                            date = selectDate;
+                            dateController.text = dateFormat.format(date);
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: timeController,
+                      decoration: InputDecoration(
+                        labelText: LocaleKeys.time.tr(),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: SvgPicture.asset(
+                            Assets.images.clock,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: widget.accentColor,
+                          ),
+                        ),
+                      ),
+                      onTap: () async {
+                        final selectTime = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (selectTime != null) {
+                          setState(() {
+                            time = selectTime;
+                            date = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              selectTime.hour,
+                              selectTime.minute,
+                            );
+                            timeController.text = timeFormat.format(date);
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Row(
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: BlocBuilder<PartyCubit, PartyState>(
+                              builder: (context, state) {
+                                return CustomAutoCompleteSearch<PartyEntity>(
+                                  label: LocaleKeys.transactionParty.tr(),
+                                  accentColor: widget.accentColor,
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text.isEmpty) {
+                                      return state.parties;
+                                    }
+                                    return state.parties.where((category) {
+                                      return category.name
+                                          .toLowerCase()
+                                          .contains(textEditingValue.text
+                                              .toLowerCase());
+                                    });
+                                  },
+                                  displayStringForOption: (PartyEntity option) {
+                                    return option.name.capitalizeFirst();
+                                  },
+                                  onSelected: (value) {
+                                    setState(() {
+                                      debugPrint(value.name);
+                                      _selectedParty = value;
+                                    });
+                                  },
+                                  // selectedItem: _selectedCategory,
+                                );
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              AppNavigator.push(
+                                  context, const AddPartyScreen());
+                            },
+                            child: Container(
+                              width: 60.w,
+                              constraints: BoxConstraints(
+                                maxHeight: 50.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDEE1E0),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  Assets.images.add,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: IntrinsicHeight(
+                      child: Row(
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: BlocBuilder<CategoryCubit, CategoryState>(
+                              builder: (context, state) {
+                                //Category by transaction type
+                                final searchCategories = state.categories.where(
+                                    (element) =>
+                                        element.type == widget.transactionType);
+
+                                return CustomAutoCompleteSearch<CategoryEntity>(
+                                  label: LocaleKeys.transactionCategory.tr(),
+                                  accentColor: widget.accentColor,
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text.isEmpty) {
+                                      return searchCategories;
+                                    }
+                                    return searchCategories.where((category) {
+                                      return category.name
+                                          .toLowerCase()
+                                          .contains(textEditingValue.text
+                                              .toLowerCase());
+                                    });
+                                  },
+                                  displayStringForOption:
+                                      (CategoryEntity option) {
+                                    return option.name.capitalizeFirst();
+                                  },
+                                  onSelected: (value) {
+                                    setState(() {
+                                      debugPrint(value.name);
+                                      _selectedCategory = value;
+                                    });
+                                  },
+                                  // selectedItem: _selectedCategory,
+                                );
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              AppNavigator.push(
+                                context,
+                                AddCategoryScreen(
+                                  accentColor: widget.accentColor,
+                                  type: widget.transactionType,
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 60.w,
+                              constraints: BoxConstraints(
+                                maxHeight: 50.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDEE1E0),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  Assets.images.add,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              TextFormField(
+                controller: descriptionController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: LocaleKeys.transactionDescription.tr(),
+                  hintText: LocaleKeys.transactionTypeHere.tr(),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: widget.accentColor,
+                    ),
+                  ),
+                ),
+                onTap: () async {},
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        pickImageApp(
+                          sourcePick: ImageSource.camera,
+                        );
+                      },
+                      child: Container(
+                        height: 52.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                        ),
+                        child: Row(
+                          spacing: 4.w,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              Assets.images.camera,
+                              colorFilter: ColorFilter.mode(
+                                widget.accentColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            Text(
+                              LocaleKeys.snapPicture.tr(),
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        pickFile();
+                      },
+                      child: Container(
+                        height: 52.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                        ),
+                        child: Row(
+                          spacing: 4.w,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              Assets.images.documentUpload,
+                              colorFilter: ColorFilter.mode(
+                                widget.accentColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    LocaleKeys.uploadAttachment.tr(),
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  Text(
+                                    LocaleKeys.transactionFileType.tr(),
+                                    style: TextStyle(
+                                      fontSize: 8.sp,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              SizedBox(
+                height: 54.h,
+                width: double.infinity,
+                child: Builder(
+                  builder: (context) {
+                    return ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(widget.accentColor),
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final amount = double.parse(amountController.text);
+                          final description = descriptionController.text;
+
+                          if (widget.transactionCompleteEntity != null) {
+                            context.read<TransactionCubit>().updateTransaction(
+                                  id: widget.transactionCompleteEntity!
+                                      .transaction.clientId,
+                                  amount: amount,
+                                  description: description,
+                                  datetime: date,
+                                  categoryIds: _selectedCategory != null
+                                      ? [_selectedCategory!.clientId]
+                                      : [],
+                                  partyClientId: _selectedParty?.clientId,
+                                );
+                            // Navigation handled by BlocListener
+                          } else {
+                            context.read<TransactionCubit>().addTransaction(
+                                  amount: amount,
+                                  description: description,
+                                  categoryIds: _selectedCategory != null
+                                      ? [_selectedCategory!.clientId]
+                                      : [],
+                                  type: widget.transactionType,
+                                  datetime: date,
+                                  walletClientId:
+                                      _selectedWallet?.clientId ?? '',
+                                  partyClientId: _selectedParty?.clientId,
+                                );
+                            // Navigation handled by BlocListener
+                          }
+                        }
+                      },
+                      child: Row(
+                        spacing: 8.w,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.transactionCompleteEntity != null
+                                ? (widget.transactionType ==
+                                        TransactionType.income
+                                    ? LocaleKeys.updateIncome.tr()
+                                    : LocaleKeys.updateExpenses.tr())
+                                : widget.transactionType ==
+                                        TransactionType.income
+                                    ? LocaleKeys.transactionRecordIncome.tr()
+                                    : LocaleKeys.transactionRecordExpenses.tr(),
+                          ),
+                          SvgPicture.asset(
+                            Assets.images.add,
+                            width: 24,
+                            height: 24,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
+          ),
         ),
       ),
     );

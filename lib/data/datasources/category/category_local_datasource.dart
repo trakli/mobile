@@ -12,8 +12,7 @@ abstract class CategoryLocalDataSource {
   Future<Category> insertCategory(
     String name,
     String slug,
-    TransactionType type,
-    int userId, {
+    TransactionType type, {
     String? description,
     Media? media,
   });
@@ -43,7 +42,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
   @override
   Future<Category> insertCategory(
-      String name, String slug, TransactionType type, int userId,
+      String name, String slug, TransactionType type,
       {String? description, Media? media}) async {
     // Check if category name already exists
     final existingCategory = await (database.select(database.categories)
@@ -63,7 +62,6 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
             name: name,
             slug: slug,
             type: type,
-            userId: Value(userId),
             description: Value(description),
             icon: Value(media),
             createdAt: Value(dateTime),

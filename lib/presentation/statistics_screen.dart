@@ -452,6 +452,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             ))
         .toList();
     final totalIncome = incomeByDate.values.fold(0.0, (a, b) => a + b);
+    final totalExpense = expenseByDate.values.fold(0.0, (a, b) => a + b);
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -459,6 +460,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       child: GraphWidget(
         chartData: chartData,
         totalIncome: totalIncome,
+        totalExpense: totalExpense,
       ),
     );
   }

@@ -11,8 +11,7 @@ abstract class CategoryRepository {
   Future<Either<Failure, Unit>> insertCategory(
     String name,
     String slug,
-    TransactionType type,
-    int userId, {
+    TransactionType type, {
     String? description,
     MediaEntity? media,
   });

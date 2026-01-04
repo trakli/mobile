@@ -76,7 +76,19 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     final result = await _logoutUsecase(NoParams());
 
-    result.fold((failure) => emit(AuthState.error(failure)), (_) {});
+    result.fold(
+      (failure) => emit(AuthState.error(failure)),
+      (_) {
+        // If already unauthenticated, emit to trigger listener
+        // If authenticated, stream listener will handle it (no duplicate)
+        if (state is _Unauthenticated) {
+          emit(const AuthState.initial());
+          emit(const AuthState.unauthenticated());
+          _clearUserContext();
+        }
+        // For authenticated users, stream listener already emitted, so do nothing
+      },
+    );
   }
 
   @override
