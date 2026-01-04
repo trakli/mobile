@@ -27,6 +27,7 @@ import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
+import 'package:trakli/presentation/utils/all_wallets_tile.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
@@ -64,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (walletIndex != -1 && mounted && _carouselBuilt) {
       context.read<WalletCubit>().setCurrentSelectedWalletIndex(walletIndex);
       try {
-        _carouselController.animateToPage(walletIndex);
+        // Carousel index is walletIndex + 1 because index 0 is "All Wallets"
+        _carouselController.animateToPage(walletIndex + 1);
       } catch (e) {
         // Carousel controller not ready yet, ignore
       }
@@ -78,18 +80,27 @@ class _HomeScreenState extends State<HomeScreen> {
     required GroupEntity? selectedGroup,
     required GroupEntity? defaultGroup,
   }) {
-    final bool hasWallets =
-        wallets.isNotEmpty && currentWalletIndex < wallets.length;
+    final bool isAllWallets = currentWalletIndex == allWalletsIndex;
+    final bool hasWallets = wallets.isNotEmpty;
 
     if (!hasWallets) return <TransactionCompleteEntity>[];
 
-    final String currentWalletId = wallets[currentWalletIndex].clientId;
+    final String? currentWalletId = isAllWallets
+        ? null
+        : (currentWalletIndex < wallets.length
+            ? wallets[currentWalletIndex].clientId
+            : null);
+
+    if (!isAllWallets && currentWalletId == null) {
+      return <TransactionCompleteEntity>[];
+    }
+
     final String? selectedGroupId = selectedGroup?.clientId;
     final String? defaultGroupId = defaultGroup?.clientId;
 
     final filterdTransactions = transactions.where((transaction) {
-      // Filter by wallet first
-      if (transaction.wallet.clientId != currentWalletId) {
+      // Filter by wallet (skip if "All Wallets" is selected)
+      if (!isAllWallets && transaction.wallet.clientId != currentWalletId) {
         return false;
       }
 
@@ -143,7 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
               .read<WalletCubit>()
               .setCurrentSelectedWalletIndex(defaultWalletIndex);
           try {
-            _carouselController.animateToPage(defaultWalletIndex);
+            // Carousel index is walletIndex + 1 because index 0 is "All Wallets"
+            _carouselController.animateToPage(defaultWalletIndex + 1);
           } catch (e) {
             // Carousel controller not ready yet, ignore
           }
@@ -296,6 +308,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         });
                       }
+
+                      // Convert wallet index to carousel index
+                      // Carousel: 0 = All Wallets, 1+ = individual wallets
+                      final int carouselActiveIndex =
+                          currentWalletIndex == allWalletsIndex
+                              ? 0
+                              : currentWalletIndex + 1;
+
+                      final int adjustedInitialPage =
+                          carouselInitialPage == allWalletsIndex
+                              ? 0
+                              : carouselInitialPage + 1;
+
                       return CarouselSlider.builder(
                         carouselController: _carouselController,
                         options: CarouselOptions(
@@ -304,17 +329,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           viewportFraction: 1,
                           enlargeCenterPage: true,
                           enlargeFactor: 0.2,
-                          initialPage: carouselInitialPage,
+                          initialPage: adjustedInitialPage,
                           onPageChanged: (index, reason) {
+                            // Convert carousel index back to wallet index
+                            final walletIndex =
+                                index == 0 ? allWalletsIndex : index - 1;
                             context
                                 .read<WalletCubit>()
-                                .setCurrentSelectedWalletIndex(index);
+                                .setCurrentSelectedWalletIndex(walletIndex);
                           },
                         ),
-                        itemCount: wallets.length,
+                        itemCount: wallets.length + 1,
                         itemBuilder: (context, index, pageViewIndex) {
+                          if (index == 0) {
+                            return AllWalletsTile(wallets: wallets);
+                          }
                           return WalletTile(
-                            wallet: wallets[index],
+                            wallet: wallets[index - 1],
                             canDelete: false,
                           );
                         },
@@ -324,8 +355,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 12.h),
                   Align(
                     child: AnimatedSmoothIndicator(
-                      activeIndex: currentWalletIndex,
-                      count: wallets.length,
+                      activeIndex: currentWalletIndex == allWalletsIndex
+                          ? 0
+                          : currentWalletIndex + 1,
+                      count: wallets.length + 1,
                       effect: ExpandingDotsEffect(
                         activeDotColor: Theme.of(context).primaryColor,
                         dotWidth: 8.r,
