@@ -166,7 +166,6 @@ class _CategorySetupWidgetState extends State<CategorySetupWidget> {
         name: name,
         slug: _generateSlug(name),
         type: category['type'] as TransactionType,
-        userId: 1, // Default userId for anonymous users
         description: description,
       );
       // Small delay to prevent race conditions

@@ -37,14 +37,13 @@ class CategoryRepositoryImpl
 
   @override
   Future<Either<Failure, Unit>> insertCategory(
-      String name, String slug, TransactionType type, int userId,
+      String name, String slug, TransactionType type,
       {String? description, MediaEntity? media}) {
     return RepositoryErrorHandler.handleApiCall(() async {
       final category = await localDataSource.insertCategory(
         name,
         slug,
         type,
-        userId,
         description: description,
         media: media != null
             ? Media.fromLocal(content: media.content, type: media.mediaType)

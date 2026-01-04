@@ -83,7 +83,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       clientId: widget.category!.clientId,
                       name: name,
                       slug: _generateSlug(name),
-                      userId: widget.category!.userId,
                       description: description,
                       media: mediaEntity,
                     );
@@ -92,7 +91,6 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       name: name,
                       slug: _generateSlug(name),
                       type: widget.type,
-                      userId: 1,
                       description: description,
                       media: mediaEntity,
                     );

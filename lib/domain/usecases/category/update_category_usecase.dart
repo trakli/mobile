@@ -28,7 +28,6 @@ class UpdateCategoryUseCaseParams {
   final String clientId;
   final String? name;
   final String? slug;
-  final int? userId;
   final String? description;
   final MediaEntity? media;
 
@@ -36,7 +35,6 @@ class UpdateCategoryUseCaseParams {
     required this.clientId,
     this.name,
     this.slug,
-    this.userId,
     this.description,
     this.media,
   });

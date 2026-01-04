@@ -57,7 +57,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     required String name,
     required String slug,
     required TransactionType type,
-    required int userId,
     String? description,
     MediaEntity? media,
   }) async {
@@ -67,7 +66,6 @@ class CategoryCubit extends Cubit<CategoryState> {
         name: name,
         slug: slug,
         type: type,
-        userId: userId,
         description: description,
         media: media,
       ),
@@ -92,7 +90,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     required String clientId,
     String? name,
     String? slug,
-    int? userId,
     String? description,
     MediaEntity? media,
   }) async {
@@ -102,7 +99,6 @@ class CategoryCubit extends Cubit<CategoryState> {
         clientId: clientId,
         name: name,
         slug: slug,
-        userId: userId,
         description: description,
         media: media,
       ),
