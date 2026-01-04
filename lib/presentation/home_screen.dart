@@ -308,14 +308,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         });
                       }
-
-                      // Convert wallet index to carousel index
-                      // Carousel: 0 = All Wallets, 1+ = individual wallets
-                      final int carouselActiveIndex =
-                          currentWalletIndex == allWalletsIndex
-                              ? 0
-                              : currentWalletIndex + 1;
-
                       final int adjustedInitialPage =
                           carouselInitialPage == allWalletsIndex
                               ? 0
