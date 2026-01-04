@@ -5,9 +5,14 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
+
+void resetScaffoldKey() {
+  scaffoldKey = GlobalKey<ScaffoldState>();
+}
+
 const String maxUploadSizeInMB = "5Mo";
 final List<Locale> supportedLanguages = [
   const Locale('en'),
@@ -37,72 +42,120 @@ List<CategoryEntity> incomeTransactions = [
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Gifts",
+    name: "Investments",
     type: TransactionType.income,
     clientId: "3",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Donations",
+    name: "Gifts",
     type: TransactionType.income,
     clientId: "4",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Other Income",
+    name: "Refunds",
     type: TransactionType.income,
     clientId: "5",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Other Income",
+    type: TransactionType.income,
+    clientId: "6",
     createdAt: DateTime.now(),
   ),
 ];
 
 List<CategoryEntity> expenseTransactions = [
   CategoryEntity(
-    name: "Rent",
-    type: TransactionType.expense,
-    clientId: "6",
-    createdAt: DateTime.now(),
-  ),
-  CategoryEntity(
-    name: "Groceries",
+    name: "Food & Dining",
     type: TransactionType.expense,
     clientId: "7",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Utilities",
+    name: "Transportation",
     type: TransactionType.expense,
     clientId: "8",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Transportation",
+    name: "Housing",
     type: TransactionType.expense,
     clientId: "9",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Health",
+    name: "Utilities",
     type: TransactionType.expense,
     clientId: "10",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Fitness",
+    name: "Healthcare",
     type: TransactionType.expense,
     clientId: "11",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Shopping",
+    name: "Entertainment",
     type: TransactionType.expense,
     clientId: "12",
     createdAt: DateTime.now(),
   ),
   CategoryEntity(
-    name: "Travel",
+    name: "Shopping",
     type: TransactionType.expense,
     clientId: "13",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Personal Care",
+    type: TransactionType.expense,
+    clientId: "14",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Education",
+    type: TransactionType.expense,
+    clientId: "15",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Subscriptions",
+    type: TransactionType.expense,
+    clientId: "16",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Insurance",
+    type: TransactionType.expense,
+    clientId: "17",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Savings",
+    type: TransactionType.expense,
+    clientId: "18",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Gifts & Donations",
+    type: TransactionType.expense,
+    clientId: "19",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Travel",
+    type: TransactionType.expense,
+    clientId: "20",
+    createdAt: DateTime.now(),
+  ),
+  CategoryEntity(
+    name: "Other Expenses",
+    type: TransactionType.expense,
+    clientId: "21",
     createdAt: DateTime.now(),
   ),
 ];

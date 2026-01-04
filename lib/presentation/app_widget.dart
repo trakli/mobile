@@ -228,7 +228,7 @@ class _AppViewState extends State<AppView> {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
-                            builder: (context) => MainNavigationScreen(),
+                            builder: (context) => const MainNavigationScreen(),
                           ),
                           (route) => false,
                         );
@@ -266,7 +266,7 @@ class _AppViewState extends State<AppView> {
                         setOnboardingMode(false);
                         navigatorKey.currentState?.pushAndRemoveUntil(
                           MaterialPageRoute(
-                            builder: (context) => MainNavigationScreen(),
+                            builder: (context) => const MainNavigationScreen(),
                           ),
                           (route) => false,
                         );

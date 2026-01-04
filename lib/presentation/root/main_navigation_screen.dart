@@ -19,11 +19,23 @@ import 'package:trakli/presentation/utils/custom_drawer.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 
-class MainNavigationScreen extends StatelessWidget {
-  MainNavigationScreen({super.key});
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
 
+  @override
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> screens =
       NavigationScreen.values.map((e) => e.screen).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset the scaffold key to avoid duplicate key errors
+    resetScaffoldKey();
+  }
 
   @override
   Widget build(BuildContext context) {
