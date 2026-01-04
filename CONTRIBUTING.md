@@ -86,7 +86,21 @@ To set up the project:
     flutter pub get
     ```
 
-3. Run the project:
+3. **Set up Git hooks**:
+    
+    Install Git hooks to run pre-commit checks automatically:
+    
+    ```bash
+    dart run husky install
+    ```
+    
+    This sets up hooks that run linting, Flutter analysis, and validate GitHub Actions workflow files before commits. **Note**: You must install action-validator (step 4) for the GitHub Actions validation to work.
+
+4. **Install action-validator**:
+    
+    The Git hooks validate GitHub Actions workflow files, which requires [action-validator](https://github.com/mpalmer/action-validator). Install it following the [installation instructions](https://github.com/mpalmer/action-validator#installation) in their documentation.
+
+5. Run the project:
     ```bash
     flutter run
     ```

@@ -276,7 +276,8 @@ class WalletCubit extends Cubit<WalletState> {
   }
 
   void setCurrentSelectedWalletIndex(int index) {
-    if (index >= 0 && index < state.wallets.length) {
+    if (index == allWalletsIndex ||
+        (index >= 0 && index < state.wallets.length)) {
       emit(state.copyWith(currentSelectedWalletIndex: index));
     }
   }

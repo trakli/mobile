@@ -179,15 +179,16 @@ class __$$WalletStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WalletStateImpl implements _WalletState {
+class _$WalletStateImpl extends _WalletState {
   const _$WalletStateImpl(
       {required final List<WalletEntity> wallets,
       required this.isLoading,
       required this.isSaving,
       required this.isDeleting,
       required this.failure,
-      this.currentSelectedWalletIndex = 0})
-      : _wallets = wallets;
+      this.currentSelectedWalletIndex = allWalletsIndex})
+      : _wallets = wallets,
+        super._();
 
   final List<WalletEntity> _wallets;
   @override
@@ -252,7 +253,7 @@ class _$WalletStateImpl implements _WalletState {
       __$$WalletStateImplCopyWithImpl<_$WalletStateImpl>(this, _$identity);
 }
 
-abstract class _WalletState implements WalletState {
+abstract class _WalletState extends WalletState {
   const factory _WalletState(
       {required final List<WalletEntity> wallets,
       required final bool isLoading,
@@ -260,6 +261,7 @@ abstract class _WalletState implements WalletState {
       required final bool isDeleting,
       required final Failure failure,
       final int currentSelectedWalletIndex}) = _$WalletStateImpl;
+  const _WalletState._() : super._();
 
   @override
   List<WalletEntity> get wallets;

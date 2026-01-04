@@ -1,5 +1,7 @@
 part of 'wallet_cubit.dart';
 
+const int allWalletsIndex = -1;
+
 @freezed
 class WalletState with _$WalletState {
   const factory WalletState({
@@ -8,7 +10,7 @@ class WalletState with _$WalletState {
     required bool isSaving,
     required bool isDeleting,
     required Failure failure,
-    @Default(0) int currentSelectedWalletIndex,
+    @Default(allWalletsIndex) int currentSelectedWalletIndex,
   }) = _WalletState;
 
   factory WalletState.initial() => const WalletState(
@@ -18,4 +20,8 @@ class WalletState with _$WalletState {
         isDeleting: false,
         failure: Failure.none(),
       );
+
+  const WalletState._();
+
+  bool get isAllWalletsSelected => currentSelectedWalletIndex == allWalletsIndex;
 }
