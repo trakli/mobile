@@ -131,6 +131,6 @@ jobs:
         with:
           lane: "release_play_store"
           subdirectory: android
-          options: '{ "version_number": "${{ github.ref_name }}" }'
+          options: '{ "version_number": "${{ github.ref_name }}", "environment": "prod" }'
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
