@@ -35,14 +35,19 @@ lane :build_flutter_app do |options|
   no_codesign = options[:no_codesign] || false
   config_only = options[:config_only] || false
   commit = last_git_commit
+  
+  # Determine environment - default to dev, allow override
+  environment = options[:environment] || 'dev'
+  dart_define = "--dart-define=ENV=#{environment}"
 
   command = "flutter build #{type}  --release --no-pub --suppress-analytics"
   command += " --build-number=#{build_number}" if build_number.to_s != ""
   command += " --build-name=#{version_number}" if version_number.to_s != ""
   command += " --no-codesign" if no_codesign
   command += " --config-only" if config_only
+  command += " #{dart_define}"
 
-	UI.message("Building #{type} - version: #{version_number} - build: #{build_number} - commit: #{commit[:abbreviated_commit_hash]}")
+	UI.message("Building #{type} - version: #{version_number} - build: #{build_number} - commit: #{commit[:abbreviated_commit_hash]} - env: #{environment}")
 
   fetch_dependencies
 
