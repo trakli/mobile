@@ -31,7 +31,8 @@ platform :android do
       config_only: options[:config_only],
       build_number: options[:build_number],
       version_number: options[:version_number],
-      store: "playstore"
+      store: "playstore",
+      environment: options[:environment] || 'dev'
     )
   end
 
@@ -43,7 +44,8 @@ platform :android do
         no_codesign: options[:no_codesign],
         config_only: options[:config_only],
         build_number: options[:build_number],
-        version_number: options[:version_number]
+        version_number: options[:version_number],
+        environment: 'prod'  # Production for Play Store releases
       )
 
       supply(
@@ -70,7 +72,8 @@ platform :android do
         no_codesign: options[:no_codesign],
         config_only: options[:config_only],
         build_number: options[:build_number],
-        version_number: options[:version_number]
+        version_number: options[:version_number],
+        environment: 'dev'  # Dev for Firebase Distribution
       )
 
       firebase_app_distribution(

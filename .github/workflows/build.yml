@@ -78,7 +78,7 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
       - name: Build APK
-        run: flutter build apk
+        run: flutter build apk --dart-define=ENV=dev
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

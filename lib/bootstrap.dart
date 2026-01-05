@@ -14,6 +14,7 @@ import 'package:trakli/core/sync/drift_sync_crash_reporting_service.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/firebase_options.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/config/build_env.dart' as build_config;
 
 /// Adds a global error handler to the Flutter app.
 ///
@@ -36,7 +37,14 @@ Future<void> bootstrap(
         options: DefaultFirebaseOptions.currentPlatform,
       );
 
-      configureDependencies(Environment.dev);
+      // Determine environment: dart-define (Android) or build config file (iOS)
+      const dartDefineEnv = String.fromEnvironment('ENV', defaultValue: '');
+      final env = dartDefineEnv.isNotEmpty
+          ? dartDefineEnv
+          : (build_config.buildEnvironment == 'prod' ? 'prod' : 'dev');
+      final environment = env == 'prod' ? Environment.prod : Environment.dev;
+
+      configureDependencies(environment);
 
       // Initialize crash reporting
       crashReportingService = getIt<CrashReportingService>();
