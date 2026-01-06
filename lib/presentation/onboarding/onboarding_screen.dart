@@ -60,7 +60,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Column(
               children: [
                 SizedBox(height: 0.2.sh),
-                SvgPicture.asset(Assets.images.logo),
+                SvgPicture.asset(
+                  Assets.images.logo,
+                  height: 120.h,
+                ),
               ],
             ),
           ),
