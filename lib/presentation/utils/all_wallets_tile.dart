@@ -162,106 +162,126 @@ class AllWalletsTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: incomeGreen,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 4.h,
-                      ),
-                      child: Column(
-                        spacing: 2.h,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            spacing: 4.w,
-                            children: [
-                              SvgPicture.asset(
-                                width: 16.w,
-                                Assets.images.arrowSwapDown,
-                                colorFilter: ColorFilter.mode(
-                                  incomeGreenText,
-                                  BlendMode.srcIn,
+                    Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: incomeGreen,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
+                        child: Column(
+                          spacing: 2.h,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 4.w,
+                              children: [
+                                SvgPicture.asset(
+                                  width: 16.w,
+                                  Assets.images.arrowSwapDown,
+                                  colorFilter: ColorFilter.mode(
+                                    incomeGreenText,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                LocaleKeys.transactionIncome.tr(),
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: incomeGreenText,
+                                Flexible(
+                                  child: Text(
+                                    LocaleKeys.transactionIncome.tr(),
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: incomeGreenText,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            LocaleKeys.balanceAmountWithCurrency.tr(
-                              args: [
-                                CurrencyFormater.formatAmountWithSymbol(
-                                  context,
-                                  totalIncome,
-                                )
                               ],
                             ),
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
+                            Text(
+                              LocaleKeys.balanceAmountWithCurrency.tr(
+                                args: [
+                                  CurrencyFormater.formatAmountWithSymbol(
+                                    context,
+                                    totalIncome,
+                                  )
+                                ],
+                              ),
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: expenseRed,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 4.h,
-                      ),
-                      child: Column(
-                        spacing: 2.h,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            spacing: 4.w,
-                            children: [
-                              Text(
-                                LocaleKeys.transactionExpense.tr(),
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: expenseRedText,
+                    SizedBox(width: 8.w),
+                    Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: expenseRed,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
+                        child: Column(
+                          spacing: 2.h,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              spacing: 4.w,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    LocaleKeys.transactionExpense.tr(),
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: expenseRedText,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.end,
+                                  ),
                                 ),
-                              ),
-                              SvgPicture.asset(
-                                width: 16.w,
-                                Assets.images.arrowSwapUp,
-                                colorFilter: ColorFilter.mode(
-                                  expenseRedText,
-                                  BlendMode.srcIn,
+                                SvgPicture.asset(
+                                  width: 16.w,
+                                  Assets.images.arrowSwapUp,
+                                  colorFilter: ColorFilter.mode(
+                                    expenseRedText,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            LocaleKeys.balanceAmountWithCurrency.tr(
-                              args: [
-                                CurrencyFormater.formatAmountWithSymbol(
-                                  context,
-                                  totalExpense,
-                                )
                               ],
                             ),
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
+                            Text(
+                              LocaleKeys.balanceAmountWithCurrency.tr(
+                                args: [
+                                  CurrencyFormater.formatAmountWithSymbol(
+                                    context,
+                                    totalExpense,
+                                  )
+                                ],
+                              ),
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
