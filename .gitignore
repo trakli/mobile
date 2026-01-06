@@ -70,6 +70,3 @@ android/vendor/
 
 # macOS generated files
 **/macos/Flutter/ephemeral/
-
-# Environment config (auto-generated)
-lib/config/build_env.dart
