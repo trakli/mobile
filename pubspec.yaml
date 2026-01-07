@@ -62,10 +62,10 @@ dependencies:
   path_provider: ^2.1.5
   drift_sync_core:
     path: drift_sync_core/
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
   uuid: ^4.5.1
   fpdart: ^1.1.1
-  injectable: ^2.5.0
+  injectable: ^2.6.0
   logger: ^2.5.0
   flutter_secure_storage: ^9.2.4
   get_it: ^8.0.3
@@ -76,7 +76,7 @@ dependencies:
   bloc: ^9.0.0
   internet_connection_checker_plus: ^2.2.0
   intl: ^0.20.2
-  drift: ^2.26.1
+  drift: ^2.30.0
   drift_flutter: ^0.2.4
   carousel_slider: ^5.1.1
   popover: ^0.3.1
@@ -95,7 +95,7 @@ dependencies:
   sign_in_with_apple: ^7.0.1
 
 dev_dependencies:
-  flutter_gen_runner: ^5.8.0
+  flutter_gen_runner: ^5.12.0
   flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
@@ -106,14 +106,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
-  freezed: ^2.5.8
-  json_serializable: ^6.9.5
-  injectable_generator: ^2.7.0
+  freezed: ^3.2.4
+  json_serializable: ^6.11.3
+  injectable_generator: ^2.10.0
   lint_staged: ^0.5.1
   husky: ^0.1.7
   commitlint_cli: ^0.8.1
-  drift_dev: ^2.26.1
-  build_runner: ^2.4.15
+  drift_dev: ^2.30.0
+  build_runner: ^2.10.4
 
 lint_staged:
   "lib/**.dart": dart fix --apply && dart format  && dart analyze --fatal-infos --fatal-warnings
