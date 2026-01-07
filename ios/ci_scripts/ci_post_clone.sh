@@ -40,7 +40,11 @@ flutter precache --ios
 # fi
 
 # Determine environment - default to 'prod' for App Store builds
-BUILD_ENV="${CI_BUILD_ENV:-prod}"
+if [ "$CI_BRANCH" = "main" ]; then
+  BUILD_ENV="prod"
+else
+  BUILD_ENV="dev"
+fi
 echo "Building iOS for environment: $BUILD_ENV"
 
 # Create config directory and write environment file
