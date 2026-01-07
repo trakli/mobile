@@ -50,6 +50,9 @@ Future<void> bootstrap(
       crashReportingService = getIt<CrashReportingService>();
       await crashReportingService?.initialize();
 
+      // Set environment tag in Crashlytics
+      await crashReportingService?.setCustomKey('environment', env);
+
       // Initialize user context service
       final userContextService = getIt<UserContextService>();
       await userContextService.initialize();
