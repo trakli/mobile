@@ -1,1 +1,1 @@
-const String buildEnvironment = 'prod';
+const String buildEnvironment = 'dev';
