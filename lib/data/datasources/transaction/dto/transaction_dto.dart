@@ -20,7 +20,7 @@ class TransactionDTO {
   @JsonKey(name: 'updated_at')
   final String updatedAt;
   @JsonKey(name: 'wallet_id')
-  final int walletId;
+  final int? walletId;
   @JsonKey(name: 'user_id')
   final int userId;
   final WalletDto? wallet;
@@ -42,7 +42,7 @@ class TransactionDTO {
     this.datetime,
     required this.createdAt,
     required this.updatedAt,
-    required this.walletId,
+    this.walletId,
     required this.userId,
     this.wallet,
     required this.categories,
