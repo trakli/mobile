@@ -12,7 +12,6 @@ import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/party_card.dart';
 
 class MockExchangeRateCubit extends Mock implements ExchangeRateCubit {}
@@ -88,12 +87,12 @@ void main() {
     );
 
     when(() => mockPartyCubit.state).thenReturn(
-      PartyState(
+      const PartyState(
         parties: [],
         isLoading: false,
         isSaving: false,
         isDeleting: false,
-        failure: const Failure.none(),
+        failure: Failure.none(),
       ),
     );
 

@@ -509,5 +509,7 @@
   "engagementRemindersDesc": "Мягкие напоминания, когда вы не отслеживали",
   "preferencesUpdated": "Настройки обновлены",
   "preferencesUpdateFailed": "Не удалось обновить настройки",
-  "loadingPreferences": "Загрузка настроек..."
+  "loadingPreferences": "Загрузка настроек...",
+  "openSourceProject": "Trakli с открытым исходным кодом",
+  "viewOnGithub": "Посмотреть на GitHub"
 }

@@ -507,5 +507,7 @@
   "engagementRemindersDesc": "Recordatorios suaves cuando no has registrado",
   "preferencesUpdated": "Preferencias actualizadas",
   "preferencesUpdateFailed": "Error al actualizar preferencias",
-  "loadingPreferences": "Cargando preferencias..."
+  "loadingPreferences": "Cargando preferencias...",
+  "openSourceProject": "Trakli es de código abierto",
+  "viewOnGithub": "Ver en GitHub"
 }
