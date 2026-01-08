@@ -355,6 +355,8 @@ abstract class  LocaleKeys {
   static const dataDeletionFallbackSubjectLabel = 'dataDeletionFallbackSubjectLabel';
   static const dataDeletionFallbackBodyLabel = 'dataDeletionFallbackBodyLabel';
   static const copiedToClipboard = 'copiedToClipboard';
+  static const partyEducationBanner = 'partyEducationBanner';
+  static const groupEducationBanner = 'groupEducationBanner';
   static const emptyPartyTitle = 'emptyPartyTitle';
   static const emptyPartyDescription = 'emptyPartyDescription';
   static const emptyPartyStep1 = 'emptyPartyStep1';

@@ -3,16 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
+import 'package:trakli/core/constants/ui_constants.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/groups/add_group_screen.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
+import 'package:trakli/presentation/utils/education_banner.dart';
 import 'package:trakli/presentation/utils/group_tile.dart';
 
-class MyGroupsScreen extends StatelessWidget {
+class MyGroupsScreen extends StatefulWidget {
   const MyGroupsScreen({super.key});
+
+  @override
+  State<MyGroupsScreen> createState() => _MyGroupsScreenState();
+}
+
+class _MyGroupsScreenState extends State<MyGroupsScreen> {
+  bool _bannerDismissed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -76,21 +85,38 @@ class MyGroupsScreen extends StatelessWidget {
               );
             }
 
-            return Padding(
+            return ListView(
               padding: EdgeInsets.symmetric(
                 horizontal: 16.w,
                 vertical: 16.h,
               ),
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return GroupTile(group: state.groups[index]);
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 8.h);
-                },
-                itemCount: state.groups.length,
-              ),
+              children: [
+                if (state.groups.length < UiConstants.educationBannerThreshold &&
+                    !_bannerDismissed)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: EducationBanner(
+                      message: LocaleKeys.groupEducationBanner.tr(),
+                      icon: Icons.folder_outlined,
+                      onDismiss: () {
+                        setState(() {
+                          _bannerDismissed = true;
+                        });
+                      },
+                    ),
+                  ),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return GroupTile(group: state.groups[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 8.h);
+                  },
+                  itemCount: state.groups.length,
+                ),
+              ],
             );
           },
         ),
