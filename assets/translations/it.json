@@ -353,6 +353,8 @@
   "dataDeletionFallbackSubjectLabel": "Oggetto",
   "dataDeletionFallbackBodyLabel": "Corpo",
   "copiedToClipboard": "Copiato negli appunti",
+  "partyEducationBanner": "Le parti rappresentano persone, aziende o organizzazioni con cui scambi denaro. Aggiungine altre per monitorare i tuoi modelli di spesa!",
+  "groupEducationBanner": "I gruppi ti aiutano a separare diverse aree delle tue finanze, come spese personali vs aziendali. Crea più gruppi per una migliore organizzazione!",
   "emptyPartyTitle": "Tieni traccia di chi fai affari",
   "emptyPartyDescription": "Le parti sono persone o aziende con cui scambi denaro. Questo ti aiuta a vedere i modelli di spesa con fornitori specifici.",
   "emptyPartyStep1": "Aggiungi pagatori comuni (es. 'Supermercato', 'Proprietario')",

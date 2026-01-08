@@ -351,6 +351,8 @@
   "dataDeletionFallbackSubjectLabel": "Betreff",
   "dataDeletionFallbackBodyLabel": "Text",
   "copiedToClipboard": "In die Zwischenablage kopiert",
+  "partyEducationBanner": "Parteien stehen für Personen, Unternehmen oder Organisationen, mit denen du Geld austauschst. Füge mehr hinzu, um deine Ausgabemuster zu verfolgen!",
+  "groupEducationBanner": "Gruppen helfen dir, verschiedene Bereiche deiner Finanzen zu trennen, z.B. private und geschäftliche Ausgaben. Erstelle mehr Gruppen für bessere Organisation!",
   "emptyPartyTitle": "Verfolge, mit wem du Geschäfte machst",
   "emptyPartyDescription": "Parteien sind Personen oder Unternehmen, mit denen du Geld austauschst. Das hilft dir, Ausgabemuster bei bestimmten Anbietern zu erkennen.",
   "emptyPartyStep1": "Füge häufige Zahlungspartner hinzu (z. B. 'Supermarkt', 'Vermieter')",

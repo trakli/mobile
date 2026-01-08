@@ -28,6 +28,7 @@ import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
 import 'package:trakli/presentation/utils/all_wallets_tile.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
@@ -374,14 +375,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           spacing: 8.w,
                           children: [
-                            SvgPicture.asset(
-                              width: 16.w,
-                              height: 16.h,
-                              Assets.images.profile2user,
-                              colorFilter: ColorFilter.mode(
-                                appOrange,
-                                BlendMode.srcIn,
-                              ),
+                            ImageWidget(
+                              mediaEntity: selectedGroup?.icon,
+                              accentColor: appOrange,
+                              iconSize: 16.sp,
+                              emojiSize: 16.sp,
+                              placeholderIcon: Icons.folder_outlined,
                             ),
                             Text(
                               selectedGroup?.name ?? LocaleKeys.group.tr(),
