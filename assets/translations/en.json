@@ -509,5 +509,7 @@
   "engagementRemindersDesc": "Gentle nudges when you haven't tracked",
   "preferencesUpdated": "Preferences updated",
   "preferencesUpdateFailed": "Failed to update preferences",
-  "loadingPreferences": "Loading preferences..."
+  "loadingPreferences": "Loading preferences...",
+  "openSourceProject": "Trakli is open source",
+  "viewOnGithub": "View on GitHub"
 }

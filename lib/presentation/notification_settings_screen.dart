@@ -207,7 +207,7 @@ class _NotificationSettingsScreenState
                 child: SizedBox(
                   width: 20.r,
                   height: 20.r,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: const CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
             ),
