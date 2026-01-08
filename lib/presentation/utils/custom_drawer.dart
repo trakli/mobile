@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:trakli/presentation/category/category_screen.dart';
 import 'package:trakli/presentation/groups/my_groups_screen.dart';
 import 'package:trakli/presentation/history_screen.dart';
@@ -16,6 +17,19 @@ import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
+
+void _launchSupportEmail() async {
+  final Uri emailUri = Uri(
+    scheme: 'mailto',
+    path: 'support@trakli.app',
+    queryParameters: {
+      'subject': 'Trakli Support Request',
+    },
+  );
+  if (await canLaunchUrl(emailUri)) {
+    await launchUrl(emailUri);
+  }
+}
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -100,7 +114,9 @@ class CustomDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                _launchSupportEmail();
+              },
               leading: SvgPicture.asset(
                 Assets.images.support,
                 colorFilter: const ColorFilter.mode(
