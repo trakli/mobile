@@ -80,6 +80,8 @@
   "transactionTime": "Transaction time",
   "transactionAmount": "Amount",
   "transactionParty": "Party",
+  "transactionSentTo": "Sent to",
+  "transactionReceivedFrom": "Received from",
   "transactionCategory": "Category",
   "transactionAttachment": "Attachment",
   "transactionDescription": "Description",
