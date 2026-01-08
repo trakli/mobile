@@ -1,16 +1,13 @@
 import 'dart:ui';
 
 import 'package:country_flags/country_flags.dart';
-import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
@@ -18,7 +15,6 @@ import 'package:trakli/presentation/advanced_settings_screen.dart';
 import 'package:trakli/presentation/notification_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/defaults_settings_screen.dart';
-import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
@@ -54,83 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         child: Column(
           children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: () {
-                AppNavigator.push(context, const DisplaySettingsScreen());
-              },
-              leading: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                ),
-                child: Icon(
-                  Icons.display_settings,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              title: Text(LocaleKeys.display.tr()),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                size: 16.sp,
-              ),
-            ),
-            BlocBuilder<CurrencyCubit, CurrencyState>(
-              builder: (context, currencyState) {
-                final currency = currencyState.currency;
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  onTap: () {
-                    showCurrencyPicker(
-                      context: context,
-                      theme: CurrencyPickerThemeData(
-                        bottomSheetHeight: 0.7.sh,
-                        backgroundColor: Colors.white,
-                        flagSize: 24.sp,
-                        subtitleTextStyle: TextStyle(
-                          fontSize: 12.sp,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      onSelect: (Currency currencyValue) {
-                        context
-                            .read<CurrencyCubit>()
-                            .setCurrency(currencyValue);
-                      },
-                    );
-                  },
-                  leading: Container(
-                    width: 40.w,
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
-                      color:
-                          Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                    ),
-                    child: Icon(
-                      Icons.currency_exchange,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  title: Text(LocaleKeys.defaultCurrency.tr()),
-                  subtitle: currency != null
-                      ? Text(
-                          currency.code,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        )
-                      : null,
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16.sp,
-                  ),
-                );
-              },
-            ),
+            // Language
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {
@@ -168,25 +88,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
+            // Display
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {
-                AppNavigator.push(context, const DefaultsSettingsScreen());
+                AppNavigator.push(context, const DisplaySettingsScreen());
               },
               leading: Container(
-                padding: EdgeInsets.all(8.h),
                 width: 40.w,
                 height: 40.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 ),
-                child: SvgPicture.asset(
-                  Assets.images.people,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor,
-                    BlendMode.srcIn,
-                  ),
+                child: Icon(
+                  Icons.display_settings,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              title: Text(LocaleKeys.display.tr()),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16.sp,
+              ),
+            ),
+            // Defaults
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: () {
+                AppNavigator.push(context, const DefaultsSettingsScreen());
+              },
+              leading: Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                ),
+                child: Icon(
+                  Icons.settings_suggest_outlined,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               title: Text(LocaleKeys.defaults.tr()),
@@ -202,6 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 size: 16.sp,
               ),
             ),
+            // Account
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {
@@ -225,6 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 size: 16.sp,
               ),
             ),
+            // Notifications (authenticated only)
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 if (!authState.isAuthenticated) {
@@ -257,6 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
+            // Advanced
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {
@@ -280,6 +224,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 size: 16.sp,
               ),
             ),
+            // About
             ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () {

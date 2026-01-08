@@ -31,7 +31,34 @@ class AboutAppBottomSheet extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
+          Text(
+            LocaleKeys.openSourceProject.tr(),
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: Colors.grey.shade600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8.h),
+          TextButton.icon(
+            onPressed: () {
+              openUrl(url: "https://github.com/trakli");
+            },
+            icon: Icon(
+              Icons.code,
+              size: 18.sp,
+              color: Theme.of(context).primaryColor,
+            ),
+            label: Text(
+              LocaleKeys.viewOnGithub.tr(),
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
