@@ -496,5 +496,23 @@ abstract class  LocaleKeys {
   static const categoryTravelDesc = 'categoryTravelDesc';
   static const categoryOtherExpenses = 'categoryOtherExpenses';
   static const categoryOtherExpensesDesc = 'categoryOtherExpensesDesc';
+  static const notificationSettings = 'notificationSettings';
+  static const notificationChannels = 'notificationChannels';
+  static const notificationTypes = 'notificationTypes';
+  static const emailNotifications = 'emailNotifications';
+  static const emailNotificationsDesc = 'emailNotificationsDesc';
+  static const pushNotifications = 'pushNotifications';
+  static const pushNotificationsDesc = 'pushNotificationsDesc';
+  static const inAppNotifications = 'inAppNotifications';
+  static const inAppNotificationsDesc = 'inAppNotificationsDesc';
+  static const reminders = 'reminders';
+  static const remindersDesc = 'remindersDesc';
+  static const financialInsights = 'financialInsights';
+  static const financialInsightsDesc = 'financialInsightsDesc';
+  static const engagementReminders = 'engagementReminders';
+  static const engagementRemindersDesc = 'engagementRemindersDesc';
+  static const preferencesUpdated = 'preferencesUpdated';
+  static const preferencesUpdateFailed = 'preferencesUpdateFailed';
+  static const loadingPreferences = 'loadingPreferences';
 
 }

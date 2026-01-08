@@ -12,8 +12,10 @@ import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
 import 'package:trakli/presentation/advanced_settings_screen.dart';
+import 'package:trakli/presentation/notification_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/defaults_settings_screen.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
@@ -222,6 +224,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.arrow_forward_ios,
                 size: 16.sp,
               ),
+            ),
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, authState) {
+                if (!authState.isAuthenticated) {
+                  return const SizedBox.shrink();
+                }
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    AppNavigator.push(
+                        context, const NotificationSettingsScreen());
+                  },
+                  leading: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                    ),
+                    child: Icon(
+                      Icons.notifications_outlined,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  title: Text(LocaleKeys.notificationSettings.tr()),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16.sp,
+                  ),
+                );
+              },
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,

@@ -49,6 +49,8 @@ import '../data/datasources/exchange-rate/exchange_rate_remote_datasource.dart'
     as _i632;
 import '../data/datasources/group/group_local_datasource.dart' as _i873;
 import '../data/datasources/group/group_remote_datasource.dart' as _i478;
+import '../data/datasources/notification/notification_preferences_remote_datasource.dart'
+    as _i246;
 import '../data/datasources/party/party_local_datasource.dart' as _i655;
 import '../data/datasources/party/party_remote_datasource.dart' as _i656;
 import '../data/datasources/subscription/subscription_remote_data_source.dart'
@@ -252,6 +254,8 @@ _i174.GetIt $initGetIt(
         gh<_i704.AppDatabase>(),
         gh<_i656.PartyRemoteDataSource>(),
       ));
+  gh.factory<_i246.NotificationPreferencesRemoteDataSource>(() =>
+      _i246.NotificationPreferencesRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i705.DriftSyncCrashReportingAdapter>(() =>

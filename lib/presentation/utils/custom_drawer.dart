@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,21 +19,45 @@ import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
 
-void _launchSupportEmail() async {
-  final Uri emailUri = Uri(
-    scheme: 'mailto',
-    path: 'support@trakli.app',
-    queryParameters: {
-      'subject': 'Trakli Support Request',
-    },
-  );
-  if (await canLaunchUrl(emailUri)) {
-    await launchUrl(emailUri);
-  }
-}
+const String _supportEmail = 'support@trakli.app';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
+
+  Future<void> _launchSupportEmail(BuildContext context) async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: _supportEmail,
+      queryParameters: {
+        'subject': 'Trakli Support Request',
+      },
+    );
+
+    try {
+      final launched = await launchUrl(
+        emailUri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && context.mounted) {
+        await _copyEmailAndShowSnackbar(context);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        await _copyEmailAndShowSnackbar(context);
+      }
+    }
+  }
+
+  Future<void> _copyEmailAndShowSnackbar(BuildContext context) async {
+    await Clipboard.setData(const ClipboardData(text: _supportEmail));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('$_supportEmail (copied to clipboard)'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +139,7 @@ class CustomDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              onTap: () {
-                _launchSupportEmail();
-              },
+              onTap: () => _launchSupportEmail(context),
               leading: SvgPicture.asset(
                 Assets.images.support,
                 colorFilter: const ColorFilter.mode(
