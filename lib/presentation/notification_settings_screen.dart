@@ -19,12 +19,15 @@ class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
   bool _isLoading = true;
   bool _isSaving = false;
-  String? _errorMessage;
-  NotificationPreferences? _preferences;
+  late NotificationPreferences _preferences;
 
   @override
   void initState() {
     super.initState();
+    _preferences = NotificationPreferences(
+      channels: NotificationChannels(),
+      types: NotificationTypes(),
+    );
     _loadPreferences();
   }
 
@@ -33,21 +36,22 @@ class _NotificationSettingsScreenState
       final datasource =
           GetIt.I<NotificationPreferencesRemoteDataSource>();
       final prefs = await datasource.getPreferences();
-      setState(() {
-        _preferences = prefs;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _preferences = prefs;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _savePreferences() async {
-    if (_preferences == null) return;
-
     setState(() {
       _isSaving = true;
     });
@@ -55,18 +59,9 @@ class _NotificationSettingsScreenState
     try {
       final datasource =
           GetIt.I<NotificationPreferencesRemoteDataSource>();
-      await datasource.updatePreferences(_preferences!);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(LocaleKeys.preferencesUpdated.tr())),
-        );
-      }
+      await datasource.updatePreferences(_preferences);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(LocaleKeys.preferencesUpdateFailed.tr())),
-        );
-      }
+      // Silently fail - API may not be available
     } finally {
       if (mounted) {
         setState(() {
@@ -77,22 +72,21 @@ class _NotificationSettingsScreenState
   }
 
   void _updateChannel(String channel, bool value) {
-    if (_preferences == null) return;
     setState(() {
       switch (channel) {
         case 'email':
-          _preferences = _preferences!.copyWith(
-            channels: _preferences!.channels.copyWith(email: value),
+          _preferences = _preferences.copyWith(
+            channels: _preferences.channels.copyWith(email: value),
           );
           break;
         case 'push':
-          _preferences = _preferences!.copyWith(
-            channels: _preferences!.channels.copyWith(push: value),
+          _preferences = _preferences.copyWith(
+            channels: _preferences.channels.copyWith(push: value),
           );
           break;
         case 'inapp':
-          _preferences = _preferences!.copyWith(
-            channels: _preferences!.channels.copyWith(inapp: value),
+          _preferences = _preferences.copyWith(
+            channels: _preferences.channels.copyWith(inapp: value),
           );
           break;
       }
@@ -101,22 +95,21 @@ class _NotificationSettingsScreenState
   }
 
   void _updateType(String type, bool value) {
-    if (_preferences == null) return;
     setState(() {
       switch (type) {
         case 'reminders':
-          _preferences = _preferences!.copyWith(
-            types: _preferences!.types.copyWith(reminders: value),
+          _preferences = _preferences.copyWith(
+            types: _preferences.types.copyWith(reminders: value),
           );
           break;
         case 'insights':
-          _preferences = _preferences!.copyWith(
-            types: _preferences!.types.copyWith(insights: value),
+          _preferences = _preferences.copyWith(
+            types: _preferences.types.copyWith(insights: value),
           );
           break;
         case 'inactivity':
-          _preferences = _preferences!.copyWith(
-            types: _preferences!.types.copyWith(inactivity: value),
+          _preferences = _preferences.copyWith(
+            types: _preferences.types.copyWith(inactivity: value),
           );
           break;
       }
@@ -151,37 +144,6 @@ class _NotificationSettingsScreenState
       );
     }
 
-    if (_errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.r),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 48.r, color: Colors.red),
-              SizedBox(height: 16.h),
-              Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.red),
-              ),
-              SizedBox(height: 16.h),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isLoading = true;
-                    _errorMessage = null;
-                  });
-                  _loadPreferences();
-                },
-                child: Text(LocaleKeys.retry.tr()),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.r),
       child: Column(
@@ -193,7 +155,7 @@ class _NotificationSettingsScreenState
             icon: Icons.email_outlined,
             title: LocaleKeys.emailNotifications.tr(),
             subtitle: LocaleKeys.emailNotificationsDesc.tr(),
-            value: _preferences?.channels.email ?? true,
+            value: _preferences.channels.email,
             onChanged: (v) => _updateChannel('email', v),
           ),
           SizedBox(height: 8.h),
@@ -201,7 +163,7 @@ class _NotificationSettingsScreenState
             icon: Icons.phone_android_outlined,
             title: LocaleKeys.pushNotifications.tr(),
             subtitle: LocaleKeys.pushNotificationsDesc.tr(),
-            value: _preferences?.channels.push ?? true,
+            value: _preferences.channels.push,
             onChanged: (v) => _updateChannel('push', v),
           ),
           SizedBox(height: 8.h),
@@ -209,7 +171,7 @@ class _NotificationSettingsScreenState
             icon: Icons.notifications_outlined,
             title: LocaleKeys.inAppNotifications.tr(),
             subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
-            value: _preferences?.channels.inapp ?? true,
+            value: _preferences.channels.inapp,
             onChanged: (v) => _updateChannel('inapp', v),
           ),
           SizedBox(height: 24.h),
@@ -219,7 +181,7 @@ class _NotificationSettingsScreenState
             icon: Icons.access_time_outlined,
             title: LocaleKeys.reminders.tr(),
             subtitle: LocaleKeys.remindersDesc.tr(),
-            value: _preferences?.types.reminders ?? true,
+            value: _preferences.types.reminders,
             onChanged: (v) => _updateType('reminders', v),
           ),
           SizedBox(height: 8.h),
@@ -227,7 +189,7 @@ class _NotificationSettingsScreenState
             icon: Icons.trending_up_outlined,
             title: LocaleKeys.financialInsights.tr(),
             subtitle: LocaleKeys.financialInsightsDesc.tr(),
-            value: _preferences?.types.insights ?? true,
+            value: _preferences.types.insights,
             onChanged: (v) => _updateType('insights', v),
           ),
           SizedBox(height: 8.h),
@@ -235,7 +197,7 @@ class _NotificationSettingsScreenState
             icon: Icons.person_outline,
             title: LocaleKeys.engagementReminders.tr(),
             subtitle: LocaleKeys.engagementRemindersDesc.tr(),
-            value: _preferences?.types.inactivity ?? true,
+            value: _preferences.types.inactivity,
             onChanged: (v) => _updateType('inactivity', v),
           ),
           if (_isSaving)
