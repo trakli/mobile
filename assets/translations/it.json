@@ -71,6 +71,8 @@
   "transactionTime": "Ora transazione",
   "transactionAmount": "Importo",
   "transactionParty": "Partito",
+  "transactionSentTo": "Inviato a",
+  "transactionReceivedFrom": "Ricevuto da",
   "transactionCategory": "Categoria",
   "transactionAttachment": "Allegato",
   "transactionDescription": "Descrizione",
