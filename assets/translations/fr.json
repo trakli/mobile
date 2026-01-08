@@ -71,6 +71,8 @@
   "transactionTime": "Heure de la transaction",
   "transactionAmount": "Montant",
   "transactionParty": "Partie",
+  "transactionSentTo": "Envoyé à",
+  "transactionReceivedFrom": "Reçu de",
   "transactionCategory": "Catégorie",
   "transactionAttachment": "Pièce jointe",
   "transactionDescription": "Description",

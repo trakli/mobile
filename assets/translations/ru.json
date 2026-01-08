@@ -80,6 +80,8 @@
   "transactionTime": "Время транзакции",
   "transactionAmount": "Сумма",
   "transactionParty": "Сторона",
+  "transactionSentTo": "Отправлено",
+  "transactionReceivedFrom": "Получено от",
   "transactionCategory": "Категория",
   "transactionAttachment": "Вложение",
   "transactionDescription": "Описание",
