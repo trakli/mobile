@@ -353,6 +353,8 @@
   "dataDeletionFallbackSubjectLabel": "Subject",
   "dataDeletionFallbackBodyLabel": "Body",
   "copiedToClipboard": "Copied to clipboard",
+  "partyEducationBanner": "Parties represent people, businesses, or organizations you exchange money with. Add more to track your spending patterns!",
+  "groupEducationBanner": "Groups help you separate different areas of your finances, like personal vs business spending. Create more groups for better organization!",
   "emptyPartyTitle": "Track who you deal with",
   "emptyPartyDescription": "Parties are people or businesses you exchange money with. This helps you see spending patterns with specific vendors.",
   "emptyPartyStep1": "Add common payees (e.g., 'Grocery Store', 'Landlord')",

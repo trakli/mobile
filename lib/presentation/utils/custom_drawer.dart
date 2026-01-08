@@ -54,12 +54,9 @@ class CustomDrawer extends StatelessWidget {
               onTap: () {
                 AppNavigator.push(context, const MyGroupsScreen());
               },
-              leading: SvgPicture.asset(
-                Assets.images.people,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
-                  BlendMode.srcIn,
-                ),
+              leading: const Icon(
+                Icons.folder_outlined,
+                color: Color(0XFF3B4E45),
               ),
               title: Text(LocaleKeys.groups.tr()),
             ),
@@ -67,12 +64,9 @@ class CustomDrawer extends StatelessWidget {
               onTap: () {
                 AppNavigator.push(context, const PartyScreen());
               },
-              leading: SvgPicture.asset(
-                Assets.images.bank,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
-                  BlendMode.srcIn,
-                ),
+              leading: const Icon(
+                Icons.handshake_outlined,
+                color: Color(0XFF3B4E45),
               ),
               title: Text(LocaleKeys.parties.tr()),
             ),

@@ -351,6 +351,8 @@
   "dataDeletionFallbackSubjectLabel": "Objet",
   "dataDeletionFallbackBodyLabel": "Corps",
   "copiedToClipboard": "Copié dans le presse-papiers",
+  "partyEducationBanner": "Les parties représentent des personnes, des entreprises ou des organisations avec lesquelles vous échangez de l'argent. Ajoutez-en plus pour suivre vos habitudes de dépenses !",
+  "groupEducationBanner": "Les groupes vous aident à séparer différents domaines de vos finances, comme les dépenses personnelles et professionnelles. Créez plus de groupes pour une meilleure organisation !",
   "emptyPartyTitle": "Suivez avec qui vous traitez",
   "emptyPartyDescription": "Les parties sont des personnes ou des entreprises avec lesquelles vous échangez de l'argent. Cela vous aide à voir vos habitudes de dépenses avec certains fournisseurs.",
   "emptyPartyStep1": "Ajoutez des bénéficiaires courants (ex. : 'Supermarché', 'Propriétaire')",

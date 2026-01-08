@@ -351,6 +351,8 @@
   "dataDeletionFallbackSubjectLabel": "Asunto",
   "dataDeletionFallbackBodyLabel": "Cuerpo",
   "copiedToClipboard": "Copiado al portapapeles",
+  "partyEducationBanner": "Las partes representan personas, empresas u organizaciones con las que intercambias dinero. ¡Agrega más para seguir tus patrones de gasto!",
+  "groupEducationBanner": "Los grupos te ayudan a separar diferentes áreas de tus finanzas, como gastos personales vs empresariales. ¡Crea más grupos para una mejor organización!",
   "emptyPartyTitle": "Haz un seguimiento de con quién tratas",
   "emptyPartyDescription": "Las partes son personas o empresas con las que intercambias dinero. Esto te ayuda a ver patrones de gasto con proveedores específicos.",
   "emptyPartyStep1": "Agrega beneficiarios comunes (ej. 'Supermercado', 'Propietario')",
