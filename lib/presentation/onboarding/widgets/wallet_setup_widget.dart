@@ -358,13 +358,13 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                     onPress: () async {
                       final hasDefaultWallet = configCubit.state
                           .hasConfig(ConfigConstants.defaultWallet);
+
+                      if (defaultCurrency == null) {
+                        context.read<CurrencyCubit>().setCurrency(usdCurrency);
+                      }
+
                       if (!hasDefaultWallet) {
                         final walletCubit = context.read<WalletCubit>();
-                        if (defaultCurrency == null) {
-                          context
-                              .read<CurrencyCubit>()
-                              .setCurrency(usdCurrency);
-                        }
                         if (_selectedWalletOption ==
                                 WalletOption.createManually &&
                             (_formKey.currentState?.validate() ?? false)) {

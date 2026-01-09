@@ -510,6 +510,7 @@
   "preferencesUpdated": "Einstellungen aktualisiert",
   "preferencesUpdateFailed": "Aktualisierung der Einstellungen fehlgeschlagen",
   "loadingPreferences": "Lädt Einstellungen...",
+  "errorLoadingPreferences": "Fehler beim Laden der Einstellungen",
   "openSourceProject": "Trakli ist Open Source",
   "viewOnGithub": "Auf GitHub anzeigen"
 }
