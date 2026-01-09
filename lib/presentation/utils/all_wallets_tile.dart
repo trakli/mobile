@@ -20,8 +20,7 @@ class AllWalletsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final exchangeRateEntity =
-        context.watch<ExchangeRateCubit>().state.entity;
+    final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
     double totalBalance = 0;
     double totalIncome = 0;
@@ -161,8 +160,9 @@ class AllWalletsTile extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
+                    Flexible(
                       child: Container(
                         decoration: BoxDecoration(
                           color: incomeGreen,
@@ -175,6 +175,7 @@ class AllWalletsTile extends StatelessWidget {
                         child: Column(
                           spacing: 2.h,
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
                               mainAxisSize: MainAxisSize.min,
@@ -221,7 +222,7 @@ class AllWalletsTile extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    Expanded(
+                    Flexible(
                       child: Container(
                         decoration: BoxDecoration(
                           color: expenseRed,
@@ -234,6 +235,7 @@ class AllWalletsTile extends StatelessWidget {
                         child: Column(
                           spacing: 2.h,
                           crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
                               mainAxisSize: MainAxisSize.min,
@@ -248,6 +250,7 @@ class AllWalletsTile extends StatelessWidget {
                                       color: expenseRedText,
                                     ),
                                     overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.end,
                                   ),
                                 ),
                                 SvgPicture.asset(
@@ -275,6 +278,7 @@ class AllWalletsTile extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                               overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.end,
                             ),
                           ],
                         ),

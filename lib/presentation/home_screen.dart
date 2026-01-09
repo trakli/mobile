@@ -42,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final CarouselSliderController _carouselController =
       CarouselSliderController();
   int? _previousWalletsLength;
-  String? _previousDefaultWalletId;
   int _previousTransactionCount = 0;
   bool _wasSaving = false;
   bool _carouselBuilt = false;
@@ -133,29 +132,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final defaultGroup =
         groups.firstWhereOrNull((entity) => entity.clientId == defaultGroupId);
 
-    // Get default wallet and set initial index
-    final defaultWalletConfig =
-        configState.getConfigByKey(ConfigConstants.defaultWallet);
-    final defaultWalletId = defaultWalletConfig?.value as String?;
-
-    // Calculate the default wallet index
-    final int defaultWalletIndex = wallets.isNotEmpty && defaultWalletId != null
-        ? wallets.indexWhere((wallet) => wallet.clientId == defaultWalletId)
-        : -1;
-
-    // When wallets are loaded or changed, set to default wallet if available
-    if (wallets.isNotEmpty &&
-        defaultWalletIndex != -1 &&
-        _previousWalletsLength != wallets.length) {
+    // Ensure "All Wallets" is selected by default
+    // Reset to "All Wallets" when wallets are first loaded or when app restarts
+    if (wallets.isNotEmpty && _previousWalletsLength != wallets.length) {
       _carouselBuilt = false; // Reset flag when wallets change
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _carouselBuilt) {
+          // Always default to "All Wallets" when wallets are first loaded
           context
               .read<WalletCubit>()
-              .setCurrentSelectedWalletIndex(defaultWalletIndex);
+              .setCurrentSelectedWalletIndex(allWalletsIndex);
           try {
-            // Carousel index is walletIndex + 1 because index 0 is "All Wallets"
-            _carouselController.animateToPage(defaultWalletIndex + 1);
+            // Carousel index 0 is "All Wallets"
+            _carouselController.animateToPage(0);
           } catch (e) {
             // Carousel controller not ready yet, ignore
           }
@@ -164,10 +153,13 @@ class _HomeScreenState extends State<HomeScreen> {
       _previousWalletsLength = wallets.length;
     }
 
-    // Calculate the initial page for carousel (default wallet or current index)
-    final int carouselInitialPage = defaultWalletIndex != -1
-        ? defaultWalletIndex
-        : (currentWalletIndex < wallets.length ? currentWalletIndex : 0);
+    // Always start with "All Wallets" (index 0) on initial load
+    // Only use current index if it's already set and valid (for navigation within session)
+    final int carouselInitialPage = currentWalletIndex == allWalletsIndex
+        ? 0
+        : (currentWalletIndex >= 0 && currentWalletIndex < wallets.length
+            ? currentWalletIndex + 1
+            : 0);
 
     final currentSelectedGroup =
         context.watch<TransactionCubit>().state.selectedGroup;
@@ -177,20 +169,6 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<TransactionCubit>().setCurrentGroup(selectedGroup);
 
     selectedGroup = selectedGroup ?? groups.firstOrNull;
-
-    // Listen for default wallet changes
-    if (defaultWalletId != null &&
-        defaultWalletId != _previousDefaultWalletId &&
-        wallets.isNotEmpty &&
-        defaultWalletIndex != -1) {
-      final walletId = defaultWalletId;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _navigateToWallet(walletId, wallets);
-        }
-      });
-      _previousDefaultWalletId = defaultWalletId;
-    }
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -308,10 +286,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         });
                       }
-                      final int adjustedInitialPage =
-                          carouselInitialPage == allWalletsIndex
-                              ? 0
-                              : carouselInitialPage + 1;
+                      // carouselInitialPage is already calculated correctly (0 for All Wallets, or walletIndex + 1)
+                      final int adjustedInitialPage = carouselInitialPage;
 
                       return CarouselSlider.builder(
                         carouselController: _carouselController,

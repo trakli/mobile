@@ -39,6 +39,18 @@ flutter precache --ios
 #   cp .env.stag .env
 # fi
 
+# Determine environment - default to 'prod' for App Store builds
+if [ "$CI_BRANCH" = "main" ]; then
+  BUILD_ENV="prod"
+else
+  BUILD_ENV="dev"
+fi
+echo "Building iOS for environment: $BUILD_ENV"
+
+# Create config directory and write environment file
+mkdir -p lib/config
+echo "const String buildEnvironment = '$BUILD_ENV';" > lib/config/build_env.dart
+
 # Install Flutter dependencies.
 flutter pub get
 

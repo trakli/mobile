@@ -10,14 +10,12 @@ import 'package:trakli/di/injection.dart';
 @module
 abstract class InjectHttpClientModule {
   @Named('HttpUrl')
+  @dev
   String get devHttpUrl => 'https://api.dev.trakli.app/api/v1/';
 
-  // @Named('HttpUrl')
-  // @prod
-  // String get prodHttpUrl => 'https://api.trakli.com/api/v1/';
-
-  // @lazySingleton
-  // TokenManager get tokenManager => TokenManager();
+  @Named('HttpUrl')
+  @prod
+  String get prodHttpUrl => 'https://api.trakli.app/api/v1/';
 
   @lazySingleton
   Dio dio(@Named('HttpUrl') String url) {

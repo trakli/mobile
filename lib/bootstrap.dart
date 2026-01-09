@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ import 'package:trakli/core/sync/drift_sync_crash_reporting_service.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/firebase_options.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/config/build_env.dart' as build_config;
 
 /// Adds a global error handler to the Flutter app.
 ///
@@ -31,16 +33,33 @@ Future<void> bootstrap(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+      // Force Portrait Mode
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       // Initialize Firebase
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
 
-      configureDependencies(Environment.dev);
+      // Determine environment: dart-define (Android) or build config file (iOS)
+      const dartDefineEnv = String.fromEnvironment('ENV', defaultValue: '');
+      final env = dartDefineEnv.isNotEmpty
+          ? dartDefineEnv
+          : (build_config.buildEnvironment == 'prod' ? 'prod' : 'dev');
+      final environment = env == 'prod' ? Environment.prod : Environment.dev;
+
+      configureDependencies(environment);
 
       // Initialize crash reporting
       crashReportingService = getIt<CrashReportingService>();
       await crashReportingService?.initialize();
+
+      // Set environment tag in Crashlytics
+      await crashReportingService?.setCustomKey('environment', env);
 
       // Initialize user context service
       final userContextService = getIt<UserContextService>();

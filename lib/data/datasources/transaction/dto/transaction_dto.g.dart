@@ -15,7 +15,7 @@ TransactionDTO _$TransactionDTOFromJson(Map<String, dynamic> json) =>
       datetime: json['datetime'] as String?,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
-      walletId: (json['wallet_id'] as num).toInt(),
+      walletId: (json['wallet_id'] as num?)?.toInt(),
       userId: (json['user_id'] as num).toInt(),
       wallet: json['wallet'] == null
           ? null
