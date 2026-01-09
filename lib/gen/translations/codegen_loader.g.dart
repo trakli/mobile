@@ -514,6 +514,7 @@ abstract class  LocaleKeys {
   static const preferencesUpdated = 'preferencesUpdated';
   static const preferencesUpdateFailed = 'preferencesUpdateFailed';
   static const loadingPreferences = 'loadingPreferences';
+  static const errorLoadingPreferences = 'errorLoadingPreferences';
   static const openSourceProject = 'openSourceProject';
   static const viewOnGithub = 'viewOnGithub';
 
