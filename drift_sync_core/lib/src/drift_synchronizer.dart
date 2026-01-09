@@ -384,7 +384,7 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
       final batch = updatedItems.sublist(i, end);
       final futureAwait = batch.map((entity) => handler.putRemote(entity));
 
-      final responses = await Future.wait(futureAwait);
+      final responses = await Future.wait<T>(futureAwait);
 
       allResponses.addAll(responses);
 

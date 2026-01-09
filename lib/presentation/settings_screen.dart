@@ -12,7 +12,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
 import 'package:trakli/presentation/advanced_settings_screen.dart';
-import 'package:trakli/presentation/notification_settings_screen.dart';
+import 'package:trakli/presentation/notification_settings/notification_settings_screen.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/defaults_settings_screen.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';

@@ -510,6 +510,7 @@
   "preferencesUpdated": "Préférences mises à jour",
   "preferencesUpdateFailed": "Échec de la mise à jour des préférences",
   "loadingPreferences": "Chargement des préférences...",
+  "errorLoadingPreferences": "Erreur lors du chargement des préférences",
   "openSourceProject": "Trakli est open source",
   "viewOnGithub": "Voir sur GitHub"
 }
