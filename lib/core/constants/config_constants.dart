@@ -6,4 +6,12 @@ class ConfigConstants {
   static const String defaultLang = 'default-lang';
   static const String onboardingComplete = 'onboarding-complete';
   static const String theme = 'theme';
+
+  /// Notification preference keys
+  static const String notificationsEmail = 'notifications-email';
+  static const String notificationsPush = 'notifications-push';
+  static const String notificationsInapp = 'notifications-inapp';
+  static const String notificationsReminders = 'notifications-reminders';
+  static const String notificationsInsights = 'notifications-insights';
+  static const String notificationsInactivity = 'notifications-inactivity';
 }

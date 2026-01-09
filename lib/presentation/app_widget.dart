@@ -38,7 +38,6 @@ import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
 import 'package:trakli/presentation/utils/theme.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/presentation/notification_settings/cubit/notification_preferences_cubit.dart';
 
 // Global flag to track if we're in onboarding mode
 bool _isInOnboardingMode = false;
@@ -99,9 +98,6 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<CurrencyCubit>()..loadCurrency(),
-        ),
-        BlocProvider(
-          create: (_) => getIt<NotificationPreferencesCubit>(),
         ),
       ],
       child: const AppView(),

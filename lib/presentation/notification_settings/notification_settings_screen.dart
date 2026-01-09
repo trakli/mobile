@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/notification_settings/cubit/notification_preferences_cubit.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
@@ -29,25 +31,56 @@ class NotificationSettingsScreen extends StatelessWidget {
 class _NotificationSettingsBody extends StatelessWidget {
   const _NotificationSettingsBody();
 
+  bool _getConfigBoolValue(ConfigState state, String key,
+      {bool defaultValue = true}) {
+    final config = state.getConfigByKey(key);
+    if (config == null || config.value == null) return defaultValue;
+    return config.value as bool? ?? defaultValue;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final configState = context.watch<ConfigCubit>().state;
+
+    // Get notification preference values with defaults
+    final email =
+        _getConfigBoolValue(configState, ConfigConstants.notificationsEmail);
+    final push =
+        _getConfigBoolValue(configState, ConfigConstants.notificationsPush);
+    final inapp =
+        _getConfigBoolValue(configState, ConfigConstants.notificationsInapp);
+    final reminders = _getConfigBoolValue(
+        configState, ConfigConstants.notificationsReminders);
+    final insights =
+        _getConfigBoolValue(configState, ConfigConstants.notificationsInsights);
+    final inactivity = _getConfigBoolValue(
+        configState, ConfigConstants.notificationsInactivity);
+
+    if (configState.isLoading) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            SizedBox(height: 16.h),
+            Text(LocaleKeys.loadingPreferences.tr()),
+          ],
+        ),
+      );
+    }
+
     return MultiBlocListener(
       listeners: [
-        BlocListener<NotificationPreferencesCubit,
-            NotificationPreferencesState>(
+        BlocListener<ConfigCubit, ConfigState>(
           listenWhen: (previous, current) =>
               previous.failure != current.failure && current.failure.hasError,
           listener: (context, state) {
-            // Show error message when there's a failure
             showSnackBar(
               message: state.failure.customMessage,
-              // backgroundColor: appDangerColor,
-              // borderRadius: 8.r,
             );
           },
         ),
-        BlocListener<NotificationPreferencesCubit,
-            NotificationPreferencesState>(
+        BlocListener<ConfigCubit, ConfigState>(
           listenWhen: (previous, current) =>
               previous.isSaving != current.isSaving,
           listener: (context, state) {
@@ -59,128 +92,94 @@ class _NotificationSettingsBody extends StatelessWidget {
           },
         ),
       ],
-      child: BlocBuilder<NotificationPreferencesCubit,
-          NotificationPreferencesState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  SizedBox(height: 16.h),
-                  Text(LocaleKeys.loadingPreferences.tr()),
-                ],
-              ),
-            );
-          }
-
-          final preferences = state.preferences;
-          if (preferences == null) {
-            return Center(
-              child: Text(LocaleKeys.errorLoadingPreferences.tr()),
-            );
-          }
-
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(16.r),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionHeader(LocaleKeys.notificationChannels.tr()),
-                SizedBox(height: 12.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.email_outlined,
-                  title: LocaleKeys.emailNotifications.tr(),
-                  subtitle: LocaleKeys.emailNotificationsDesc.tr(),
-                  value: preferences.channels.email,
-                  onChanged: (v) => context
-                      .read<NotificationPreferencesCubit>()
-                      .updateChannel(
-                        email: v,
-                        push: preferences.channels.push,
-                        inapp: preferences.channels.inapp,
-                      ),
-                ),
-                SizedBox(height: 8.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.phone_android_outlined,
-                  title: LocaleKeys.pushNotifications.tr(),
-                  subtitle: LocaleKeys.pushNotificationsDesc.tr(),
-                  value: preferences.channels.push,
-                  onChanged: (v) => context
-                      .read<NotificationPreferencesCubit>()
-                      .updateChannel(
-                        email: preferences.channels.email,
-                        push: v,
-                        inapp: preferences.channels.inapp,
-                      ),
-                ),
-                SizedBox(height: 8.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.notifications_outlined,
-                  title: LocaleKeys.inAppNotifications.tr(),
-                  subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
-                  value: preferences.channels.inapp,
-                  onChanged: (v) => context
-                      .read<NotificationPreferencesCubit>()
-                      .updateChannel(
-                        email: preferences.channels.email,
-                        push: preferences.channels.push,
-                        inapp: v,
-                      ),
-                ),
-                SizedBox(height: 24.h),
-                _buildSectionHeader(LocaleKeys.notificationTypes.tr()),
-                SizedBox(height: 12.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.access_time_outlined,
-                  title: LocaleKeys.reminders.tr(),
-                  subtitle: LocaleKeys.remindersDesc.tr(),
-                  value: preferences.types.reminders,
-                  onChanged: (v) =>
-                      context.read<NotificationPreferencesCubit>().updateType(
-                            reminders: v,
-                            insights: preferences.types.insights,
-                            inactivity: preferences.types.inactivity,
-                          ),
-                ),
-                SizedBox(height: 8.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.trending_up_outlined,
-                  title: LocaleKeys.financialInsights.tr(),
-                  subtitle: LocaleKeys.financialInsightsDesc.tr(),
-                  value: preferences.types.insights,
-                  onChanged: (v) =>
-                      context.read<NotificationPreferencesCubit>().updateType(
-                            reminders: preferences.types.reminders,
-                            insights: v,
-                            inactivity: preferences.types.inactivity,
-                          ),
-                ),
-                SizedBox(height: 8.h),
-                _buildToggleItem(
-                  context: context,
-                  icon: Icons.person_outline,
-                  title: LocaleKeys.engagementReminders.tr(),
-                  subtitle: LocaleKeys.engagementRemindersDesc.tr(),
-                  value: preferences.types.inactivity,
-                  onChanged: (v) =>
-                      context.read<NotificationPreferencesCubit>().updateType(
-                            reminders: preferences.types.reminders,
-                            insights: preferences.types.insights,
-                            inactivity: v,
-                          ),
-                ),
-              ],
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16.r),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(LocaleKeys.notificationChannels.tr()),
+            SizedBox(height: 12.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.email_outlined,
+              title: LocaleKeys.emailNotifications.tr(),
+              subtitle: LocaleKeys.emailNotificationsDesc.tr(),
+              value: email,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsEmail,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
             ),
-          );
-        },
+            SizedBox(height: 8.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.phone_android_outlined,
+              title: LocaleKeys.pushNotifications.tr(),
+              subtitle: LocaleKeys.pushNotificationsDesc.tr(),
+              value: push,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsPush,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
+            ),
+            SizedBox(height: 8.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.notifications_outlined,
+              title: LocaleKeys.inAppNotifications.tr(),
+              subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
+              value: inapp,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsInapp,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
+            ),
+            SizedBox(height: 24.h),
+            _buildSectionHeader(LocaleKeys.notificationTypes.tr()),
+            SizedBox(height: 12.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.access_time_outlined,
+              title: LocaleKeys.reminders.tr(),
+              subtitle: LocaleKeys.remindersDesc.tr(),
+              value: reminders,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsReminders,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
+            ),
+            SizedBox(height: 8.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.trending_up_outlined,
+              title: LocaleKeys.financialInsights.tr(),
+              subtitle: LocaleKeys.financialInsightsDesc.tr(),
+              value: insights,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsInsights,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
+            ),
+            SizedBox(height: 8.h),
+            _buildToggleItem(
+              context: context,
+              icon: Icons.person_outline,
+              title: LocaleKeys.engagementReminders.tr(),
+              subtitle: LocaleKeys.engagementRemindersDesc.tr(),
+              value: inactivity,
+              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
+                    key: ConfigConstants.notificationsInactivity,
+                    type: ConfigType.bool,
+                    value: v,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }
