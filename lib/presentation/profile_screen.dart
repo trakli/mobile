@@ -20,7 +20,6 @@ import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/utils/premium_tile.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -168,7 +167,9 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 12.h,
                 children: [
-                  const PremiumTile(),
+                  // TODO: Commented out for App Store review
+                  //- premium not fully implemented
+                  // const PremiumTile(),
                   ActionTile(
                     title: LocaleKeys.accountInfo.tr(),
                     iconPath: Assets.images.user,
