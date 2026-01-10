@@ -18,8 +18,8 @@ abstract class SyncModule {
     WalletSyncHandler walletTypeHandler,
     PartySyncHandler partyTypeHandler,
     GroupSyncHandler groupTypeHandler,
-    TransactionSyncHandler transactionTypeHandler,
     NotificationSyncHandler notificationTypeHandler,
+    TransactionSyncHandler transactionTypeHandler,
   ) {
     return {
       categoryTypeHandler,
@@ -27,8 +27,8 @@ abstract class SyncModule {
       walletTypeHandler,
       partyTypeHandler,
       groupTypeHandler,
-      transactionTypeHandler,
       notificationTypeHandler,
+      transactionTypeHandler
     };
   }
 

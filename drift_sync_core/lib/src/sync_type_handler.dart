@@ -44,6 +44,10 @@ abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   bool shouldPersistRemote(TEntity entity);
 
   Future<TEntity> assignClientId(TEntity item);
+
+  List<TEntity> getEmptyList() {
+    return List<TEntity>.empty(growable: true);
+  }
 }
 
 // Helper typedefs for clarity

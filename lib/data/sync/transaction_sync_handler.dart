@@ -150,10 +150,16 @@ class TransactionSyncHandler
         datetime: Value(entity.transaction.datetime),
         createdAt: Value(entity.transaction.createdAt),
         lastSyncedAt: Value(entity.transaction.lastSyncedAt),
-        updatedAt: Value(entity.transaction.updatedAt),
+        // updatedAt: Value(entity.transaction.updatedAt),
         walletClientId: Value(entity.wallet.clientId),
         partyClientId: Value(entity.party?.clientId),
         groupClientId: Value(entity.group?.clientId),
+        walletId: Value(entity.wallet.id),
+        partyId: Value(entity.party?.id),
+        groupId: Value(entity.group?.id),
+        userId: Value(entity.transaction.userId),
+        rev: Value(entity.transaction.rev),
+        deletedAt: Value(entity.transaction.deletedAt),
       );
 
       await table.insertOne(transaction, mode: InsertMode.insertOrReplace);
@@ -229,9 +235,7 @@ class TransactionSyncHandler
   @override
   Future<void> deleteLocalNotIn(Set<String> clientIds) async {
     if (clientIds.isEmpty) return;
-    await (db.delete(table)
-          ..where((t) => t.clientId.isNotIn(clientIds)))
-        .go();
+    await (db.delete(table)..where((t) => t.clientId.isNotIn(clientIds))).go();
   }
 
   @override
