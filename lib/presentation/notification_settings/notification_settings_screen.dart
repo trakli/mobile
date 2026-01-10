@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/core/constants/insights_frequency_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/notification_settings/helpers/notification_settings_helpers.dart';
+import 'package:trakli/presentation/notification_settings/widgets/insights_frequency_selector_bottom_sheet.dart';
+import 'package:trakli/presentation/notification_settings/widgets/notification_section_header.dart';
+import 'package:trakli/presentation/notification_settings/widgets/notification_selection_item.dart';
+import 'package:trakli/presentation/notification_settings/widgets/notification_toggle_item.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
@@ -38,6 +44,13 @@ class _NotificationSettingsBody extends StatelessWidget {
     return config.value as bool? ?? defaultValue;
   }
 
+  String _getConfigStringValue(ConfigState state, String key,
+      {String defaultValue = InsightsFrequencyConstants.weekly}) {
+    final config = state.getConfigByKey(key);
+    if (config == null || config.value == null) return defaultValue;
+    return config.value as String? ?? defaultValue;
+  }
+
   @override
   Widget build(BuildContext context) {
     final configState = context.watch<ConfigCubit>().state;
@@ -53,6 +66,9 @@ class _NotificationSettingsBody extends StatelessWidget {
         configState, ConfigConstants.notificationsReminders);
     final insights =
         _getConfigBoolValue(configState, ConfigConstants.notificationsInsights);
+    final insightsFrequency = _getConfigStringValue(
+        configState, ConfigConstants.insightsFrequency,
+        defaultValue: InsightsFrequencyConstants.weekly);
     final inactivity = _getConfigBoolValue(
         configState, ConfigConstants.notificationsInactivity);
 
@@ -97,10 +113,11 @@ class _NotificationSettingsBody extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(LocaleKeys.notificationChannels.tr()),
+            NotificationSectionHeader(
+              title: LocaleKeys.notificationChannels.tr(),
+            ),
             SizedBox(height: 12.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.email_outlined,
               title: LocaleKeys.emailNotifications.tr(),
               subtitle: LocaleKeys.emailNotificationsDesc.tr(),
@@ -112,8 +129,7 @@ class _NotificationSettingsBody extends StatelessWidget {
                   ),
             ),
             SizedBox(height: 8.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.phone_android_outlined,
               title: LocaleKeys.pushNotifications.tr(),
               subtitle: LocaleKeys.pushNotificationsDesc.tr(),
@@ -125,8 +141,7 @@ class _NotificationSettingsBody extends StatelessWidget {
                   ),
             ),
             SizedBox(height: 8.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.notifications_outlined,
               title: LocaleKeys.inAppNotifications.tr(),
               subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
@@ -138,10 +153,11 @@ class _NotificationSettingsBody extends StatelessWidget {
                   ),
             ),
             SizedBox(height: 24.h),
-            _buildSectionHeader(LocaleKeys.notificationTypes.tr()),
+            NotificationSectionHeader(
+              title: LocaleKeys.notificationTypes.tr(),
+            ),
             SizedBox(height: 12.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.access_time_outlined,
               title: LocaleKeys.reminders.tr(),
               subtitle: LocaleKeys.remindersDesc.tr(),
@@ -153,8 +169,7 @@ class _NotificationSettingsBody extends StatelessWidget {
                   ),
             ),
             SizedBox(height: 8.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.trending_up_outlined,
               title: LocaleKeys.financialInsights.tr(),
               subtitle: LocaleKeys.financialInsightsDesc.tr(),
@@ -165,9 +180,20 @@ class _NotificationSettingsBody extends StatelessWidget {
                     value: v,
                   ),
             ),
+            if (insights) ...[
+              SizedBox(height: 8.h),
+              NotificationSelectionItem(
+                icon: Icons.calendar_today_outlined,
+                title: LocaleKeys.insightsFrequency.tr(),
+                subtitle: LocaleKeys.insightsFrequencyDesc.tr(),
+                value: NotificationSettingsHelpers.getFrequencyLabel(
+                    insightsFrequency),
+                onTap: () => InsightsFrequencySelectorBottomSheet.show(
+                    context, insightsFrequency),
+              ),
+            ],
             SizedBox(height: 8.h),
-            _buildToggleItem(
-              context: context,
+            NotificationToggleItem(
               icon: Icons.person_outline,
               title: LocaleKeys.engagementReminders.tr(),
               subtitle: LocaleKeys.engagementRemindersDesc.tr(),
@@ -180,80 +206,6 @@ class _NotificationSettingsBody extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w600,
-        color: const Color(0xFF061D23),
-      ),
-    );
-  }
-
-  Widget _buildToggleItem({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(12.r),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40.r,
-            height: 40.r,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Icon(
-              icon,
-              color: Theme.of(context).primaryColor,
-              size: 20.r,
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF061D23),
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF576760),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: Theme.of(context).primaryColor,
-          ),
-        ],
       ),
     );
   }

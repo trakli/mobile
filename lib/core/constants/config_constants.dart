@@ -14,4 +14,5 @@ class ConfigConstants {
   static const String notificationsReminders = 'notifications-reminders';
   static const String notificationsInsights = 'notifications-insights';
   static const String notificationsInactivity = 'notifications-inactivity';
+  static const String insightsFrequency = 'insights-frequency';
 }
