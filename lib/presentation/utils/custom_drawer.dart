@@ -16,6 +16,7 @@ import 'package:trakli/presentation/parties/party_screen.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
 
 const String _supportEmail = 'support@trakli.app';
@@ -174,12 +175,10 @@ class CustomDrawer extends StatelessWidget {
                 title: Text(LocaleKeys.databaseViewer.tr()),
               ),
             ],
-            // TODO: Commented out for App Store review
-            // - premium not fully implemented
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 12.w),
-            //   child: const PremiumTile(),
-            // ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: const PremiumTile(),
+            ),
           ],
         ),
       ),
