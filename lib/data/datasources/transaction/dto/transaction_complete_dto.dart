@@ -137,7 +137,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
           ? formatServerIsoDateTimeString(transaction.datetime!)
           : null,
       'created_at': formatServerIsoDateTimeString(transaction.createdAt),
-      // 'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
+      'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
       'deleted_at': transaction.deletedAt != null
           ? formatServerIsoDateTimeString(transaction.deletedAt!)
           : null,
