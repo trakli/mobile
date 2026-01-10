@@ -1,6 +1,7 @@
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:trakli/data/sync/category_sync_handler.dart';
 import 'package:trakli/data/sync/group_sync_handler.dart';
+import 'package:trakli/data/sync/notification_sync_handler.dart';
 import 'package:trakli/data/sync/party_sync_handler.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
 import 'package:trakli/data/sync/wallet_sync_handler.dart';
@@ -20,5 +21,6 @@ class SyncDependencyManager extends DefaultSyncDependencyManager {
         WalletSyncHandler.entity: {},
         PartySyncHandler.entity: {},
         GroupSyncHandler.entity: {},
+        NotificationSyncHandler.entity: {},
       };
 }

@@ -4,6 +4,7 @@ import 'package:trakli/core/sync/sync_dependency_manager.dart';
 import 'package:trakli/data/sync/category_sync_handler.dart';
 import 'package:trakli/data/sync/config_sync_handler.dart';
 import 'package:trakli/data/sync/group_sync_handler.dart';
+import 'package:trakli/data/sync/notification_sync_handler.dart';
 import 'package:trakli/data/sync/party_sync_handler.dart';
 import 'package:trakli/data/sync/transaction_sync_handler.dart';
 import 'package:trakli/data/sync/wallet_sync_handler.dart';
@@ -18,6 +19,7 @@ abstract class SyncModule {
     PartySyncHandler partyTypeHandler,
     GroupSyncHandler groupTypeHandler,
     TransactionSyncHandler transactionTypeHandler,
+    NotificationSyncHandler notificationTypeHandler,
   ) {
     return {
       categoryTypeHandler,
@@ -26,6 +28,7 @@ abstract class SyncModule {
       partyTypeHandler,
       groupTypeHandler,
       transactionTypeHandler,
+      notificationTypeHandler,
     };
   }
 
