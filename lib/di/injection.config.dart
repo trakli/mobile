@@ -372,16 +372,6 @@ _i174.GetIt $initGetIt(
       () => _i444.StreamAuthStatus(gh<_i800.AuthRepository>()));
   gh.factory<_i828.IsOnboardingCompleted>(
       () => _i828.IsOnboardingCompleted(gh<_i800.AuthRepository>()));
-  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
-      () => syncModule.provideSyncTypeHandlers(
-            gh<_i463.CategorySyncHandler>(),
-            gh<_i480.ConfigSyncHandler>(),
-            gh<_i849.WalletSyncHandler>(),
-            gh<_i280.PartySyncHandler>(),
-            gh<_i235.GroupSyncHandler>(),
-            gh<_i893.TransactionSyncHandler>(),
-            gh<_i217.NotificationSyncHandler>(),
-          ));
   gh.lazySingleton<_i118.TransactionRepository>(() =>
       _i114.TransactionRepositoryImpl(
         syncHandler: gh<_i893.TransactionSyncHandler>(),
@@ -389,6 +379,16 @@ _i174.GetIt $initGetIt(
         db: gh<_i704.AppDatabase>(),
         requestAuthorizationService: gh<_i877.RequestAuthorizationService>(),
       ));
+  gh.lazySingleton<Set<_i877.SyncTypeHandler<dynamic, dynamic, dynamic>>>(
+      () => syncModule.provideSyncTypeHandlers(
+            gh<_i463.CategorySyncHandler>(),
+            gh<_i480.ConfigSyncHandler>(),
+            gh<_i849.WalletSyncHandler>(),
+            gh<_i280.PartySyncHandler>(),
+            gh<_i235.GroupSyncHandler>(),
+            gh<_i217.NotificationSyncHandler>(),
+            gh<_i893.TransactionSyncHandler>(),
+          ));
   gh.factory<_i56.DeletePartyUseCase>(
       () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i84.AddPartyUseCase>(

@@ -46,7 +46,7 @@ class NotificationSyncHandler extends SyncTypeHandler<Notification, String, int>
     bool? noClientId,
     DateTime? syncedSince,
   }) async {
-    return remoteDataSource.getAllNotifications(
+    return await remoteDataSource.getAllNotifications(
       noClientId: noClientId,
       syncedSince: syncedSince,
     );

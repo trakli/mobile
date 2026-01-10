@@ -509,6 +509,11 @@ abstract class  LocaleKeys {
   static const remindersDesc = 'remindersDesc';
   static const financialInsights = 'financialInsights';
   static const financialInsightsDesc = 'financialInsightsDesc';
+  static const insightsFrequency = 'insightsFrequency';
+  static const insightsFrequencyDesc = 'insightsFrequencyDesc';
+  static const insightsFrequencyWeekly = 'insightsFrequencyWeekly';
+  static const insightsFrequencyMonthly = 'insightsFrequencyMonthly';
+  static const selectFrequency = 'selectFrequency';
   static const engagementReminders = 'engagementReminders';
   static const engagementRemindersDesc = 'engagementRemindersDesc';
   static const preferencesUpdated = 'preferencesUpdated';

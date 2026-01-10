@@ -137,7 +137,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
           ? formatServerIsoDateTimeString(transaction.datetime!)
           : null,
       'created_at': formatServerIsoDateTimeString(transaction.createdAt),
-      'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
+      // 'updated_at': formatServerIsoDateTimeString(transaction.updatedAt),
       'deleted_at': transaction.deletedAt != null
           ? formatServerIsoDateTimeString(transaction.deletedAt!)
           : null,
@@ -183,6 +183,9 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       partyClientId: party?.clientId,
       groupClientId: group?.clientId,
       lastSyncedAt: transactionDto.lastSyncedAt,
+      deletedAt: transactionDto.deletedAt,
+      partyId: party?.id,
+      groupId: group?.id,
     );
 
     return TransactionCompleteDto(

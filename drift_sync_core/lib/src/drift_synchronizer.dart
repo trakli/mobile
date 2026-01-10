@@ -340,14 +340,14 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
   }
 
   /// PARTIAL SYNC: Assign client IDs to remote items without client ID (generic for any handler)
-  Future<void> assignClientIdsToRemoteItemsWithoutClientId<T>(
-    SyncTypeHandler<T, dynamic, dynamic> handler,
+  Future<void> assignClientIdsToRemoteItemsWithoutClientId(
+    SyncTypeHandler<dynamic, dynamic, dynamic> handler,
   ) async {
     final itemsWithoutClientId = await handler.getAllRemote(noClientId: true);
 
     if (itemsWithoutClientId.isEmpty) return;
 
-    var updatedItems = <T>[];
+    var updatedItems = handler.getEmptyList();
 
     for (final item in itemsWithoutClientId) {
       try {
@@ -375,18 +375,21 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
     }
 
     const batchSize = 5;
-    final allResponses = <T>[];
+    var allResponses = handler.getEmptyList();
 
     for (int i = 0; i < updatedItems.length; i += batchSize) {
       final end = (i + batchSize < updatedItems.length)
           ? i + batchSize
           : updatedItems.length;
       final batch = updatedItems.sublist(i, end);
+
       final futureAwait = batch.map((entity) => handler.putRemote(entity));
 
-      final responses = await Future.wait<T>(futureAwait);
+      final responses = await Future.wait(futureAwait);
 
-      allResponses.addAll(responses);
+      for (final response in responses) {
+        allResponses.add(response);
+      }
 
       DriftSyncLogger.logger.finest('responses', responses);
     }
