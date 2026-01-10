@@ -183,6 +183,9 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       partyClientId: party?.clientId,
       groupClientId: group?.clientId,
       lastSyncedAt: transactionDto.lastSyncedAt,
+      deletedAt: transactionDto.deletedAt,
+      partyId: party?.id,
+      groupId: group?.id,
     );
 
     return TransactionCompleteDto(

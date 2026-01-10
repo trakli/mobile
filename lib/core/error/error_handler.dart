@@ -26,12 +26,30 @@ class ErrorHandler {
 
   static ApiException handleDioException(DioException err) {
     // Record the error in crash reporting
+    final requestData = err.requestOptions.data;
+    final requestDataMap = requestData is Map<String, dynamic>
+        ? requestData
+        : requestData is Map
+            ? Map<String, dynamic>.from(requestData)
+            : requestData != null
+                ? {'data': requestData}
+                : null;
+
+    final responseData = err.response?.data;
+    final responseDataMap = responseData is Map<String, dynamic>
+        ? responseData
+        : responseData is Map
+            ? Map<String, dynamic>.from(responseData)
+            : responseData != null
+                ? {'data': responseData}
+                : null;
+
     _crashReportingService?.recordApiError(
       err.requestOptions.path,
       err.response?.statusCode,
       err.message ?? 'Unknown error',
-      requestData: err.requestOptions.data,
-      responseData: err.response?.data,
+      requestData: requestDataMap,
+      responseData: responseDataMap,
     );
 
     if (err.type == DioExceptionType.connectionError) {
@@ -42,7 +60,10 @@ class ErrorHandler {
       return UnknownException('Unknown error');
     }
     final statusCode = err.response?.statusCode;
-    final message = err.response?.data['message'] as String? ?? 'Unknown error';
+    final responseDataForMessage = err.response?.data;
+    final message = responseDataForMessage is Map
+        ? (responseDataForMessage['message'] as String?) ?? 'Unknown error'
+        : 'Unknown error';
     final data = err.response?.data;
 
     switch (statusCode) {

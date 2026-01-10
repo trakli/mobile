@@ -79,7 +79,7 @@ class GroupTile extends StatelessWidget {
               accentColor: accentColor,
               iconSize: 20.sp,
               emojiSize: 20.sp,
-              placeholderIcon: Icons.groups_outlined,
+              placeholderIcon: Icons.folder_outlined,
             ),
           ),
           SizedBox(width: 16.w),

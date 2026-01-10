@@ -75,6 +75,8 @@ abstract class  LocaleKeys {
   static const transactionTime = 'transactionTime';
   static const transactionAmount = 'transactionAmount';
   static const transactionParty = 'transactionParty';
+  static const transactionSentTo = 'transactionSentTo';
+  static const transactionReceivedFrom = 'transactionReceivedFrom';
   static const transactionCategory = 'transactionCategory';
   static const transactionAttachment = 'transactionAttachment';
   static const transactionDescription = 'transactionDescription';
@@ -353,6 +355,8 @@ abstract class  LocaleKeys {
   static const dataDeletionFallbackSubjectLabel = 'dataDeletionFallbackSubjectLabel';
   static const dataDeletionFallbackBodyLabel = 'dataDeletionFallbackBodyLabel';
   static const copiedToClipboard = 'copiedToClipboard';
+  static const partyEducationBanner = 'partyEducationBanner';
+  static const groupEducationBanner = 'groupEducationBanner';
   static const emptyPartyTitle = 'emptyPartyTitle';
   static const emptyPartyDescription = 'emptyPartyDescription';
   static const emptyPartyStep1 = 'emptyPartyStep1';
@@ -492,5 +496,31 @@ abstract class  LocaleKeys {
   static const categoryTravelDesc = 'categoryTravelDesc';
   static const categoryOtherExpenses = 'categoryOtherExpenses';
   static const categoryOtherExpensesDesc = 'categoryOtherExpensesDesc';
+  static const notificationSettings = 'notificationSettings';
+  static const notificationChannels = 'notificationChannels';
+  static const notificationTypes = 'notificationTypes';
+  static const emailNotifications = 'emailNotifications';
+  static const emailNotificationsDesc = 'emailNotificationsDesc';
+  static const pushNotifications = 'pushNotifications';
+  static const pushNotificationsDesc = 'pushNotificationsDesc';
+  static const inAppNotifications = 'inAppNotifications';
+  static const inAppNotificationsDesc = 'inAppNotificationsDesc';
+  static const reminders = 'reminders';
+  static const remindersDesc = 'remindersDesc';
+  static const financialInsights = 'financialInsights';
+  static const financialInsightsDesc = 'financialInsightsDesc';
+  static const insightsFrequency = 'insightsFrequency';
+  static const insightsFrequencyDesc = 'insightsFrequencyDesc';
+  static const insightsFrequencyWeekly = 'insightsFrequencyWeekly';
+  static const insightsFrequencyMonthly = 'insightsFrequencyMonthly';
+  static const selectFrequency = 'selectFrequency';
+  static const engagementReminders = 'engagementReminders';
+  static const engagementRemindersDesc = 'engagementRemindersDesc';
+  static const preferencesUpdated = 'preferencesUpdated';
+  static const preferencesUpdateFailed = 'preferencesUpdateFailed';
+  static const loadingPreferences = 'loadingPreferences';
+  static const errorLoadingPreferences = 'errorLoadingPreferences';
+  static const openSourceProject = 'openSourceProject';
+  static const viewOnGithub = 'viewOnGithub';
 
 }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/core/constants/config_constants.dart';
-import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -33,10 +32,12 @@ class PickGroupTile<T> extends StatelessWidget {
     String? groupName;
     String? groupDescription;
     bool isDefaultGroup = false;
+    GroupEntity? groupEntity;
     if (value is GroupEntity) {
-      groupName = (value as GroupEntity).name;
-      groupDescription = (value as GroupEntity).description;
-      isDefaultGroup = (value as GroupEntity).clientId == defaultGroup;
+      groupEntity = value as GroupEntity;
+      groupName = groupEntity.name;
+      groupDescription = groupEntity.description;
+      isDefaultGroup = groupEntity.clientId == defaultGroup;
     }
     return Container(
       padding: EdgeInsets.symmetric(
@@ -48,14 +49,12 @@ class PickGroupTile<T> extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(
-            Assets.images.profile2user,
-            width: 16.w,
-            height: 16.h,
-            colorFilter: ColorFilter.mode(
-              appOrange,
-              BlendMode.srcIn,
-            ),
+          ImageWidget(
+            mediaEntity: groupEntity?.icon,
+            accentColor: appOrange,
+            iconSize: 16.sp,
+            emojiSize: 16.sp,
+            placeholderIcon: Icons.folder_outlined,
           ),
           SizedBox(width: 8.w),
           Expanded(

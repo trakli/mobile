@@ -4,7 +4,9 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:trakli/data/database/converters/media_converter.dart';
+import 'package:trakli/data/database/converters/party_type_converter.dart';
 import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
+import 'package:trakli/data/database/converters/wallet_type_converter.dart';
 import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/data/database/tables/configs.dart';
 import 'package:trakli/data/database/tables/groups.dart';
@@ -23,6 +25,8 @@ import 'package:trakli/data/models/wallet_stats.dart';
 import 'dart:io';
 import 'tables/sync_meta_data.dart';
 import 'package:trakli/data/database/tables/categorizables.dart';
+import 'package:trakli/data/database/tables/notifications.dart';
+import 'app_database.steps.dart';
 
 part 'app_database.g.dart';
 
@@ -37,6 +41,7 @@ part 'app_database.g.dart';
   LocalChanges,
   SyncMetadata,
   Categorizables,
+  Notifications,
 ])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
@@ -48,7 +53,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
         super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -56,7 +61,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
-      onUpgrade: (Migrator m, int from, int to) async {},
+      onUpgrade: _schemaUpgrade,
     );
   }
 
@@ -257,5 +262,17 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     await localChanges.deleteAll();
     await syncMetadata.deleteAll();
     await categorizables.deleteAll();
+    await notifications.deleteAll();
   }
+}
+
+extension Migrations on GeneratedDatabase {
+  // Extracting the `stepByStep` call into a getter ensures that you're not
+  // accidentally referring to the current database schema (via a getter on the database class).
+  // This ensures that each step brings the database into the correct snapshot.
+  OnUpgrade get _schemaUpgrade => stepByStep(
+        from1To2: (m, schema) async {
+          await m.createTable(schema.notifications);
+        },
+      );
 }

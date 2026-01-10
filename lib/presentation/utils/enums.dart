@@ -42,6 +42,16 @@ enum WalletType {
       WalletType.mobile => 'mobile',
     };
   }
+
+  static WalletType fromServerKey(String key) {
+    return switch (key) {
+      'bank' => WalletType.bank,
+      'cash' => WalletType.cash,
+      'credit_card' => WalletType.creditCard,
+      'mobile' => WalletType.mobile,
+      _ => throw ArgumentError('Unknown WalletType server key: $key'),
+    };
+  }
 }
 
 enum TransactionType {
@@ -168,6 +178,26 @@ enum GroupOption {
       GroupOption.createAutomatically => LocaleKeys.createAutomatically,
       GroupOption.createManually => LocaleKeys.createManually,
       GroupOption.selectFromGroupList => LocaleKeys.selectFromGroupList,
+    };
+  }
+}
+
+enum NotificationType {
+  @JsonValue('reminder')
+  reminder,
+  @JsonValue('alert')
+  alert,
+  @JsonValue('achievement')
+  achievement,
+  @JsonValue('system')
+  system;
+
+  String get serverKey {
+    return switch (this) {
+      NotificationType.reminder => 'reminder',
+      NotificationType.alert => 'alert',
+      NotificationType.achievement => 'achievement',
+      NotificationType.system => 'system',
     };
   }
 }

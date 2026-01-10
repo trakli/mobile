@@ -152,12 +152,7 @@ class _DataDeletionScreenState extends State<DataDeletionScreen> {
     );
 
     try {
-      if (await canLaunchUrl(emailUri)) {
-        await launchUrl(emailUri);
-      } else {
-        // Fallback: show a dialog with the email content
-        _showEmailFallbackDialog(subject, body);
-      }
+      await launchUrl(emailUri);
     } catch (e) {
       // Fallback: show a dialog with the email content
       _showEmailFallbackDialog(subject, body);

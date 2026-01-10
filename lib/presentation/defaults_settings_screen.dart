@@ -1,15 +1,15 @@
 import 'package:collection/collection.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
@@ -56,22 +56,72 @@ class DefaultsSettingsScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
+            // Default Currency
+            BlocBuilder<CurrencyCubit, CurrencyState>(
+              builder: (context, currencyState) {
+                final currency = currencyState.currency;
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    showCurrencyPicker(
+                      context: context,
+                      theme: CurrencyPickerThemeData(
+                        bottomSheetHeight: 0.7.sh,
+                        backgroundColor: Colors.white,
+                        flagSize: 24.sp,
+                        subtitleTextStyle: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      onSelect: (Currency currencyValue) {
+                        context.read<CurrencyCubit>().setCurrency(currencyValue);
+                      },
+                    );
+                  },
+                  leading: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color:
+                          Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                    ),
+                    child: Icon(
+                      Icons.currency_exchange,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  title: Text(LocaleKeys.defaultCurrency.tr()),
+                  subtitle: currency != null
+                      ? Text(
+                          currency.code,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        )
+                      : null,
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16.sp,
+                  ),
+                );
+              },
+            ),
+            // Default Group
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Container(
-                padding: EdgeInsets.all(8.h),
                 width: 40.w,
                 height: 40.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 ),
-                child: SvgPicture.asset(
-                  Assets.images.people,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor,
-                    BlendMode.srcIn,
-                  ),
+                child: Icon(
+                  Icons.folder_outlined,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               title: Text(LocaleKeys.switchDefaultGroup.tr()),
@@ -107,7 +157,7 @@ class DefaultsSettingsScreen extends StatelessWidget {
                     )
                   : null,
             ),
-            SizedBox(height: 24.h),
+            // Default Wallet
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Container(

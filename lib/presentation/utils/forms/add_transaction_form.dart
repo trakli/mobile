@@ -424,7 +424,9 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
               ),
               SizedBox(height: 16.h),
               Text(
-                LocaleKeys.transactionParty.tr(),
+                widget.transactionType == TransactionType.expense
+                    ? '${LocaleKeys.transactionSentTo.tr()} (${LocaleKeys.party.tr()})'
+                    : '${LocaleKeys.transactionReceivedFrom.tr()} (${LocaleKeys.party.tr()})',
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,

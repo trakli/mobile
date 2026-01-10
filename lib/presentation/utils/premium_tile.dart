@@ -18,7 +18,12 @@ class PremiumTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PlansCubit, PlansState>(
       listener: (context, state) {
-        if (state.failure != const Failure.none()) {
+        // Show error message for any failure except notFound
+        if (state.failure != const Failure.none() &&
+            !state.failure.maybeWhen(
+              notFound: () => true,
+              orElse: () => false,
+            )) {
           showSnackBar(
             message: state.failure.customMessage,
             borderRadius: 8.r,
@@ -26,6 +31,14 @@ class PremiumTile extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        // Hide completely if failure is notFound
+        if (state.failure.maybeWhen(
+          notFound: () => true,
+          orElse: () => false,
+        )) {
+          return const SizedBox.shrink();
+        }
+
         if (state.isLoading) {
           return Center(
             child: CircularProgressIndicator.adaptive(

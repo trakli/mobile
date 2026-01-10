@@ -77,7 +77,7 @@ class PartyTile extends StatelessWidget {
               accentColor: Theme.of(context).primaryColor,
               iconSize: 20.sp,
               emojiSize: 20.sp,
-              placeholderIcon: Icons.groups_outlined,
+              placeholderIcon: Icons.person_outline,
             ),
           ),
           Expanded(

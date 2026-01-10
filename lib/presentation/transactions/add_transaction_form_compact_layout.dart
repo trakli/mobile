@@ -422,7 +422,9 @@ class _AddTransactionFormCompactLayoutState
                             child: BlocBuilder<PartyCubit, PartyState>(
                               builder: (context, state) {
                                 return CustomAutoCompleteSearch<PartyEntity>(
-                                  label: LocaleKeys.transactionParty.tr(),
+                                  label: widget.transactionType == TransactionType.expense
+                                      ? '${LocaleKeys.transactionSentTo.tr()} (${LocaleKeys.party.tr()})'
+                                      : '${LocaleKeys.transactionReceivedFrom.tr()} (${LocaleKeys.party.tr()})',
                                   accentColor: widget.accentColor,
                                   optionsBuilder:
                                       (TextEditingValue textEditingValue) {
