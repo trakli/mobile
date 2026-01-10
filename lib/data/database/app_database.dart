@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:trakli/data/database/converters/media_converter.dart';
 import 'package:trakli/data/database/converters/party_type_converter.dart';
 import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
+import 'package:trakli/data/database/converters/wallet_type_converter.dart';
 import 'package:trakli/data/database/tables/categories.dart';
 import 'package:trakli/data/database/tables/configs.dart';
 import 'package:trakli/data/database/tables/groups.dart';

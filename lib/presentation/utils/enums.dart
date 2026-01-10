@@ -42,6 +42,16 @@ enum WalletType {
       WalletType.mobile => 'mobile',
     };
   }
+
+  static WalletType fromServerKey(String key) {
+    return switch (key) {
+      'bank' => WalletType.bank,
+      'cash' => WalletType.cash,
+      'credit_card' => WalletType.creditCard,
+      'mobile' => WalletType.mobile,
+      _ => throw ArgumentError('Unknown WalletType server key: $key'),
+    };
+  }
 }
 
 enum TransactionType {

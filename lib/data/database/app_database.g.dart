@@ -151,7 +151,7 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
   }
 
   static JsonTypeConverter2<WalletType, String, String> $convertertype =
-      const EnumNameConverter<WalletType>(WalletType.values);
+      const WalletTypeConverter();
   static JsonTypeConverter2<WalletStats, String, Map<String, Object?>>
       $converterstats = const WalletStatsConverter();
   static JsonTypeConverter2<WalletStats?, String?, Map<String, Object?>?>
