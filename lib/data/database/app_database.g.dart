@@ -767,7 +767,7 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
   static JsonTypeConverter2<Media?, String?, Map<String, Object?>?>
       $convertericonn = JsonTypeConverter2.asNullable($convertericon);
   static JsonTypeConverter2<PartyType, String, String> $convertertype =
-      const EnumNameConverter<PartyType>(PartyType.values);
+      const PartyTypeConverter();
   static JsonTypeConverter2<PartyType?, String?, String?> $convertertypen =
       JsonTypeConverter2.asNullable($convertertype);
 }
