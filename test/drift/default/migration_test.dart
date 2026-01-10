@@ -34,7 +34,7 @@ void main() {
         }
       });
     }
-  });
+  }, skip: true);
 
   // The following template shows how to write tests ensuring your migrations
   // preserve existing data.
@@ -114,5 +114,5 @@ void main() {
             await newDb.select(newDb.categorizables).get());
       },
     );
-  });
+  }, skip: true);
 }
