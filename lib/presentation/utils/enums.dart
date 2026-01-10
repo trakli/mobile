@@ -171,3 +171,23 @@ enum GroupOption {
     };
   }
 }
+
+enum NotificationType {
+  @JsonValue('reminder')
+  reminder,
+  @JsonValue('alert')
+  alert,
+  @JsonValue('achievement')
+  achievement,
+  @JsonValue('system')
+  system;
+
+  String get serverKey {
+    return switch (this) {
+      NotificationType.reminder => 'reminder',
+      NotificationType.alert => 'alert',
+      NotificationType.achievement => 'achievement',
+      NotificationType.system => 'system',
+    };
+  }
+}

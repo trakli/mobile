@@ -1,0 +1,19 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
+import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/usecases/usecase.dart';
+import 'package:trakli/domain/entities/notification_entity.dart';
+import 'package:trakli/domain/repositories/notification_repository.dart';
+
+@injectable
+class GetNotificationsUseCase implements UseCase<void, NoParams> {
+  final NotificationRepository _repository;
+
+  GetNotificationsUseCase(this._repository);
+
+  @override
+  Future<Either<Failure, List<NotificationEntity>>> call(
+      NoParams params) async {
+    return await _repository.getAllNotifications();
+  }
+}

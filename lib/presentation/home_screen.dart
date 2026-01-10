@@ -31,6 +31,7 @@ import 'package:trakli/presentation/utils/all_wallets_tile.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/presentation/notifications/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -178,6 +179,31 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 38.h,
         ),
         actions: [
+          GestureDetector(
+            onTap: () {
+              AppNavigator.push(
+                context,
+                const NotificationsScreen(),
+              );
+            },
+            child: Container(
+              width: 42.r,
+              height: 42.r,
+              padding: EdgeInsets.all(12.r),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.r),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+              ),
+              child: SvgPicture.asset(
+                Assets.images.notificationBing,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).primaryColor,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
           GestureDetector(
             onTap: () {
               final isAuthenticated =
