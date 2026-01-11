@@ -61,8 +61,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     String? description,
     Media? icon,
   }) async {
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final companion = WalletsCompanion.insert(
       clientId: Value(
@@ -93,8 +92,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     String? description,
     Media? icon,
   }) async {
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final companion = WalletsCompanion(
       name: name != null ? Value(name) : const Value.absent(),

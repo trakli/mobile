@@ -73,7 +73,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
     final apiResponse = ApiResponse.fromJson(data as Map<String, dynamic>);
 
     return TransactionCompleteDto.fromServerJson(
-        apiResponse.data as Map<String, dynamic>);
+      apiResponse.data as Map<String, dynamic>,
+    );
   }
 
   @override

@@ -127,7 +127,7 @@ class _TransactionDetailsBottomSheetState
             ),
             SizedBox(height: 2.h),
             Text(
-              format.format(transaction.datetime),
+              format.format(transaction.datetime.toLocal()),
               style: TextStyle(
                 color: const Color(0xFF576760),
                 fontSize: 12.sp,

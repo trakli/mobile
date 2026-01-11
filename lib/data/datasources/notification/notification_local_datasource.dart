@@ -31,8 +31,7 @@ class NotificationLocalDataSourceImpl implements NotificationLocalDataSource {
 
   @override
   Future<Notification> markAsRead(String clientId, DateTime readAt) async {
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final model = await (database.update(database.notifications)
           ..where((n) => n.clientId.equals(clientId)))

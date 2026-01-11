@@ -78,11 +78,11 @@ class _AddTransactionFormState extends State<AddTransactionForm> {
       setAmountController(currency);
       descriptionController.text =
           widget.transactionCompleteEntity!.transaction.description;
-      date = widget.transactionCompleteEntity!.transaction.datetime;
-      dateController.text = dateFormat
-          .format(widget.transactionCompleteEntity!.transaction.datetime);
-      timeController.text = timeFormat
-          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      date = widget.transactionCompleteEntity!.transaction.datetime.toLocal();
+      dateController.text = dateFormat.format(
+          widget.transactionCompleteEntity!.transaction.datetime.toLocal());
+      timeController.text = timeFormat.format(
+          widget.transactionCompleteEntity!.transaction.datetime.toLocal());
 
       if (widget.transactionCompleteEntity?.wallet != null) {
         selectedWallet = widget.transactionCompleteEntity!.wallet;
