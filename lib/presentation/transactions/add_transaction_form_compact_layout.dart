@@ -91,11 +91,11 @@ class _AddTransactionFormCompactLayoutState
 
       descriptionController.text =
           widget.transactionCompleteEntity!.transaction.description;
-      date = widget.transactionCompleteEntity!.transaction.datetime;
-      dateController.text = dateFormat
-          .format(widget.transactionCompleteEntity!.transaction.datetime);
-      timeController.text = timeFormat
-          .format(widget.transactionCompleteEntity!.transaction.datetime);
+      date = widget.transactionCompleteEntity!.transaction.datetime.toLocal();
+      dateController.text = dateFormat.format(
+          widget.transactionCompleteEntity!.transaction.datetime.toLocal());
+      timeController.text = timeFormat.format(
+          widget.transactionCompleteEntity!.transaction.datetime.toLocal());
       if (widget.transactionCompleteEntity?.categories != null &&
           widget.transactionCompleteEntity!.categories.isNotEmpty) {
         _selectedCategory = widget.transactionCompleteEntity!.categories.first;
@@ -422,7 +422,8 @@ class _AddTransactionFormCompactLayoutState
                             child: BlocBuilder<PartyCubit, PartyState>(
                               builder: (context, state) {
                                 return CustomAutoCompleteSearch<PartyEntity>(
-                                  label: widget.transactionType == TransactionType.expense
+                                  label: widget.transactionType ==
+                                          TransactionType.expense
                                       ? '${LocaleKeys.transactionSentTo.tr()} (${LocaleKeys.party.tr()})'
                                       : '${LocaleKeys.transactionReceivedFrom.tr()} (${LocaleKeys.party.tr()})',
                                   accentColor: widget.accentColor,

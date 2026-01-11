@@ -44,8 +44,7 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
     String? description,
     Media? icon,
   }) async {
-    final now = DateTime.now();
-    final dateTime = formatServerIsoDateTime(now);
+    final dateTime = getNewFormattedUtcDateTime();
 
     final companion = GroupsCompanion.insert(
       clientId: Value(await generateDeviceScopedId()),
@@ -68,8 +67,7 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
     String? description,
     Media? icon,
   }) async {
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final companion = GroupsCompanion(
       name: name != null ? Value(name) : const Value.absent(),

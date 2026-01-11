@@ -129,7 +129,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
   }
 
   Map<String, dynamic> toServerJson() {
-    return {
+    final data = <String, dynamic>{
       ...transaction.toJson(),
       'client_id': transaction.clientId,
       'type': transaction.type.serverKey,
@@ -146,6 +146,8 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'party_id': party?.id,
       'group_id': group?.id,
     };
+
+    return data;
   }
 
   factory TransactionCompleteDto.fromServerJson(Map<String, dynamic> json) {

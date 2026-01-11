@@ -53,8 +53,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       throw DuplicateException('Category with name "$name" already exists');
     }
 
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final model = await database.into(database.categories).insertReturning(
           CategoriesCompanion.insert(
@@ -92,8 +91,7 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
       }
     }
 
-    final now = DateTime.now();
-    DateTime dateTime = formatServerIsoDateTime(now);
+    DateTime dateTime = getNewFormattedUtcDateTime();
 
     final model = await (database.update(database.categories)
           ..where((c) => c.clientId.equals(clientId)))

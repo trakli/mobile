@@ -52,7 +52,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
     Media? media,
     PartyType? type,
   }) async {
-    final now = formatServerIsoDateTime(DateTime.now());
+    final now = getNewFormattedUtcDateTime();
 
     final model = await database.into(database.parties).insertReturning(
           PartiesCompanion.insert(
@@ -77,7 +77,7 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
     Media? media,
     PartyType? type,
   }) async {
-    final now = formatServerIsoDateTime(DateTime.now());
+    final now = getNewFormattedUtcDateTime();
 
     final party = await (database.update(database.parties)
           ..where((p) => p.clientId.equals(clientId)))
