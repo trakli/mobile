@@ -246,8 +246,8 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
     }
 
-    final now = formatServerIsoDateTime(DateTime.now());
-    final utcDatetime = formatServerIsoDateTime(datetime);
+    final now = getNewFormattedUtcDateTime();
+    final utcDatetime = getFormattedUtcDateTimeFromUtc(datetime);
 
     final model = await database.into(database.transactions).insertReturning(
           TransactionsCompanion.insert(
@@ -381,7 +381,7 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
           description:
               description != null ? Value(description) : const Value.absent(),
           datetime: datetime != null
-              ? Value(formatServerIsoDateTime(datetime))
+              ? Value(getFormattedUtcDateTimeFromUtc(datetime))
               : const Value.absent(),
           walletClientId: walletClientId != null
               ? Value(walletClientId)

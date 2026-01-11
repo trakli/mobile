@@ -52,8 +52,7 @@ class ConfigLocalDataSourceImpl implements ConfigLocalDataSource {
     required dynamic value,
     int? userId,
   }) async {
-    final now = DateTime.now();
-    final dateTime = formatServerIsoDateTime(now);
+    final dateTime = getNewFormattedUtcDateTime();
 
     final companion = ConfigsCompanion.insert(
       clientId: Value(await generateDeviceScopedId()),
@@ -76,8 +75,7 @@ class ConfigLocalDataSourceImpl implements ConfigLocalDataSource {
     ConfigType? type,
     dynamic value,
   }) async {
-    final now = DateTime.now();
-    final dateTime = formatServerIsoDateTime(now);
+    final dateTime = getNewFormattedUtcDateTime();
 
     final companion = ConfigsCompanion(
       type: type != null ? Value(type) : const Value.absent(),

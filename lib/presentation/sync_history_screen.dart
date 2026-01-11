@@ -101,7 +101,7 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
 
   String _formatDateTime(DateTime? dateTime) {
     if (dateTime == null) return LocaleKeys.notSet.tr();
-    return DateFormat('MMM d, yyyy HH:mm').format(dateTime);
+    return DateFormat('MMM d, yyyy HH:mm').format(dateTime.toLocal());
   }
 
   String _getEntityTypeDisplayName(String entityType) {

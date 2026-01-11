@@ -164,7 +164,7 @@ class _TransactionTileState extends State<TransactionTile> {
                   ),
                 ),
                 Text(
-                  format.format(transaction.datetime),
+                  format.format(transaction.datetime.toLocal()),
                   style: TextStyle(
                     color: const Color(0xFF576760),
                     fontSize: 10.sp,

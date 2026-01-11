@@ -432,7 +432,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     final Map<String, double> incomeByDate = {};
     final Map<String, double> expenseByDate = {};
     for (final tx in transactions) {
-      final dateKey = DateFormat('MM/dd').format(tx.transaction.datetime);
+      final dateKey =
+          DateFormat('MM/dd').format(tx.transaction.datetime.toLocal());
       if (tx.transaction.type == TransactionType.income) {
         incomeByDate[dateKey] =
             (incomeByDate[dateKey] ?? 0) + tx.transaction.amount;
