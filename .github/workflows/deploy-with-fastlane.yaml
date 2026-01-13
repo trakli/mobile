@@ -106,13 +106,18 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_ACCOUNT_BASE64 }}" | base64 --decode > google_service_account.json
 
-      - name: Log google_service_account.json (base64) for local use
+      - name: Log google_service_account.json base64 (for manual copy)
         run: |
-          echo "::warning::Copy the base64 string below for local use:"
-          base64 -w 0 google_service_account.json
-          echo ""
-          echo "To use locally, run:"
-          echo "echo '<base64_string_above>' | base64 --decode > google_service_account.json"
+          echo "=========================================="
+          echo "Base64 for google_service_account.json:"
+          echo "=========================================="
+          # Store in variable first to potentially avoid masking
+          BASE64_CONTENT=$(base64 -w 0 google_service_account.json)
+          echo "$BASE64_CONTENT"
+          echo "=========================================="
+          echo "To use locally, copy the base64 above and run:"
+          echo "echo '<base64_string>' | base64 --decode > google_service_account.json"
+          echo "=========================================="
 
       - name: Create firebase google_service_account.json
         env:
