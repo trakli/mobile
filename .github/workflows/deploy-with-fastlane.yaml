@@ -106,6 +106,14 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_ACCOUNT_BASE64 }}" | base64 --decode > google_service_account.json
 
+      - name: Log google_service_account.json (base64) for local use
+        run: |
+          echo "::warning::Copy the base64 string below for local use:"
+          base64 -w 0 google_service_account.json
+          echo ""
+          echo "To use locally, run:"
+          echo "echo '<base64_string_above>' | base64 --decode > google_service_account.json"
+
       - name: Create firebase google_service_account.json
         env:
           CREDENTIAL_FILE_CONTENT: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
