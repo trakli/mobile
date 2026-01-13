@@ -28,6 +28,12 @@ end
 
 lane :build_flutter_app do |options|
   pubspec_version_number = get_version_from_pubspec()
+  
+  build_num = get_build_number(options[:store])
+  UI.message("Build number: #{build_num}")
+
+  build_store = options[:store]
+  UI.message("Build store: #{build_store}")
 
   type = options[:type]
   build_number = options[:build_number] || get_build_number(options[:store])

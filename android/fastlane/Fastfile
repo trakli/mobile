@@ -10,6 +10,8 @@ platform :android do
       "APP_PACKAGE_NAME"
     ])
 
+    UI.message("Building Android app for package name: #{ENV["APP_PACKAGE_NAME"]}")
+
     # Verify 'firebase_app_distribution_service_account.json' file exists
     unless File.exist?(google_service_account_json_path)
       UI.user_error!("google_service_account.json file not found. Please add it to the root of the flutter project. See https://docs.fastlane.tools/actions/supply/")

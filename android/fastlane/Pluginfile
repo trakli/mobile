@@ -3,4 +3,4 @@
 # Ensure this file is checked in to source control!
 
 gem 'fastlane-plugin-firebase_app_distribution'
-gem 'fastlane-plugin-get_new_build_number'
+gem 'fastlane-plugin-get_new_build_number', '0.3.3'
