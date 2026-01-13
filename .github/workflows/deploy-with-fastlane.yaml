@@ -108,14 +108,21 @@ jobs:
 
       - name: Log google_service_account.json base64 (for manual copy)
         run: |
+          # Write base64 to a file
+          base64 -w 0 google_service_account.json > base64_output.txt
+          
           echo "=========================================="
           echo "Base64 for google_service_account.json:"
           echo "=========================================="
-          # Store in variable first to potentially avoid masking
-          BASE64_CONTENT=$(base64 -w 0 google_service_account.json)
-          echo "$BASE64_CONTENT"
+          echo ""
+          echo "***** START BASE64 *****"
+          echo ""
+          cat base64_output.txt
+          echo ""
+          echo "***** END BASE64 *****"
+          echo ""
           echo "=========================================="
-          echo "To use locally, copy the base64 above and run:"
+          echo "To use locally, copy the base64 between the markers and run:"
           echo "echo '<base64_string>' | base64 --decode > google_service_account.json"
           echo "=========================================="
 
