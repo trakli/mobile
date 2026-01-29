@@ -4,6 +4,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
@@ -23,6 +25,7 @@ class CategoryTile extends StatefulWidget {
   final int walletCount;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final Currency? currency;
 
   const CategoryTile({
     super.key,
@@ -35,6 +38,7 @@ class CategoryTile extends StatefulWidget {
     this.walletCount = 0,
     this.onEdit,
     this.onDelete,
+    this.currency,
   });
 
   @override
@@ -217,6 +221,7 @@ class _CategoryTileState extends State<CategoryTile> {
                                 text: CurrencyFormater.formatAmountWithSymbol(
                                   context,
                                   widget.amount ?? randomValue.toDouble(),
+                                  currency: widget.currency,
                                 ),
                               ),
                             ],
