@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
@@ -18,15 +20,28 @@ import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 class WalletTile extends StatelessWidget {
   final WalletEntity wallet;
   final bool canDelete;
+  final bool showDefaultWallet;
 
   const WalletTile({
     super.key,
     required this.wallet,
     this.canDelete = true,
+    this.showDefaultWallet = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Check if this wallet is the default wallet
+    String? defaultWalletId;
+    if (showDefaultWallet) {
+      final configState = context.watch<ConfigCubit>().state;
+      defaultWalletId = configState
+          .getConfigByKey(ConfigConstants.defaultWallet)
+          ?.value as String?;
+    }
+    final isDefaultWallet =
+        showDefaultWallet && wallet.clientId == defaultWalletId;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -56,12 +71,46 @@ class WalletTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '${wallet.name} ${LocaleKeys.wallet.tr()}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              '${wallet.name} ${LocaleKeys.wallet.tr()}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (isDefaultWallet) ...[
+                            SizedBox(width: 8.w),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 2.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withAlpha(51),
+                                borderRadius: BorderRadius.circular(6.r),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                LocaleKeys.defaultWallet.tr(),
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     Container(
