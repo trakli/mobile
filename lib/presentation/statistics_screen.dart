@@ -1,9 +1,11 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
+import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -18,6 +20,7 @@ import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
+import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -223,6 +226,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         // Aggregate transactions
         final allTransactions = state.transactions;
         final wallets = context.watch<WalletCubit>().state.wallets;
+        final exchangeRateEntity =
+            context.watch<ExchangeRateCubit>().state.entity;
 
         final transactions = _filterTransactions(
           allTransactions,
@@ -231,19 +236,33 @@ class _StatisticsScreenState extends State<StatisticsScreen>
           endDate: _endDate,
         );
 
+        if (_selectedWalletClientId == null && exchangeRateEntity == null) {
+          return const SizedBox.shrink();
+        }
+
         final Map<String, double> incomeByCategory = {};
         final Map<String, double> expenseByCategory = {};
         final Map<String, CategoryEntity> categoryMap = {};
+
         for (final tx in transactions) {
+          double convertedAmount = 0;
+          if (_selectedWalletClientId == null) {
+            convertedAmount = calculateSingleTransactionTotal(
+              tx,
+              exchangeRateEntity!,
+            );
+          } else {
+            convertedAmount = tx.transaction.amount;
+          }
+
           for (final cat in tx.categories) {
             categoryMap[cat.clientId] = cat;
             if (tx.transaction.type == TransactionType.income) {
               incomeByCategory[cat.clientId] =
-                  (incomeByCategory[cat.clientId] ?? 0) + tx.transaction.amount;
+                  (incomeByCategory[cat.clientId] ?? 0) + convertedAmount;
             } else if (tx.transaction.type == TransactionType.expense) {
               expenseByCategory[cat.clientId] =
-                  (expenseByCategory[cat.clientId] ?? 0) +
-                      tx.transaction.amount;
+                  (expenseByCategory[cat.clientId] ?? 0) + convertedAmount;
             }
           }
         }
@@ -416,9 +435,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 ),
                 SizedBox(height: 12.h),
                 if (tabController.index == 0)
-                  incomeListWidget(incomeListData)
+                  incomeListWidget(incomeListData, _selectedWallet)
                 else
-                  expenseListWidget(expenseListData),
+                  expenseListWidget(expenseListData, _selectedWallet),
                 SizedBox(height: 24.h),
               ],
             ),
@@ -429,19 +448,41 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   }
 
   Widget statOne({required List<TransactionCompleteEntity> transactions}) {
+    final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
+
+    // If no exchange rate entity and all wallets selected, return empty
+    if (_selectedWalletClientId == null && exchangeRateEntity == null) {
+      return const SizedBox.shrink();
+    }
+
     final Map<String, double> incomeByDate = {};
     final Map<String, double> expenseByDate = {};
+
     for (final tx in transactions) {
       final dateKey =
           DateFormat('MM/dd').format(tx.transaction.datetime.toLocal());
+
+      // Convert amount based on wallet selection
+      double convertedAmount;
+      if (_selectedWalletClientId == null && exchangeRateEntity != null) {
+        // All wallets selected: convert to base/default currency
+        convertedAmount = calculateSingleTransactionTotal(
+          tx,
+          exchangeRateEntity,
+        );
+      } else {
+        // Specific wallet selected: use amount as-is (already in wallet currency)
+        convertedAmount = tx.transaction.amount;
+      }
+
       if (tx.transaction.type == TransactionType.income) {
-        incomeByDate[dateKey] =
-            (incomeByDate[dateKey] ?? 0) + tx.transaction.amount;
+        incomeByDate[dateKey] = (incomeByDate[dateKey] ?? 0) + convertedAmount;
       } else if (tx.transaction.type == TransactionType.expense) {
         expenseByDate[dateKey] =
-            (expenseByDate[dateKey] ?? 0) + tx.transaction.amount;
+            (expenseByDate[dateKey] ?? 0) + convertedAmount;
       }
     }
+
     final allDatesSet = <String>{...incomeByDate.keys, ...expenseByDate.keys};
     final allDates = allDatesSet.toList();
     allDates.sort((a, b) => a.compareTo(b));
@@ -452,8 +493,40 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               expenseByDate[date] ?? 0,
             ))
         .toList();
-    final totalIncome = incomeByDate.values.fold(0.0, (a, b) => a + b);
-    final totalExpense = expenseByDate.values.fold(0.0, (a, b) => a + b);
+
+    // Calculate totals using helper function for accurate conversion
+    final incomeTransactions = transactions
+        .where((tx) => tx.transaction.type == TransactionType.income)
+        .toList();
+    final expenseTransactions = transactions
+        .where((tx) => tx.transaction.type == TransactionType.expense)
+        .toList();
+
+    double totalIncome;
+    double totalExpense;
+
+    if (_selectedWalletClientId == null && exchangeRateEntity != null) {
+      // All wallets: use calculateTransactionsTotal for accurate conversion
+      totalIncome = calculateTransactionsTotal(
+        incomeTransactions,
+        exchangeRateEntity,
+      );
+      totalExpense = calculateTransactionsTotal(
+        expenseTransactions,
+        exchangeRateEntity,
+      );
+    } else {
+      // Specific wallet: sum amounts directly
+      totalIncome = incomeTransactions.fold(
+        0.0,
+        (sum, tx) => sum + tx.transaction.amount,
+      );
+      totalExpense = expenseTransactions.fold(
+        0.0,
+        (sum, tx) => sum + tx.transaction.amount,
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -469,16 +542,46 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   Widget statTwo({required List<TransactionCompleteEntity> transactions}) {
     final currencyState = context.watch<CurrencyCubit>().state;
     final currencySymbol = currencyState.currency?.symbol ?? 'XAF';
+    final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
 
-    double totalIncome = 0;
-    double totalExpense = 0;
-    for (final tx in transactions) {
-      if (tx.transaction.type == TransactionType.income) {
-        totalIncome += tx.transaction.amount;
-      } else if (tx.transaction.type == TransactionType.expense) {
-        totalExpense += tx.transaction.amount;
-      }
+    // If no exchange rate entity and all wallets selected, return empty
+    if (_selectedWalletClientId == null && exchangeRateEntity == null) {
+      return const SizedBox.shrink();
     }
+
+    // Filter transactions by type
+    final incomeTransactions = transactions
+        .where((tx) => tx.transaction.type == TransactionType.income)
+        .toList();
+    final expenseTransactions = transactions
+        .where((tx) => tx.transaction.type == TransactionType.expense)
+        .toList();
+
+    double totalIncome;
+    double totalExpense;
+
+    if (_selectedWalletClientId == null && exchangeRateEntity != null) {
+      // All wallets selected: use calculateTransactionsTotal for accurate conversion
+      totalIncome = calculateTransactionsTotal(
+        incomeTransactions,
+        exchangeRateEntity,
+      );
+      totalExpense = calculateTransactionsTotal(
+        expenseTransactions,
+        exchangeRateEntity,
+      );
+    } else {
+      // Specific wallet selected: sum amounts directly (already in wallet currency)
+      totalIncome = incomeTransactions.fold(
+        0.0,
+        (sum, tx) => sum + tx.transaction.amount,
+      );
+      totalExpense = expenseTransactions.fold(
+        0.0,
+        (sum, tx) => sum + tx.transaction.amount,
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -528,8 +631,29 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  Widget incomeListWidget(
-      List<MapEntry<CategoryEntity, double>> incomeListData) {
+  /// Gets the currency for a category based on selected wallet, default currency, or transactions
+  Currency? _getCategoryCurrency(
+    WalletEntity? selectedWallet,
+    List<TransactionCompleteEntity> categoryTransactions,
+  ) {
+    if (selectedWallet != null) {
+      return selectedWallet.currency;
+    }
+
+    // Get default currency from config
+    final currencyState = context.watch<CurrencyCubit>().state;
+    final currency = currencyState.currency;
+
+    // If still no currency, use first transaction's wallet currency
+    if (currency == null && categoryTransactions.isNotEmpty) {
+      return categoryTransactions.first.wallet.currency;
+    }
+
+    return currency;
+  }
+
+  Widget incomeListWidget(List<MapEntry<CategoryEntity, double>> incomeListData,
+      WalletEntity? selectedWallet) {
     final allTransactions = context.read<TransactionCubit>().state.transactions;
     final transactions = (_startDate != null && _endDate != null)
         ? allTransactions.where((tx) {
@@ -556,6 +680,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             .map((tx) => tx.transaction.walletClientId)
             .toSet()
             .length;
+
+        final currency =
+            _getCategoryCurrency(selectedWallet, categoryTransactions);
         return CategoryTile(
           accentColor: Theme.of(context).primaryColor,
           category: category,
@@ -564,6 +691,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
           amount: entry.value,
           transactionCount: transactionCount,
           walletCount: walletCount,
+          currency: currency,
         );
       },
       separatorBuilder: (context, index) {
@@ -573,7 +701,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   }
 
   Widget expenseListWidget(
-      List<MapEntry<CategoryEntity, double>> expenseListData) {
+      List<MapEntry<CategoryEntity, double>> expenseListData,
+      WalletEntity? selectedWallet) {
     final allTransactions = context.read<TransactionCubit>().state.transactions;
     final transactions = (_startDate != null && _endDate != null)
         ? allTransactions.where((tx) {
@@ -600,6 +729,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             .map((tx) => tx.transaction.walletClientId)
             .toSet()
             .length;
+
+        final currency =
+            _getCategoryCurrency(selectedWallet, categoryTransactions);
         return CategoryTile(
           category: category,
           showStat: true,
@@ -607,6 +739,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
           amount: entry.value,
           transactionCount: transactionCount,
           walletCount: walletCount,
+          currency: currency,
         );
       },
       separatorBuilder: (context, index) {

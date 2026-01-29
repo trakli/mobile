@@ -271,7 +271,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_previousTransactionCount == 0 && state.transactions.isNotEmpty) {
             _previousTransactionCount = state.transactions.length;
           }
-
           if (state.isLoading) {
             return Center(
               child: CircularProgressIndicator.adaptive(
@@ -342,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return WalletTile(
                             wallet: wallets[index - 1],
                             canDelete: false,
+                            showDefaultWallet: true,
                           );
                         },
                       );

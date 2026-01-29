@@ -134,7 +134,7 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
   @override
   Stream<List<Wallet>> listenToWallets() {
     return (database.select(database.wallets)
-          ..orderBy([(w) => OrderingTerm.desc(w.createdAt)]))
+          ..orderBy([(w) => OrderingTerm.asc(w.createdAt)]))
         .watch();
   }
 
