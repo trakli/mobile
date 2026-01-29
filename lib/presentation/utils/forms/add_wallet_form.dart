@@ -45,7 +45,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
 
     if (widget.wallet != null) {
       _nameController.text = widget.wallet!.name;
-      _balanceController.text = widget.wallet!.balance.toString();
       _descriptionController.text = widget.wallet!.description ?? '';
       currency = widget.wallet!.currency ?? currency;
       mediaEntity = widget.wallet?.icon;
@@ -177,80 +176,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 ),
               ),
               SizedBox(height: 8.h),
-              IntrinsicHeight(
-                child: Row(
-                  spacing: 16.w,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _balanceController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: LocaleKeys.exampleAmount.tr(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return null;
-                          }
-                          final number = double.tryParse(value.trim());
-                          if (number == null) {
-                            return LocaleKeys.mustBeNumber.tr();
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: widget.wallet == null
-                          ? () async {
-                              showCurrencyPicker(
-                                context: context,
-                                theme: CurrencyPickerThemeData(
-                                    bottomSheetHeight: 0.7.sh,
-                                    backgroundColor: Colors.white,
-                                    flagSize: 24.sp,
-                                    subtitleTextStyle: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Theme.of(context).primaryColor,
-                                    )),
-                                onSelect: (Currency currencyValue) {
-                                  setState(() {
-                                    currency = currencyValue;
-                                  });
-                                },
-                              );
-                            }
-                          : null,
-                      child: Container(
-                        width: 60.w,
-                        constraints: BoxConstraints(
-                          maxHeight: 50.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDEE1E0),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(currency?.code ??
-                              widget.wallet?.currencyCode ??
-                              'XAF'),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                LocaleKeys.balance.tr(),
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-              ),
-              SizedBox(height: 8.h),
               Row(
                 children: [
                   Expanded(
@@ -262,11 +187,17 @@ class _AddWalletFormState extends State<AddWalletForm> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        LocaleKeys.balanceWillBeSetToZero.tr(),
+                        widget.wallet != null
+                            ? widget.wallet!.balance.toString()
+                            : LocaleKeys.balanceWillBeSetToZero.tr(),
                         style: TextStyle(
                           color: Theme.of(context)
                               .primaryColorDark
                               .withValues(alpha: 0.6),
+                          fontSize: widget.wallet != null ? 18.sp : 14.sp,
+                          fontWeight: widget.wallet != null
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                         ),
                       ),
                     ),
