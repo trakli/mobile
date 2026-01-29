@@ -121,6 +121,8 @@ import '../domain/usecases/configs/listen_to_configs_usecase.dart' as _i608;
 import '../domain/usecases/configs/save_config_usecase.dart' as _i833;
 import '../domain/usecases/configs/update_config_usecase.dart' as _i436;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
+import '../domain/usecases/exchange_rate/update_default_currency_usecase.dart'
+    as _i798;
 import '../domain/usecases/group/add_group_usecase.dart' as _i353;
 import '../domain/usecases/group/delete_group_usecase.dart' as _i759;
 import '../domain/usecases/group/get_groups_usecase.dart' as _i982;
@@ -552,6 +554,8 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i977.PlansCubit>(
       () => _i977.PlansCubit(gh<_i314.FetchSubscriptionPlans>()));
+  gh.factory<_i798.UpdateDefaultCurrencyUseCase>(() =>
+      _i798.UpdateDefaultCurrencyUseCase(gh<_i1057.ExchangeRateRepository>()));
   gh.factory<_i676.GroupCubit>(() => _i676.GroupCubit(
         gh<_i982.GetGroupsUseCase>(),
         gh<_i353.AddGroupUseCase>(),
@@ -560,16 +564,17 @@ _i174.GetIt $initGetIt(
         gh<_i146.ListenToGroupsUseCase>(),
         gh<_i833.SaveConfigUseCase>(),
       ));
-  gh.factory<_i484.CurrencyCubit>(() => _i484.CurrencyCubit(
-        gh<_i933.GetConfigUseCase>(),
-        gh<_i833.SaveConfigUseCase>(),
-        gh<_i608.ListenToConfigsUseCase>(),
-      ));
   gh.factory<_i669.CreateTransactionUseCase>(
       () => _i669.CreateTransactionUseCase(
             gh<_i118.TransactionRepository>(),
             gh<_i1057.ExchangeRateRepository>(),
           ));
+  gh.factory<_i484.CurrencyCubit>(() => _i484.CurrencyCubit(
+        gh<_i933.GetConfigUseCase>(),
+        gh<_i833.SaveConfigUseCase>(),
+        gh<_i608.ListenToConfigsUseCase>(),
+        gh<_i798.UpdateDefaultCurrencyUseCase>(),
+      ));
   gh.factory<_i311.ExchangeRateCubit>(
       () => _i311.ExchangeRateCubit(gh<_i397.ListenExchangeRate>()));
   gh.factory<_i117.TransactionCubit>(() => _i117.TransactionCubit(

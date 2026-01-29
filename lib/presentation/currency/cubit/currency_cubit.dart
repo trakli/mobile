@@ -10,6 +10,7 @@ import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/domain/usecases/configs/get_config_usecase.dart';
 import 'package:trakli/domain/usecases/configs/listen_to_configs_usecase.dart';
 import 'package:trakli/domain/usecases/configs/save_config_usecase.dart';
+import 'package:trakli/domain/usecases/exchange_rate/update_default_currency_usecase.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 
 part 'currency_state.dart';
@@ -20,12 +21,14 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   final GetConfigUseCase _getConfigUseCase;
   final SaveConfigUseCase _saveConfigUseCase;
   final ListenToConfigsUseCase _listenToConfigsUseCase;
+  final UpdateDefaultCurrencyUseCase _updateDefaultCurrencyUseCase;
   StreamSubscription? _subscription;
 
   CurrencyCubit(
     this._getConfigUseCase,
     this._saveConfigUseCase,
     this._listenToConfigsUseCase,
+    this._updateDefaultCurrencyUseCase,
   ) : super(const CurrencyState.initial()) {
     _listenToCurrency();
   }
@@ -91,16 +94,27 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
   Future<void> setCurrency(Currency currency) async {
     emit(const CurrencyState.loading());
-    final result = await _saveConfigUseCase(
+    final saveResult = await _saveConfigUseCase(
       SaveConfigUseCaseParams(
         key: ConfigConstants.defaultCurrency,
         type: ConfigType.string,
         value: currency.code,
       ),
     );
-    result.fold(
+    saveResult.fold(
       (failure) => emit(CurrencyState.error(failure)),
-      (_) => emit(CurrencyState.loaded(currency)),
+      (_) async {
+        // Update the exchange rate with the new default currency
+        final updateResult = await _updateDefaultCurrencyUseCase(
+          UpdateDefaultCurrencyParams(
+            currencyCode: currency.code,
+          ),
+        );
+        updateResult.fold(
+          (failure) => emit(CurrencyState.error(failure)),
+          (_) => emit(CurrencyState.loaded(currency)),
+        );
+      },
     );
   }
 

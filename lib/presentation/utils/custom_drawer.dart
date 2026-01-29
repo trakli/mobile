@@ -122,7 +122,7 @@ class CustomDrawer extends StatelessWidget {
                   BlendMode.srcIn,
                 ),
               ),
-              title: Text(LocaleKeys.wallet.tr()),
+              title: Text(LocaleKeys.wallets.tr()),
             ),
             ListTile(
               onTap: () {
