@@ -379,7 +379,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                             name: LocaleKeys.defaultWalletName.tr(),
                             description:
                                 LocaleKeys.defaultWalletDescription.tr(),
-                            currency: KeyConstants.defaultCurrencyCode,
+                            currency: defaultCurrency?.code ?? usdCurrency.code,
                           );
                           widget.onNext();
                         } else if (_selectedWalletOption ==
