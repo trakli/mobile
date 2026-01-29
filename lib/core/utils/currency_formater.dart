@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:trakli/domain/entities/exchange_rate_entity.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/core/constants/config_constants.dart';
@@ -135,4 +136,55 @@ double convertAmountToDefault(
       currency != null ? amount / (exchangeRate.rates[currency] ?? 1) : amount;
 
   return amountInBaseCurrency;
+}
+
+/// Calculates the total amount of transactions converted to the base currency (default)
+///
+/// Converts each transaction individually from its wallet currency to base currency,
+/// then sums the converted amounts. This ensures accurate totals when transactions
+/// have different currencies.
+///
+/// [transactions] - List of transactions to sum
+/// [exchangeRateEntity] - Exchange rate entity for currency conversion (required)
+///
+/// Returns the total amount in the base currency (exchangeRateEntity.baseCode)
+double calculateTransactionsTotal(
+  List<TransactionCompleteEntity> transactions,
+  ExchangeRateEntity exchangeRateEntity,
+) {
+  if (transactions.isEmpty) return 0.0;
+
+  double total = 0.0;
+  final baseCurrency = exchangeRateEntity.baseCode;
+
+  // Convert each transaction individually, then sum
+  for (final tx in transactions) {
+    final transactionCurrency = tx.wallet.currencyCode;
+    final amount = tx.transaction.amount;
+
+    // If transaction currency is already the base currency, no conversion needed
+    if (transactionCurrency == baseCurrency) {
+      total += amount;
+      continue;
+    }
+
+    // Convert from transaction currency to base currency (like convertAmountToDefault)
+    final transactionRate = exchangeRateEntity.rates[transactionCurrency] ?? 1;
+    final amountInBase = amount / transactionRate;
+    total += amountInBase;
+  }
+
+  return total;
+}
+
+double calculateSingleTransactionTotal(
+  TransactionCompleteEntity transaction,
+  ExchangeRateEntity exchangeRateEntity,
+) {
+  final transactionCurrency = transaction.wallet.currencyCode;
+  final amount = transaction.transaction.amount;
+
+  final transactionRate = exchangeRateEntity.rates[transactionCurrency] ?? 1;
+  final amountInBase = amount / transactionRate;
+  return amountInBase;
 }

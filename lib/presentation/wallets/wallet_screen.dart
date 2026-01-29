@@ -122,7 +122,10 @@ class WalletScreen extends StatelessWidget {
                                 : ListView.separated(
                                     itemBuilder: (context, index) {
                                       final wallet = state.wallets[index];
-                                      return WalletTile(wallet: wallet);
+                                      return WalletTile(
+                                        wallet: wallet,
+                                        showDefaultWallet: true,
+                                      );
                                     },
                                     separatorBuilder: (context, index) {
                                       return SizedBox(height: 16.h);
