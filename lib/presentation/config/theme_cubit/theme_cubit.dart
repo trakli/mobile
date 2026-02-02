@@ -23,6 +23,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
   void updateThemeByString(String themeName) {
     try {
       final ThemeMode mode = ThemeMode.values.byName(themeName.toLowerCase());
+      print("mode ======== ${mode.name}");
       emit(mode);
     } catch (e) {
       emit(ThemeMode.light);
