@@ -6,7 +6,7 @@ import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 
-@injectable
+@lazySingleton
 class ThemeCubit extends Cubit<ThemeMode> {
   ThemeCubit() : super(ThemeMode.light);
 
@@ -23,7 +23,6 @@ class ThemeCubit extends Cubit<ThemeMode> {
   void updateThemeByString(String themeName) {
     try {
       final ThemeMode mode = ThemeMode.values.byName(themeName.toLowerCase());
-      print("mode ======== ${mode.name}");
       emit(mode);
     } catch (e) {
       emit(ThemeMode.light);

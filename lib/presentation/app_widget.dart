@@ -273,8 +273,6 @@ class _AppViewState extends State<AppView> {
                               (entity) => entity,
                             );
                             if (entityTheme?.value != null) {
-                              print("object ==============");
-                              print(entityTheme?.value);
                               getIt<ThemeCubit>()
                                   .updateThemeByString(entityTheme?.value);
                             }
