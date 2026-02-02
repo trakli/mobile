@@ -6,7 +6,7 @@ import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 
-@lazySingleton
+@injectable
 class ThemeCubit extends Cubit<ThemeMode> {
   ThemeCubit() : super(ThemeMode.light);
 
