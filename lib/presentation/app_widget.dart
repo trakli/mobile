@@ -21,6 +21,7 @@ import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/config/theme_cubit/theme_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -98,6 +99,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<CurrencyCubit>()..loadCurrency(),
+        ),
+        BlocProvider(
+          create: (_) => ThemeCubit(),
         ),
       ],
       child: const AppView(),
@@ -212,6 +216,8 @@ class _AppViewState extends State<AppView> {
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
         theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: getIt<ThemeCubit>().state,
         builder: (context, child) {
           return Stack(
             children: [
@@ -249,9 +255,22 @@ class _AppViewState extends State<AppView> {
                           (failure) => null,
                           (entity) => entity,
                         );
-
                         if (entityLang?.value != null) {
                           updateLanguage(null, Locale(entityLang?.value));
+                        }
+                      });
+
+                      ///setting theme config initially
+                      getIt<ConfigRepository>()
+                          .getConfigByKey(ConfigConstants.theme)
+                          .then((themeName) {
+                        final entityTheme = themeName.fold(
+                          (failure) => null,
+                          (entity) => entity,
+                        );
+                        if (entityTheme?.value != null) {
+                          getIt<ThemeCubit>()
+                              .updateThemeByString(entityTheme?.value);
                         }
                       });
                     },
