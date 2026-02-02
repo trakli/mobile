@@ -42,47 +42,48 @@ class InfoInterface extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10.sp),
               Text(
                 data.description.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.grey[700],
-                  height: 1.4,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelSmall
+                    ?.copyWith(fontSize: 14.sp),
               ),
               SizedBox(height: 24.sp),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16.sp),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.sp),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${LocaleKeys.quickStart.tr().toUpperCase()}:",
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                        color: appPrimaryColor,
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${LocaleKeys.quickStart.tr().toUpperCase()}:",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w700,
+                          color: appPrimaryColor,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10.sp),
-                    for (int i = 0; i < data.quickStartSteps.length; i++)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: _buildStep(
-                            "${i + 1}", data.quickStartSteps[i].tr()),
-                      ),
-                  ],
+                      SizedBox(height: 10.sp),
+                      for (int i = 0; i < data.quickStartSteps.length; i++)
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildStep(
+                            "${i + 1}",
+                            data.quickStartSteps[i].tr(),
+                            context,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 28.h),
@@ -136,7 +137,7 @@ class InfoInterface extends StatelessWidget {
     );
   }
 
-  Widget _buildStep(String number, String text) {
+  Widget _buildStep(String number, String text, BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -156,10 +157,7 @@ class InfoInterface extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.black87,
-            ),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
       ],

@@ -176,7 +176,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           SizedBox(height: 20.h),
           Card(
             child: Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
