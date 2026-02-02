@@ -97,7 +97,10 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                     ),
                     Text(
                       LocaleKeys.financeInfo.tr(),
-                      style: TextStyle(fontSize: 13.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(fontSize: 13.sp),
                     ),
                   ],
                 ),
@@ -165,7 +168,10 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           Text(
             data.description1?.tr() ?? data.description.tr(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall
+                ?.copyWith(fontSize: 14.sp),
           ),
           SizedBox(height: 20.h),
           Container(

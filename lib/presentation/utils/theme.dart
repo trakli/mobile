@@ -6,9 +6,8 @@ final lightTheme = ThemeData(
   primaryColor: const Color(0xFF047844),
   primaryColorLight: const Color(0xFFDFE1E4),
   primaryColorDark: const Color(0xFF1E2448),
-  hintColor: const Color(0xFFF7B600),
+  hintColor: appYellow,
   scaffoldBackgroundColor: const Color(0xFFEBEDEC),
-  // brightness: Theme.of(context).brightness,
   useMaterial3: true,
   datePickerTheme: DatePickerThemeData(
     shape: RoundedRectangleBorder(
@@ -192,7 +191,6 @@ final darkTheme = ThemeData(
   scaffoldBackgroundColor: neutralN900,
   useMaterial3: true,
   brightness: Brightness.dark,
-
   datePickerTheme: DatePickerThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
     headerBackgroundColor: appPrimaryColor,
@@ -205,7 +203,6 @@ final darkTheme = ThemeData(
     confirmButtonStyle:
         ButtonStyle(foregroundColor: WidgetStatePropertyAll(appPrimaryColor)),
   ),
-
   timePickerTheme: TimePickerThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
     backgroundColor: neutralN700,
@@ -219,7 +216,6 @@ final darkTheme = ThemeData(
     hourMinuteTextColor: Colors.white,
     entryModeIconColor: appPrimaryColor,
   ),
-
   textTheme: TextTheme(
     headlineMedium: TextStyle(
       fontWeight: FontWeight.bold,
@@ -239,7 +235,6 @@ final darkTheme = ThemeData(
       color: Colors.white.withValues(alpha: 0.9),
     ),
   ),
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       textStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
@@ -249,7 +244,6 @@ final darkTheme = ThemeData(
       padding: EdgeInsets.symmetric(horizontal: 32.0.w, vertical: 12.h),
     ),
   ),
-
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       iconSize: 12.sp,
@@ -261,7 +255,6 @@ final darkTheme = ThemeData(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
     ),
   ),
-
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: neutralN700,
@@ -283,7 +276,6 @@ final darkTheme = ThemeData(
     ),
     floatingLabelStyle: TextStyle(color: appPrimaryColor),
   ),
-
   popupMenuTheme: PopupMenuThemeData(
     color: neutralN700,
     shape: RoundedRectangleBorder(
@@ -294,7 +286,6 @@ final darkTheme = ThemeData(
       TextStyle(fontSize: 14.sp, color: Colors.white),
     ),
   ),
-
   searchBarTheme: SearchBarThemeData(
     backgroundColor: WidgetStatePropertyAll(neutralN700),
     hintStyle: WidgetStatePropertyAll(TextStyle(color: neutralN40)),
@@ -303,7 +294,6 @@ final darkTheme = ThemeData(
       RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
     ),
   ),
-
   cardTheme: CardThemeData(
     color: neutralN700,
     elevation: 0,
