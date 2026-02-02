@@ -53,136 +53,127 @@ class GroupTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final accentColor = Theme.of(context).primaryColor;
 
-    return Container(
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.r),
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: ImageWidget(
-              mediaEntity: group.icon,
-              accentColor: accentColor,
-              iconSize: 20.sp,
-              emojiSize: 20.sp,
-              placeholderIcon: Icons.folder_outlined,
-            ),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  group.name,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (group.description != null) ...[
-                  SizedBox(height: 4.h),
-                  Text(
-                    group.description!,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Container(
-            width: 36.w,
-            height: 36.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.r),
-              color: accentColor.withValues(alpha: 0.2),
-            ),
-            child: PopupMenuButton(
-              icon: SvgPicture.asset(
-                height: 20.h,
-                width: 20.w,
-                Assets.images.more,
-                colorFilter: ColorFilter.mode(
-                  accentColor,
-                  BlendMode.srcIn,
-                ),
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.r),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8.r),
               ),
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    onTap: () => _handleEdit(context),
-                    height: 40.h,
-                    child: Row(
-                      spacing: 8.w,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: accentColor.withValues(alpha: 0.2),
-                          ),
-                          child: SvgPicture.asset(
-                            height: 16.h,
-                            width: 16.w,
-                            Assets.images.edit2,
-                            colorFilter: ColorFilter.mode(
-                              accentColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        Text(LocaleKeys.edit.tr()),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    onTap: () => _showDeleteConfirmation(context),
-                    height: 40.h,
-                    child: Row(
-                      spacing: 8.w,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.redAccent.withValues(alpha: 0.2),
-                          ),
-                          child: SvgPicture.asset(
-                            height: 16.h,
-                            width: 16.w,
-                            Assets.images.trash,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.redAccent,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                        Text(LocaleKeys.delete.tr()),
-                      ],
-                    ),
-                  ),
-                ];
-              },
+              child: ImageWidget(
+                mediaEntity: group.icon,
+                accentColor: accentColor,
+                iconSize: 20.sp,
+                emojiSize: 20.sp,
+                placeholderIcon: Icons.folder_outlined,
+              ),
             ),
-          ),
-        ],
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group.name,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (group.description != null) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      group.description!,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(fontSize: 14.sp),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.r),
+                color: accentColor.withValues(alpha: 0.2),
+              ),
+              child: PopupMenuButton(
+                icon: SvgPicture.asset(
+                  height: 20.h,
+                  width: 20.w,
+                  Assets.images.more,
+                  colorFilter: ColorFilter.mode(
+                    accentColor,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      onTap: () => _handleEdit(context),
+                      height: 40.h,
+                      child: Row(
+                        spacing: 8.w,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: accentColor.withValues(alpha: 0.2),
+                            ),
+                            child: SvgPicture.asset(
+                              height: 16.h,
+                              width: 16.w,
+                              Assets.images.edit2,
+                              colorFilter: ColorFilter.mode(
+                                accentColor,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          Text(LocaleKeys.edit.tr()),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: () => _showDeleteConfirmation(context),
+                      height: 40.h,
+                      child: Row(
+                        spacing: 8.w,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.redAccent.withValues(alpha: 0.2),
+                            ),
+                            child: SvgPicture.asset(
+                              height: 16.h,
+                              width: 16.w,
+                              Assets.images.trash,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.redAccent,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          Text(LocaleKeys.delete.tr()),
+                        ],
+                      ),
+                    ),
+                  ];
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
