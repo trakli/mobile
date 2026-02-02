@@ -179,7 +179,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       width: 2,
                     ),
                   ),
-        fillColor: const Color(0xFFF5F6F7),
         filled: widget.filled,
         // filled: true,
       ),
