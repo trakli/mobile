@@ -61,6 +61,7 @@ final lightTheme = ThemeData(
     labelSmall: TextStyle(
       fontSize: 12.sp,
       color: textColor,
+      fontWeight: FontWeight.normal,
     ),
     bodySmall: TextStyle(
       fontSize: 12.sp,
@@ -193,7 +194,8 @@ final lightTheme = ThemeData(
     color: Colors.white,
     elevation: 2,
     shadowColor: Colors.black.withValues(alpha: 0.1),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    margin: EdgeInsets.zero,
   ),
 );
 
@@ -249,6 +251,7 @@ final darkTheme = ThemeData(
     labelSmall: TextStyle(
       fontSize: 12.sp,
       color: neutralN40,
+      fontWeight: FontWeight.normal,
     ),
     bodyMedium: TextStyle(
       color: Colors.white.withValues(alpha: 0.9),
@@ -320,6 +323,7 @@ final darkTheme = ThemeData(
   cardTheme: CardThemeData(
     color: neutralN700,
     elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    margin: EdgeInsets.zero,
   ),
 );
