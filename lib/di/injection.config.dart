@@ -194,8 +194,8 @@ _i174.GetIt $initGetIt(
   final injectHttpClientModule = _$InjectHttpClientModule();
   gh.factory<_i1041.SyncCubit>(() => _i1041.SyncCubit());
   gh.factory<_i624.OAuthService>(() => _i624.OAuthService());
-  gh.factory<_i627.ThemeCubit>(() => _i627.ThemeCubit());
   gh.singleton<_i957.SyncService>(() => _i957.SyncService());
+  gh.lazySingleton<_i627.ThemeCubit>(() => _i627.ThemeCubit());
   gh.lazySingleton<_i877.SyncDependencyManagerBase>(
       () => syncModule.provideSyncDependencyManager());
   gh.factory<_i6.NetworkInfo>(() => _i6.NetworkInfoImpl()..init());
