@@ -9,6 +9,11 @@ final lightTheme = ThemeData(
   hintColor: appYellow,
   scaffoldBackgroundColor: const Color(0xFFEBEDEC),
   useMaterial3: true,
+  colorScheme: ColorScheme.light(
+    surface: Colors.white,
+    onSurface: neutralN900,
+    primary: appPrimaryColor,
+  ),
   datePickerTheme: DatePickerThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.r),
@@ -199,6 +204,11 @@ final darkTheme = ThemeData(
   hintColor: appYellow,
   scaffoldBackgroundColor: neutralN900,
   useMaterial3: true,
+  colorScheme: ColorScheme.dark(
+    surface: neutralN700,
+    onSurface: Colors.white,
+    primary: appPrimaryColor,
+  ),
   brightness: Brightness.dark,
   datePickerTheme: DatePickerThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),

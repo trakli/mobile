@@ -12,6 +12,7 @@ import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_nav.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_drawer.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
@@ -110,8 +111,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   text: LocaleKeys.profile.tr(),
                 ),
               ],
-              backgroundColor: Colors.white,
-              color: const Color(0xFF576760),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.onSurface,
               selectedColor: Theme.of(context).primaryColor,
             ),
           );
