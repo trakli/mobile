@@ -192,7 +192,7 @@ Future<T?> showCustomPopOver<T>(
 }) async {
   return showPopover<T>(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     transitionDuration: const Duration(milliseconds: 150),
     bodyBuilder: (context) => widget,
     direction: direction ?? PopoverDirection.bottom,
