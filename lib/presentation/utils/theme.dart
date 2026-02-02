@@ -57,6 +57,9 @@ final lightTheme = ThemeData(
       fontSize: 12.sp,
       color: textColor,
     ),
+    bodySmall: TextStyle(
+      fontSize: 12.sp,
+    ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
@@ -181,6 +184,12 @@ final lightTheme = ThemeData(
       ),
     ),
   ),
+  cardTheme: CardThemeData(
+    color: Colors.white,
+    elevation: 2,
+    shadowColor: Colors.black.withValues(alpha: 0.1),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+  ),
 );
 
 final darkTheme = ThemeData(
@@ -229,9 +238,13 @@ final darkTheme = ThemeData(
     ),
     labelSmall: TextStyle(
       fontSize: 12.sp,
-      color: neutralN40, // Lighter grey for dark mode readability
+      color: neutralN40,
     ),
     bodyMedium: TextStyle(
+      color: Colors.white.withValues(alpha: 0.9),
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12.sp,
       color: Colors.white.withValues(alpha: 0.9),
     ),
   ),
@@ -297,6 +310,6 @@ final darkTheme = ThemeData(
   cardTheme: CardThemeData(
     color: neutralN700,
     elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
   ),
 );

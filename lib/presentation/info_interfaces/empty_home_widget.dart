@@ -174,40 +174,30 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                 ?.copyWith(fontSize: 14.sp),
           ),
           SizedBox(height: 20.h),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${LocaleKeys.whyThisMatters.tr()}:",
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: appPrimaryColor,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                if (data.quickSteps != null)
-                  ...data.quickSteps!.map(
-                    (p) => _buildPoint(
-                      icon: p.icon,
-                      text: p.description.tr(),
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${LocaleKeys.whyThisMatters.tr()}:",
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: appPrimaryColor,
                     ),
                   ),
-              ],
+                  SizedBox(height: 16.h),
+                  if (data.quickSteps != null)
+                    ...data.quickSteps!.map(
+                      (p) => _buildPoint(
+                        icon: p.icon,
+                        text: p.description.tr(),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           SizedBox(height: 20.h),
@@ -255,7 +245,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 13.5.sp, color: Colors.black87),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ],
