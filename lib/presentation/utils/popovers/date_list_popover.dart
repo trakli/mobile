@@ -79,6 +79,10 @@ class DateListPopover extends StatelessWidget {
                 ),
                 trailing: SvgPicture.asset(
                   Assets.images.arrowRight,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.onSurface,
+                    BlendMode.srcIn,
+                  ),
                 ),
               );
             },

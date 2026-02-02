@@ -87,7 +87,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: Form(
           key: formKey,
           child: Column(

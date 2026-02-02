@@ -79,7 +79,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen>
             resetPassword: (response) {});
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Form(
@@ -214,10 +214,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen>
                   child: RichText(
                     text: TextSpan(
                       text: LocaleKeys.dontHaveAccount.tr(),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: neutralN700,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 14.sp,
+                          ),
                       children: [
                         const TextSpan(
                           text: ' ',

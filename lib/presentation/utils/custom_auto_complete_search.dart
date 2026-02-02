@@ -105,7 +105,7 @@ class _CustomAutoCompleteSearchState<T extends Object>
           showWhenUnlinked: false,
           offset: Offset(0, size.height),
           child: Material(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             elevation: 4,
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(8.r),
@@ -175,7 +175,9 @@ class _CustomAutoCompleteSearchState<T extends Object>
           focusNode: _focusNode,
           validator: widget.validator,
           decoration: InputDecoration(
-            fillColor: _focusNode.hasFocus ? Colors.white : null,
+            fillColor: _focusNode.hasFocus
+                ? Theme.of(context).colorScheme.surface
+                : null,
             labelText: widget.label,
             contentPadding: EdgeInsets.only(top: 16.h),
             prefixIcon: IconButton(

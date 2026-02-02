@@ -287,7 +287,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: supportedLanguages.elementAt(index).languageCode ==
                             context.locale.languageCode
                         ? Theme.of(context).primaryColor
-                        : Theme.of(context).primaryColor.withValues(alpha: 0.5),
+                        : Theme.of(context).colorScheme.onSurface,
                     fontSize: 16.sp,
                   ),
                 ),

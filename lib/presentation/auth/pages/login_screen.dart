@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: SingleChildScrollView(
           padding: EdgeInsets.only(
             left: 16.w,
@@ -135,9 +136,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPress: () => context.read<OAuthCubit>().signInWithGoogle(),
                   iconPath: Assets.images.google,
                   borderColor: const Color(0xFF79828E),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   buttonText: LocaleKeys.loginGoogle.tr(),
-                  buttonTextColor: textColor,
+                  buttonTextColor: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               if (Platform.isIOS) ...[
@@ -174,9 +175,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: Text(
                   LocaleKeys.skip.tr(),
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontSize: 13.sp),
                 ),
               ),
             ],

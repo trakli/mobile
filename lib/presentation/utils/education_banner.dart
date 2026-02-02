@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 
 class EducationBanner extends StatelessWidget {
   final String message;
@@ -19,7 +20,9 @@ class EducationBanner extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+        color: Theme.of(context).brightness == Brightness.light
+            ? appPrimaryColor.withValues(alpha: 0.08)
+            : neutralN700.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
@@ -45,11 +48,10 @@ class EducationBanner extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: const Color(0xFF061D23),
-                height: 1.4,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(fontSize: 12.5.sp, height: 1.4),
             ),
           ),
           if (onDismiss != null) ...[

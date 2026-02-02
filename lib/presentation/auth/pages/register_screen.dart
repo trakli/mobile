@@ -89,7 +89,6 @@ class _RegisterScreenState extends State<RegisterScreen>
             });
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Form(
@@ -186,10 +185,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                   child: RichText(
                     text: TextSpan(
                       text: LocaleKeys.alreadyHaveAccount.tr(),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: neutralN700,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 14.sp,
+                          ),
                       children: [
                         const TextSpan(text: ' '),
                         TextSpan(

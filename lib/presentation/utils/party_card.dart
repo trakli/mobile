@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -13,8 +15,6 @@ import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PartyCard extends StatelessWidget {
   final PartyEntity party;
@@ -121,22 +121,7 @@ class PartyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          width: 1,
-          color: transactionTileBorderColor,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return Card(
       child: Stack(
         children: [
           SizedBox(
@@ -175,7 +160,6 @@ class PartyCard extends StatelessWidget {
                     party.name,
                     style: TextStyle(
                       fontSize: 14.sp,
-                      color: const Color(0xFF061D23),
                       fontWeight: FontWeight.w600,
                     ),
                     textAlign: TextAlign.center,
@@ -210,10 +194,10 @@ class PartyCard extends StatelessWidget {
                     SizedBox(height: 8.h),
                     Text(
                       party.description!,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: const Color(0xFF576760),
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(fontSize: 11.sp),
                       textAlign: TextAlign.center,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -341,5 +325,4 @@ class PartyCard extends StatelessWidget {
       ),
     );
   }
-
 }

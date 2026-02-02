@@ -1,15 +1,18 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:trakli/providers/local_storage.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/config/theme_cubit/theme_cubit.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/providers/local_storage.dart';
 
 class DisplaySettingsScreen extends StatefulWidget {
   const DisplaySettingsScreen({super.key});
@@ -88,35 +91,39 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                 size: 16.sp,
               ),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: () {
-                _showThemeModeSheet(context);
+            BlocBuilder<ThemeCubit, ThemeMode>(
+              builder: (context, mode) {
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () {
+                    _showThemeModeSheet(context);
+                  },
+                  leading: Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.r),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    child: const Icon(
+                      Icons.brightness_4,
+                      color: Colors.white,
+                    ),
+                  ),
+                  title: Text(LocaleKeys.themeMode.tr()),
+                  subtitle: Text(
+                    mode.name.tr(),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16.sp,
+                  ),
+                );
               },
-              leading: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: const Icon(
-                  Icons.display_settings,
-                  color: Colors.white,
-                ),
-              ),
-              title: Text(LocaleKeys.themeMode.tr()),
-              subtitle: Text(
-                ThemeMode.system.toString().split('.').last,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                size: 16.sp,
-              ),
             ),
           ],
         ),
@@ -164,6 +171,9 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
   }
 
   void _showThemeModeSheet(BuildContext context) {
+    final themeCubit = context.read<ThemeCubit>();
+    final currentMode = themeCubit.state;
+
     showCupertinoModalPopup(
       context: context,
       builder: (context) {
@@ -171,47 +181,24 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: CupertinoActionSheet(
             title: Text(LocaleKeys.selectThemeMode.tr()),
-            actions: [
-              CupertinoActionSheetAction(
+            actions: ThemeMode.values.map((mode) {
+              final isSelected = currentMode == mode;
+              return CupertinoActionSheetAction(
                 onPressed: () {
-                  // TODO: Implement theme switching
+                  themeCubit.updateThemeByEnum(mode);
                   Navigator.pop(context);
                 },
                 child: Text(
-                  LocaleKeys.light.tr(),
+                  mode.name.tr(),
                   style: TextStyle(
                     fontSize: 16.sp,
-                    color: Colors.black,
+                    color: isSelected
+                        ? appPrimaryColor
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-              ),
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  // TODO: Implement theme switching
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  LocaleKeys.dark.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  // TODO: Implement theme switching
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  LocaleKeys.system.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
         );
       },

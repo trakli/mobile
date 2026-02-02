@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/gen/assets.gen.dart' show Assets;
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PopUpDialog extends StatelessWidget {
   final DialogType dialogType;
@@ -96,7 +96,7 @@ class PopUpDialog extends StatelessWidget {
         vertical: 20.h,
         horizontal: 16.w,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
       ),
@@ -138,10 +138,9 @@ class PopUpDialog extends StatelessWidget {
             SizedBox(height: 16.h),
             Text(
               subTitle,
-              style: TextStyle(
-                color: neutralN900,
-                fontSize: 14.sp,
-              ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 14.sp,
+                  ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),

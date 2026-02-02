@@ -5,8 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/auth/pages/login_screen.dart';
 import 'package:trakli/presentation/app_widget.dart';
+import 'package:trakli/presentation/auth/pages/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -17,7 +17,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late PageController pageController = PageController();
-  int currentPage = 1;
+  int currentIndex = 0;
 
   navigateToNextPage() {
     // Set onboarding mode to false when leaving onboarding
@@ -28,6 +28,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         builder: (context) => const LoginScreen(),
       ),
     );
+  }
+
+  void nextSlide() {
+    if (currentIndex == 2) {
+      navigateToNextPage();
+    } else {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 850),
+        curve: Curves.decelerate,
+      );
+    }
   }
 
   @override
@@ -50,7 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           Container(
@@ -75,7 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 28),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: const [
                   BoxShadow(
@@ -85,23 +96,52 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ],
               ),
-              child: PageView(
-                controller: pageController,
-                physics: const NeverScrollableScrollPhysics(),
+              child: Column(
                 children: [
-                  pageItem(
-                    title: LocaleKeys.onboardTitle1.tr(),
-                    desc: LocaleKeys.onboardDesc1.tr(),
+                  Expanded(
+                    child: PageView(
+                      controller: pageController,
+                      onPageChanged: (value) {
+                        setState(() {
+                          currentIndex = value;
+                        });
+                      },
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        pageItem(
+                          title: LocaleKeys.onboardTitle1.tr(),
+                          desc: LocaleKeys.onboardDesc1.tr(),
+                        ),
+                        pageItem(
+                          title: LocaleKeys.onboardTitle2.tr(),
+                          desc: LocaleKeys.onboardDesc2.tr(),
+                        ),
+                        pageItem(
+                          title: LocaleKeys.onboardTitle3.tr(),
+                          desc: LocaleKeys.onboardDesc3.tr(),
+                          isLastPage: true,
+                        ),
+                      ],
+                    ),
                   ),
-                  pageItem(
-                    title: LocaleKeys.onboardTitle2.tr(),
-                    desc: LocaleKeys.onboardDesc2.tr(),
+                  SizedBox(
+                    height: 80.sp,
+                    width: 80.sp,
+                    child: animatedProgress,
                   ),
-                  pageItem(
-                    title: LocaleKeys.onboardTitle3.tr(),
-                    desc: LocaleKeys.onboardDesc3.tr(),
-                    isLastPage: true,
+                  SizedBox(height: 2.h),
+                  TextButton(
+                    onPressed: currentIndex != 2 ? navigateToNextPage : null,
+                    child: Text(
+                      currentIndex != 2 ? LocaleKeys.skip.tr() : "",
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                  SizedBox(height: 4.h),
                 ],
               ),
             ),
@@ -131,7 +171,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           pointers: [
             RangePointer(
               color: Theme.of(context).primaryColor,
-              value: (currentPage / 3) * 100,
+              value: ((currentIndex + 1) / 3) * 100,
               width: 0.2,
               sizeUnit: GaugeSizeUnit.factor,
               enableAnimation: true,
@@ -150,39 +190,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     shape: BoxShape.circle,
                     color: Theme.of(context).primaryColor,
                   ),
-                  child: currentPage != 3
-                      ? IconButton(
-                          onPressed: () {
-                            pageController
-                                .nextPage(
-                              duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeIn,
-                            )
-                                .then((val) {
-                              setState(() {
-                                currentPage += 1;
-                              });
-                            });
-                          },
-                          icon: const Icon(
+                  child: IconButton(
+                    onPressed: nextSlide,
+                    icon: currentIndex != 2
+                        ? const Icon(
                             Icons.arrow_forward_outlined,
                             color: Colors.white,
-                          ),
-                        )
-                      : Center(
-                          child: TextButton(
-                            onPressed: () {
-                              navigateToNextPage();
-                            },
-                            child: Text(
-                              LocaleKeys.go.tr().toUpperCase(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                              ),
+                          )
+                        : Text(
+                            LocaleKeys.go.tr().toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
                             ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             )
@@ -198,7 +220,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     bool isLastPage = false,
   }) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Text(
           title,
@@ -208,35 +230,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           textAlign: TextAlign.center,
         ),
-        // const SizedBox(height: 20),
         Text(
           desc,
           style: TextStyle(
             fontSize: 14.sp,
           ),
           textAlign: TextAlign.center,
-        ),
-        // const SizedBox(height: 20),
-        SizedBox(
-          height: 80.sp,
-          width: 80.sp,
-          child: animatedProgress,
-        ),
-        TextButton(
-          onPressed: isLastPage
-              ? null
-              : () {
-                  navigateToNextPage();
-                },
-          child: Text(
-            isLastPage ? "" : LocaleKeys.skip.tr(),
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
-            ),
-            textAlign: TextAlign.center,
-          ),
         ),
       ],
     );

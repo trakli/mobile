@@ -21,6 +21,7 @@ import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/config/theme_cubit/theme_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -98,6 +99,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => getIt<CurrencyCubit>()..loadCurrency(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<ThemeCubit>(),
         ),
       ],
       child: const AppView(),
@@ -204,120 +208,145 @@ class _AppViewState extends State<AppView> {
           ),
         );
       },
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
-        scaffoldMessengerKey: scaffoldMessengerKey,
-        title: 'Trakli',
-        locale: context.locale,
-        supportedLocales: context.supportedLocales,
-        localizationsDelegates: context.localizationDelegates,
-        theme: lightTheme,
-        builder: (context, child) {
-          return Stack(
-            children: [
-              BlocListener<AuthCubit, AuthState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    authenticated: (user) async {
-                      await getIt<SynchAppDatabase>().doSync();
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            navigatorKey: navigatorKey,
+            scaffoldMessengerKey: scaffoldMessengerKey,
+            title: 'Trakli',
+            locale: context.locale,
+            supportedLocales: context.supportedLocales,
+            localizationsDelegates: context.localizationDelegates,
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: themeMode,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  BlocListener<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        authenticated: (user) async {
+                          await getIt<SynchAppDatabase>().doSync();
 
-                      final isOnboardingComplete =
-                          await _isOnboardingCompleteWithDefaults();
+                          final isOnboardingComplete =
+                              await _isOnboardingCompleteWithDefaults();
 
-                      if (isOnboardingComplete) {
-                        setOnboardingMode(false);
-                        navigatorKey.currentState?.pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const MainNavigationScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      } else {
-                        setOnboardingMode(true);
-                        navigatorKey.currentState?.pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const OnboardSettingsScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      }
+                          if (isOnboardingComplete) {
+                            setOnboardingMode(false);
+                            navigatorKey.currentState?.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const MainNavigationScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          } else {
+                            setOnboardingMode(true);
+                            navigatorKey.currentState?.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const OnboardSettingsScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          }
 
-                      getIt<ConfigRepository>()
-                          .getConfigByKey(ConfigConstants.defaultLang)
-                          .then((langCode) {
-                        final entityLang = langCode.fold(
-                          (failure) => null,
-                          (entity) => entity,
-                        );
+                          getIt<ConfigRepository>()
+                              .getConfigByKey(ConfigConstants.defaultLang)
+                              .then((langCode) {
+                            final entityLang = langCode.fold(
+                              (failure) => null,
+                              (entity) => entity,
+                            );
+                            if (entityLang?.value != null) {
+                              updateLanguage(null, Locale(entityLang?.value));
+                            }
+                          });
 
-                        if (entityLang?.value != null) {
-                          updateLanguage(null, Locale(entityLang?.value));
-                        }
-                      });
+                          ///setting theme config initially
+                          getIt<ConfigRepository>()
+                              .getConfigByKey(ConfigConstants.theme)
+                              .then((themeName) {
+                            final entityTheme = themeName.fold(
+                              (failure) => null,
+                              (entity) => entity,
+                            );
+                            if (entityTheme?.value != null) {
+                              getIt<ThemeCubit>()
+                                  .updateThemeByString(entityTheme?.value);
+                            }
+                          });
+                        },
+                        unauthenticated: () async {
+                          getIt<SynchAppDatabase>().stopAllSync();
+                          context
+                              .read<TransactionCubit>()
+                              .setCurrentGroup(null);
+
+                          final isOnboardingComplete =
+                              await _isOnboardingCompleteWithDefaults();
+
+                          if (isOnboardingComplete) {
+                            setOnboardingMode(false);
+                            navigatorKey.currentState?.pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const MainNavigationScreen(),
+                              ),
+                              (route) => false,
+                            );
+                          } else {
+                            final wasAnyConfigSet = await _wasAnyConfigSet();
+                            if (wasAnyConfigSet) {
+                              setOnboardingMode(false);
+                              navigatorKey.currentState?.pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const OnboardSettingsScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            } else {
+                              setOnboardingMode(true);
+                              navigatorKey.currentState?.pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const OnboardingScreen(),
+                                ),
+                                (route) => true,
+                              );
+                            }
+                          }
+                        },
+                        orElse: () {},
+                      );
                     },
-                    unauthenticated: () async {
-                      getIt<SynchAppDatabase>().stopAllSync();
-                      context.read<TransactionCubit>().setCurrentGroup(null);
+                    child: child,
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: BlocBuilder<SyncCubit, bool>(
+                      builder: (context, isSyncing) {
+                        if (!isSyncing) return const SizedBox.shrink();
 
-                      final isOnboardingComplete =
-                          await _isOnboardingCompleteWithDefaults();
-
-                      if (isOnboardingComplete) {
-                        setOnboardingMode(false);
-                        navigatorKey.currentState?.pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const MainNavigationScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      } else {
-                        final wasAnyConfigSet = await _wasAnyConfigSet();
-                        if (wasAnyConfigSet) {
-                          setOnboardingMode(false);
-                          navigatorKey.currentState?.pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const OnboardSettingsScreen(),
-                            ),
-                            (route) => false,
-                          );
-                        } else {
-                          setOnboardingMode(true);
-                          navigatorKey.currentState?.pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) => const OnboardingScreen(),
-                            ),
-                            (route) => true,
-                          );
+                        // Don't show sync indicator on onboarding screens
+                        if (isInOnboardingMode) {
+                          return const SizedBox.shrink();
                         }
-                      }
-                    },
-                    orElse: () {},
-                  );
-                },
-                child: child,
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: BlocBuilder<SyncCubit, bool>(
-                  builder: (context, isSyncing) {
-                    if (!isSyncing) return const SizedBox.shrink();
 
-                    // Don't show sync indicator on onboarding screens
-                    if (isInOnboardingMode) {
-                      return const SizedBox.shrink();
-                    }
-
-                    return const SyncIndicatorOverlay();
-                  },
-                ),
-              ),
-            ],
+                        return const SyncIndicatorOverlay();
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+            onGenerateRoute: (_) => SplashScreen.route(),
           );
         },
-        onGenerateRoute: (_) => SplashScreen.route(),
       ),
     );
   }

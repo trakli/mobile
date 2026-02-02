@@ -74,7 +74,7 @@ class _CategoryScreenState extends State<CategoryScreen>
               height: 40.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
-                color: const Color(0xFFEBEDEC),
+                color: Theme.of(context).scaffoldBackgroundColor,
               ),
               padding: EdgeInsets.all(8.r),
               child: Center(

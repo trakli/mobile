@@ -6,10 +6,14 @@ final lightTheme = ThemeData(
   primaryColor: const Color(0xFF047844),
   primaryColorLight: const Color(0xFFDFE1E4),
   primaryColorDark: const Color(0xFF1E2448),
-  hintColor: const Color(0xFFF7B600),
+  hintColor: appYellow,
   scaffoldBackgroundColor: const Color(0xFFEBEDEC),
-  // brightness: Theme.of(context).brightness,
   useMaterial3: true,
+  colorScheme: ColorScheme.light(
+    surface: Colors.white,
+    onSurface: neutralN900,
+    primary: appPrimaryColor,
+  ),
   datePickerTheme: DatePickerThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.r),
@@ -57,6 +61,10 @@ final lightTheme = ThemeData(
     labelSmall: TextStyle(
       fontSize: 12.sp,
       color: textColor,
+      fontWeight: FontWeight.normal,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12.sp,
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -181,5 +189,147 @@ final lightTheme = ThemeData(
         borderRadius: BorderRadius.circular(8.r),
       ),
     ),
+  ),
+  cardTheme: CardThemeData(
+    color: Colors.white,
+    elevation: 2,
+    shadowColor: Colors.black.withValues(alpha: 0.1),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      side: BorderSide(
+        width: 1,
+        color: transactionTileBorderColor,
+      ),
+    ),
+    margin: EdgeInsets.zero,
+  ),
+);
+
+final darkTheme = ThemeData(
+  primaryColor: appPrimaryColor,
+  primaryColorLight: neutralN600,
+  primaryColorDark: Colors.black,
+  hintColor: appYellow,
+  scaffoldBackgroundColor: neutralN900,
+  useMaterial3: true,
+  colorScheme: ColorScheme.dark(
+    surface: neutralN700,
+    onSurface: Colors.white,
+    primary: appPrimaryColor,
+  ),
+  brightness: Brightness.dark,
+  datePickerTheme: DatePickerThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    headerBackgroundColor: appPrimaryColor,
+    headerForegroundColor: Colors.white,
+    backgroundColor: neutralN700,
+    todayBackgroundColor: WidgetStatePropertyAll(appPrimaryColor),
+    todayForegroundColor: const WidgetStatePropertyAll(Colors.white),
+    cancelButtonStyle:
+        ButtonStyle(foregroundColor: WidgetStatePropertyAll(appPrimaryColor)),
+    confirmButtonStyle:
+        ButtonStyle(foregroundColor: WidgetStatePropertyAll(appPrimaryColor)),
+  ),
+  timePickerTheme: TimePickerThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    backgroundColor: neutralN700,
+    cancelButtonStyle:
+        ButtonStyle(foregroundColor: WidgetStatePropertyAll(appPrimaryColor)),
+    confirmButtonStyle:
+        ButtonStyle(foregroundColor: WidgetStatePropertyAll(appPrimaryColor)),
+    dayPeriodColor: appPrimaryColor.withAlpha(80),
+    dialBackgroundColor: neutralN600,
+    dialHandColor: appPrimaryColor,
+    hourMinuteTextColor: Colors.white,
+    entryModeIconColor: appPrimaryColor,
+  ),
+  textTheme: TextTheme(
+    headlineMedium: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 20.sp,
+      color: Colors.white,
+    ),
+    headlineSmall: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 14.sp,
+      color: Colors.white,
+    ),
+    labelSmall: TextStyle(
+      fontSize: 12.sp,
+      color: neutralN40,
+      fontWeight: FontWeight.normal,
+    ),
+    bodyMedium: TextStyle(
+      color: Colors.white.withValues(alpha: 0.9),
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12.sp,
+      color: Colors.white.withValues(alpha: 0.9),
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
+      backgroundColor: appPrimaryColor,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+      padding: EdgeInsets.symmetric(horizontal: 32.0.w, vertical: 12.h),
+    ),
+  ),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      iconSize: 12.sp,
+      foregroundColor: neutralN20,
+      // Lighter text for dark backgrounds
+      textStyle: TextStyle(fontSize: 10.sp),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+      side: BorderSide(color: appPrimaryColor),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: neutralN700,
+    // Darker input fields
+    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+    hintStyle: TextStyle(color: neutralN40),
+    labelStyle: const TextStyle(color: Colors.white70),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.r),
+      borderSide: const BorderSide(color: Colors.transparent),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.r),
+      borderSide: BorderSide(color: appPrimaryColor),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.r),
+      borderSide: const BorderSide(color: Colors.transparent),
+    ),
+    floatingLabelStyle: TextStyle(color: appPrimaryColor),
+  ),
+  popupMenuTheme: PopupMenuThemeData(
+    color: neutralN700,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.r),
+      side: BorderSide(color: neutralN600),
+    ),
+    labelTextStyle: WidgetStatePropertyAll(
+      TextStyle(fontSize: 14.sp, color: Colors.white),
+    ),
+  ),
+  searchBarTheme: SearchBarThemeData(
+    backgroundColor: WidgetStatePropertyAll(neutralN700),
+    hintStyle: WidgetStatePropertyAll(TextStyle(color: neutralN40)),
+    textStyle: const WidgetStatePropertyAll(TextStyle(color: Colors.white)),
+    shape: WidgetStatePropertyAll(
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    ),
+  ),
+  cardTheme: CardThemeData(
+    color: neutralN700,
+    elevation: 0,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    margin: EdgeInsets.zero,
   ),
 );

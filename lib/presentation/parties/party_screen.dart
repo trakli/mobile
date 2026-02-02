@@ -88,7 +88,7 @@ class _PartyScreenState extends State<PartyScreen> {
                       height: 42.r,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.r),
-                        color: const Color(0xFFEBEDEC),
+                        color: Theme.of(context).scaffoldBackgroundColor,
                       ),
                       padding: EdgeInsets.all(8.r),
                       child: Center(

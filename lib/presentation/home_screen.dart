@@ -367,7 +367,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
-                    color: Theme.of(context).primaryColorDark,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -412,7 +411,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               selectedGroup?.name ?? LocaleKeys.group.tr(),
                               style: TextStyle(
                                 fontSize: 14.sp,
-                                color: Colors.black,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

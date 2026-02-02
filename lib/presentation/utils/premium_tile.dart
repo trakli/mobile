@@ -88,6 +88,7 @@ class PremiumTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
+                        color: Colors.black,
                       ),
                     ),
                   ],

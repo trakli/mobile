@@ -97,7 +97,10 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
                     ),
                     Text(
                       LocaleKeys.financeInfo.tr(),
-                      style: TextStyle(fontSize: 13.sp),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(fontSize: 13.sp),
                     ),
                   ],
                 ),
@@ -165,43 +168,36 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           Text(
             data.description1?.tr() ?? data.description.tr(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+            style: Theme.of(context)
+                .textTheme
+                .labelSmall
+                ?.copyWith(fontSize: 14.sp),
           ),
           SizedBox(height: 20.h),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${LocaleKeys.whyThisMatters.tr()}:",
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: appPrimaryColor,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                if (data.quickSteps != null)
-                  ...data.quickSteps!.map(
-                    (p) => _buildPoint(
-                      icon: p.icon,
-                      text: p.description.tr(),
+          Card(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${LocaleKeys.whyThisMatters.tr()}:",
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: appPrimaryColor,
                     ),
                   ),
-              ],
+                  SizedBox(height: 16.h),
+                  if (data.quickSteps != null)
+                    ...data.quickSteps!.map(
+                      (p) => _buildPoint(
+                        icon: p.icon,
+                        text: p.description.tr(),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           SizedBox(height: 20.h),
@@ -249,7 +245,7 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 13.5.sp, color: Colors.black87),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
         ],

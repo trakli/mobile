@@ -65,7 +65,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               height: 42.r,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
-                color: const Color(0xFFEBEDEC),
+                color: Theme.of(context).scaffoldBackgroundColor,
               ),
               padding: EdgeInsets.all(8.r),
               child: Center(
@@ -154,7 +154,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Colors.white,
                             hintText: LocaleKeys.searchHint.tr(),
                             suffixIcon: Padding(
                               padding: const EdgeInsets.all(12),
@@ -463,10 +462,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
             onPressed: () {
               showCustomPopOver(
                 context,
-                maxWidth: filterType == FilterType.date ? 0.45.sw : null,
+                maxWidth: 0.45.sw,
                 widget: filterType == FilterType.wallet
                     ? WalletListPopover(
-                        label: filterType.filterName,
+                        label: filterType.filterName.tr(),
                         onSelect: (wallet) {
                           setState(() {
                             if (!selectedItems.any((item) =>
@@ -479,7 +478,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       )
                     : filterType == FilterType.category
                         ? CategoryListPopover(
-                            label: filterType.filterName,
+                            label: filterType.filterName.tr(),
                             onSelect: (category) {
                               setState(() {
                                 if (!selectedItems.any((item) =>
@@ -491,7 +490,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             },
                           )
                         : DateListPopover(
-                            label: filterType.filterName,
+                            label: filterType.filterName.tr(),
                             onSelect: (range) {
                               setState(() {
                                 dateRange = range;
@@ -511,13 +510,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
               iconPath,
               width: 12.w,
               height: 12.h,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface,
+                BlendMode.srcIn,
+              ),
             ),
             label: Text(
-              filterType.filterName,
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: neutralN900,
-              ),
+              filterType.filterName.tr(),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontSize: 10.sp,
+                  ),
               overflow: TextOverflow.ellipsis,
             ),
           );

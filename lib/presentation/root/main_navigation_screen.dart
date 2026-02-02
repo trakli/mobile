@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/di/injection.dart';
 import 'package:trakli/core/sync/sync_database.dart';
+import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
@@ -110,8 +110,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   text: LocaleKeys.profile.tr(),
                 ),
               ],
-              backgroundColor: Colors.white,
-              color: const Color(0xFF576760),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.onSurface,
               selectedColor: Theme.of(context).primaryColor,
             ),
           );

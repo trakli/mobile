@@ -50,11 +50,10 @@ class PartyDisplayWidget extends StatelessWidget {
             type == TransactionType.income
                 ? LocaleKeys.from.tr()
                 : LocaleKeys.to.tr(),
-            style: TextStyle(
-              color: const Color(0xFF576760),
-              fontSize: labelSize ?? 9.sp,
-              fontWeight: FontWeight.w700,
-            ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: labelSize ?? 9.sp,
+                  fontWeight: FontWeight.w700,
+                ),
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -97,7 +96,7 @@ class PartyDisplayWidget extends StatelessWidget {
           Text(
             "-",
             style: TextStyle(
-              color: transactionTileTextColor,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 14.sp,
             ),
           ),
