@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/colors.dart';
 
 class CustomBackButton extends StatelessWidget {
   const CustomBackButton({super.key});
@@ -14,7 +15,7 @@ class CustomBackButton extends StatelessWidget {
         height: 42.r,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.r),
-          color: const Color(0xFFEBEDEC),
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: Icon(
           Icons.arrow_back,

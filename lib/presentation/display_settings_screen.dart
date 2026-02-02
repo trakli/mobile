@@ -106,7 +106,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     child: const Icon(
-                      Icons.display_settings,
+                      Icons.brightness_4,
                       color: Colors.white,
                     ),
                   ),
