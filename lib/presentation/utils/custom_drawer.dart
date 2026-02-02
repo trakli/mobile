@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:trakli/presentation/category/category_screen.dart';
 import 'package:trakli/presentation/groups/my_groups_screen.dart';
 import 'package:trakli/presentation/history_screen.dart';
@@ -18,6 +17,7 @@ import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const String _supportEmail = 'support@trakli.app';
 
@@ -82,8 +82,8 @@ class CustomDrawer extends StatelessWidget {
               },
               leading: SvgPicture.asset(
                 Assets.images.category,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
               ),
@@ -93,9 +93,9 @@ class CustomDrawer extends StatelessWidget {
               onTap: () {
                 AppNavigator.push(context, const MyGroupsScreen());
               },
-              leading: const Icon(
+              leading: Icon(
                 Icons.folder_outlined,
-                color: Color(0XFF3B4E45),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               title: Text(LocaleKeys.groups.tr()),
             ),
@@ -103,9 +103,9 @@ class CustomDrawer extends StatelessWidget {
               onTap: () {
                 AppNavigator.push(context, const PartyScreen());
               },
-              leading: const Icon(
+              leading: Icon(
                 Icons.handshake_outlined,
-                color: Color(0XFF3B4E45),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               title: Text(LocaleKeys.parties.tr()),
             ),
@@ -117,8 +117,8 @@ class CustomDrawer extends StatelessWidget {
               },
               leading: SvgPicture.asset(
                 Assets.images.wallet,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
               ),
@@ -130,8 +130,8 @@ class CustomDrawer extends StatelessWidget {
               },
               leading: SvgPicture.asset(
                 Assets.images.refresh,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
               ),
@@ -142,8 +142,8 @@ class CustomDrawer extends StatelessWidget {
               onTap: () => _launchSupportEmail(context),
               leading: SvgPicture.asset(
                 Assets.images.support,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
               ),
@@ -155,8 +155,8 @@ class CustomDrawer extends StatelessWidget {
               },
               leading: SvgPicture.asset(
                 Assets.images.setting,
-                colorFilter: const ColorFilter.mode(
-                  Color(0XFF3B4E45),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 ),
               ),
