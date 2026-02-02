@@ -92,7 +92,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
               ),
             ),
             BlocBuilder<ThemeCubit, ThemeMode>(
-              builder: (context, mode) {
+              builder: (context, state) {
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   onTap: () {
@@ -106,13 +106,13 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                       color: Theme.of(context).primaryColor,
                     ),
                     child: const Icon(
-                      Icons.brightness_4,
+                      Icons.display_settings,
                       color: Colors.white,
                     ),
                   ),
                   title: Text(LocaleKeys.themeMode.tr()),
                   subtitle: Text(
-                    mode.name.tr(),
+                    state.name,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Theme.of(context).primaryColor,

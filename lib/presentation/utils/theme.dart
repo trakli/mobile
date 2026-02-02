@@ -189,7 +189,6 @@ final darkTheme = ThemeData(
   primaryColorLight: neutralN600,
   primaryColorDark: Colors.black,
   hintColor: appYellow,
-  // Using your neutral dark shades for background
   scaffoldBackgroundColor: neutralN900,
   useMaterial3: true,
   brightness: Brightness.dark,
