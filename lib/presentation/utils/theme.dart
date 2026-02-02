@@ -194,7 +194,13 @@ final lightTheme = ThemeData(
     color: Colors.white,
     elevation: 2,
     shadowColor: Colors.black.withValues(alpha: 0.1),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      side: BorderSide(
+        width: 1,
+        color: transactionTileBorderColor,
+      ),
+    ),
     margin: EdgeInsets.zero,
   ),
 );
