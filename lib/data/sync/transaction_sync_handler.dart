@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
+import 'package:trakli/core/constants/fileable_type_constants.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
@@ -70,6 +71,7 @@ class TransactionSyncHandler
       wallet: wallet,
       party: party,
       group: group,
+      files: transactionCompleteModel.files,
     );
   }
 
@@ -134,6 +136,13 @@ class TransactionSyncHandler
     await db.categorizables.deleteWhere((row) =>
         row.categorizableId.equals(entity.transaction.clientId) &
         row.categorizableType.equals(CategorizableType.transaction.name));
+
+    // Delete all media for this transaction
+    await (db.delete(db.mediaFiles)
+          ..where((m) =>
+              m.localFileableType.equals(FileableTypeConstants.transactions) &
+              m.localFileableId.equals(entity.transaction.clientId)))
+        .go();
 
     await table.deleteOne(entity.transaction);
   }
@@ -203,6 +212,21 @@ class TransactionSyncHandler
       if (entity.group != null) {
         await db.groups
             .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
+      }
+
+      // Replace media for this transaction: delete existing, then insert from dto.files
+      await (db.delete(db.mediaFiles)
+            ..where((m) =>
+                m.localFileableType.equals(FileableTypeConstants.transactions) &
+                m.localFileableId.equals(entity.transaction.clientId)))
+          .go();
+
+      for (final file in entity.files) {
+        final media = file.copyWith(
+          localFileableType: const Value(FileableTypeConstants.transactions),
+          localFileableId: Value(entity.transaction.clientId),
+        );
+        await db.mediaFiles.insertOne(media, mode: InsertMode.insertOrReplace);
       }
     });
   }

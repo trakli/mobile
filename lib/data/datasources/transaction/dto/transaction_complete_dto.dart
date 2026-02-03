@@ -1,11 +1,29 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/media_file/dto/media_file_dto.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_dto.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 
 part 'transaction_complete_dto.freezed.dart';
 part 'transaction_complete_dto.g.dart';
+
+class MediaFileListConverter
+    implements JsonConverter<List<MediaFile>, List<dynamic>> {
+  const MediaFileListConverter();
+
+  @override
+  List<MediaFile> fromJson(List<dynamic> list) {
+    return list
+        .map((e) => MediaFile.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  List<dynamic> toJson(List<MediaFile> list) {
+    return list.map((e) => e.toJson()).toList();
+  }
+}
 
 class TransactionConverter
     implements JsonConverter<Transaction, Map<String, dynamic>> {
@@ -102,6 +120,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     @WalletConverter() required Wallet wallet,
     @PartyConverter() Party? party,
     @GroupConverter() Group? group,
+    @MediaFileListConverter() @Default([]) List<MediaFile> files,
   }) = _TransactionCompleteDto;
 
   factory TransactionCompleteDto.fromTransaction({
@@ -110,6 +129,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     @WalletConverter() required Wallet wallet,
     @PartyConverter() Party? party,
     @GroupConverter() Group? group,
+    List<MediaFile>? files,
   }) {
     return TransactionCompleteDto(
       transaction: transaction,
@@ -117,6 +137,7 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       wallet: wallet,
       party: party,
       group: group,
+      files: files ?? [],
     );
   }
 
@@ -190,12 +211,32 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       groupId: group?.id,
     );
 
+    final filesRaw = json['files'] is List<dynamic>
+        ? (json['files'] as List<dynamic>)
+            .map((e) => MediaFileDto.fromJson(e as Map<String, dynamic>))
+            .toList()
+        : <MediaFileDto>[];
+    final files = filesRaw
+        .map((dto) => MediaFile(
+              path: dto.path,
+              id: dto.id,
+              type: dto.type,
+              fileableType: dto.fileableType,
+              fileableId: dto.fileableId,
+              localFileableType: null,
+              localFileableId: null,
+              createdAt: dto.createdAt,
+              updatedAt: dto.updatedAt,
+            ))
+        .toList();
+
     return TransactionCompleteDto(
       transaction: transaction,
       categories: categories,
       wallet: wallet,
       party: party,
       group: group,
+      files: files,
     );
   }
 }

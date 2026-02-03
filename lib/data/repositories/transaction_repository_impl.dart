@@ -79,6 +79,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
     String walletClientId, {
     String? partyClientId,
     String? groupClientId,
+    List<String> attachedFilePaths = const [],
   }) async {
     try {
       final transaction = await localDataSource.insertTransaction(
@@ -90,6 +91,7 @@ class TransactionRepositoryImpl extends SyncEntityRepository<AppDatabase,
         walletClientId,
         partyClientId: partyClientId,
         groupClientId: groupClientId,
+        attachedFilePaths: attachedFilePaths,
       );
 
       unawaited(post(transaction));

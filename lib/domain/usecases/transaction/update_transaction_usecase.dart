@@ -35,6 +35,7 @@ class UpdateTransactionParams {
   final String? walletClientId;
   final String? partyClientId;
   final String? groupClientId;
+  final List<String> attachedFilePaths;
 
   UpdateTransactionParams({
     required this.id,
@@ -45,5 +46,6 @@ class UpdateTransactionParams {
     this.walletClientId,
     this.partyClientId,
     this.groupClientId,
+    this.attachedFilePaths = const [],
   });
 }
