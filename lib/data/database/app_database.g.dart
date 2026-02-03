@@ -5237,6 +5237,442 @@ class NotificationsCompanion extends UpdateCompanion<Notification> {
   }
 }
 
+class $MediaFilesTable extends MediaFiles
+    with TableInfo<$MediaFilesTable, MediaFile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MediaFilesTable(this.attachedDatabase, [this._alias]);
+  @override
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+      'path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+      'type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> fileableType = GeneratedColumn<String>(
+      'fileable_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> fileableId = GeneratedColumn<int>(
+      'fileable_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> localFileableType =
+      GeneratedColumn<String>('local_fileable_type', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> localFileableId = GeneratedColumn<String>(
+      'local_fileable_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        path,
+        id,
+        type,
+        fileableType,
+        fileableId,
+        localFileableType,
+        localFileableId,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'media_files';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {path};
+  @override
+  MediaFile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MediaFile(
+      path: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}path'])!,
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id']),
+      type: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type']),
+      fileableType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fileable_type']),
+      fileableId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}fileable_id']),
+      localFileableType: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}local_fileable_type']),
+      localFileableId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}local_fileable_id']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+    );
+  }
+
+  @override
+  $MediaFilesTable createAlias(String alias) {
+    return $MediaFilesTable(attachedDatabase, alias);
+  }
+}
+
+class MediaFile extends DataClass implements Insertable<MediaFile> {
+  /// Storage path (e.g. "transactions/19YH5k1aHr4z23UMLCOUs3FS7aCBFB0a7vzaB2k9.png").
+  /// Primary key.
+  final String path;
+
+  /// Server-assigned id (optional).
+  final int? id;
+
+  /// Media type (e.g. "file").
+  final String? type;
+
+  /// Server polymorphic type (e.g. "App\\Models\\Transaction").
+  final String? fileableType;
+
+  /// Server polymorphic id (e.g. transaction id on server).
+  final int? fileableId;
+
+  /// Local polymorphic type (e.g. transaction client id or type).
+  final String? localFileableType;
+
+  /// Local polymorphic id (e.g. transaction client_id).
+  final String? localFileableId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  const MediaFile(
+      {required this.path,
+      this.id,
+      this.type,
+      this.fileableType,
+      this.fileableId,
+      this.localFileableType,
+      this.localFileableId,
+      this.createdAt,
+      this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['path'] = Variable<String>(path);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || type != null) {
+      map['type'] = Variable<String>(type);
+    }
+    if (!nullToAbsent || fileableType != null) {
+      map['fileable_type'] = Variable<String>(fileableType);
+    }
+    if (!nullToAbsent || fileableId != null) {
+      map['fileable_id'] = Variable<int>(fileableId);
+    }
+    if (!nullToAbsent || localFileableType != null) {
+      map['local_fileable_type'] = Variable<String>(localFileableType);
+    }
+    if (!nullToAbsent || localFileableId != null) {
+      map['local_fileable_id'] = Variable<String>(localFileableId);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
+    return map;
+  }
+
+  MediaFilesCompanion toCompanion(bool nullToAbsent) {
+    return MediaFilesCompanion(
+      path: Value(path),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+      fileableType: fileableType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileableType),
+      fileableId: fileableId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileableId),
+      localFileableType: localFileableType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localFileableType),
+      localFileableId: localFileableId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localFileableId),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+    );
+  }
+
+  factory MediaFile.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MediaFile(
+      path: serializer.fromJson<String>(json['path']),
+      id: serializer.fromJson<int?>(json['id']),
+      type: serializer.fromJson<String?>(json['type']),
+      fileableType: serializer.fromJson<String?>(json['fileableType']),
+      fileableId: serializer.fromJson<int?>(json['fileableId']),
+      localFileableType:
+          serializer.fromJson<String?>(json['localFileableType']),
+      localFileableId: serializer.fromJson<String?>(json['localFileableId']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'path': serializer.toJson<String>(path),
+      'id': serializer.toJson<int?>(id),
+      'type': serializer.toJson<String?>(type),
+      'fileableType': serializer.toJson<String?>(fileableType),
+      'fileableId': serializer.toJson<int?>(fileableId),
+      'localFileableType': serializer.toJson<String?>(localFileableType),
+      'localFileableId': serializer.toJson<String?>(localFileableId),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
+    };
+  }
+
+  MediaFile copyWith(
+          {String? path,
+          Value<int?> id = const Value.absent(),
+          Value<String?> type = const Value.absent(),
+          Value<String?> fileableType = const Value.absent(),
+          Value<int?> fileableId = const Value.absent(),
+          Value<String?> localFileableType = const Value.absent(),
+          Value<String?> localFileableId = const Value.absent(),
+          Value<DateTime?> createdAt = const Value.absent(),
+          Value<DateTime?> updatedAt = const Value.absent()}) =>
+      MediaFile(
+        path: path ?? this.path,
+        id: id.present ? id.value : this.id,
+        type: type.present ? type.value : this.type,
+        fileableType:
+            fileableType.present ? fileableType.value : this.fileableType,
+        fileableId: fileableId.present ? fileableId.value : this.fileableId,
+        localFileableType: localFileableType.present
+            ? localFileableType.value
+            : this.localFileableType,
+        localFileableId: localFileableId.present
+            ? localFileableId.value
+            : this.localFileableId,
+        createdAt: createdAt.present ? createdAt.value : this.createdAt,
+        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+      );
+  MediaFile copyWithCompanion(MediaFilesCompanion data) {
+    return MediaFile(
+      path: data.path.present ? data.path.value : this.path,
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      fileableType: data.fileableType.present
+          ? data.fileableType.value
+          : this.fileableType,
+      fileableId:
+          data.fileableId.present ? data.fileableId.value : this.fileableId,
+      localFileableType: data.localFileableType.present
+          ? data.localFileableType.value
+          : this.localFileableType,
+      localFileableId: data.localFileableId.present
+          ? data.localFileableId.value
+          : this.localFileableId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaFile(')
+          ..write('path: $path, ')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('fileableType: $fileableType, ')
+          ..write('fileableId: $fileableId, ')
+          ..write('localFileableType: $localFileableType, ')
+          ..write('localFileableId: $localFileableId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(path, id, type, fileableType, fileableId,
+      localFileableType, localFileableId, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MediaFile &&
+          other.path == this.path &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.fileableType == this.fileableType &&
+          other.fileableId == this.fileableId &&
+          other.localFileableType == this.localFileableType &&
+          other.localFileableId == this.localFileableId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class MediaFilesCompanion extends UpdateCompanion<MediaFile> {
+  final Value<String> path;
+  final Value<int?> id;
+  final Value<String?> type;
+  final Value<String?> fileableType;
+  final Value<int?> fileableId;
+  final Value<String?> localFileableType;
+  final Value<String?> localFileableId;
+  final Value<DateTime?> createdAt;
+  final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
+  const MediaFilesCompanion({
+    this.path = const Value.absent(),
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.fileableType = const Value.absent(),
+    this.fileableId = const Value.absent(),
+    this.localFileableType = const Value.absent(),
+    this.localFileableId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MediaFilesCompanion.insert({
+    required String path,
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.fileableType = const Value.absent(),
+    this.fileableId = const Value.absent(),
+    this.localFileableType = const Value.absent(),
+    this.localFileableId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : path = Value(path);
+  static Insertable<MediaFile> custom({
+    Expression<String>? path,
+    Expression<int>? id,
+    Expression<String>? type,
+    Expression<String>? fileableType,
+    Expression<int>? fileableId,
+    Expression<String>? localFileableType,
+    Expression<String>? localFileableId,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (path != null) 'path': path,
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (fileableType != null) 'fileable_type': fileableType,
+      if (fileableId != null) 'fileable_id': fileableId,
+      if (localFileableType != null) 'local_fileable_type': localFileableType,
+      if (localFileableId != null) 'local_fileable_id': localFileableId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MediaFilesCompanion copyWith(
+      {Value<String>? path,
+      Value<int?>? id,
+      Value<String?>? type,
+      Value<String?>? fileableType,
+      Value<int?>? fileableId,
+      Value<String?>? localFileableType,
+      Value<String?>? localFileableId,
+      Value<DateTime?>? createdAt,
+      Value<DateTime?>? updatedAt,
+      Value<int>? rowid}) {
+    return MediaFilesCompanion(
+      path: path ?? this.path,
+      id: id ?? this.id,
+      type: type ?? this.type,
+      fileableType: fileableType ?? this.fileableType,
+      fileableId: fileableId ?? this.fileableId,
+      localFileableType: localFileableType ?? this.localFileableType,
+      localFileableId: localFileableId ?? this.localFileableId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (fileableType.present) {
+      map['fileable_type'] = Variable<String>(fileableType.value);
+    }
+    if (fileableId.present) {
+      map['fileable_id'] = Variable<int>(fileableId.value);
+    }
+    if (localFileableType.present) {
+      map['local_fileable_type'] = Variable<String>(localFileableType.value);
+    }
+    if (localFileableId.present) {
+      map['local_fileable_id'] = Variable<String>(localFileableId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MediaFilesCompanion(')
+          ..write('path: $path, ')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('fileableType: $fileableType, ')
+          ..write('fileableId: $fileableId, ')
+          ..write('localFileableType: $localFileableType, ')
+          ..write('localFileableId: $localFileableId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5251,6 +5687,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SyncMetadataTable syncMetadata = $SyncMetadataTable(this);
   late final $CategorizablesTable categorizables = $CategorizablesTable(this);
   late final $NotificationsTable notifications = $NotificationsTable(this);
+  late final $MediaFilesTable mediaFiles = $MediaFilesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5266,7 +5703,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         localChanges,
         syncMetadata,
         categorizables,
-        notifications
+        notifications,
+        mediaFiles
       ];
   @override
   DriftDatabaseOptions get options =>
@@ -8815,6 +9253,236 @@ typedef $$NotificationsTableProcessedTableManager = ProcessedTableManager<
     ),
     Notification,
     PrefetchHooks Function()>;
+typedef $$MediaFilesTableCreateCompanionBuilder = MediaFilesCompanion Function({
+  required String path,
+  Value<int?> id,
+  Value<String?> type,
+  Value<String?> fileableType,
+  Value<int?> fileableId,
+  Value<String?> localFileableType,
+  Value<String?> localFileableId,
+  Value<DateTime?> createdAt,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+typedef $$MediaFilesTableUpdateCompanionBuilder = MediaFilesCompanion Function({
+  Value<String> path,
+  Value<int?> id,
+  Value<String?> type,
+  Value<String?> fileableType,
+  Value<int?> fileableId,
+  Value<String?> localFileableType,
+  Value<String?> localFileableId,
+  Value<DateTime?> createdAt,
+  Value<DateTime?> updatedAt,
+  Value<int> rowid,
+});
+
+class $$MediaFilesTableFilterComposer
+    extends Composer<_$AppDatabase, $MediaFilesTable> {
+  $$MediaFilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get path => $composableBuilder(
+      column: $table.path, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get fileableType => $composableBuilder(
+      column: $table.fileableType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get fileableId => $composableBuilder(
+      column: $table.fileableId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get localFileableType => $composableBuilder(
+      column: $table.localFileableType,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get localFileableId => $composableBuilder(
+      column: $table.localFileableId,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$MediaFilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $MediaFilesTable> {
+  $$MediaFilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get path => $composableBuilder(
+      column: $table.path, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get fileableType => $composableBuilder(
+      column: $table.fileableType,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get fileableId => $composableBuilder(
+      column: $table.fileableId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get localFileableType => $composableBuilder(
+      column: $table.localFileableType,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get localFileableId => $composableBuilder(
+      column: $table.localFileableId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$MediaFilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MediaFilesTable> {
+  $$MediaFilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get path =>
+      $composableBuilder(column: $table.path, builder: (column) => column);
+
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get fileableType => $composableBuilder(
+      column: $table.fileableType, builder: (column) => column);
+
+  GeneratedColumn<int> get fileableId => $composableBuilder(
+      column: $table.fileableId, builder: (column) => column);
+
+  GeneratedColumn<String> get localFileableType => $composableBuilder(
+      column: $table.localFileableType, builder: (column) => column);
+
+  GeneratedColumn<String> get localFileableId => $composableBuilder(
+      column: $table.localFileableId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$MediaFilesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MediaFilesTable,
+    MediaFile,
+    $$MediaFilesTableFilterComposer,
+    $$MediaFilesTableOrderingComposer,
+    $$MediaFilesTableAnnotationComposer,
+    $$MediaFilesTableCreateCompanionBuilder,
+    $$MediaFilesTableUpdateCompanionBuilder,
+    (MediaFile, BaseReferences<_$AppDatabase, $MediaFilesTable, MediaFile>),
+    MediaFile,
+    PrefetchHooks Function()> {
+  $$MediaFilesTableTableManager(_$AppDatabase db, $MediaFilesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MediaFilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MediaFilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MediaFilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> path = const Value.absent(),
+            Value<int?> id = const Value.absent(),
+            Value<String?> type = const Value.absent(),
+            Value<String?> fileableType = const Value.absent(),
+            Value<int?> fileableId = const Value.absent(),
+            Value<String?> localFileableType = const Value.absent(),
+            Value<String?> localFileableId = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MediaFilesCompanion(
+            path: path,
+            id: id,
+            type: type,
+            fileableType: fileableType,
+            fileableId: fileableId,
+            localFileableType: localFileableType,
+            localFileableId: localFileableId,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String path,
+            Value<int?> id = const Value.absent(),
+            Value<String?> type = const Value.absent(),
+            Value<String?> fileableType = const Value.absent(),
+            Value<int?> fileableId = const Value.absent(),
+            Value<String?> localFileableType = const Value.absent(),
+            Value<String?> localFileableId = const Value.absent(),
+            Value<DateTime?> createdAt = const Value.absent(),
+            Value<DateTime?> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MediaFilesCompanion.insert(
+            path: path,
+            id: id,
+            type: type,
+            fileableType: fileableType,
+            fileableId: fileableId,
+            localFileableType: localFileableType,
+            localFileableId: localFileableId,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$MediaFilesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $MediaFilesTable,
+    MediaFile,
+    $$MediaFilesTableFilterComposer,
+    $$MediaFilesTableOrderingComposer,
+    $$MediaFilesTableAnnotationComposer,
+    $$MediaFilesTableCreateCompanionBuilder,
+    $$MediaFilesTableUpdateCompanionBuilder,
+    (MediaFile, BaseReferences<_$AppDatabase, $MediaFilesTable, MediaFile>),
+    MediaFile,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8841,4 +9509,6 @@ class $AppDatabaseManager {
       $$CategorizablesTableTableManager(_db, _db.categorizables);
   $$NotificationsTableTableManager get notifications =>
       $$NotificationsTableTableManager(_db, _db.notifications);
+  $$MediaFilesTableTableManager get mediaFiles =>
+      $$MediaFilesTableTableManager(_db, _db.mediaFiles);
 }
