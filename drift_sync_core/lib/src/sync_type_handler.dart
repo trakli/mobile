@@ -3,6 +3,10 @@ import 'dart:async';
 abstract class SyncTypeHandler<TEntity, TKey, TServerKey> {
   String get entityType;
 
+  /// If true, the synchronizer skips down-sync (getAllRemote / upsert / delete) for this handler.
+  /// Use for entity types that are only pushed (e.g. media that comes with transactions).
+  bool get skipDownSync => false;
+
   // Get the client ID (string) from an entity
   String getClientId(TEntity entity);
 
