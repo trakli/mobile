@@ -7,6 +7,7 @@ import 'dart:async';
 abstract class TransactionRepository {
   Future<Either<Failure, List<TransactionCompleteEntity>>> getAllTransactions();
 
+  /// Inserts a transaction. [attachedFilePaths] are copied into media_files and linked to the new transaction.
   Future<Either<Failure, Unit>> insertTransaction(
     double amount,
     String description,
@@ -16,6 +17,7 @@ abstract class TransactionRepository {
     String walletClientId, {
     String? partyClientId,
     String? groupClientId,
+    List<String> attachedFilePaths = const [],
   });
 
   Future<Either<Failure, Unit>> updateTransaction(

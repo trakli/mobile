@@ -25,6 +25,7 @@ class CreateTransactionUseCase
       params.walletClientId,
       partyClientId: params.partyClientId,
       groupClientId: params.groupClientId,
+      attachedFilePaths: params.attachedFilePaths,
     );
   }
 }
@@ -38,6 +39,7 @@ class CreateTransactionParams {
   final String walletClientId;
   final String? partyClientId;
   final String? groupClientId;
+  final List<String> attachedFilePaths;
 
   CreateTransactionParams({
     required this.amount,
@@ -48,5 +50,6 @@ class CreateTransactionParams {
     required this.walletClientId,
     this.partyClientId,
     this.groupClientId,
+    this.attachedFilePaths = const [],
   });
 }

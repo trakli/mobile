@@ -1,10 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/core/constants/fileable_type_constants.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/media_file/media_file_local_datasource.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
-import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/wallet_stats.dart';
+import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/core/utils/id_helper.dart';
 
 abstract class TransactionLocalDataSource {
@@ -18,6 +20,7 @@ abstract class TransactionLocalDataSource {
     String walletClientId, {
     String? partyClientId,
     String? groupClientId,
+    List<String> attachedFilePaths = const [],
   });
   Future<TransactionCompleteDto> updateTransaction(
     String id,
@@ -37,12 +40,14 @@ abstract class TransactionLocalDataSource {
 
 @Injectable(as: TransactionLocalDataSource)
 class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
-  TransactionLocalDataSourceImpl(this.database);
+  TransactionLocalDataSourceImpl(this.database, this._mediaFileLocalDataSource);
 
   final AppDatabase database;
+  final MediaFileLocalDataSource _mediaFileLocalDataSource;
 
   List<TransactionCompleteDto> mapTransactionAndComplete(
-      List<TypedResult> rows) {
+    List<TypedResult> rows,
+  ) {
     final transactionMap = <String, TransactionCompleteDto>{};
 
     for (final row in rows) {
@@ -51,21 +56,27 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       final wallet = row.readTableOrNull(database.wallets);
       final party = row.readTableOrNull(database.parties);
       final group = row.readTableOrNull(database.groups);
+      final mediaFile = row.readTableOrNull(database.mediaFiles);
 
       if (wallet == null) {
         throw Exception('Transaction wallet not found');
       }
 
+      final transactionClientId = transaction.clientId;
+
       // Initialize the transaction entry if not exists
       transactionMap.putIfAbsent(
-          transaction.clientId,
+          transactionClientId,
           () => TransactionCompleteDto.fromTransaction(
                 transaction: transaction,
                 categories: [],
                 wallet: wallet,
                 party: party,
                 group: group,
+                files: [],
               ));
+
+      var dto = transactionMap[transactionClientId]!;
 
       // Add the category if it exists (leftOuterJoin may return null)
       if (category != null) {
@@ -81,6 +92,25 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
             wallet: wallet,
             party: party,
             group: group,
+            files: dto.files,
+          );
+          dto = transactionMap[transactionClientId]!;
+        }
+      }
+
+      // Add the media file if it exists (leftOuterJoin may return null)
+      if (mediaFile != null) {
+        final currentFiles = List<MediaFile>.from(dto.files);
+        if (!currentFiles.any((f) => f.path == mediaFile.path)) {
+          currentFiles.add(mediaFile);
+          transactionMap[transactionClientId] =
+              TransactionCompleteDto.fromTransaction(
+            transaction: transaction,
+            categories: dto.categories,
+            wallet: wallet,
+            party: party,
+            group: group,
+            files: currentFiles,
           );
         }
       }
@@ -188,6 +218,13 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.groups,
         database.groups.clientId.equalsExp(database.transactions.groupClientId),
       ),
+      leftOuterJoin(
+        database.mediaFiles,
+        database.mediaFiles.localFileableType
+                .equals(FileableTypeConstants.transactions) &
+            database.mediaFiles.localFileableId
+                .equalsExp(database.transactions.clientId),
+      ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
@@ -205,7 +242,9 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
     String walletClientId, {
     String? partyClientId,
     String? groupClientId,
+    List<String> attachedFilePaths = const [],
   }) async {
+    // Reads outside transaction to avoid long blocking.
     for (var categoryId in categoryIds) {
       final categoryModel = await (database.select(database.categories)
             ..where((c) => c.clientId.equals(categoryId)))
@@ -246,59 +285,96 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
     }
 
+    final clientId = await generateDeviceScopedId();
     final now = getNewFormattedUtcDateTime();
     final utcDatetime = getFormattedUtcDateTimeFromUtc(datetime);
 
-    final model = await database.into(database.transactions).insertReturning(
-          TransactionsCompanion.insert(
-            clientId: Value(await generateDeviceScopedId()),
-            amount: amount,
-            description: Value(description),
-            type: type,
-            datetime: Value(utcDatetime),
-            updatedAt: Value(now),
-            createdAt: Value(now),
-            walletClientId: walletClientId,
-            partyClientId: Value(partyClientId),
-            groupClientId: Value(groupClientId),
-          ),
-        );
+    // Copy attached files into app media directory only when saving.
+    final resolvedPaths = <String>[];
+    for (final path in attachedFilePaths) {
+      resolvedPaths
+          .add(await _mediaFileLocalDataSource.copyToStoredLocation(path));
+    }
 
-    await _updateWalletBalanceAndStats(
-      wallet: wallet,
-      transaction: model,
-    );
-
-    for (var categoryId in categoryIds) {
-      await database.into(database.categorizables).insert(
-            CategorizablesCompanion.insert(
-              categorizableId: model.clientId,
-              categorizableType: CategorizableType.transaction,
-              categoryClientId: categoryId,
+    // Transaction: writes only + reads that depend on those writes.
+    return database.transaction(() async {
+      final model = await database.into(database.transactions).insertReturning(
+            TransactionsCompanion.insert(
+              clientId: Value(clientId),
+              amount: amount,
+              description: Value(description),
+              type: type,
+              datetime: Value(utcDatetime),
+              updatedAt: Value(now),
+              createdAt: Value(now),
+              walletClientId: walletClientId,
+              partyClientId: Value(partyClientId),
+              groupClientId: Value(groupClientId),
             ),
           );
-    }
 
-    final categories = await database.getCategoriesForTransaction(
-      model.clientId,
-      CategorizableType.transaction,
-    );
+      await _updateWalletBalanceAndStats(
+        wallet: wallet,
+        transaction: model,
+      );
 
-    final updatedWallet = await (database.select(database.wallets)
-          ..where((w) => w.clientId.equals(walletClientId)))
-        .getSingleOrNull();
+      for (var categoryId in categoryIds) {
+        await database.into(database.categorizables).insert(
+              CategorizablesCompanion.insert(
+                categorizableId: model.clientId,
+                categorizableType: CategorizableType.transaction,
+                categoryClientId: categoryId,
+              ),
+            );
+      }
 
-    if (updatedWallet == null) {
-      throw Exception('Wallet $walletClientId not found');
-    }
+      for (final path in resolvedPaths) {
+        final media = MediaFile(
+          path: path,
+          id: null,
+          type: null,
+          fileableType: null,
+          fileableId: null,
+          localFileableType: FileableTypeConstants.transactions,
+          localFileableId: model.clientId,
+          createdAt: null,
+          updatedAt: null,
+        );
+        await database.mediaFiles.insertOne(
+          media,
+          mode: InsertMode.insertOrReplace,
+        );
+      }
 
-    return TransactionCompleteDto.fromTransaction(
-      transaction: model,
-      categories: categories,
-      wallet: updatedWallet,
-      party: party,
-      group: group,
-    );
+      final categories = await database.getCategoriesForTransaction(
+        model.clientId,
+        CategorizableType.transaction,
+      );
+
+      final updatedWallet = await (database.select(database.wallets)
+            ..where((w) => w.clientId.equals(walletClientId)))
+          .getSingleOrNull();
+
+      if (updatedWallet == null) {
+        throw Exception('Wallet $walletClientId not found');
+      }
+
+      return TransactionCompleteDto.fromTransaction(
+        transaction: model,
+        categories: categories,
+        wallet: updatedWallet,
+        party: party,
+        group: group,
+        files: resolvedPaths
+            .map((path) => MediaFile(
+                  path: path,
+                  id: null,
+                  localFileableType: FileableTypeConstants.transactions,
+                  localFileableId: model.clientId,
+                ))
+            .toList(),
+      );
+    });
   }
 
   @override
@@ -409,12 +485,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
       }
 
       if (categoryIds == null) {
+        final files = await _mediaFileLocalDataSource.getForTransaction(
+          model.first.clientId,
+        );
         return TransactionCompleteDto.fromTransaction(
           transaction: model.first,
           categories: categories,
           wallet: wallet,
           party: party,
           group: group,
+          files: files,
         );
       }
 
@@ -449,12 +529,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         CategorizableType.transaction,
       );
 
+      final files = await _mediaFileLocalDataSource.getForTransaction(
+        model.first.clientId,
+      );
       return TransactionCompleteDto.fromTransaction(
         transaction: model.first,
         categories: finalCategories,
         wallet: wallet,
         party: party,
         group: group,
+        files: files,
       );
     });
   }
@@ -496,6 +580,14 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         isDelete: true,
       );
 
+      final files = await _mediaFileLocalDataSource.getForTransaction(
+        transaction.clientId,
+      );
+      final categories = await database.getCategoriesForTransaction(
+        transaction.clientId,
+        CategorizableType.transaction,
+      );
+
       // Delete all categorizables for this transaction
       await database.categorizables.deleteWhere((row) =>
           row.categorizableId.equals(transaction.clientId) &
@@ -505,9 +597,11 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
 
       return TransactionCompleteDto.fromTransaction(
         transaction: transaction,
+        categories: categories,
         wallet: wallet,
         party: party,
         group: group,
+        files: files,
       );
     });
   }
@@ -541,11 +635,16 @@ class TransactionLocalDataSourceImpl implements TransactionLocalDataSource {
         database.groups,
         database.groups.clientId.equalsExp(database.transactions.groupClientId),
       ),
+      leftOuterJoin(
+        database.mediaFiles,
+        database.mediaFiles.localFileableType
+                .equals(FileableTypeConstants.transactions) &
+            database.mediaFiles.localFileableId
+                .equalsExp(database.transactions.clientId),
+      ),
     ])
       ..orderBy([OrderingTerm.desc(database.transactions.createdAt)]);
 
-    return query.watch().map((rows) {
-      return mapTransactionAndComplete(rows);
-    });
+    return query.watch().map((rows) => mapTransactionAndComplete(rows));
   }
 }

@@ -6,6 +6,7 @@ import 'package:trakli/data/mappers/party_mapper.dart';
 import 'package:trakli/data/mappers/wallet_mapper.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/data/mappers/media_file_mapper.dart';
 
 class _TransactionMapper {
   static TransactionEntity toDomain(Transaction row) {
@@ -34,6 +35,7 @@ class TransactionCompleteModelMapper {
       wallet: WalletMapper.toDomain(data.wallet),
       party: data.party != null ? PartyMapper.toDomain(data.party!) : null,
       group: data.group != null ? GroupMapper.toDomain(data.group!) : null,
+      files: MediaFileMapper.toDomainListFromRows(data.files),
     );
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
 import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 
@@ -86,6 +87,32 @@ class MockTransactionRemoteDataSource implements TransactionRemoteDataSource {
   void clearTransactions() {
     _transactions.clear();
     _notifyListeners();
+  }
+
+  @override
+  Future<TransactionCompleteDto> addMediaToTransaction(
+      int transactionId, MediaFile media) {
+    return _simulateDelay(() async {
+      final index =
+          _transactions.indexWhere((t) => t.transaction.id == transactionId);
+      if (index == -1) {
+        throw Exception('Transaction not found');
+      }
+      final dto = _transactions[index];
+      final updated = dto.copyWith(
+        files: [...dto.files, media],
+      );
+      _transactions[index] = updated;
+      _notifyListeners();
+      return updated;
+    });
+  }
+
+  @override
+  Future<TransactionCompleteDto> deleteMediaFromTransaction(
+      int transactionId, int fileId) {
+    // TODO: implement delete   MediaFromTransaction
+    throw UnimplementedError();
   }
 
   // Simulate network error

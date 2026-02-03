@@ -21,6 +21,7 @@ TransactionCompleteDto _$TransactionCompleteDtoFromJson(
           .fromJson(json['party'] as Map<String, dynamic>?),
       group: const GroupConverter()
           .fromJson(json['group'] as Map<String, dynamic>?),
+      files: const MediaFileListConverter().fromJson(json['files'] as List<dynamic>),
     );
 
 Map<String, dynamic> _$TransactionCompleteDtoToJson(
@@ -32,4 +33,5 @@ Map<String, dynamic> _$TransactionCompleteDtoToJson(
       'wallet': const WalletConverter().toJson(instance.wallet),
       'party': const PartyConverter().toJson(instance.party),
       'group': const GroupConverter().toJson(instance.group),
+      'files': const MediaFileListConverter().toJson(instance.files),
     };

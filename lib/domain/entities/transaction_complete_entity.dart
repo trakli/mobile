@@ -3,6 +3,7 @@ import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 
 class TransactionCompleteEntity extends Equatable {
@@ -11,6 +12,7 @@ class TransactionCompleteEntity extends Equatable {
   final WalletEntity wallet;
   final PartyEntity? party;
   final GroupEntity? group;
+  final List<MediaFileEntity> files;
 
   const TransactionCompleteEntity({
     required this.transaction,
@@ -18,8 +20,10 @@ class TransactionCompleteEntity extends Equatable {
     required this.wallet,
     this.party,
     this.group,
+    this.files = const <MediaFileEntity>[],
   });
 
   @override
-  List<Object?> get props => [transaction, categories, wallet, party, group];
+  List<Object?> get props =>
+      [transaction, categories, wallet, party, group, files];
 }

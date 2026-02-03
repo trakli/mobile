@@ -26,6 +26,7 @@ mixin _$TransactionCompleteDto {
   Party? get party => throw _privateConstructorUsedError;
   @GroupConverter()
   Group? get group => throw _privateConstructorUsedError;
+  List<MediaFile> get files => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.
@@ -45,7 +46,8 @@ abstract class $TransactionCompleteDtoCopyWith<$Res> {
       @CategoryConverter() List<Category> categories,
       @WalletConverter() Wallet wallet,
       @PartyConverter() Party? party,
-      @GroupConverter() Group? group});
+      @GroupConverter() Group? group,
+      List<MediaFile> files});
 }
 
 /// @nodoc
@@ -69,6 +71,7 @@ class _$TransactionCompleteDtoCopyWithImpl<$Res,
     Object? wallet = freezed,
     Object? party = freezed,
     Object? group = freezed,
+    Object? files = null,
   }) {
     return _then(_value.copyWith(
       transaction: freezed == transaction
@@ -91,6 +94,10 @@ class _$TransactionCompleteDtoCopyWithImpl<$Res,
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as Group?,
+      files: null == files
+          ? _value.files
+          : files // ignore: cast_nullable_to_non_nullable
+              as List<MediaFile>,
     ) as $Val);
   }
 }
@@ -109,7 +116,8 @@ abstract class _$$TransactionCompleteDtoImplCopyWith<$Res>
       @CategoryConverter() List<Category> categories,
       @WalletConverter() Wallet wallet,
       @PartyConverter() Party? party,
-      @GroupConverter() Group? group});
+      @GroupConverter() Group? group,
+      List<MediaFile> files});
 }
 
 /// @nodoc
@@ -132,6 +140,7 @@ class __$$TransactionCompleteDtoImplCopyWithImpl<$Res>
     Object? wallet = freezed,
     Object? party = freezed,
     Object? group = freezed,
+    Object? files = null,
   }) {
     return _then(_$TransactionCompleteDtoImpl(
       transaction: freezed == transaction
@@ -154,6 +163,10 @@ class __$$TransactionCompleteDtoImplCopyWithImpl<$Res>
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
               as Group?,
+      files: null == files
+          ? _value._files
+          : files // ignore: cast_nullable_to_non_nullable
+              as List<MediaFile>,
     ));
   }
 }
@@ -166,8 +179,10 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
       @CategoryConverter() final List<Category> categories = const [],
       @WalletConverter() required this.wallet,
       @PartyConverter() this.party,
-      @GroupConverter() this.group})
+      @GroupConverter() this.group,
+      final List<MediaFile> files = const []})
       : _categories = categories,
+        _files = files,
         super._();
 
   @override
@@ -192,10 +207,18 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
   @override
   @GroupConverter()
   final Group? group;
+  final List<MediaFile> _files;
+  @override
+  @JsonKey()
+  List<MediaFile> get files {
+    if (_files is EqualUnmodifiableListView) return _files;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_files);
+  }
 
   @override
   String toString() {
-    return 'TransactionCompleteDto(transaction: $transaction, categories: $categories, wallet: $wallet, party: $party, group: $group)';
+    return 'TransactionCompleteDto(transaction: $transaction, categories: $categories, wallet: $wallet, party: $party, group: $group, files: $files)';
   }
 
   @override
@@ -209,7 +232,8 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
                 .equals(other._categories, _categories) &&
             const DeepCollectionEquality().equals(other.wallet, wallet) &&
             const DeepCollectionEquality().equals(other.party, party) &&
-            const DeepCollectionEquality().equals(other.group, group));
+            const DeepCollectionEquality().equals(other.group, group) &&
+            const DeepCollectionEquality().equals(other._files, _files));
   }
 
   @override
@@ -219,7 +243,8 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
       const DeepCollectionEquality().hash(_categories),
       const DeepCollectionEquality().hash(wallet),
       const DeepCollectionEquality().hash(party),
-      const DeepCollectionEquality().hash(group));
+      const DeepCollectionEquality().hash(group),
+      const DeepCollectionEquality().hash(_files));
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.
@@ -237,7 +262,8 @@ abstract class _TransactionCompleteDto extends TransactionCompleteDto {
       @CategoryConverter() final List<Category> categories,
       @WalletConverter() required final Wallet wallet,
       @PartyConverter() final Party? party,
-      @GroupConverter() final Group? group}) = _$TransactionCompleteDtoImpl;
+      @GroupConverter() final Group? group,
+      final List<MediaFile> files}) = _$TransactionCompleteDtoImpl;
   const _TransactionCompleteDto._() : super._();
 
   @override
@@ -255,6 +281,8 @@ abstract class _TransactionCompleteDto extends TransactionCompleteDto {
   @override
   @GroupConverter()
   Group? get group;
+  @override
+  List<MediaFile> get files;
 
   /// Create a copy of TransactionCompleteDto
   /// with the given fields replaced by the non-null parameter values.
