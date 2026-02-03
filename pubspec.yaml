@@ -60,6 +60,8 @@ dependencies:
   json_annotation: ^4.9.0
   drift_db_viewer: ^2.1.0
   path_provider: ^2.1.5
+  pdfx: ^2.9.2
+  share_plus: ^10.0.2
   drift_sync_core:
     path: drift_sync_core/
   freezed_annotation: ^2.4.4
