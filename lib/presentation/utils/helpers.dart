@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:currency_picker/currency_picker.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -22,26 +24,87 @@ import 'package:trakli/presentation/utils/enums.dart'
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Allowed extensions for transaction attachments (backend: jpg, jpeg, png, pdf; max 1MB each).
+const List<String> _transactionAttachmentExtensions = [
+  'jpg',
+  'jpeg',
+  'png',
+  'pdf',
+];
+
 Future<File?> pickFile() async {
   try {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+      allowedExtensions: _transactionAttachmentExtensions,
       withData: true,
     );
     if (result != null) {
       final fileSize = result.files.single.size;
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 1024 * 1024; // 1MB
       if (fileSize > maxSize) {
         throw Exception(LocaleKeys.fileSizeExceedsLimit.tr());
       }
-      File file = File(result.files.single.path!);
-      return file;
+      final path = result.files.single.path;
+      if (path == null) return null;
+      return File(path);
     } else {
       return null;
     }
   } catch (e) {
     rethrow;
+  }
+}
+
+/// Renders the first page of a PDF to a small JPEG thumbnail.
+/// Returns null on failure or if the PDF has no pages.
+Future<Uint8List?> renderPdfFirstPageThumbnail({
+  String? filePath,
+  Uint8List? bytes,
+  int size = 144,
+}) async {
+  assert(filePath != null || bytes != null);
+  try {
+    final document = filePath != null
+        ? await PdfDocument.openFile(filePath)
+        : await PdfDocument.openData(bytes!);
+    final pageCount = document.pagesCount;
+    if (pageCount == 0) {
+      await document.close();
+      return null;
+    }
+    final page = await document.getPage(1);
+    final image = await page.render(
+      width: size.toDouble(),
+      height: size.toDouble(),
+      format: PdfPageImageFormat.jpeg,
+    );
+    await page.close();
+    await document.close();
+    return image?.bytes;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Returns the Material icon for the given file path based on extension.
+/// Use for attachment tiles when no image preview is shown.
+IconData iconForAttachmentPath(String path) {
+  final ext = path.contains('.') ? path.split('.').last.toLowerCase() : '';
+  switch (ext) {
+    case 'pdf':
+      return Icons.picture_as_pdf;
+    case 'doc':
+    case 'docx':
+      return Icons.description;
+    case 'xls':
+    case 'xlsx':
+    case 'csv':
+      return Icons.table_chart;
+    case 'txt':
+      return Icons.text_snippet;
+    default:
+      return Icons.insert_drive_file;
   }
 }
 

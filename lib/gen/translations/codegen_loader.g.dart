@@ -238,6 +238,11 @@ abstract class  LocaleKeys {
   static const updateExpenses = 'updateExpenses';
   static const fileSizeExceedsLimit = 'fileSizeExceedsLimit';
   static const couldNotLaunchUrl = 'couldNotLaunchUrl';
+  static const couldNotLoadAttachment = 'couldNotLoadAttachment';
+  static const couldNotLoadPdf = 'couldNotLoadPdf';
+  static const fileNotFound = 'fileNotFound';
+  static const noContent = 'noContent';
+  static const previewNotAvailable = 'previewNotAvailable';
   static const cropper = 'cropper';
   static const aboutAppDescription = 'aboutAppDescription';
   static const privacyPolicy = 'privacyPolicy';
@@ -246,6 +251,7 @@ abstract class  LocaleKeys {
   static const pickGroup = 'pickGroup';
   static const pickGroupDesc = 'pickGroupDesc';
   static const search = 'search';
+  static const share = 'share';
   static const selectIcon = 'selectIcon';
   static const selectPhoto = 'selectPhoto';
   static const useEmoji = 'useEmoji';

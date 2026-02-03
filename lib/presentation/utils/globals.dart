@@ -13,7 +13,7 @@ void resetScaffoldKey() {
   scaffoldKey = GlobalKey<ScaffoldState>();
 }
 
-const String maxUploadSizeInMB = "5Mo";
+const String maxUploadSizeInMB = "1 MB";
 final List<Locale> supportedLanguages = [
   const Locale('en'),
   const Locale('fr'),
