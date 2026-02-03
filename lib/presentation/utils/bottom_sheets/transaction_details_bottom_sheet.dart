@@ -46,161 +46,164 @@ class _TransactionDetailsBottomSheetState
     final party = widget.transaction.party;
     final wallet = widget.transaction.wallet;
 
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16.w,
-          right: 16.w,
-          top: 16.h,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 8.h),
-            Stack(
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: transaction.type == TransactionType.income
-                          ? transactionTileIncomeColor
-                          : transactionTileExpenseColor,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: SvgPicture.asset(
-                      transaction.type == TransactionType.income
-                          ? Assets.images.arrowSwapDown
-                          : Assets.images.arrowSwapUp,
-                      width: 20.r,
-                      height: 20.r,
-                      colorFilter: ColorFilter.mode(
-                        widget.accentColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+    return SafeArea(
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            top: 16.h,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 8.h),
+              Stack(
+                children: [
+                  Center(
                     child: Container(
-                      width: 36.w,
-                      height: 36.h,
+                      padding: EdgeInsets.all(12.r),
                       decoration: BoxDecoration(
+                        color: transaction.type == TransactionType.income
+                            ? transactionTileIncomeColor
+                            : transactionTileExpenseColor,
                         borderRadius: BorderRadius.circular(8.r),
-                        color: const Color(0xFF1D3229).withValues(alpha: 0.12),
                       ),
-                      padding: EdgeInsets.all(8.r),
-                      child: Center(
-                        child: Icon(
-                          Icons.close,
-                          size: 16.r,
-                          color: widget.accentColor,
+                      child: SvgPicture.asset(
+                        transaction.type == TransactionType.income
+                            ? Assets.images.arrowSwapDown
+                            : Assets.images.arrowSwapUp,
+                        width: 20.r,
+                        height: 20.r,
+                        colorFilter: ColorFilter.mode(
+                          widget.accentColor,
+                          BlendMode.srcIn,
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              CurrencyFormater.formatAmountWithSymbol(
-                context,
-                transaction.amount,
-                compact: true,
-                currency: widget.transaction.wallet.currency,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: 36.w,
+                        height: 36.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.r),
+                          color:
+                              const Color(0xFF1D3229).withValues(alpha: 0.12),
+                        ),
+                        padding: EdgeInsets.all(8.r),
+                        child: Center(
+                          child: Icon(
+                            Icons.close,
+                            size: 16.r,
+                            color: widget.accentColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
-              style: TextStyle(
-                color: widget.accentColor,
-                fontSize: 25.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              format.format(transaction.datetime.toLocal()),
-              style: TextStyle(
-                color: const Color(0xFF576760),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            if (transaction.description.isNotEmpty) ...[
+              SizedBox(height: 4.h),
               Text(
-                transaction.description,
-                textAlign: TextAlign.center,
+                CurrencyFormater.formatAmountWithSymbol(
+                  context,
+                  transaction.amount,
+                  compact: true,
+                  currency: widget.transaction.wallet.currency,
+                ),
                 style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
+                  color: widget.accentColor,
+                  fontSize: 25.sp,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: 12.h),
-            ],
-            PartyDisplayWidget(
-              type: widget.transaction.transaction.type,
-              party: party,
-              walletEntity: wallet,
-              maxNameLength: 15,
-              fromTextSize: 16.sp,
-              labelSize: 12.sp,
-              toTextSize: 14.sp,
-              toIconSize: 14.w,
-              maxToWidth: 0.2.sw,
-            ),
-            SizedBox(height: 6.h),
-            CategoriesWidget(
-              categories: category,
-              accentColor: widget.accentColor,
-              placeholderSize: 20.sp,
-              emojiSize: 20.sp,
-              iconSize: 20.sp,
-            ),
-            SizedBox(height: 16.h),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              spacing: 16.w,
-              children: [
-                Expanded(
-                  child: PrimaryButton(
-                    onPress: () {
-                      Navigator.of(context).pop();
-                      widget.onEdit();
-                    },
-                    buttonText: LocaleKeys.edit.tr(),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    iconPath: Assets.images.edit2,
-                    iconColor: Colors.white,
-                    textDirection: ui.TextDirection.rtl,
+              SizedBox(height: 2.h),
+              Text(
+                format.format(transaction.datetime.toLocal()),
+                style: TextStyle(
+                  color: const Color(0xFF576760),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              if (transaction.description.isNotEmpty) ...[
+                Text(
+                  transaction.description,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-                Expanded(
-                  child: PrimaryButton(
-                    onPress: () {
-                      Navigator.of(context).pop();
-                      widget.onDelete();
-                    },
-                    buttonText: LocaleKeys.delete.tr(),
-                    backgroundColor: expenseRed,
-                    iconPath: Assets.images.trash,
-                    iconColor: const Color(0xFFEB5757),
-                    textDirection: ui.TextDirection.rtl,
-                    buttonTextColor: const Color(0xFFEB5757),
-                  ),
-                ),
+                SizedBox(height: 12.h),
               ],
-            ),
-            SizedBox(height: 36.h),
-          ],
+              PartyDisplayWidget(
+                type: widget.transaction.transaction.type,
+                party: party,
+                walletEntity: wallet,
+                maxNameLength: 15,
+                fromTextSize: 16.sp,
+                labelSize: 12.sp,
+                toTextSize: 14.sp,
+                toIconSize: 14.w,
+                maxToWidth: 0.2.sw,
+              ),
+              SizedBox(height: 6.h),
+              CategoriesWidget(
+                categories: category,
+                accentColor: widget.accentColor,
+                placeholderSize: 20.sp,
+                emojiSize: 20.sp,
+                iconSize: 20.sp,
+              ),
+              SizedBox(height: 16.h),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                spacing: 16.w,
+                children: [
+                  Expanded(
+                    child: PrimaryButton(
+                      onPress: () {
+                        Navigator.of(context).pop();
+                        widget.onEdit();
+                      },
+                      buttonText: LocaleKeys.edit.tr(),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      iconPath: Assets.images.edit2,
+                      iconColor: Colors.white,
+                      textDirection: ui.TextDirection.rtl,
+                    ),
+                  ),
+                  Expanded(
+                    child: PrimaryButton(
+                      onPress: () {
+                        Navigator.of(context).pop();
+                        widget.onDelete();
+                      },
+                      buttonText: LocaleKeys.delete.tr(),
+                      backgroundColor: expenseRed,
+                      iconPath: Assets.images.trash,
+                      iconColor: const Color(0xFFEB5757),
+                      textDirection: ui.TextDirection.rtl,
+                      buttonTextColor: const Color(0xFFEB5757),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 36.h),
+            ],
+          ),
         ),
       ),
     );

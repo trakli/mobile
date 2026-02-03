@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:fpdart/fpdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -9,6 +11,11 @@ import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/domain/usecases/wallet/get_wallets_usecase.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/domain/entities/media_file_entity.dart';
+import 'package:trakli/domain/usecases/transaction/add_media_to_transaction_usecase.dart';
+import 'package:trakli/domain/usecases/transaction/delete_media_usecase.dart';
+import 'package:trakli/domain/usecases/transaction/get_file_content_usecase.dart';
+import 'package:trakli/domain/usecases/transaction/get_media_for_transaction_usecase.dart';
 import 'package:trakli/domain/usecases/transaction/usecase.dart';
 
 part 'transaction_state.dart';
@@ -18,6 +25,10 @@ part 'transaction_cubit.freezed.dart';
 class TransactionCubit extends Cubit<TransactionState> {
   final GetAllTransactionsUseCase getAllTransactionsUseCase;
   final CreateTransactionUseCase createTransactionUseCase;
+  final AddMediaToTransactionUseCase addMediaToTransactionUseCase;
+  final DeleteMediaUseCase deleteMediaUseCase;
+  final GetMediaForTransactionUseCase getMediaForTransactionUseCase;
+  final GetFileContentUseCase getFileContentUseCase;
   final UpdateTransactionUseCase updateTransactionUseCase;
   final DeleteTransactionUseCase deleteTransactionUseCase;
   final GetWalletsUseCase getWalletsUseCase;
@@ -27,6 +38,10 @@ class TransactionCubit extends Cubit<TransactionState> {
   TransactionCubit({
     required this.getAllTransactionsUseCase,
     required this.createTransactionUseCase,
+    required this.addMediaToTransactionUseCase,
+    required this.deleteMediaUseCase,
+    required this.getMediaForTransactionUseCase,
+    required this.getFileContentUseCase,
     required this.updateTransactionUseCase,
     required this.deleteTransactionUseCase,
     required this.listenToTransactionsUseCase,
@@ -67,11 +82,11 @@ class TransactionCubit extends Cubit<TransactionState> {
   Future<void> loadWallets() async {
     final result = await getWalletsUseCase(NoParams());
     result.fold(
-          (failure) => emit(state.copyWith(
+      (failure) => emit(state.copyWith(
         isLoading: false,
         failure: failure,
       )),
-          (wallets) => emit(state.copyWith(
+      (wallets) => emit(state.copyWith(
         isLoading: false,
         wallets: wallets,
         failure: const Failure.none(),
@@ -87,6 +102,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     required DateTime datetime,
     required String walletClientId,
     String? partyClientId,
+    List<String> attachedFilePaths = const [],
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await createTransactionUseCase(
@@ -99,19 +115,22 @@ class TransactionCubit extends Cubit<TransactionState> {
         walletClientId: walletClientId,
         partyClientId: partyClientId,
         groupClientId: state.selectedGroup?.clientId,
+        attachedFilePaths: attachedFilePaths,
       ),
     );
-    result.fold(
-      (failure) => emit(state.copyWith(
+    await result.fold(
+      (failure) async => emit(state.copyWith(
         isSaving: false,
         failure: failure,
       )),
-      (_) => emit(
-        state.copyWith(
-          isSaving: false,
-          failure: const Failure.none(),
-        ),
-      ),
+      (_) async {
+        emit(
+          state.copyWith(
+            isSaving: false,
+            failure: const Failure.none(),
+          ),
+        );
+      },
     );
   }
 
@@ -124,6 +143,7 @@ class TransactionCubit extends Cubit<TransactionState> {
     String? walletClientId,
     String? partyClientId,
     String? groupClientId,
+    List<String> attachedFilePaths = const [],
   }) async {
     emit(state.copyWith(isSaving: true, failure: const Failure.none()));
     final result = await updateTransactionUseCase(
@@ -136,18 +156,50 @@ class TransactionCubit extends Cubit<TransactionState> {
         walletClientId: walletClientId,
         partyClientId: partyClientId,
         groupClientId: groupClientId,
+        attachedFilePaths: attachedFilePaths,
       ),
     );
-    result.fold(
-      (failure) => emit(state.copyWith(
+    await result.fold(
+      (failure) async => emit(state.copyWith(
         isSaving: false,
         failure: failure,
       )),
-      (_) => emit(state.copyWith(
-        isSaving: false,
-        failure: const Failure.none(),
-      )),
+      (_) async {
+        for (final path in attachedFilePaths) {
+          await addMediaToTransactionUseCase(
+            AddMediaToTransactionParams(
+              transactionClientId: id,
+              filePath: path,
+            ),
+          );
+        }
+        emit(state.copyWith(
+          isSaving: false,
+          failure: const Failure.none(),
+        ));
+      },
     );
+  }
+
+  /// Returns existing media attached to a transaction (from local DB).
+  Future<Either<Failure, List<MediaFileEntity>>> getMediaForTransaction(
+    String transactionClientId,
+  ) async {
+    return getMediaForTransactionUseCase(
+      GetMediaForTransactionParams(
+        transactionClientId: transactionClientId,
+      ),
+    );
+  }
+
+  /// Fetches file content for viewing (synced file). Uses cache when available.
+  Future<Either<Failure, String>> getFileContent(int fileId) async {
+    return getFileContentUseCase(GetFileContentParams(fileId: fileId));
+  }
+
+  /// Deletes a media by path (removes locally and creates pending delete for sync).
+  Future<Either<Failure, Unit>> deleteMedia(String path) async {
+    return deleteMediaUseCase(DeleteMediaParams(path: path));
   }
 
   Future<void> deleteTransaction(String id) async {
