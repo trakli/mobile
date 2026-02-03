@@ -26,6 +26,7 @@ import 'dart:io';
 import 'tables/sync_meta_data.dart';
 import 'package:trakli/data/database/tables/categorizables.dart';
 import 'package:trakli/data/database/tables/notifications.dart';
+import 'package:trakli/data/database/tables/media_files.dart';
 import 'app_database.steps.dart';
 
 part 'app_database.g.dart';
@@ -42,6 +43,7 @@ part 'app_database.g.dart';
   SyncMetadata,
   Categorizables,
   Notifications,
+  MediaFiles,
 ])
 class AppDatabase extends _$AppDatabase with SynchronizerDb {
   final Set<SyncTypeHandler> typeHandlers;
@@ -53,7 +55,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
         super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -263,6 +265,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
     await syncMetadata.deleteAll();
     await categorizables.deleteAll();
     await notifications.deleteAll();
+    await mediaFiles.deleteAll();
   }
 }
 
@@ -273,6 +276,9 @@ extension Migrations on GeneratedDatabase {
   OnUpgrade get _schemaUpgrade => stepByStep(
         from1To2: (m, schema) async {
           await m.createTable(schema.notifications);
+        },
+        from2To3: (m, schema) async {
+          await m.createTable(schema.mediaFiles);
         },
       );
 }
