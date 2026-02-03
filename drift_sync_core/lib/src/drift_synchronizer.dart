@@ -414,6 +414,11 @@ abstract class DriftSynchronizer<TAppDatabase extends SynchronizerDb> {
         DriftSyncLogger.logger.info(
             'started handler for \u001b[1m${handler.entityType}\u001b[0m');
 
+        if (handler.skipDownSync) {
+          _dependencyManager.markSuccessfullySynced(handler);
+          continue;
+        }
+
         // 1. Get last sync time for this handler/model
         final localMeta =
             await appDatabase.getLocalSyncMetadata(handler.entityType);
