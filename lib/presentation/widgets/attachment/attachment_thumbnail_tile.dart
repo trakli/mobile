@@ -70,11 +70,11 @@ class AttachmentThumbnailTile extends StatelessWidget {
         height: h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
           border: Border.all(color: Colors.grey.shade300),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
           child: showThumbnail
               ? (showPdfPreview
                   ? Image.memory(

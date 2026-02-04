@@ -523,5 +523,9 @@
   "loadingPreferences": "Chargement des préférences...",
   "errorLoadingPreferences": "Erreur lors du chargement des préférences",
   "openSourceProject": "Trakli est open source",
-  "viewOnGithub": "Voir sur GitHub"
+  "viewOnGithub": "Voir sur GitHub",
+  "images": "Images",
+  "files": "Fichiers",
+  "noImages": "Aucune image",
+  "noFiles": "Aucun fichier"
 }

@@ -528,5 +528,9 @@ abstract class  LocaleKeys {
   static const errorLoadingPreferences = 'errorLoadingPreferences';
   static const openSourceProject = 'openSourceProject';
   static const viewOnGithub = 'viewOnGithub';
+  static const images = 'images';
+  static const files = 'files';
+  static const noImages = 'noImages';
+  static const noFiles = 'noFiles';
 
 }
