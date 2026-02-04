@@ -26,6 +26,7 @@ mixin _$TransactionCompleteDto {
   Party? get party => throw _privateConstructorUsedError;
   @GroupConverter()
   Group? get group => throw _privateConstructorUsedError;
+  @MediaFileListConverter()
   List<MediaFile> get files => throw _privateConstructorUsedError;
 
   /// Create a copy of TransactionCompleteDto
@@ -47,7 +48,7 @@ abstract class $TransactionCompleteDtoCopyWith<$Res> {
       @WalletConverter() Wallet wallet,
       @PartyConverter() Party? party,
       @GroupConverter() Group? group,
-      List<MediaFile> files});
+      @MediaFileListConverter() List<MediaFile> files});
 }
 
 /// @nodoc
@@ -117,7 +118,7 @@ abstract class _$$TransactionCompleteDtoImplCopyWith<$Res>
       @WalletConverter() Wallet wallet,
       @PartyConverter() Party? party,
       @GroupConverter() Group? group,
-      List<MediaFile> files});
+      @MediaFileListConverter() List<MediaFile> files});
 }
 
 /// @nodoc
@@ -180,7 +181,7 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
       @WalletConverter() required this.wallet,
       @PartyConverter() this.party,
       @GroupConverter() this.group,
-      final List<MediaFile> files = const []})
+      @MediaFileListConverter() final List<MediaFile> files = const []})
       : _categories = categories,
         _files = files,
         super._();
@@ -210,6 +211,7 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
   final List<MediaFile> _files;
   @override
   @JsonKey()
+  @MediaFileListConverter()
   List<MediaFile> get files {
     if (_files is EqualUnmodifiableListView) return _files;
     // ignore: implicit_dynamic_type
@@ -258,12 +260,13 @@ class _$TransactionCompleteDtoImpl extends _TransactionCompleteDto {
 
 abstract class _TransactionCompleteDto extends TransactionCompleteDto {
   const factory _TransactionCompleteDto(
-      {@TransactionConverter() required final Transaction transaction,
-      @CategoryConverter() final List<Category> categories,
-      @WalletConverter() required final Wallet wallet,
-      @PartyConverter() final Party? party,
-      @GroupConverter() final Group? group,
-      final List<MediaFile> files}) = _$TransactionCompleteDtoImpl;
+          {@TransactionConverter() required final Transaction transaction,
+          @CategoryConverter() final List<Category> categories,
+          @WalletConverter() required final Wallet wallet,
+          @PartyConverter() final Party? party,
+          @GroupConverter() final Group? group,
+          @MediaFileListConverter() final List<MediaFile> files}) =
+      _$TransactionCompleteDtoImpl;
   const _TransactionCompleteDto._() : super._();
 
   @override
@@ -282,6 +285,7 @@ abstract class _TransactionCompleteDto extends TransactionCompleteDto {
   @GroupConverter()
   Group? get group;
   @override
+  @MediaFileListConverter()
   List<MediaFile> get files;
 
   /// Create a copy of TransactionCompleteDto

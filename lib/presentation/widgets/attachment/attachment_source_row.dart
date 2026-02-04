@@ -21,6 +21,8 @@ class AttachmentSourceRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final iconColor = colorScheme.onSurface;
     return Row(
       spacing: 8.w,
       children: [
@@ -28,7 +30,7 @@ class AttachmentSourceRow extends StatelessWidget {
           child: _AttachmentSourceButton(
             icon: SvgPicture.asset(
               Assets.images.camera,
-              colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
             label: LocaleKeys.snapPicture.tr(),
             onTap: () async {
@@ -43,7 +45,7 @@ class AttachmentSourceRow extends StatelessWidget {
           child: _AttachmentSourceButton(
             icon: SvgPicture.asset(
               Assets.images.galleryAdd,
-              colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
             label: LocaleKeys.gallery.tr(),
             onTap: () async {
@@ -58,7 +60,7 @@ class AttachmentSourceRow extends StatelessWidget {
           child: _AttachmentSourceButton(
             icon: SvgPicture.asset(
               Assets.images.documentUpload,
-              colorFilter: ColorFilter.mode(accentColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
             label: LocaleKeys.uploadAttachment.tr(),
             subtitle: LocaleKeys.transactionFileType.tr(),
@@ -88,12 +90,14 @@ class _AttachmentSourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return InkWell(
       onTap: onTap,
       child: Container(
         height: 52.h,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
         ),
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -110,15 +114,20 @@ class _AttachmentSourceButton extends StatelessWidget {
                       children: [
                         Text(
                           label,
-                          style: TextStyle(fontSize: 12.sp),
+                          style: textTheme.bodySmall?.copyWith(
+                            fontSize: 12.sp,
+                            color: colorScheme.onSurface,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           subtitle!,
-                          style: TextStyle(
+                          style: textTheme.bodySmall?.copyWith(
                             fontSize: 8.sp,
-                            color: Colors.grey.shade500,
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.7,
+                            ),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -127,7 +136,10 @@ class _AttachmentSourceButton extends StatelessWidget {
                     )
                   : Text(
                       label,
-                      style: TextStyle(fontSize: 12.sp),
+                      style: textTheme.bodySmall?.copyWith(
+                        fontSize: 12.sp,
+                        color: colorScheme.onSurface,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
             ),
