@@ -1,15 +1,9 @@
-import 'package:collection/collection.dart';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
@@ -24,12 +18,15 @@ import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/presentation/transactions/view_attachment_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_display_cache.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_list_item.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_list_view.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_source_row.dart';
 import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
@@ -67,47 +64,21 @@ class _AddTransactionFormCompactLayoutState
   PartyEntity? _selectedParty;
   List<String> attachedFilePaths = [];
   List<MediaFileEntity> existingMedia = [];
-  final Map<int, String> _loadedMediaPaths = {};
-  final Set<int> _failedMediaIds = {};
-  final Map<String, Uint8List> _pdfThumbnailBytes = {};
   final _formKey = GlobalKey<FormState>();
 
-  static bool _isPdfPath(String path) => path.toLowerCase().endsWith('.pdf');
+  List<AttachmentListItem> get _allAttachments => [
+        ...existingMedia.map((m) => ExistingAttachment(m)),
+        ...attachedFilePaths.map((p) => NewLocalAttachment(p)),
+      ];
 
-  Future<void> _loadPdfThumbnails() async {
-    const thumbSize = 144;
-    final toLoad = <String, String?>{};
-    for (final m in existingMedia) {
-      if (!_isPdfPath(m.path)) continue;
-      if (_pdfThumbnailBytes.containsKey(m.path)) continue;
-      // Server media: use cached path when loaded; local-only (id == null): use m.path directly.
-      final filePath = m.id != null ? _loadedMediaPaths[m.id] : m.path;
-      if (filePath != null) toLoad[m.path] = filePath;
-    }
-    for (final path in attachedFilePaths) {
-      if (!_isPdfPath(path)) continue;
-      if (_pdfThumbnailBytes.containsKey(path)) continue;
-      if (File(path).existsSync()) toLoad[path] = null;
-    }
-    for (final e in toLoad.entries) {
-      final thumb = await renderPdfFirstPageThumbnail(
-        filePath: e.value ?? e.key,
-        bytes: null,
-        size: thumbSize,
-      );
-      if (!mounted) return;
-      if (thumb != null) {
-        setState(() => _pdfThumbnailBytes[e.key] = thumb);
+  void _addAttachmentPath(String? path) {
+    if (path == null || !mounted) return;
+    try {
+      setState(() => attachedFilePaths = [...attachedFilePaths, path]);
+    } catch (_) {
+      if (mounted) {
+        showSnackBar(message: LocaleKeys.unknownErrorDesc.tr());
       }
-    }
-  }
-
-  Future<void> _loadPdfThumbnailForPath(String path) async {
-    if (!_isPdfPath(path) || _pdfThumbnailBytes.containsKey(path)) return;
-    final thumb = await renderPdfFirstPageThumbnail(filePath: path, size: 144);
-    if (!mounted) return;
-    if (thumb != null) {
-      setState(() => _pdfThumbnailBytes[path] = thumb);
     }
   }
 
@@ -159,13 +130,7 @@ class _AddTransactionFormCompactLayoutState
       }
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final list = widget.transactionCompleteEntity!.files;
-        setState(() {
-          existingMedia = list;
-          _loadedMediaPaths
-              .removeWhere((id, _) => !list.any((m) => m.id == id));
-          _failedMediaIds.removeWhere((id) => !list.any((m) => m.id == id));
-          _loadMediaThumbnails(list);
-        });
+        setState(() => existingMedia = list);
       });
     } else {
       date = DateTime.now();
@@ -195,39 +160,24 @@ class _AddTransactionFormCompactLayoutState
     }
   }
 
-  Future<void> _loadMediaThumbnails(List<MediaFileEntity> mediaList) async {
-    final withIds = mediaList.where((m) => m.id != null).toList();
-    if (withIds.isNotEmpty) {
-      final cubit = context.read<TransactionCubit>();
-      final futures = withIds.map((media) async {
-        final result = await cubit.getFileContent(media.id!);
-        return (media.id!, result);
-      });
-      final results = await Future.wait(futures);
-      if (!mounted) return;
-      setState(() {
-        for (final (id, result) in results) {
-          result.fold(
-            (_) => _failedMediaIds.add(id),
-            (filePath) {
-              _loadedMediaPaths[id] = filePath;
-              _failedMediaIds.remove(id);
-            },
-          );
-        }
-      });
+  void _handleRemove(AttachmentListItem item) {
+    switch (item) {
+      case ExistingAttachment(media: final m):
+        context.read<TransactionCubit>().deleteMedia(m.path);
+        setState(
+            () => existingMedia = existingMedia.where((e) => e != m).toList());
+        break;
+      case NewLocalAttachment(path: final p):
+        setState(() => attachedFilePaths =
+            attachedFilePaths.where((path) => path != p).toList());
+        break;
     }
-    // Always load PDF thumbnails so local-only files (no id, path like app_flutter/media/xxx.pdf) get thumbnails too.
-    _loadPdfThumbnails();
   }
 
-  static bool _isImageExt(String path) {
-    final ext = path.split('.').last.toLowerCase();
-    return ext == 'png' ||
-        ext == 'jpg' ||
-        ext == 'jpeg' ||
-        ext == 'gif' ||
-        ext == 'webp';
+  @override
+  void dispose() {
+    AttachmentDisplayCache.clear();
+    super.dispose();
   }
 
   @override
@@ -646,466 +596,19 @@ class _AddTransactionFormCompactLayoutState
                 onTap: () async {},
               ),
               SizedBox(height: 16.h),
-              Row(
-                spacing: 8.w,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final file = await pickImageApp(
-                          sourcePick: ImageSource.camera,
-                        );
-                        if (file != null && mounted) {
-                          try {
-                            final path = file.path;
-                            setState(() => attachedFilePaths = [
-                                  ...attachedFilePaths,
-                                  path
-                                ]);
-                            if (_isPdfPath(path)) {
-                              _loadPdfThumbnailForPath(path);
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              showSnackBar(
-                                message: LocaleKeys.unknownErrorDesc.tr(),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 52.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                        ),
-                        child: Row(
-                          spacing: 4.w,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.images.camera,
-                              colorFilter: ColorFilter.mode(
-                                widget.accentColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                LocaleKeys.snapPicture.tr(),
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final file = await pickImageApp(
-                          sourcePick: ImageSource.gallery,
-                        );
-                        if (file != null && mounted) {
-                          try {
-                            final path = file.path;
-                            setState(() => attachedFilePaths = [
-                                  ...attachedFilePaths,
-                                  path
-                                ]);
-                            if (_isPdfPath(path)) {
-                              _loadPdfThumbnailForPath(path);
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              showSnackBar(
-                                message: LocaleKeys.unknownErrorDesc.tr(),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 52.h,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                        ),
-                        child: Row(
-                          spacing: 4.w,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.images.galleryAdd,
-                              colorFilter: ColorFilter.mode(
-                                widget.accentColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                LocaleKeys.gallery.tr(),
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final file = await pickFile();
-                        if (file != null && mounted) {
-                          try {
-                            final path = file.path;
-                            setState(() => attachedFilePaths = [
-                                  ...attachedFilePaths,
-                                  path
-                                ]);
-                            if (_isPdfPath(path)) {
-                              _loadPdfThumbnailForPath(path);
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              showSnackBar(
-                                message: LocaleKeys.unknownErrorDesc.tr(),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 52.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                        ),
-                        child: Row(
-                          spacing: 4.w,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.images.galleryAdd,
-                              colorFilter: ColorFilter.mode(
-                                widget.accentColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                LocaleKeys.gallery.tr(),
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        final file = await pickFile();
-                        if (file != null && mounted) {
-                          try {
-                            final path = file.path;
-                            setState(() => attachedFilePaths = [
-                                  ...attachedFilePaths,
-                                  path
-                                ]);
-                            if (_isPdfPath(path)) {
-                              _loadPdfThumbnailForPath(path);
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              showSnackBar(
-                                message: LocaleKeys.unknownErrorDesc.tr(),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 52.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                        ),
-                        child: Row(
-                          spacing: 4.w,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.images.documentUpload,
-                              colorFilter: ColorFilter.mode(
-                                widget.accentColor,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    LocaleKeys.uploadAttachment.tr(),
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(LocaleKeys.transactionFileType.tr(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall
-                                          ?.copyWith(
-                                            fontSize: 8.sp,
-                                          )),
-                                  Text(
-                                    LocaleKeys.transactionFileType.tr(),
-                                    style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall
-                                          ?.copyWith(
-                                            fontSize: 8.sp,
-                                          ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              AttachmentSourceRow(
+                accentColor: widget.accentColor,
+                onFileAdded: _addAttachmentPath,
               ),
-              if (attachedFilePaths.isNotEmpty || existingMedia.isNotEmpty) ...[
+              if (_allAttachments.isNotEmpty) ...[
                 SizedBox(height: 12.h),
                 SizedBox(
                   height: 72.h,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: existingMedia.length + attachedFilePaths.length,
-                    separatorBuilder: (_, __) => SizedBox(width: 8.w),
-                    itemBuilder: (context, index) {
-                      final isExisting = index < existingMedia.length;
-                      final path = isExisting
-                          ? existingMedia[index].path
-                          : attachedFilePaths[index - existingMedia.length];
-                      final mediaId =
-                          isExisting ? existingMedia[index].id : null;
-                      final file = File(path);
-                      final ext = path.split('.').last.toLowerCase();
-                      final isImage = ext == 'png' ||
-                          ext == 'jpg' ||
-                          ext == 'jpeg' ||
-                          ext == 'gif' ||
-                          ext == 'webp';
-                      final name = path.split(Platform.pathSeparator).last;
-
-                      // Server media (has id): show loaded path, loader, or file icon
-                      final hasServerId = mediaId != null;
-                      final loadedPath =
-                          hasServerId ? _loadedMediaPaths[mediaId] : null;
-                      final loadFailed =
-                          hasServerId && _failedMediaIds.contains(mediaId);
-                      final isLoading =
-                          hasServerId && loadedPath == null && !loadFailed;
-                      // Image types and PDF (first-page thumbnail) get a preview; others show file icon.
-                      final showPreviewFromFile =
-                          !hasServerId && isImage && file.existsSync();
-                      final showPreviewFromPath = hasServerId &&
-                          loadedPath != null &&
-                          _isImageExt(path);
-                      final showImagePreview =
-                          showPreviewFromFile || showPreviewFromPath;
-                      final isPdf = _isPdfPath(path);
-                      final pdfThumbnail =
-                          isPdf ? _pdfThumbnailBytes[path] : null;
-                      final showPdfPreview = isPdf && pdfThumbnail != null;
-                      final showThumbnail = showImagePreview || showPdfPreview;
-                      final pdfThumbnailLoading = isPdf && pdfThumbnail == null;
-
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final isExistingWithId =
-                                  isExisting && existingMedia[index].id != null;
-                              if (isExistingWithId) {
-                                final result = await context
-                                    .read<TransactionCubit>()
-                                    .getFileContent(existingMedia[index].id!);
-                                if (!mounted) return;
-                                result.fold(
-                                  (_) => ScaffoldMessenger.of(context)
-                                      .showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        LocaleKeys.couldNotLoadAttachment.tr(),
-                                      ),
-                                    ),
-                                  ),
-                                  (filePath) => Navigator.of(context).push(
-                                    MaterialPageRoute<void>(
-                                      builder: (_) => ViewAttachmentScreen(
-                                        filePath: filePath,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => ViewAttachmentScreen(
-                                      filePath: path,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Container(
-                              width: 72.w,
-                              height: 72.h,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: showThumbnail
-                                    ? (showPdfPreview
-                                        ? Image.memory(
-                                            pdfThumbnail,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : (loadedPath != null
-                                            ? Image.file(
-                                                File(loadedPath),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.file(
-                                                file,
-                                                fit: BoxFit.cover,
-                                              )))
-                                    : isLoading || pdfThumbnailLoading
-                                        ? Center(
-                                            child: SizedBox(
-                                              width: 24.w,
-                                              height: 24.h,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.grey.shade600,
-                                              ),
-                                            ),
-                                          )
-                                        : Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  iconForAttachmentPath(path),
-                                                  size: 28.sp,
-                                                  color: Colors.grey.shade600,
-                                                ),
-                                                SizedBox(height: 4.h),
-                                                Text(
-                                                  name.length > 10
-                                                      ? '${name.substring(0, 10)}…'
-                                                      : name,
-                                                  style: TextStyle(
-                                                    fontSize: 10.sp,
-                                                    color: Colors.grey.shade600,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: -6.h,
-                            right: -6.w,
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: 24.w,
-                                minHeight: 24.h,
-                              ),
-                              icon: Icon(
-                                Icons.cancel,
-                                size: 24.sp,
-                                color: widget.accentColor,
-                              ),
-                              onPressed: () async {
-                                if (isExisting) {
-                                  final result = await context
-                                      .read<TransactionCubit>()
-                                      .deleteMedia(path);
-                                  if (!mounted) return;
-                                  result.fold(
-                                    (_) => null,
-                                    (_) => setState(() {
-                                      existingMedia = existingMedia
-                                          .where((m) => m.path != path)
-                                          .toList();
-                                      if (mediaId != null) {
-                                        _loadedMediaPaths.remove(mediaId);
-                                        _failedMediaIds.remove(mediaId);
-                                      }
-                                    }),
-                                  );
-                                } else {
-                                  setState(() {
-                                    attachedFilePaths = List.from(
-                                        attachedFilePaths)
-                                      ..removeAt(index - existingMedia.length);
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  child: AttachmentListView(
+                    items: _allAttachments,
+                    showRemoveButton: true,
+                    accentColor: widget.accentColor,
+                    onRemove: _handleRemove,
                   ),
                 ),
               ],
