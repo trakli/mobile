@@ -42,9 +42,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to your camera to take photos</string>
+	<string>Trakli uses the camera to capture photos that you attach to your income and expense transactions. For example, you can take a picture of a receipt or invoice to keep a record with that transaction.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library to upload profile pictures</string>
+	<string>Trakli uses your photo library so you can attach images and PDFs to your transactions. You can select photos or documents (e.g. receipts or invoices) to link to an expense or income entry.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
