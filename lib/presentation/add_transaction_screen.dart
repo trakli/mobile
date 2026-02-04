@@ -115,7 +115,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                           BlendMode.srcIn,
                         ),
                       ),
-                      Text(LocaleKeys.transactionExpense.tr())
+                      Text(
+                        LocaleKeys.transactionExpense.tr(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
                     ],
                   ),
                 ),
