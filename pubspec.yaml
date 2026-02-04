@@ -50,7 +50,6 @@ dependencies:
   equatable: ^2.0.7
   emoji_picker_flutter: ^4.3.0
   image_picker: ^1.1.2
-  image_cropper: ^9.0.0
   heroicons: ^0.11.0
   shared_preferences: ^2.2.2
   sqflite: ^2.4.2
@@ -95,6 +94,7 @@ dependencies:
   intl_phone_field: ^3.1.0
   firebase_auth: ^5.7.0
   sign_in_with_apple: ^7.0.1
+  image_cropper: ^10.0.0
 
 dev_dependencies:
   flutter_gen_runner: ^5.8.0
