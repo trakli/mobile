@@ -279,39 +279,47 @@ Future<T?> showCustomDialog<T>({
 
 Future<File?> pickImageApp({
   ImageSource sourcePick = ImageSource.gallery,
+  bool skipCrop = true,
 }) async {
   final picker = ImagePicker();
   final pickedFile = await picker.pickImage(
     source: sourcePick,
   );
   if (pickedFile != null) {
+    if (skipCrop) {
+      return File(pickedFile.path);
+    }
+    // Status-bar–friendly: Android = same toolbar + statusBar;
+    // iOS = embed in nav controller so safe area is respected.
+    const statusBarColor = Colors.white;
+    final androidSettings = AndroidUiSettings(
+      toolbarTitle: LocaleKeys.cropper.tr(),
+      toolbarColor: statusBarColor,
+      statusBarLight: true,
+      activeControlsWidgetColor: appPrimaryColor,
+      toolbarWidgetColor: appPrimaryColor,
+      navBarLight: false,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9,
+        CropAspectRatioPresetCustom(),
+      ],
+    );
+    final iosSettings = IOSUiSettings(
+      title: LocaleKeys.cropper.tr(),
+      embedInNavigationController: true,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.square,
+        CropAspectRatioPresetCustom(),
+      ],
+    );
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: LocaleKeys.cropper.tr(),
-          toolbarColor: appPrimaryColor,
-          activeControlsWidgetColor: appPrimaryColor,
-          toolbarWidgetColor: Colors.white,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio3x2,
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.ratio4x3,
-            CropAspectRatioPreset.ratio16x9,
-            CropAspectRatioPresetCustom(),
-          ],
-        ),
-        IOSUiSettings(
-          title: LocaleKeys.cropper.tr(),
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPresetCustom(),
-            // IMPORTANT: iOS supports only one custom aspect ratio in preset list
-          ],
-        ),
-      ],
+      uiSettings: [androidSettings, iosSettings],
     );
     if (croppedFile != null) {
       return File(croppedFile.path);

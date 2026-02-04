@@ -257,6 +257,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                   onTap: () async {
                     File? pickedFile = await pickImageApp(
                       sourcePick: ImageSource.camera,
+                      skipCrop: false,
                     );
                     AppNavigator.pop(context, pickedFile);
                   },
