@@ -24,7 +24,7 @@ import 'package:trakli/presentation/utils/enums.dart'
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Allowed extensions for transaction attachments (backend: jpg, jpeg, png, pdf; max 1MB each).
+/// Allowed extensions for attachment (jpg, jpeg, png, pdf; max 1MB each).
 const List<String> _transactionAttachmentExtensions = [
   'jpg',
   'jpeg',
@@ -84,27 +84,6 @@ Future<Uint8List?> renderPdfFirstPageThumbnail({
     return image?.bytes;
   } catch (_) {
     return null;
-  }
-}
-
-/// Returns the Material icon for the given file path based on extension.
-/// Use for attachment tiles when no image preview is shown.
-IconData iconForAttachmentPath(String path) {
-  final ext = path.contains('.') ? path.split('.').last.toLowerCase() : '';
-  switch (ext) {
-    case 'pdf':
-      return Icons.picture_as_pdf;
-    case 'doc':
-    case 'docx':
-      return Icons.description;
-    case 'xls':
-    case 'xlsx':
-    case 'csv':
-      return Icons.table_chart;
-    case 'txt':
-      return Icons.text_snippet;
-    default:
-      return Icons.insert_drive_file;
   }
 }
 
