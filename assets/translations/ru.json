@@ -523,5 +523,9 @@
   "loadingPreferences": "Загрузка настроек...",
   "errorLoadingPreferences": "Ошибка загрузки настроек",
   "openSourceProject": "Trakli с открытым исходным кодом",
-  "viewOnGithub": "Посмотреть на GitHub"
+  "viewOnGithub": "Посмотреть на GitHub",
+  "images": "Изображения",
+  "files": "Файлы",
+  "noImages": "Нет изображений",
+  "noFiles": "Нет файлов"
 }

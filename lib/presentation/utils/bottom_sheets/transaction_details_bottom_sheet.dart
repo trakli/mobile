@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/path_helper.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_list_item.dart';
+import 'package:trakli/presentation/widgets/attachment/attachment_list_view.dart';
 import 'package:trakli/presentation/widgets/categories_widget.dart';
 import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
@@ -36,6 +40,9 @@ class TransactionDetailsBottomSheet extends StatefulWidget {
 class _TransactionDetailsBottomSheetState
     extends State<TransactionDetailsBottomSheet> {
   SelectIconType? selectedIconType;
+
+  /// 0 = Images, 1 = Files
+  int _selectedAttachmentTab = 0;
 
   DateFormat format = DateFormat('dd/MM/yyyy HH:mm');
 
@@ -167,6 +174,49 @@ class _TransactionDetailsBottomSheetState
                 emojiSize: 20.sp,
                 iconSize: 20.sp,
               ),
+              if (widget.transaction.files.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Center(
+                  child: Text(
+                    LocaleKeys.attachment.tr(),
+                    style: TextStyle(
+                      color: const Color(0xFF576760),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _AttachmentTab(
+                        label: LocaleKeys.images.tr(),
+                        isSelected: _selectedAttachmentTab == 0,
+                        onTap: () => setState(() => _selectedAttachmentTab = 0),
+                        accentColor: widget.accentColor,
+                      ),
+                      SizedBox(width: 16.w),
+                      _AttachmentTab(
+                        label: LocaleKeys.files.tr(),
+                        isSelected: _selectedAttachmentTab == 1,
+                        onTap: () => setState(() => _selectedAttachmentTab = 1),
+                        accentColor: widget.accentColor,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Center(
+                  child: _AttachmentTabContent(
+                    files: widget.transaction.files,
+                    selectedTab: _selectedAttachmentTab,
+                    accentColor: widget.accentColor,
+                  ),
+                ),
+                SizedBox(height: 16.h),
+              ],
               SizedBox(height: 16.h),
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -206,6 +256,116 @@ class _TransactionDetailsBottomSheetState
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AttachmentTab extends StatelessWidget {
+  const _AttachmentTab({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.accentColor,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? accentColor : const Color(0xFF576760),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Container(
+            height: 2.h,
+            width: 48.w,
+            decoration: BoxDecoration(
+              color: isSelected ? accentColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(1.r),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AttachmentTabContent extends StatelessWidget {
+  const _AttachmentTabContent({
+    required this.files,
+    required this.selectedTab,
+    required this.accentColor,
+  });
+
+  final List<MediaFileEntity> files;
+  final int selectedTab;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final imageItems = files
+        .where((f) => isImageAttachmentPath(f.path))
+        .map((f) => ExistingAttachment(f))
+        .toList();
+    final fileItems = files
+        .where((f) => !isImageAttachmentPath(f.path))
+        .map((f) => ExistingAttachment(f))
+        .toList();
+    final items = selectedTab == 0 ? imageItems : fileItems;
+    final emptyMessage =
+        selectedTab == 0 ? LocaleKeys.noImages.tr() : LocaleKeys.noFiles.tr();
+
+    if (items.isEmpty) {
+      return SizedBox(
+        height: 80.h,
+        child: Center(
+          child: Text(
+            emptyMessage,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF576760),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final tileWidth = 72.w;
+        final gapWidth = 8.w;
+        final contentWidth =
+            items.length * tileWidth + (items.length - 1) * gapWidth;
+        final horizontalPadding = (constraints.maxWidth - contentWidth) / 2;
+        final padding = horizontalPadding > 0
+            ? EdgeInsets.symmetric(horizontal: horizontalPadding)
+            : null;
+
+        return SizedBox(
+          height: 100.h,
+          child: AttachmentListView(
+            items: items,
+            showRemoveButton: false,
+            accentColor: accentColor,
+            onRemove: (_) {},
+            padding: padding,
+          ),
+        );
+      },
     );
   }
 }

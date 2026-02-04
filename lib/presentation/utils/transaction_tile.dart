@@ -48,11 +48,14 @@ class _TransactionTileState extends State<TransactionTile> {
   void _handleViewDetails() {
     showCustomBottomSheet(
       context,
-      widget: TransactionDetailsBottomSheet(
-        transaction: widget.transaction,
-        accentColor: widget.accentColor,
-        onDelete: _handleDelete,
-        onEdit: _handleEdit,
+      widget: BlocProvider.value(
+        value: context.read<TransactionCubit>(),
+        child: TransactionDetailsBottomSheet(
+          transaction: widget.transaction,
+          accentColor: widget.accentColor,
+          onDelete: _handleDelete,
+          onEdit: _handleEdit,
+        ),
       ),
     );
   }
