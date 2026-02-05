@@ -527,5 +527,8 @@
   "images": "Bilder",
   "files": "Dateien",
   "noImages": "Keine Bilder",
-  "noFiles": "Keine Dateien"
+  "noFiles": "Keine Dateien",
+  "orphanedMediaCleanupLog": "Bereinigung verwaister Medien (Log)",
+  "orphanedMediaCleanupLogDesc": "Letztes Lauf-Log anzeigen (nur Debug)",
+  "orphanedMediaCleanupLogEmpty": "Noch keine Logdatei. Ein Log wird hier geschrieben, wenn die Bereinigung im Debug-Modus läuft und eine oder mehrere verwaiste Dateien löscht."
 }
