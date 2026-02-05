@@ -527,5 +527,8 @@
   "images": "Immagini",
   "files": "File",
   "noImages": "Nessuna immagine",
-  "noFiles": "Nessun file"
+  "noFiles": "Nessun file",
+  "orphanedMediaCleanupLog": "Log pulizia file multimediali orfani",
+  "orphanedMediaCleanupLogDesc": "Visualizza log ultima esecuzione (solo debug)",
+  "orphanedMediaCleanupLogEmpty": "Nessun file di log ancora. Un log viene scritto qui quando la pulizia viene eseguita in debug ed elimina uno o più file orfani."
 }

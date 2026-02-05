@@ -527,5 +527,8 @@
   "images": "Images",
   "files": "Fichiers",
   "noImages": "Aucune image",
-  "noFiles": "Aucun fichier"
+  "noFiles": "Aucun fichier",
+  "orphanedMediaCleanupLog": "Journal de nettoyage des médias orphelins",
+  "orphanedMediaCleanupLogDesc": "Voir le journal du dernier exécution (débogage uniquement)",
+  "orphanedMediaCleanupLogEmpty": "Pas encore de fichier journal. Un journal est écrit ici lorsque le nettoyage s'exécute en mode débogage et supprime un ou plusieurs fichiers orphelins."
 }

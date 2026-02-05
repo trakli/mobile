@@ -527,5 +527,8 @@
   "images": "Images",
   "files": "Files",
   "noImages": "No images",
-  "noFiles": "No files"
+  "noFiles": "No files",
+  "orphanedMediaCleanupLog": "Orphaned media cleanup log",
+  "orphanedMediaCleanupLogDesc": "View last run log (debug only)",
+  "orphanedMediaCleanupLogEmpty": "No log file yet. A log is written here when the cleanup runs in debug and deletes one or more orphaned files."
 }
