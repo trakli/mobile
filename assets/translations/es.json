@@ -525,5 +525,8 @@
   "images": "Imágenes",
   "files": "Archivos",
   "noImages": "Sin imágenes",
-  "noFiles": "Sin archivos"
+  "noFiles": "Sin archivos",
+  "orphanedMediaCleanupLog": "Registro de limpieza de medios huérfanos",
+  "orphanedMediaCleanupLogDesc": "Ver registro del último análisis (solo depuración)",
+  "orphanedMediaCleanupLogEmpty": "Aún no hay archivo de registro. Se escribe aquí cuando la limpieza se ejecuta en depuración y elimina uno o más archivos huérfanos."
 }

@@ -532,5 +532,8 @@ abstract class  LocaleKeys {
   static const files = 'files';
   static const noImages = 'noImages';
   static const noFiles = 'noFiles';
+  static const orphanedMediaCleanupLog = 'orphanedMediaCleanupLog';
+  static const orphanedMediaCleanupLogDesc = 'orphanedMediaCleanupLogDesc';
+  static const orphanedMediaCleanupLogEmpty = 'orphanedMediaCleanupLogEmpty';
 
 }
