@@ -112,7 +112,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         );
       },
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         _startDate = picked.start;
         _endDate = picked.end;
@@ -180,10 +180,12 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                         groupValue: _selectedWalletClientId,
                         isAllWallets: true,
                         onChanged: (value) {
-                          setState(() {
-                            _selectedWalletClientId = null;
-                            _selectedWallet = null;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              _selectedWalletClientId = null;
+                              _selectedWallet = null;
+                            });
+                          }
                           Navigator.pop(context);
                         },
                         walletNameOverride: LocaleKeys.allWallets.tr(),
@@ -197,10 +199,12 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                         wallet: wallet,
                         isAllWallets: false,
                         onChanged: (value) {
-                          setState(() {
-                            _selectedWalletClientId = wallet.clientId;
-                            _selectedWallet = wallet;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              _selectedWalletClientId = wallet.clientId;
+                              _selectedWallet = wallet;
+                            });
+                          }
                           Navigator.pop(context);
                         },
                       );
