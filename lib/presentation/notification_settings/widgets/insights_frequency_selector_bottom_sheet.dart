@@ -35,7 +35,7 @@ class InsightsFrequencySelectorBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20.r),
         ),
@@ -59,7 +59,6 @@ class InsightsFrequencySelectorBottomSheet extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF061D23),
               ),
             ),
           ),

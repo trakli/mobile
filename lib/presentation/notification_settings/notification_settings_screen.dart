@@ -187,9 +187,12 @@ class _NotificationSettingsBody extends StatelessWidget {
                 title: LocaleKeys.insightsFrequency.tr(),
                 subtitle: LocaleKeys.insightsFrequencyDesc.tr(),
                 value: NotificationSettingsHelpers.getFrequencyLabel(
-                    insightsFrequency),
+                  insightsFrequency,
+                ),
                 onTap: () => InsightsFrequencySelectorBottomSheet.show(
-                    context, insightsFrequency),
+                  context,
+                  insightsFrequency,
+                ),
               ),
             ],
             SizedBox(height: 8.h),

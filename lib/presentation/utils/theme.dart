@@ -68,32 +68,22 @@ final lightTheme = ThemeData(
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ButtonStyle(
-      textStyle: WidgetStatePropertyAll(
-        TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 16.sp,
+    style: ElevatedButton.styleFrom(
+      textStyle: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 16.sp,
+      ),
+      backgroundColor: appPrimaryColor,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        side: const BorderSide(
+          color: Colors.transparent,
         ),
       ),
-      backgroundColor: const WidgetStatePropertyAll(
-        Color(0xFF047844),
-      ),
-      foregroundColor: const WidgetStatePropertyAll(
-        Colors.white,
-      ),
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          side: const BorderSide(
-            color: Colors.transparent,
-          ),
-        ),
-      ),
-      padding: WidgetStatePropertyAll(
-        EdgeInsets.symmetric(
-          horizontal: 32.0.w,
-          vertical: 12.h,
-        ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 12.h,
       ),
     ),
   ),
@@ -269,11 +259,22 @@ final darkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
+      textStyle: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 16.sp,
+      ),
       backgroundColor: appPrimaryColor,
       foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
-      padding: EdgeInsets.symmetric(horizontal: 32.0.w, vertical: 12.h),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.r),
+        side: const BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 12.h,
+      ),
     ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
@@ -316,6 +317,10 @@ final darkTheme = ThemeData(
     ),
     labelTextStyle: WidgetStatePropertyAll(
       TextStyle(fontSize: 14.sp, color: Colors.white),
+    ),
+    menuPadding: EdgeInsets.symmetric(
+      vertical: 8.h,
+      horizontal: 0,
     ),
   ),
   searchBarTheme: SearchBarThemeData(

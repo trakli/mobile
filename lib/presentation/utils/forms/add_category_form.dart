@@ -82,6 +82,7 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
                   onTap: () {
                     showCustomBottomSheet(
                       context,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       widget: SelectIconBottomSheet(
                         onSelect: (mediaType, image) {
                           setState(() {
