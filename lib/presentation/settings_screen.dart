@@ -9,13 +9,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/account_settings_screen.dart';
 import 'package:trakli/presentation/advanced_settings_screen.dart';
-import 'package:trakli/presentation/notification_settings/notification_settings_screen.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/defaults_settings_screen.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
+import 'package:trakli/presentation/notification_settings/notification_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
@@ -230,6 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () {
                 showCustomBottomSheet(
                   context,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   widget: const AboutAppBottomSheet(),
                 );
               },
