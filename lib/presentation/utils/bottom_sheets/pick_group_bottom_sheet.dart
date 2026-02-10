@@ -89,19 +89,6 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             ),
             textAlign: TextAlign.center,
           ),
-          // SizedBox(height: 16.h),
-          // SearchBar(
-          //   leading: SvgPicture.asset(
-          //     Assets.images.searchSpecial,
-          //     width: 24.sp,
-          //     colorFilter: const ColorFilter.mode(
-          //       Colors.grey,
-          //       BlendMode.srcIn,
-          //     ),
-          //   ),
-          //   hintText: LocaleKeys.search.tr(),
-          //   onChanged: (value) {},
-          // ),
           SizedBox(height: 16.h),
           ConstrainedBox(
             constraints: BoxConstraints(

@@ -77,9 +77,7 @@ final lightTheme = ThemeData(
       foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.r),
-        side: const BorderSide(
-          color: Colors.transparent,
-        ),
+        side: BorderSide.none,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -267,9 +265,7 @@ final darkTheme = ThemeData(
       foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.r),
-        side: const BorderSide(
-          color: Colors.transparent,
-        ),
+        side: BorderSide.none,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,

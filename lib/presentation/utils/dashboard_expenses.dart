@@ -38,8 +38,9 @@ class DashboardExpenses extends StatelessWidget {
                 padding: 5.w,
                 legendItemBuilder:
                     (String name, dynamic series, dynamic point, int index) {
-                  final Color color =
-                      index == 0 ? appPrimaryColor : expenseRedText;
+                  final Color color = index == 0
+                      ? Theme.of(context).primaryColor
+                      : expenseRedText;
                   final double value = index == 0 ? totalIncome : totalExpense;
                   return Row(
                     spacing: 6.w,
@@ -51,10 +52,14 @@ class DashboardExpenses extends StatelessWidget {
                       ),
                       RichText(
                         text: TextSpan(
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: textColor,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  fontSize: 12.sp,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
                             text: "$name ",
                             children: [
                               TextSpan(
@@ -66,7 +71,6 @@ class DashboardExpenses extends StatelessWidget {
                                     .textTheme
                                     .bodySmall
                                     ?.copyWith(
-                                      fontSize: 12.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                               )
