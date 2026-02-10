@@ -167,12 +167,14 @@ class DashboardExpenses extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          LocaleKeys.trendingByMonth.tr(args: [5.2.toString()]),
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: Text(
+            LocaleKeys.trendingByMonth.tr(args: [5.2.toString()]),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14.sp,
+            ),
           ),
         ),
       ],

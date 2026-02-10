@@ -406,11 +406,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     // vertical:
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                    ),
                   ),
                   child: TabBar(
                     controller: tabController,
@@ -425,7 +422,6 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     ),
                     unselectedLabelStyle: TextStyle(
                       fontSize: 16.sp,
-                      color: const Color(0xFF1D3229),
                     ),
                     labelStyle: TextStyle(
                       fontSize: 16.sp,
