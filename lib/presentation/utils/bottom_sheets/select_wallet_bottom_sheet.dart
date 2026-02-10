@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/presentation/utils/wallet_tile_mini.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/utils/wallet_tile_mini.dart';
 
 class SelectWalletBottomSheet extends StatelessWidget {
   final List<WalletEntity> wallets;
@@ -34,7 +34,7 @@ class SelectWalletBottomSheet extends StatelessWidget {
               width: 90.w,
               height: 6.h,
               decoration: BoxDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),

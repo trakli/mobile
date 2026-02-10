@@ -68,7 +68,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               width: 90.w,
               height: 6.h,
               decoration: BoxDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -87,23 +87,22 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             LocaleKeys.pickGroupDesc.tr(),
             style: TextStyle(
               fontSize: 14.sp,
-              color: neutralN900,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 16.h),
-          SearchBar(
-            leading: SvgPicture.asset(
-              Assets.images.searchSpecial,
-              width: 24.sp,
-              colorFilter: const ColorFilter.mode(
-                Colors.grey,
-                BlendMode.srcIn,
-              ),
-            ),
-            hintText: LocaleKeys.search.tr(),
-            onChanged: (value) {},
-          ),
+          // SizedBox(height: 16.h),
+          // SearchBar(
+          //   leading: SvgPicture.asset(
+          //     Assets.images.searchSpecial,
+          //     width: 24.sp,
+          //     colorFilter: const ColorFilter.mode(
+          //       Colors.grey,
+          //       BlendMode.srcIn,
+          //     ),
+          //   ),
+          //   hintText: LocaleKeys.search.tr(),
+          //   onChanged: (value) {},
+          // ),
           SizedBox(height: 16.h),
           ConstrainedBox(
             constraints: BoxConstraints(

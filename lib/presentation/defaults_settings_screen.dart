@@ -67,7 +67,8 @@ class DefaultsSettingsScreen extends StatelessWidget {
                       context: context,
                       theme: CurrencyPickerThemeData(
                         bottomSheetHeight: 0.7.sh,
-                        backgroundColor: Colors.white,
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
                         flagSize: 24.sp,
                         subtitleTextStyle: TextStyle(
                           fontSize: 12.sp,
@@ -75,7 +76,9 @@ class DefaultsSettingsScreen extends StatelessWidget {
                         ),
                       ),
                       onSelect: (Currency currencyValue) {
-                        context.read<CurrencyCubit>().setCurrency(currencyValue);
+                        context
+                            .read<CurrencyCubit>()
+                            .setCurrency(currencyValue);
                       },
                     );
                   },
@@ -137,6 +140,7 @@ class DefaultsSettingsScreen extends StatelessWidget {
                       final pickedGroup =
                           await showCustomBottomSheet<GroupEntity>(
                         context,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                         widget: PickGroupBottomSheet(
                           group: group,
                         ),
@@ -186,6 +190,7 @@ class DefaultsSettingsScreen extends StatelessWidget {
                   ? () async {
                       await showCustomBottomSheet(
                         context,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         widget: SelectWalletBottomSheet(
                           wallets: wallets,
                           onSelect: (selectedWallet) {
