@@ -76,7 +76,7 @@ class WalletTile extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              '${wallet.name} ${LocaleKeys.wallet.tr()}',
+                              wallet.name,
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w700,

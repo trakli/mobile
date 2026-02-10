@@ -1,31 +1,32 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
+import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
+import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/dashboard_expenses.dart';
 import 'package:trakli/presentation/utils/dashboard_pie_data.dart';
-import 'package:trakli/presentation/utils/graph_widget.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
-import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
-import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/presentation/utils/graph_widget.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/wallet_mini_tile.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:trakli/providers/chart_data_provider.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -121,101 +122,100 @@ class _StatisticsScreenState extends State<StatisticsScreen>
   }
 
   void _pickWallet(List<WalletEntity> wallets) async {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.only(
-            left: 16.w,
-            right: 16.w,
-            top: 16.h,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 8.h),
-              Align(
-                child: Container(
-                  width: 90.w,
-                  height: 6.h,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD9D9D9),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+    showCustomBottomSheet(
+      context,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      widget: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: 16.w,
+          top: 16.h,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 8.h),
+            Align(
+              child: Container(
+                width: 90.w,
+                height: 6.h,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              SizedBox(height: 16.h),
-              Text(
-                LocaleKeys.pickWallet.tr(),
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColor,
-                ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              LocaleKeys.pickWallet.tr(),
+              style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).primaryColor,
               ),
-              SizedBox(height: 16.h),
-              Text(
-                LocaleKeys.selectWalletInfoDesc.tr(),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: neutralN900,
-                ),
-                textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              LocaleKeys.selectWalletInfoDesc.tr(),
+              style: TextStyle(
+                fontSize: 14.sp,
               ),
-              SizedBox(height: 16.h),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 0.4.sh,
-                ),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: wallets.length + 1, // +1 for "All wallets" option
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      // "All wallets" option
-                      return WalletMiniTile<String?>(
-                        value: null,
-                        groupValue: _selectedWalletClientId,
-                        isAllWallets: true,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedWalletClientId = null;
-                            _selectedWallet = null;
-                          });
-                          Navigator.pop(context);
-                        },
-                        walletNameOverride: LocaleKeys.allWallets.tr(),
-                      );
-                    } else {
-                      // Individual wallet options
-                      final wallet = wallets[index - 1];
-                      return WalletMiniTile<String?>(
-                        value: wallet.clientId,
-                        groupValue: _selectedWalletClientId,
-                        wallet: wallet,
-                        isAllWallets: false,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedWalletClientId = wallet.clientId;
-                            _selectedWallet = wallet;
-                          });
-                          Navigator.pop(context);
-                        },
-                      );
-                    }
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 8.h);
-                  },
-                ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: 0.4.sh,
               ),
-              SizedBox(height: 20.h),
-            ],
-          ),
-        );
-      },
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemCount: wallets.length + 1,
+                // +1 for "All wallets" option
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // "All wallets" option
+                    return WalletMiniTile<String?>(
+                      value: null,
+                      groupValue: _selectedWalletClientId,
+                      isAllWallets: true,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedWalletClientId = null;
+                          _selectedWallet = null;
+                        });
+                        Navigator.pop(context);
+                      },
+                      walletNameOverride: LocaleKeys.allWallets.tr(),
+                    );
+                  } else {
+                    // Individual wallet options
+                    final wallet = wallets[index - 1];
+                    return WalletMiniTile<String?>(
+                      value: wallet.clientId,
+                      groupValue: _selectedWalletClientId,
+                      wallet: wallet,
+                      isAllWallets: false,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedWalletClientId = wallet.clientId;
+                          _selectedWallet = wallet;
+                        });
+                        Navigator.pop(context);
+                      },
+                    );
+                  }
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 8.h);
+                },
+              ),
+            ),
+            SizedBox(height: 20.h),
+          ],
+        ),
+      ),
     );
   }
 
@@ -286,7 +286,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     horizontal: 16.w,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Column(
@@ -300,7 +300,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: statFilterColor,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               padding: EdgeInsets.all(8.r),
@@ -310,17 +311,20 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                   spacing: 8.w,
                                   children: [
                                     Text(
-                                      (_selectedWallet?.name ?? 'All wallets')
+                                      (_selectedWallet?.name ??
+                                              LocaleKeys.allWallets.tr())
                                           .extractWords(maxSize: 15),
                                       style: TextStyle(
                                         fontSize: 10.sp,
-                                        color:
-                                            Theme.of(context).primaryColorDark,
                                       ),
                                     ),
                                     SvgPicture.asset(
                                       Assets.images.arrowDown,
                                       width: 16.w,
+                                      colorFilter: ColorFilter.mode(
+                                        Theme.of(context).colorScheme.onSurface,
+                                        BlendMode.srcIn,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -329,7 +333,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                             const Spacer(),
                             Container(
                               decoration: BoxDecoration(
-                                color: statFilterColor,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               padding: EdgeInsets.all(8.r),
@@ -347,14 +352,18 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                                   .format(DateTime.now()),
                                           style: TextStyle(
                                             fontSize: 10.sp,
-                                            color: Theme.of(context)
-                                                .primaryColorDark,
                                           ),
                                         ),
                                         SizedBox(width: 4.w),
                                         SvgPicture.asset(
                                           Assets.images.arrowDown,
                                           width: 16.w,
+                                          colorFilter: ColorFilter.mode(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                            BlendMode.srcIn,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -397,11 +406,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     // vertical:
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                    ),
                   ),
                   child: TabBar(
                     controller: tabController,
@@ -416,7 +422,6 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     ),
                     unselectedLabelStyle: TextStyle(
                       fontSize: 16.sp,
-                      color: const Color(0xFF1D3229),
                     ),
                     labelStyle: TextStyle(
                       fontSize: 16.sp,

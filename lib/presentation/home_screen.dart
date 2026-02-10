@@ -19,7 +19,9 @@ import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/info_interfaces/empty_home_widget.dart';
+import 'package:trakli/presentation/notifications/notifications_screen.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
+import 'package:trakli/presentation/utils/all_wallets_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
 import 'package:trakli/presentation/utils/colors.dart';
@@ -27,11 +29,9 @@ import 'package:trakli/presentation/utils/custom_appbar.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/transaction_tile.dart';
-import 'package:trakli/presentation/utils/all_wallets_tile.dart';
-import 'package:trakli/presentation/widgets/image_widget.dart';
 import 'package:trakli/presentation/utils/wallet_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/presentation/notifications/notifications_screen.dart';
+import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -378,6 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         final groupEntity =
                             await showCustomBottomSheet<GroupEntity>(
                           context,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           widget: PickGroupBottomSheet(
                             group: selectedGroup,
                           ),

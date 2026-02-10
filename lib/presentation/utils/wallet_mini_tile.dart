@@ -35,7 +35,7 @@ class WalletMiniTile<T> extends StatelessWidget {
         horizontal: 16.w,
       ),
       decoration: BoxDecoration(
-        color: neutralN20,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(

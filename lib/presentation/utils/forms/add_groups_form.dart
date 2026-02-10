@@ -86,6 +86,7 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
                       onTap: () {
                         showCustomBottomSheet(
                           context,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           widget: SelectIconBottomSheet(
                             onSelect: (mediaType, image) {
                               setState(() {

@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,14 +10,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class SelectIconBottomSheet extends StatefulWidget {
   const SelectIconBottomSheet({
@@ -50,7 +50,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               width: 90.w,
               height: 6.h,
               decoration: BoxDecoration(
-                  color: const Color(0xFFD9D9D9),
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20)),
             ),
           ),
@@ -212,28 +212,13 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
         Row(
           spacing: 16.w,
           children: [
-            InkWell(
+            CustomBackButton(
               onTap: () {
                 setState(() {
                   selectedIconType = null;
                 });
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: backButtonColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                padding: EdgeInsets.all(8.r),
-                child: SvgPicture.asset(
-                  width: 24.w,
-                  height: 24.w,
-                  Assets.images.arrowLeft,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
+              color: Theme.of(context).primaryColor.withAlpha(50),
             ),
             Text(
               LocaleKeys.selectPhoto.tr(),
@@ -320,7 +305,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
     );
   }
 
-  Widget selectEmoji(context) {
+  Widget selectEmoji(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,28 +313,13 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
         Row(
           spacing: 16.w,
           children: [
-            InkWell(
+            CustomBackButton(
               onTap: () {
                 setState(() {
                   selectedIconType = null;
                 });
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: backButtonColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                padding: EdgeInsets.all(8.r),
-                child: SvgPicture.asset(
-                  width: 24.w,
-                  height: 24.w,
-                  Assets.images.arrowLeft,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
+              color: Theme.of(context).primaryColor.withAlpha(50),
             ),
             Text(
               LocaleKeys.selectEmoji.tr(),
@@ -369,6 +339,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
           },
           config: Config(
             height: 340.h,
+            locale: context.locale,
             checkPlatformCompatibility: true,
             emojiViewConfig: EmojiViewConfig(
               emojiSizeMax: 28.sp *
@@ -376,18 +347,21 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                       ? 1.20
                       : 1.0),
               columns: 7,
-              backgroundColor: emojiBackgroundColor,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               verticalSpacing: 6.h,
               horizontalSpacing: 6.w,
               buttonMode: foundation.defaultTargetPlatform == TargetPlatform.iOS
                   ? ButtonMode.CUPERTINO
                   : ButtonMode.MATERIAL,
             ),
-            skinToneConfig: const SkinToneConfig(),
+            skinToneConfig: SkinToneConfig(
+              dialogBackgroundColor: Theme.of(context).colorScheme.surface,
+              indicatorColor: Theme.of(context).colorScheme.onSurface,
+            ),
             categoryViewConfig: CategoryViewConfig(
               tabBarHeight: 46.h,
               initCategory: Category.SMILEYS,
-              backgroundColor: emojiBackgroundColor,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               indicatorColor: Theme.of(context).primaryColor,
               iconColorSelected: Theme.of(context).primaryColor,
               iconColor: Colors.grey.shade400,
@@ -416,7 +390,6 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                     onChanged: (val) {},
                     decoration: InputDecoration(
                       hintText: LocaleKeys.searchEmoji.tr(),
-                      fillColor: Colors.white,
                       prefixIcon: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SvgPicture.asset(
@@ -433,8 +406,9 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               },
             ),
             searchViewConfig: SearchViewConfig(
-              backgroundColor: emojiBackgroundColor,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               hintText: LocaleKeys.searchEmoji.tr(),
+              buttonIconColor: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -442,7 +416,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
     );
   }
 
-  Widget selectIcon(context) {
+  Widget selectIcon(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,28 +424,13 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
         Row(
           spacing: 16.w,
           children: [
-            InkWell(
+            CustomBackButton(
               onTap: () {
                 setState(() {
                   selectedIconType = null;
                 });
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: backButtonColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                padding: EdgeInsets.all(8.r),
-                child: SvgPicture.asset(
-                  width: 24.w,
-                  height: 24.w,
-                  Assets.images.arrowLeft,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
+              color: Theme.of(context).primaryColor.withAlpha(50),
             ),
             Text(
               LocaleKeys.selectIcon.tr(),

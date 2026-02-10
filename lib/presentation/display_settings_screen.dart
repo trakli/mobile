@@ -158,7 +158,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
                   style: TextStyle(
                     color: supportedFormDisplays.elementAt(index) == formDisplay
                         ? Theme.of(context).primaryColor
-                        : Colors.black,
+                        : Theme.of(context).colorScheme.onSurface,
                     fontSize: 16.sp,
                   ),
                 ),

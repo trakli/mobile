@@ -1,19 +1,18 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
-import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/pick_group_tile.dart';
-import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
-import 'package:trakli/presentation/config/cubit/config_cubit.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PickGroupBottomSheet extends StatefulWidget {
   final GroupEntity? group;
+
   const PickGroupBottomSheet({super.key, this.group});
 
   @override
@@ -68,7 +67,7 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
               width: 90.w,
               height: 6.h,
               decoration: BoxDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
@@ -87,22 +86,8 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             LocaleKeys.pickGroupDesc.tr(),
             style: TextStyle(
               fontSize: 14.sp,
-              color: neutralN900,
             ),
             textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16.h),
-          SearchBar(
-            leading: SvgPicture.asset(
-              Assets.images.searchSpecial,
-              width: 24.sp,
-              colorFilter: const ColorFilter.mode(
-                Colors.grey,
-                BlendMode.srcIn,
-              ),
-            ),
-            hintText: LocaleKeys.search.tr(),
-            onChanged: (value) {},
           ),
           SizedBox(height: 16.h),
           ConstrainedBox(

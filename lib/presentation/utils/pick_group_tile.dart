@@ -1,14 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/core/constants/config_constants.dart';
+import 'package:trakli/core/extensions/string_extension.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/widgets/image_widget.dart';
-import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PickGroupTile<T> extends StatelessWidget {
   final T value;
@@ -44,7 +44,7 @@ class PickGroupTile<T> extends StatelessWidget {
         horizontal: 16.w,
       ),
       decoration: BoxDecoration(
-        color: neutralN20,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(

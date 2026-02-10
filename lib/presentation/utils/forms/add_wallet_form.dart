@@ -125,6 +125,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                   onTap: () {
                     showCustomBottomSheet(
                       context,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       widget: SelectIconBottomSheet(
                         onSelect: (mediaType, image) {
                           setState(() {
@@ -172,7 +173,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColorDark,
                 ),
               ),
               SizedBox(height: 8.h),
@@ -183,7 +183,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
                       padding: EdgeInsets.symmetric(
                           horizontal: 12.w, vertical: 16.h),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDEE1E0),
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -191,9 +191,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                             ? widget.wallet!.balance.toString()
                             : LocaleKeys.balanceWillBeSetToZero.tr(),
                         style: TextStyle(
-                          color: Theme.of(context)
-                              .primaryColorDark
-                              .withValues(alpha: 0.6),
                           fontSize: widget.wallet != null ? 18.sp : 14.sp,
                           fontWeight: widget.wallet != null
                               ? FontWeight.w600
@@ -209,13 +206,15 @@ class _AddWalletFormState extends State<AddWalletForm> {
                             showCurrencyPicker(
                               context: context,
                               theme: CurrencyPickerThemeData(
-                                  bottomSheetHeight: 0.7.sh,
-                                  backgroundColor: Colors.white,
-                                  flagSize: 24.sp,
-                                  subtitleTextStyle: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Theme.of(context).primaryColor,
-                                  )),
+                                bottomSheetHeight: 0.7.sh,
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                flagSize: 24.sp,
+                                subtitleTextStyle: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
                               onSelect: (Currency currencyValue) {
                                 setState(() {
                                   currency = currencyValue;
@@ -230,13 +229,15 @@ class _AddWalletFormState extends State<AddWalletForm> {
                         maxHeight: 50.h,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDEE1E0),
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
-                        child: Text(currency?.code ??
-                            widget.wallet?.currencyCode ??
-                            'XAF'),
+                        child: Text(
+                          currency?.code ??
+                              widget.wallet?.currencyCode ??
+                              'XAF',
+                        ),
                       ),
                     ),
                   )
@@ -249,7 +250,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
               ),
             ),
             SizedBox(height: 8.h),
@@ -278,7 +278,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColorDark,
               ),
             ),
             SizedBox(height: 8.h),

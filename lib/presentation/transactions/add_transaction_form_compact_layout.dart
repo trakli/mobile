@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
@@ -23,14 +24,13 @@ import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
+import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_display_cache.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_item.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_view.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_source_row.dart';
-import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
-import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 
 class AddTransactionFormCompactLayout extends StatefulWidget {

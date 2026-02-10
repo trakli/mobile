@@ -22,7 +22,7 @@ class NotificationToggleItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -50,16 +50,14 @@ class NotificationToggleItem extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF061D23),
                   ),
                 ),
                 SizedBox(height: 2.h),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF576760),
-                  ),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontSize: 12.sp,
+                      ),
                 ),
               ],
             ),

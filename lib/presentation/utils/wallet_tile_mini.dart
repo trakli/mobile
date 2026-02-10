@@ -32,10 +32,10 @@ class _WalletTileMiniState extends State<WalletTileMini> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8.r),
       ),
-      padding: EdgeInsets.symmetric(vertical: 4.h),
+      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 8.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         spacing: 16.w,
@@ -55,16 +55,14 @@ class _WalletTileMiniState extends State<WalletTileMini> {
                   widget.name,
                   style: TextStyle(
                     fontSize: 16.sp,
-                    color: const Color(0xFF061D23),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 RichText(
                   text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF061D23),
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontSize: 14.sp,
+                        ),
                     text: "",
                     children: [
                       TextSpan(

@@ -62,7 +62,7 @@ class PartyDisplayWidget extends StatelessWidget {
               horizontal: 1.w,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F6F7),
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
@@ -84,7 +84,6 @@ class PartyDisplayWidget extends StatelessWidget {
                         .extractWords(maxSize: maxNameLength),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: transactionTileTextColor,
                       fontSize: fromTextSize ?? 12.sp,
                       fontWeight: FontWeight.w700,
                     ),

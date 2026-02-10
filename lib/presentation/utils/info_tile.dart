@@ -21,7 +21,7 @@ class InfoTile extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(8.sp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           width: 0.5,
@@ -36,7 +36,6 @@ class InfoTile extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12.sp,
-              color: neutralN300,
             ),
           ),
           Row(
