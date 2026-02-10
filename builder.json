@@ -1,0 +1,17 @@
+{
+  "project": "mobile",
+  "platform": "ios",
+  "github": {
+    "owner": "austin047",
+    "repo": "trakli-mobile"
+  },
+  "ios": {
+    "path": "ios"
+  },
+  "flutter": {
+    "version": "3.32.8",
+    "watch": {}
+  },
+  "reactNative": {},
+  "mobai": {}
+}
