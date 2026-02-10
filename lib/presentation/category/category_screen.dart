@@ -115,16 +115,18 @@ class _CategoryScreenState extends State<CategoryScreen>
                     )),
                 unselectedLabelStyle: TextStyle(
                   fontSize: 16.sp,
-                  color: const Color(0xFF1D3229),
                 ),
                 labelStyle: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1D3229),
+                  color: (tabController.index == 0)
+                      ? Theme.of(context).primaryColor
+                      : const Color(0xFFEB5757),
                 ),
                 tabs: [
                   Tab(
                     child: Row(
+                      spacing: 4.w,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(
@@ -132,29 +134,28 @@ class _CategoryScreenState extends State<CategoryScreen>
                           colorFilter: ColorFilter.mode(
                             (tabController.index == 0)
                                 ? Theme.of(context).primaryColor
-                                : Colors.black,
+                                : Theme.of(context).colorScheme.onSurface,
                             BlendMode.srcIn,
                           ),
                         ),
-                        SizedBox(width: 4.w),
                         Text(LocaleKeys.transactionIncome.tr())
                       ],
                     ),
                   ),
                   Tab(
                     child: Row(
+                      spacing: 4.w,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(
                           Assets.images.arrowSwapUp,
                           colorFilter: ColorFilter.mode(
                             (tabController.index == 0)
-                                ? Colors.black
+                                ? Theme.of(context).colorScheme.onSurface
                                 : const Color(0xFFEB5757),
                             BlendMode.srcIn,
                           ),
                         ),
-                        SizedBox(width: 4.w),
                         Text(LocaleKeys.transactionExpense.tr())
                       ],
                     ),

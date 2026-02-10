@@ -90,12 +90,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                 )),
             unselectedLabelStyle: TextStyle(
               fontSize: 16.sp,
-              color: const Color(0xFF1D3229),
             ),
             labelStyle: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF1D3229),
+              color: (tabController.index == 1)
+                  ? Theme.of(context).primaryColor
+                  : const Color(0xFFEB5757),
             ),
             tabs: [
               if (widget.transaction == null ||
@@ -110,14 +111,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                         Assets.images.arrowSwapUp,
                         colorFilter: ColorFilter.mode(
                           (tabController.index != 0)
-                              ? Colors.black
+                              ? Theme.of(context).colorScheme.onSurface
                               : const Color(0xFFEB5757),
                           BlendMode.srcIn,
                         ),
                       ),
                       Text(
                         LocaleKeys.transactionExpense.tr(),
-                        style: Theme.of(context).textTheme.bodyMedium,
                       )
                     ],
                   ),
@@ -135,7 +135,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen>
                         colorFilter: ColorFilter.mode(
                           (tabController.index == 1)
                               ? Theme.of(context).primaryColor
-                              : Colors.black,
+                              : Theme.of(context).colorScheme.onSurface,
                           BlendMode.srcIn,
                         ),
                       ),
