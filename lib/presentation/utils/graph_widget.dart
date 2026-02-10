@@ -28,7 +28,7 @@ class GraphWidget extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: 20.sp,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF0E251A),
+          color: Theme.of(context).primaryColor,
         ),
       ),
       legend: Legend(

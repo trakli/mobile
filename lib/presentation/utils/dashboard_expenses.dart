@@ -23,153 +23,148 @@ class DashboardExpenses extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Row(
-          spacing: 6.w,
-          children: [
-            Icon(
-              Icons.circle,
-              color: Theme.of(context).primaryColor,
-              size: 12.sp,
-            ),
-            RichText(
-              text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: textColor,
-                  ),
-                  text: LocaleKeys.totalIncome.tr(),
-                  children: [
-                    TextSpan(
-                      text: CurrencyFormater.formatAmountWithSymbol(
-                        context,
-                        totalIncome,
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            child: SfCircularChart(
+              legend: Legend(
+                isVisible: true,
+                position: LegendPosition.top,
+                alignment: ChartAlignment.near,
+                orientation: LegendItemOrientation.vertical,
+                iconHeight: 10,
+                iconWidth: 10,
+                itemPadding: 4.h,
+                padding: 5.w,
+                legendItemBuilder:
+                    (String name, dynamic series, dynamic point, int index) {
+                  final Color color =
+                      index == 0 ? appPrimaryColor : expenseRedText;
+                  final double value = index == 0 ? totalIncome : totalExpense;
+                  return Row(
+                    spacing: 6.w,
+                    children: [
+                      Icon(
+                        Icons.circle,
+                        color: color,
+                        size: 12.sp,
                       ),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColorDark,
+                      RichText(
+                        text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: textColor,
+                            ),
+                            text: "$name ",
+                            children: [
+                              TextSpan(
+                                text: CurrencyFormater.formatAmountWithSymbol(
+                                  context,
+                                  value,
+                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              )
+                            ]),
                       ),
-                    )
-                  ]),
-            ),
-          ],
-        ),
-        Row(
-          spacing: 6.w,
-          children: [
-            Icon(
-              Icons.circle,
-              color: expenseRedText,
-              size: 12.sp,
-            ),
-            RichText(
-              text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: textColor,
-                  ),
-                  text: LocaleKeys.totalExpense.tr(),
-                  children: [
-                    TextSpan(
-                      text: CurrencyFormater.formatAmountWithSymbol(
-                        context,
-                        totalExpense,
-                      ),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
-                    )
-                  ]),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 200.h,
-          child: SfCircularChart(
-            margin: EdgeInsets.zero,
-            series: <CircularSeries>[
-              DoughnutSeries<_SummaryData, String>(
-                dataSource: [
-                  _SummaryData(LocaleKeys.totalExpense.tr(), totalExpense,
-                      expenseRedText),
-                  _SummaryData(LocaleKeys.totalIncome.tr(), totalIncome,
-                      Theme.of(context).primaryColor),
-                ],
-                pointColorMapper: (data, _) => data.color,
-                xValueMapper: (data, _) => data.label,
-                yValueMapper: (data, _) => data.value,
-                dataLabelSettings: const DataLabelSettings(
-                  isVisible: false,
-                ),
-                legendIconType: LegendIconType.circle,
-                cornerStyle: CornerStyle.bothCurve,
-                radius: '100%',
-                innerRadius: "80%",
+                    ],
+                  );
+                },
               ),
-            ],
-            annotations: [
-              CircularChartAnnotation(
-                widget: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          CurrencyFormater.formatAmount(
-                            context,
-                            totalIncome,
-                            compact: true,
-                          ),
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                        Text(
-                          currencySymbol,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ],
+              margin: EdgeInsets.zero,
+              series: <CircularSeries>[
+                DoughnutSeries<_SummaryData, String>(
+                  dataSource: [
+                    _SummaryData(
+                      LocaleKeys.totalExpense.tr(),
+                      totalExpense,
+                      expenseRedText,
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          CurrencyFormater.formatAmount(
-                            context,
-                            totalExpense,
-                            compact: true,
-                          ),
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.bold,
-                            color: expenseRedText,
-                          ),
-                        ),
-                        Text(
-                          currencySymbol,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: expenseRedText,
-                          ),
-                        ),
-                      ],
+                    _SummaryData(
+                      LocaleKeys.totalIncome.tr(),
+                      totalIncome,
+                      Theme.of(context).primaryColor,
                     ),
                   ],
+                  pointColorMapper: (data, _) => data.color,
+                  xValueMapper: (data, _) => data.label,
+                  yValueMapper: (data, _) => data.value,
+                  dataLabelSettings: const DataLabelSettings(
+                    isVisible: false,
+                  ),
+                  legendIconType: LegendIconType.circle,
+                  cornerStyle: CornerStyle.bothCurve,
+                  radius: '100%',
+                  innerRadius: "80%",
                 ),
-              )
-            ],
+              ],
+              annotations: [
+                CircularChartAnnotation(
+                  widget: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            CurrencyFormater.formatAmount(
+                              context,
+                              totalIncome,
+                              compact: true,
+                            ),
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          Text(
+                            currencySymbol,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            CurrencyFormater.formatAmount(
+                              context,
+                              totalExpense,
+                              compact: true,
+                            ),
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
+                              color: expenseRedText,
+                            ),
+                          ),
+                          Text(
+                            currencySymbol,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              color: expenseRedText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
         Text(
@@ -189,5 +184,6 @@ class _SummaryData {
   final String label;
   final double value;
   final Color color;
+
   _SummaryData(this.label, this.value, this.color);
 }
