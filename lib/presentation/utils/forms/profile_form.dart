@@ -43,7 +43,6 @@ class _ProfileFormState extends State<ProfileForm> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).primaryColorDark,
             ),
           ),
           SizedBox(height: 8.h),
@@ -72,7 +71,6 @@ class _ProfileFormState extends State<ProfileForm> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).primaryColorDark,
             ),
           ),
           SizedBox(height: 8.h),
@@ -101,7 +99,6 @@ class _ProfileFormState extends State<ProfileForm> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).primaryColorDark,
             ),
           ),
           SizedBox(height: 8.h),
@@ -130,7 +127,6 @@ class _ProfileFormState extends State<ProfileForm> {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).primaryColorDark,
             ),
           ),
           SizedBox(height: 8.h),
