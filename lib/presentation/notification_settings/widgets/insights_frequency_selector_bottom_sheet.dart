@@ -106,7 +106,7 @@ class _FrequencyOption extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           color: isSelected
               ? Theme.of(context).primaryColor
-              : const Color(0xFF061D23),
+              : Theme.of(context).colorScheme.onSurface,
         ),
       ),
       trailing: isSelected
