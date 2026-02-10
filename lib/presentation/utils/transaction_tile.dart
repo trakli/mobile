@@ -48,6 +48,7 @@ class _TransactionTileState extends State<TransactionTile> {
   void _handleViewDetails() {
     showCustomBottomSheet(
       context,
+      color: Theme.of(context).scaffoldBackgroundColor,
       widget: BlocProvider.value(
         value: context.read<TransactionCubit>(),
         child: TransactionDetailsBottomSheet(

@@ -8,6 +8,7 @@ import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/notification_settings/helpers/notification_settings_helpers.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class InsightsFrequencySelectorBottomSheet extends StatelessWidget {
   final String currentValue;
@@ -21,10 +22,10 @@ class InsightsFrequencySelectorBottomSheet extends StatelessWidget {
 
   static void show(BuildContext context, String currentValue) {
     final configCubit = context.read<ConfigCubit>();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (builderContext) => InsightsFrequencySelectorBottomSheet(
+    showCustomBottomSheet(
+      context,
+      color: Theme.of(context).scaffoldBackgroundColor,
+      widget: InsightsFrequencySelectorBottomSheet(
         currentValue: currentValue,
         configCubit: configCubit,
       ),
@@ -33,12 +34,10 @@ class InsightsFrequencySelectorBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20.r),
-        ),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 16.h,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
