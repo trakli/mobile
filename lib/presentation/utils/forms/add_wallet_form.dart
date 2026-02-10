@@ -173,7 +173,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColorDark,
                 ),
               ),
               SizedBox(height: 8.h),
@@ -192,9 +191,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
                             ? widget.wallet!.balance.toString()
                             : LocaleKeys.balanceWillBeSetToZero.tr(),
                         style: TextStyle(
-                          color: Theme.of(context)
-                              .primaryColorDark
-                              .withValues(alpha: 0.6),
                           fontSize: widget.wallet != null ? 18.sp : 14.sp,
                           fontWeight: widget.wallet != null
                               ? FontWeight.w600
@@ -258,7 +254,7 @@ class _AddWalletFormState extends State<AddWalletForm> {
             ),
             SizedBox(height: 8.h),
             DropdownButtonFormField<WalletType>(
-              initialValue: _selectedType,
+              value: _selectedType,
               decoration: InputDecoration(
                 hintText: LocaleKeys.selectWalletType.tr(),
               ),
