@@ -12,14 +12,10 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 
 class PickGroupTile<T> extends StatelessWidget {
   final T value;
-  final T groupValue;
-  final ValueChanged<T?>? onChanged;
 
   const PickGroupTile({
     super.key,
     required this.value,
-    required this.groupValue,
-    this.onChanged,
   });
 
   @override
@@ -83,8 +79,6 @@ class PickGroupTile<T> extends StatelessWidget {
           Radio<T>(
             activeColor: appPrimaryColor,
             value: value,
-            groupValue: groupValue,
-            onChanged: onChanged,
           ),
         ],
       ),

@@ -105,30 +105,32 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
             onChanged: (value) {},
           ),
           SizedBox(height: 16.h),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: 0.4.sh,
-            ),
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: sortedGroups.length,
-              itemBuilder: (context, index) {
-                final group = sortedGroups[index];
-                return PickGroupTile<GroupEntity?>(
-                  value: group,
-                  groupValue: selectedGroup,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedGroup = value;
-                    });
-                  },
-                );
-              },
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 8.h);
-              },
+          RadioGroup<GroupEntity?>(
+            groupValue: selectedGroup,
+            onChanged: (value) {
+              setState(() {
+                selectedGroup = value;
+              });
+            },
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: 0.4.sh,
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: sortedGroups.length,
+                itemBuilder: (context, index) {
+                  final group = sortedGroups[index];
+                  return PickGroupTile<GroupEntity?>(
+                    value: group,
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 8.h);
+                },
+              ),
             ),
           ),
           SizedBox(height: 32.h),

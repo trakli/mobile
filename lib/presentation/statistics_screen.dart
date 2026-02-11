@@ -164,55 +164,50 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 16.h),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 0.4.sh,
-                ),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: wallets.length + 1, // +1 for "All wallets" option
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      // "All wallets" option
-                      return WalletMiniTile<String?>(
-                        value: null,
-                        groupValue: _selectedWalletClientId,
-                        isAllWallets: true,
-                        onChanged: (value) {
-                          if (mounted) {
-                            setState(() {
-                              _selectedWalletClientId = null;
-                              _selectedWallet = null;
-                            });
-                          }
-                          Navigator.pop(context);
-                        },
-                        walletNameOverride: LocaleKeys.allWallets.tr(),
-                      );
-                    } else {
-                      // Individual wallet options
-                      final wallet = wallets[index - 1];
-                      return WalletMiniTile<String?>(
-                        value: wallet.clientId,
-                        groupValue: _selectedWalletClientId,
-                        wallet: wallet,
-                        isAllWallets: false,
-                        onChanged: (value) {
-                          if (mounted) {
-                            setState(() {
-                              _selectedWalletClientId = wallet.clientId;
-                              _selectedWallet = wallet;
-                            });
-                          }
-                          Navigator.pop(context);
-                        },
-                      );
-                    }
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 8.h);
-                  },
+              RadioGroup<String?>(
+                groupValue: _selectedWalletClientId,
+                onChanged: (value) {
+                  if (mounted) {
+                    setState(() {
+                      _selectedWalletClientId = value;
+                      _selectedWallet = value == null
+                          ? null
+                          : wallets.firstWhere((w) => w.clientId == value);
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 0.4.sh,
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount:
+                        wallets.length + 1, // +1 for "All wallets" option
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // "All wallets" option
+                        return WalletMiniTile<String?>(
+                          value: null,
+                          isAllWallets: true,
+                          walletNameOverride: LocaleKeys.allWallets.tr(),
+                        );
+                      } else {
+                        // Individual wallet options
+                        final wallet = wallets[index - 1];
+                        return WalletMiniTile<String?>(
+                          value: wallet.clientId,
+                          wallet: wallet,
+                          isAllWallets: false,
+                        );
+                      }
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 8.h);
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: 20.h),
