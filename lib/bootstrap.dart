@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart'
+    show Firebase, FirebaseOptions;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +14,6 @@ import 'package:trakli/core/error/crash_reporting/user_context_service.dart';
 import 'package:trakli/core/error/error_handler.dart';
 import 'package:trakli/core/sync/drift_sync_crash_reporting_service.dart';
 import 'package:trakli/di/injection.dart';
-import 'package:trakli/firebase_options.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/config/build_env.dart' as build_config;
 
@@ -25,6 +25,7 @@ import 'package:trakli/config/build_env.dart' as build_config;
 Future<void> bootstrap(
   FutureOr<Widget> Function() builder, {
   bool sendCrashlyticsZoneErrors = true,
+  FirebaseOptions? firebaseOptions,
 }) async {
   // Initialize crash reporting service outside the zone to make it available in error handler
   CrashReportingService? crashReportingService;
@@ -42,7 +43,7 @@ Future<void> bootstrap(
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       // Initialize Firebase
       await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
+        options: firebaseOptions,
       );
 
       // Determine environment: dart-define (Android) or build config file (iOS)
