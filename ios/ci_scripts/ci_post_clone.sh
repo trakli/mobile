@@ -61,6 +61,13 @@ brew install cocoapods
 # Install CocoaPods dependencies.
 cd ios && pod install # run `pod install` in the `ios` directory.
 
+# Write CI-specific xcconfig so Xcode build finds Flutter
+cd $CI_PRIMARY_REPOSITORY_PATH
+cat > ios/Flutter/ci_env.xcconfig <<EOF
+FLUTTER_ROOT=$FLUTTER_DIR
+FLUTTER_APPLICATION_PATH=$CI_PRIMARY_REPOSITORY_PATH
+EOF
+
 exit 0
 
 
