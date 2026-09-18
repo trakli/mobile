@@ -5,6 +5,7 @@ import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<List<Notification>> getAllNotifications(
@@ -43,10 +44,11 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           await dio.get('notifications', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => Notification.fromJson(
             JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+        entityType: SyncEntity.notification,
       );
 
       allItems.addAll(paginatedResponse.data);

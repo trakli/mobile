@@ -76,9 +76,12 @@ class BudgetCompleteDto {
     return BudgetCompleteDto.fromServerJson(patched);
   }
 
-  Map<String, dynamic> toServerJson() {
+  /// The client id is for creates only: repointing a record's client id is
+  /// the claim endpoint's job, not a side effect of an edit.
+  Map<String, dynamic> toServerJson({bool includeClientId = true}) {
     return {
-      if (budget.clientId.isNotEmpty) 'client_id': budget.clientId,
+      if (includeClientId && budget.clientId.isNotEmpty)
+        'client_id': budget.clientId,
       'name': budget.name,
       if (budget.description != null && budget.description!.trim().isNotEmpty)
         'description': budget.description,

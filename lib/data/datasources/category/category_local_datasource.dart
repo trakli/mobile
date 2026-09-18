@@ -40,14 +40,27 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
         .get();
   }
 
+  /// The same name is the same category, whatever its type, case and
+  /// surrounding spaces aside.
+  Future<Category?> _findByServerName(String name, {String? excluding}) {
+    final normalized = name.trim().toLowerCase();
+    return (database.select(database.categories)
+          ..where((c) {
+            final matches = c.name.trim().lower().equals(normalized);
+            return excluding == null
+                ? matches
+                : matches & c.clientId.isNotValue(excluding);
+          })
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   @override
   Future<Category> insertCategory(
       String name, String slug, TransactionType type,
       {String? description, Media? media}) async {
     // Check if category name already exists
-    final existingCategory = await (database.select(database.categories)
-          ..where((c) => c.name.equals(name)))
-        .getSingleOrNull();
+    final existingCategory = await _findByServerName(name);
 
     if (existingCategory != null) {
       throw DuplicateException('Category with name "$name" already exists');
@@ -58,8 +71,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
     final model = await database.into(database.categories).insertReturning(
           CategoriesCompanion.insert(
             clientId: Value(await generateDeviceScopedId()),
-            name: name,
-            slug: slug,
+            name: name.trim(),
+            slug: slug.trim(),
             type: type,
             description: Value(description),
             icon: Value(media),
@@ -81,10 +94,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
   }) async {
     // Check if category name already exists (only if name is being updated)
     if (name != null) {
-      final existingCategory = await (database.select(database.categories)
-            ..where(
-                (c) => c.name.equals(name) & c.clientId.isNotValue(clientId)))
-          .getSingleOrNull();
+      final existingCategory =
+          await _findByServerName(name, excluding: clientId);
 
       if (existingCategory != null) {
         throw DuplicateException('Category with name "$name" already exists');
@@ -97,8 +108,8 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
           ..where((c) => c.clientId.equals(clientId)))
         .writeReturning(
       CategoriesCompanion(
-        name: name != null ? Value(name) : const Value.absent(),
-        slug: slug != null ? Value(slug) : const Value.absent(),
+        name: name != null ? Value(name.trim()) : const Value.absent(),
+        slug: slug != null ? Value(slug.trim()) : const Value.absent(),
         type: type != null ? Value(type) : const Value.absent(),
         description:
             description != null ? Value(description) : const Value.absent(),

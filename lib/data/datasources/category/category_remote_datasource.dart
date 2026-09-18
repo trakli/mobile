@@ -5,6 +5,7 @@ import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class CategoryRemoteDataSource {
   Future<List<Category>> getAllCategories(
@@ -50,10 +51,11 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
           await dio.get('categories', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => Category.fromJson(
             JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+        entityType: SyncEntity.category,
       );
 
       allItems.addAll(paginatedResponse.data);
@@ -107,7 +109,6 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
       'categories/${category.id}',
       data: {
         'type': category.type.serverKey,
-        'client_id': category.clientId,
         'name': category.name,
         if (category.description != null &&
             category.description!.trim().isNotEmpty) ...{

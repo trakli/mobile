@@ -101,12 +101,37 @@ class _AddWalletFormState extends State<AddWalletForm> {
           icon: mediaEntity,
         );
       }
-      AppNavigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Close only once the write landed: a rejected duplicate name has to
+    // stay on screen with its message.
+    return BlocListener<WalletCubit, WalletState>(
+      listenWhen: (previous, current) => previous.isSaving != current.isSaving,
+      listener: (context, state) {
+        if (state.failure.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.failure.maybeMap(
+                orElse: () => state.failure.customMessage,
+                duplicate: (_) => LocaleKeys.walletNameAlreadyExists.tr(),
+              )),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+
+        if (!state.isSaving && !state.failure.hasError) {
+          AppNavigator.pop(context);
+        }
+      },
+      child: _form(context),
+    );
+  }
+
+  Widget _form(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
         horizontal: 16.w,

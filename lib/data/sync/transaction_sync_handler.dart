@@ -242,15 +242,29 @@ class TransactionSyncHandler
             mode: InsertMode.insertOrReplace);
       }
 
+      // Written verbatim, so each must take its server id from whichever
+      // local copy holds it, or a stale snapshot would resurrect it.
+      await db.adoptWalletServerId(
+        serverId: entity.wallet.id,
+        clientId: entity.wallet.clientId,
+      );
       await db.wallets
           .insertOne(entity.wallet, mode: InsertMode.insertOrReplace);
 
       if (entity.party != null) {
+        await db.adoptPartyServerId(
+          serverId: entity.party!.id,
+          clientId: entity.party!.clientId,
+        );
         await db.parties
             .insertOne(entity.party!, mode: InsertMode.insertOrReplace);
       }
 
       if (entity.group != null) {
+        await db.adoptGroupServerId(
+          serverId: entity.group!.id,
+          clientId: entity.group!.clientId,
+        );
         await db.groups
             .insertOne(entity.group!, mode: InsertMode.insertOrReplace);
       }

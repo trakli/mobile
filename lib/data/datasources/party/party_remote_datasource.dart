@@ -6,6 +6,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class PartyRemoteDataSource {
   Future<List<Party>> getAllParties({DateTime? syncedSince, bool? noClientId});
@@ -49,10 +50,11 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
       final response = await dio.get('parties', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => Party.fromJson(
             JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+        entityType: SyncEntity.party,
       );
 
       allItems.addAll(paginatedResponse.data);
@@ -102,7 +104,6 @@ class PartyRemoteDataSourceImpl implements PartyRemoteDataSource {
   Future<Party> updateParty(Party party) async {
     final data = {
       'name': party.name,
-      'client_id': party.clientId,
       'description': party.description,
       if (party.icon != null) ...{
         'icon': party.icon?.content,

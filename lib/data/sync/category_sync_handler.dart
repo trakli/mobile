@@ -121,7 +121,13 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       icon: Value(entity.icon),
     );
 
-    await table.insertOne(category, mode: InsertMode.insertOrReplace);
+    await db.transaction(() async {
+      await db.adoptCategoryServerId(
+        serverId: entity.id,
+        clientId: entity.clientId,
+      );
+      await table.insertOne(category, mode: InsertMode.insertOrReplace);
+    });
   }
 
   @override
@@ -146,7 +152,13 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
           lastSyncedAt: Value(entity.lastSyncedAt),
           icon: Value(entity.icon),
         );
-        await table.insertOnConflictUpdate(category);
+        await db.transaction(() async {
+          await db.adoptCategoryServerId(
+            serverId: entity.id,
+            clientId: entity.clientId,
+          );
+          await table.insertOnConflictUpdate(category);
+        });
       }
     }
   }

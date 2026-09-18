@@ -128,6 +128,80 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
     _triggerSync();
   }
 
+  /// A category the API rejected as a duplicate can never sync, and it holds
+  /// up every transaction tagged with it. Fold it into the copy the server did
+  /// accept — matched on name the way the API compares them, ignoring case and
+  /// surrounding spaces.
+  Future<void> _mergeDuplicateCategory(LocalChange change) async {
+    final duplicate = await (_db.select(_db.categories)
+          ..where((c) => c.clientId.equals(change.entityId)))
+        .getSingleOrNull();
+    if (duplicate == null) {
+      _showMessage('That category is no longer on this device.');
+      return;
+    }
+
+    final winner = await (_db.select(_db.categories)
+          ..where((c) =>
+              c.clientId.isNotValue(duplicate.clientId) &
+              c.id.isNotNull() &
+              c.name.trim().lower().equals(duplicate.name.trim().toLowerCase()))
+          ..limit(1))
+        .getSingleOrNull();
+    if (winner == null) {
+      _showMessage(
+        'No synced category named "${duplicate.name.trim()}" to merge into. '
+        'Sync once more, then try again.',
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Merge duplicate category'),
+        content: Text(
+          '"${duplicate.name}" was rejected by the server as a duplicate of '
+          '"${winner.name}".\n\n'
+          'Everything tagged with it will be re-tagged to "${winner.name}", '
+          'and the duplicate will be removed from this device.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(LocaleKeys.cancel.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Merge'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      final retagged = await _db.mergeDuplicateCategory(
+        loserClientId: duplicate.clientId,
+        winnerClientId: winner.clientId,
+      );
+      _showMessage(retagged == 0
+          ? 'Merged into "${winner.name}".'
+          : 'Merged into "${winner.name}" — $retagged re-tagged.');
+      await _loadData();
+      await _triggerSync();
+    } catch (e) {
+      _showMessage('Could not merge: $e');
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   String _formatDateTime(DateTime? dateTime) {
     if (dateTime == null) return LocaleKeys.notSet.tr();
     return DateFormat('MMM d, yyyy HH:mm').format(dateTime.toLocal());
@@ -560,6 +634,8 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
                   onSelected: (value) {
                     if (value == 'retry') {
                       _retryQuarantinedChange(change);
+                    } else if (value == 'merge') {
+                      _mergeDuplicateCategory(change);
                     } else if (value == 'details') {
                       _showChangeDetails(change);
                     }
@@ -575,6 +651,19 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
                         ],
                       ),
                     ),
+                    // Retrying a name the server already holds just fails
+                    // again; merging is the only way out of this one.
+                    if (change.entityType == 'category')
+                      const PopupMenuItem(
+                        value: 'merge',
+                        child: Row(
+                          children: [
+                            Icon(Icons.merge_type, size: 18),
+                            SizedBox(width: 8),
+                            Text('Merge duplicate'),
+                          ],
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'retry',
                       child: Row(

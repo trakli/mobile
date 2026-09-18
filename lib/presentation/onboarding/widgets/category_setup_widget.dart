@@ -28,7 +28,7 @@ class _CategorySetupWidgetState extends State<CategorySetupWidget> {
   bool _isCreating = false;
 
   String _generateSlug(String name) {
-    return name.toLowerCase().replaceAll(' ', '-');
+    return name.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '-');
   }
 
   Future<void> _createDefaultCategoriesIfNeeded() async {

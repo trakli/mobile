@@ -8,6 +8,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/transaction/dto/transaction_complete_dto.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 /// Booleans as '1'/'0': Laravel's boolean rule rejects 'true'/'false'.
 String formDataFieldValue(dynamic value) {
@@ -37,12 +38,12 @@ abstract class TransactionRemoteDataSource {
 
   Future<void> deleteTransaction(int id);
 
- Future<TransactionCompleteDto> addMediaToTransaction(
+  Future<TransactionCompleteDto> addMediaToTransaction(
     int transactionId,
     MediaFile media,
   );
 
- Future<TransactionCompleteDto> deleteMediaFromTransaction(
+  Future<TransactionCompleteDto> deleteMediaFromTransaction(
     int transactionId,
     int fileId,
   );
@@ -71,8 +72,8 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
   Future<List<TransactionCompleteDto>> getAllTransactions(
       {DateTime? syncedSince, bool? noClientId}) async {
     final allItems = <TransactionCompleteDto>[];
-    await for (final page
-        in getAllTransactionsStream(syncedSince: syncedSince, noClientId: noClientId)) {
+    await for (final page in getAllTransactionsStream(
+        syncedSince: syncedSince, noClientId: noClientId)) {
       allItems.addAll(page);
     }
     return allItems;
@@ -88,22 +89,22 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
         'page': currentPage,
       };
       if (syncedSince != null) {
-        queryParams['synced_since'] = formatServerIsoDateTimeString(syncedSince);
+        queryParams['synced_since'] =
+            formatServerIsoDateTimeString(syncedSince);
       }
       if (noClientId != null) {
         queryParams['no_client_id'] = noClientId;
       }
 
-
-
       final response =
           await dio.get('transactions', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => TransactionCompleteDto.fromServerJson(
             json! as Map<String, dynamic>),
+        entityType: SyncEntity.transaction,
       );
 
       if (paginatedResponse.data.isNotEmpty) {
@@ -115,7 +116,6 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       }
       currentPage++;
     }
-
   }
 
   @override
@@ -171,7 +171,7 @@ class TransactionRemoteDataSourceImpl implements TransactionRemoteDataSource {
       TransactionCompleteDto transaction) async {
     var response = await dio.put(
       'transactions/${transaction.transaction.id}',
-      data: transaction.toServerJson(),
+      data: transaction.toServerJson(includeClientId: false),
     );
 
     final data = response.data;

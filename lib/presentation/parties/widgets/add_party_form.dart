@@ -92,7 +92,10 @@ class _AddPartyFormState extends State<AddPartyForm> {
         if (state.failure.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.failure.customMessage),
+              content: Text(state.failure.maybeMap(
+                orElse: () => state.failure.customMessage,
+                duplicate: (_) => LocaleKeys.partyNameAlreadyExists.tr(),
+              )),
               backgroundColor: Colors.red,
             ),
           );

@@ -59,6 +59,15 @@ class ConfigSyncHandler extends SyncTypeHandler<Config, String, int>
   }
 
   @override
+  Future<Config> claimClientId(Config entity) {
+    return remoteDataSource.claimClientId(
+      key: entity.key,
+      clientId: entity.clientId,
+      updatedAt: entity.updatedAt,
+    );
+  }
+
+  @override
   Future<Config> restPutRemote(Config entity) async {
     if (entity.id == null) {
       return await remoteDataSource.insertConfig(entity);

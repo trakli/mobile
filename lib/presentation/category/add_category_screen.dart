@@ -28,7 +28,7 @@ class AddCategoryScreen extends StatefulWidget {
 
 class _AddCategoryScreenState extends State<AddCategoryScreen> {
   String _generateSlug(String name) {
-    return name.toLowerCase().replaceAll(' ', '-');
+    return name.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '-');
   }
 
   @override

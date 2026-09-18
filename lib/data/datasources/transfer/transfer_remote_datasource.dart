@@ -5,6 +5,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/transfer/dto/transfer_dto.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class TransferRemoteDataSource {
   Future<List<Transfer>> getAllTransfers({
@@ -73,10 +74,11 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
       final response = await dio.get('transfers', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) =>
             TransferDto.fromJson(json! as Map<String, dynamic>).toTransfer(),
+        entityType: SyncEntity.transfer,
       );
 
       if (paginatedResponse.data.isNotEmpty) {
@@ -110,7 +112,7 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
   Future<Transfer> updateTransfer(Transfer transfer) async {
     final response = await dio.put(
       'transfers/${transfer.id}',
-      data: toServerJson(transfer),
+      data: toServerJson(transfer, includeClientId: false),
     );
     final apiResponse = ApiResponse.fromJson(response.data);
     return TransferDto.fromJson(apiResponse.data as Map<String, dynamic>)
@@ -138,9 +140,12 @@ class TransferRemoteDataSourceImpl implements TransferRemoteDataSource {
   }
 }
 
-Map<String, dynamic> toServerJson(Transfer transfer) {
+/// The client id is for creates only: repointing a record's client id is the
+/// claim endpoint's job, not a side effect of an edit.
+Map<String, dynamic> toServerJson(Transfer transfer,
+    {bool includeClientId = true}) {
   return <String, dynamic>{
-    'client_id': transfer.clientId,
+    if (includeClientId) 'client_id': transfer.clientId,
     'amount': transfer.amount,
     'from_wallet_id': transfer.fromWalletId,
     'to_wallet_id': transfer.toWalletId,

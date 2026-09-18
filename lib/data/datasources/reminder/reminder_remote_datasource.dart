@@ -5,6 +5,7 @@ import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class ReminderRemoteDataSource {
   Future<List<Reminder>> getAllReminders({
@@ -52,10 +53,11 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
       final response = await dio.get('reminders', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => Reminder.fromJson(
             JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+        entityType: SyncEntity.reminder,
       );
 
       allItems.addAll(paginatedResponse.data);
@@ -74,10 +76,12 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
     return Reminder.fromJson(apiResponse.data);
   }
 
-  Map<String, dynamic> _writeData(Reminder r, {bool includeCreatedAt = false}) {
+  /// [forCreate] gates the two fields only `POST /reminders` accepts:
+  /// created_at, and the client id — see [claimClientId] for repointing it.
+  Map<String, dynamic> _writeData(Reminder r, {bool forCreate = false}) {
     return {
       'title': r.title,
-      'client_id': r.clientId,
+      if (forCreate) 'client_id': r.clientId,
       if (r.description != null) 'description': r.description,
       'type': r.type,
       if (r.triggerAt != null)
@@ -86,8 +90,7 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
       'repeat_rule': r.repeatRule,
       if (r.timezone != null) 'timezone': r.timezone,
       'priority': r.priority,
-      if (includeCreatedAt)
-        'created_at': formatServerIsoDateTimeString(r.createdAt),
+      if (forCreate) 'created_at': formatServerIsoDateTimeString(r.createdAt),
     };
   }
 
@@ -95,7 +98,7 @@ class ReminderRemoteDataSourceImpl implements ReminderRemoteDataSource {
   Future<Reminder> insertReminder(Reminder reminder) async {
     final response = await dio.post(
       'reminders',
-      data: _writeData(reminder, includeCreatedAt: true),
+      data: _writeData(reminder, forCreate: true),
     );
     final apiResponse = ApiResponse.fromJson(response.data);
     return Reminder.fromJson(apiResponse.data);

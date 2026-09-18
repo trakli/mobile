@@ -142,6 +142,20 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
         .watch();
   }
 
+  /// The same name is the same budget, case and surrounding spaces aside.
+  Future<Budget?> _findByName(String name, {String? excluding}) {
+    final normalized = name.trim().toLowerCase();
+    return (database.select(database.budgets)
+          ..where((b) {
+            final matches = b.name.trim().lower().equals(normalized);
+            return excluding == null
+                ? matches
+                : matches & b.clientId.isNotValue(excluding);
+          })
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   @override
   Future<Budget> insertBudget({
     required String name,
@@ -158,10 +172,7 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
     bool isActive = true,
     List<BudgetTargetInput> targets = const [],
   }) async {
-    final existing = await (database.select(database.budgets)
-          ..where((b) => b.name.equals(name)))
-        .getSingleOrNull();
-    if (existing != null) {
+    if (await _findByName(name) != null) {
       throw DuplicateException('Budget with name "$name" already exists');
     }
 
@@ -172,7 +183,7 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
       final inserted = await database.into(database.budgets).insertReturning(
             BudgetsCompanion.insert(
               clientId: Value(clientId),
-              name: name,
+              name: name.trim(),
               slug: slug,
               amount: amount,
               currency: currency,
@@ -224,14 +235,8 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
     bool? isActive,
     List<BudgetTargetInput>? targets,
   }) async {
-    if (name != null) {
-      final dupe = await (database.select(database.budgets)
-            ..where((b) =>
-                b.name.equals(name) & b.clientId.isNotValue(clientId)))
-          .getSingleOrNull();
-      if (dupe != null) {
-        throw DuplicateException('Budget with name "$name" already exists');
-      }
+    if (name != null && await _findByName(name, excluding: clientId) != null) {
+      throw DuplicateException('Budget with name "$name" already exists');
     }
 
     final now = getNewFormattedUtcDateTime();
@@ -241,7 +246,7 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
             ..where((b) => b.clientId.equals(clientId)))
           .writeReturning(
         BudgetsCompanion(
-          name: name != null ? Value(name) : const Value.absent(),
+          name: name != null ? Value(name.trim()) : const Value.absent(),
           slug: slug != null ? Value(slug) : const Value.absent(),
           amount: amount != null ? Value(amount) : const Value.absent(),
           currency: currency != null ? Value(currency) : const Value.absent(),

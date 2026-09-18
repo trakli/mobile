@@ -335,6 +335,9 @@ abstract class  LocaleKeys {
   static const deleteGroupConfirm = 'deleteGroupConfirm';
   static const duplicate = 'duplicate';
   static const categoryNameAlreadyExists = 'categoryNameAlreadyExists';
+  static const walletNameAlreadyExists = 'walletNameAlreadyExists';
+  static const groupNameAlreadyExists = 'groupNameAlreadyExists';
+  static const partyNameAlreadyExists = 'partyNameAlreadyExists';
   static const deleteWallet = 'deleteWallet';
   static const deleteWalletConfirm = 'deleteWalletConfirm';
   static const defaultName = 'defaultName';

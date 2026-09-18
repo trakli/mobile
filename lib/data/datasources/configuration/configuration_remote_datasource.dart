@@ -7,6 +7,7 @@ import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/mappers/config_mapper.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class ConfigRemoteDataSource {
   Future<List<Config>> getAllConfigs({
@@ -19,6 +20,12 @@ abstract class ConfigRemoteDataSource {
   Future<Config> insertConfig(Config config);
 
   Future<Config> updateConfig(Config config);
+
+  Future<Config> claimClientId({
+    required String key,
+    required String clientId,
+    required DateTime updatedAt,
+  });
 
   Future<void> deleteConfig(String id);
 
@@ -51,17 +58,18 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
 
     final apiResponse = ApiResponse.fromJson(response.data);
 
-    final paginatedResponse = PaginationResponse.fromJson(
+    final paginatedResponse = PaginationResponse.lenient(
       apiResponse.data as Map<String, dynamic>,
       (Object? json) => Config.fromJson(
           JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+      entityType: SyncEntity.config,
     );
 
     return paginatedResponse.data;
   }
 
   @override
-  Future<Config?> getConfig( String id) async {
+  Future<Config?> getConfig(String id) async {
     final response = await dio.get('configurations/$id');
     if (response.data == null) return null;
 
@@ -92,10 +100,23 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
       data: {
         'type': config.type.serverKey,
         'value': config.value,
-        'client_id': config.clientId,
       },
     );
 
+    final apiResponse = ApiResponse.fromJson(response.data);
+    return Config.fromJson(apiResponse.data);
+  }
+
+  @override
+  Future<Config> claimClientId({
+    required String key,
+    required String clientId,
+    required DateTime updatedAt,
+  }) async {
+    final response = await dio.put('configurations/$key', data: {
+      'client_id': clientId,
+      'updated_at': formatServerIsoDateTimeString(updatedAt),
+    });
     final apiResponse = ApiResponse.fromJson(response.data);
     return Config.fromJson(apiResponse.data);
   }
@@ -111,5 +132,4 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
     final configs = await getAllConfigs();
     return ConfigMapper.toDomainList(configs);
   }
-
 }

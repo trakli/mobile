@@ -161,10 +161,12 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
     return _$TransactionCompleteDtoToJson(this);
   }
 
-  Map<String, dynamic> toServerJson() {
+  /// The client id is for creates only: repointing a record's client id is
+  /// the claim endpoint's job, not a side effect of an edit.
+  Map<String, dynamic> toServerJson({bool includeClientId = true}) {
     final data = <String, dynamic>{
       ...transaction.toJson(),
-      'client_id': transaction.clientId,
+      if (includeClientId) 'client_id': transaction.clientId,
       'type': transaction.type.serverKey,
       'datetime': transaction.datetime != null
           ? formatServerIsoDateTimeString(transaction.datetime!)
@@ -179,6 +181,12 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       'party_id': party?.id,
       'group_id': group?.id,
     };
+
+    // `transaction.toJson()` spreads the drift row, which names the client id
+    // client_generated_id; drop that too so an update carries neither spelling.
+    if (!includeClientId) {
+      data.remove('client_generated_id');
+    }
 
     // Refund state is set via the dedicated endpoint, not a normal write request.
     data.remove('is_refund');

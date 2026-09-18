@@ -39,7 +39,6 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
         horizontal: 16.w,
         vertical: 20.h,
       ),
-      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
       ),
