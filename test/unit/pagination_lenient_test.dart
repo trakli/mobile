@@ -2,10 +2,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/core/sync/sync_entity.dart';
 
+/// The documented GET envelope, kept whole so the lenient factory is exercised
+/// against the real wire shape rather than the subset it happens to read.
 Map<String, dynamic> _page(List<Map<String, dynamic>> rows) => {
+      'success': true,
       'current_page': 1,
       'last_page': 2,
       'per_page': 20,
+      'total': 40,
+      'last_sync': '2025-12-26T10:30:45.000000Z',
       'data': rows,
     };
 
@@ -68,6 +73,23 @@ void main() {
       );
 
       expect(page.data, isEmpty);
+      expect(page.hasMore, isFalse);
+    });
+
+    test('a malformed envelope keeps the parsed rows and stops paging', () {
+      // Casting the envelope used to throw past the row-level recovery, losing
+      // the whole page the lenient factory exists to save.
+      final page = PaginationResponse.lenient(
+        {
+          'data': [
+            {'name': 'a'}
+          ]
+        },
+        _parseName,
+        entityType: SyncEntity.transfer,
+      );
+
+      expect(page.data, ['a']);
       expect(page.hasMore, isFalse);
     });
   });
