@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
 import 'package:trakli/core/error/exceptions.dart';
@@ -40,17 +41,15 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
   }
 
   /// The same name is the same group, case and surrounding spaces aside.
-  Future<Group?> _findByServerName(String name, {String? excluding}) {
-    final normalized = name.trim().toLowerCase();
-    return (database.select(database.groups)
-          ..where((g) {
-            final matches = g.name.trim().lower().equals(normalized);
-            return excluding == null
-                ? matches
-                : matches & g.clientId.isNotValue(excluding);
-          })
-          ..limit(1))
-        .getSingleOrNull();
+  Future<Group?> _findByServerName(String name, {String? excluding}) async {
+    final rows = await database.select(database.groups).get();
+    return firstMatchingName(
+      rows,
+      name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+      excluding: excluding,
+    );
   }
 
   @override

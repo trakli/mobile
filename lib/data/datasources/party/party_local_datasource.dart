@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
 import 'package:trakli/core/error/exceptions.dart';
@@ -48,17 +49,15 @@ class PartyLocalDataSourceImpl implements PartyLocalDataSource {
 
   /// The same name is the same party, whatever its type, case and
   /// surrounding spaces aside.
-  Future<Party?> _findByServerName(String name, {String? excluding}) {
-    final normalized = name.trim().toLowerCase();
-    return (database.select(database.parties)
-          ..where((p) {
-            final matches = p.name.trim().lower().equals(normalized);
-            return excluding == null
-                ? matches
-                : matches & p.clientId.isNotValue(excluding);
-          })
-          ..limit(1))
-        .getSingleOrNull();
+  Future<Party?> _findByServerName(String name, {String? excluding}) async {
+    final rows = await database.select(database.parties).get();
+    return firstMatchingName(
+      rows,
+      name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+      excluding: excluding,
+    );
   }
 
   @override
