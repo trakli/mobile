@@ -53,10 +53,14 @@ class PaginationResponse<T> with _$PaginationResponse<T> {
       }
     }
 
+    // Casting the envelope would throw past the row-level recovery above and
+    // lose the whole page anyway. -1 matches PaginationResponse.empty() and
+    // leaves hasMore false, so a malformed envelope degrades to "keep what
+    // parsed, fetch nothing further" rather than looping or failing.
     return PaginationResponse<T>(
-      currentPage: (json['current_page'] as num).toInt(),
-      lastPage: (json['last_page'] as num).toInt(),
-      perPage: (json['per_page'] as num).toInt(),
+      currentPage: (json['current_page'] as num?)?.toInt() ?? -1,
+      lastPage: (json['last_page'] as num?)?.toInt() ?? -1,
+      perPage: (json['per_page'] as num?)?.toInt() ?? -1,
       data: parsed,
     );
   }

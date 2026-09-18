@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/budget/dtos/budget_complete_dto.dart';
+import 'package:trakli/data/datasources/budget/budget_remote_datasource.dart';
+import 'package:trakli/data/datasources/transaction/transaction_remote_datasource.dart';
 import 'package:trakli/data/datasources/category/category_remote_datasource.dart';
 import 'package:trakli/data/datasources/configuration/configuration_remote_datasource.dart';
 import 'package:trakli/data/datasources/group/group_remote_datasource.dart';
@@ -291,11 +293,23 @@ void main() {
         ),
       );
 
-      expect(toServerJson(transfer)['client_id'], 'device:transfer');
-      expect(
-        toServerJson(transfer, includeClientId: false),
-        isNot(contains('client_id')),
-      );
+      final source = TransferRemoteDataSourceImpl(dio: dio);
+
+      stubPost();
+      await expectCaptured(() => source.insertTransfer(transfer));
+      expect(sent!['client_id'], 'device:transfer');
+
+      stubPut();
+      await expectCaptured(() => source.updateTransfer(transfer));
+      expect(sent, isNot(contains('client_id')));
+
+      stubPut();
+      await expectCaptured(() => source.claimClientId(
+            id: transfer.id!,
+            clientId: transfer.clientId,
+            updatedAt: DateTime(2026, 9, 9),
+          ));
+      expect(sent!['client_id'], 'device:transfer');
     });
   });
 
@@ -314,11 +328,15 @@ void main() {
       ));
       final dto = BudgetCompleteDto(budget: budget);
 
-      expect(dto.toServerJson()['client_id'], 'device:budget');
-      expect(
-        dto.toServerJson(includeClientId: false),
-        isNot(contains('client_id')),
-      );
+      final source = BudgetRemoteDataSourceImpl(dio: dio);
+
+      stubPost();
+      await expectCaptured(() => source.insertBudget(dto));
+      expect(sent!['client_id'], 'device:budget');
+
+      stubPut();
+      await expectCaptured(() => source.updateBudget(dto));
+      expect(sent, isNot(contains('client_id')));
     });
   });
 
@@ -346,13 +364,18 @@ void main() {
         wallet: wallet,
       );
 
-      expect(dto.toServerJson()['client_id'], 'device:transaction');
+      final source = TransactionRemoteDataSourceImpl(dio: dio);
 
-      final update = dto.toServerJson(includeClientId: false);
-      expect(update, isNot(contains('client_id')));
+      stubPost();
+      await expectCaptured(() => source.insertTransaction(dto));
+      expect(sent!['client_id'], 'device:transaction');
+
+      stubPut();
+      await expectCaptured(() => source.updateTransaction(dto));
+      expect(sent, isNot(contains('client_id')));
       // The drift row spread names it client_generated_id; neither spelling
       // may ride along on an update.
-      expect(update, isNot(contains('client_generated_id')));
+      expect(sent, isNot(contains('client_generated_id')));
     });
   });
 }
