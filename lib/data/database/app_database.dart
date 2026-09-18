@@ -492,8 +492,11 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
   ) async {
     for (final table in const ['local_changes', 'deferred_remote_items']) {
       await customStatement(
-        'UPDATE $table SET data = replace(data, ?, ?) WHERE data LIKE ?',
-        [loserClientId, winnerClientId, '%$loserClientId%'],
+        // instr() is an exact, case-sensitive substring test. LIKE would treat
+        // % and _ in the id as wildcards and match case-insensitively, so it
+        // can select rows replace() then leaves untouched.
+        'UPDATE $table SET data = replace(data, ?, ?) WHERE instr(data, ?) > 0',
+        [loserClientId, winnerClientId, loserClientId],
       );
     }
   }
