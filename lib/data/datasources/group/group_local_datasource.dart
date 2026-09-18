@@ -4,6 +4,7 @@ import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
+import 'package:trakli/core/error/exceptions.dart';
 
 abstract class GroupLocalDataSource {
   Future<List<Group>> getAllGroups();
@@ -38,17 +39,36 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
         .get();
   }
 
+  /// The same name is the same group, case and surrounding spaces aside.
+  Future<Group?> _findByServerName(String name, {String? excluding}) {
+    final normalized = name.trim().toLowerCase();
+    return (database.select(database.groups)
+          ..where((g) {
+            final matches = g.name.trim().lower().equals(normalized);
+            return excluding == null
+                ? matches
+                : matches & g.clientId.isNotValue(excluding);
+          })
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   @override
   Future<Group> insertGroup(
     String name, {
     String? description,
     Media? icon,
   }) async {
+    final existing = await _findByServerName(name);
+    if (existing != null) {
+      throw DuplicateException('Group with name "$name" already exists');
+    }
+
     final dateTime = getNewFormattedUtcDateTime();
 
     final companion = GroupsCompanion.insert(
       clientId: Value(await generateDeviceScopedId()),
-      name: name,
+      name: name.trim(),
       description: Value(description),
       createdAt: Value(dateTime),
       updatedAt: Value(dateTime),
@@ -67,10 +87,17 @@ class GroupLocalDataSourceImpl implements GroupLocalDataSource {
     String? description,
     Media? icon,
   }) async {
+    if (name != null) {
+      final existing = await _findByServerName(name, excluding: clientId);
+      if (existing != null) {
+        throw DuplicateException('Group with name "$name" already exists');
+      }
+    }
+
     DateTime dateTime = getNewFormattedUtcDateTime();
 
     final companion = GroupsCompanion(
-      name: name != null ? Value(name) : const Value.absent(),
+      name: name != null ? Value(name.trim()) : const Value.absent(),
       description:
           description != null ? Value(description) : const Value.absent(),
       updatedAt: Value(dateTime),

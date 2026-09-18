@@ -5,6 +5,7 @@ import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class WalletRemoteDataSource {
   Future<List<Wallet>> getAllWallets({DateTime? syncedSince, bool? noClientId});
@@ -48,10 +49,11 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       final response = await dio.get('wallets', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) =>
             WalletDto.fromJson(json! as Map<String, dynamic>).toModel(),
+        entityType: SyncEntity.wallet,
       );
 
       allItems.addAll(paginatedResponse.data);
@@ -109,7 +111,6 @@ class WalletRemoteDataSourceImpl implements WalletRemoteDataSource {
       if (wallet.description != null) 'description': wallet.description,
       'icon': wallet.icon?.content,
       'icon_type': wallet.icon?.type.name,
-      'client_id': wallet.clientId,
     };
 
     final response = await dio.put(

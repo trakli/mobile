@@ -87,7 +87,13 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
 
   @override
   Future<void> upsertLocal(Party entity) async {
-    await table.insertOne(entity, mode: InsertMode.insertOrReplace);
+    await db.transaction(() async {
+      await db.adoptPartyServerId(
+        serverId: entity.id,
+        clientId: entity.clientId,
+      );
+      await table.insertOne(entity, mode: InsertMode.insertOrReplace);
+    });
   }
 
   @override
@@ -101,7 +107,13 @@ class PartySyncHandler extends SyncTypeHandler<Party, String, int>
         // If the entity is marked as deleted, remove it locally
         await table.deleteWhere((p) => p.clientId.equals(entity.clientId));
       } else {
-        await table.insertOnConflictUpdate(entity);
+        await db.transaction(() async {
+          await db.adoptPartyServerId(
+            serverId: entity.id,
+            clientId: entity.clientId,
+          );
+          await table.insertOnConflictUpdate(entity);
+        });
       }
     }
   }

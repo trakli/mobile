@@ -5,6 +5,7 @@ import 'package:trakli/data/datasources/core/pagination_response.dart';
 import 'package:trakli/data/datasources/holding/dto/coin_search_result_dto.dart';
 import 'package:trakli/data/datasources/holding/dto/holding_dto.dart';
 import 'package:trakli/domain/entities/holding_entity.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 /// Polymorphic owner type expected by the backend holdings endpoints.
 const String _userOwnerType = 'App\\Models\\User';
@@ -53,9 +54,10 @@ class HoldingRemoteDataSourceImpl implements HoldingRemoteDataSource {
       queryParameters: {'per_page': 200},
     );
     final apiResponse = ApiResponse.fromJson(response.data);
-    final paged = PaginationResponse.fromJson(
+    final paged = PaginationResponse.lenient(
       apiResponse.data as Map<String, dynamic>,
       (json) => HoldingDto.fromJson(json! as Map<String, dynamic>),
+      entityType: SyncEntity.holding,
     );
     return paged.data;
   }

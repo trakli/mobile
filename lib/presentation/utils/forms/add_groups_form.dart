@@ -57,7 +57,10 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
         if (state.failure.hasError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.failure.customMessage),
+              content: Text(state.failure.maybeMap(
+                orElse: () => state.failure.customMessage,
+                duplicate: (_) => LocaleKeys.groupNameAlreadyExists.tr(),
+              )),
               backgroundColor: Colors.red,
             ),
           );

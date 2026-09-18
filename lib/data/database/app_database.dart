@@ -43,6 +43,7 @@ import 'package:trakli/presentation/utils/enums.dart';
 
 import 'app_database.steps.dart';
 import 'tables/sync_meta_data.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 part 'app_database.g.dart';
 
@@ -215,6 +216,286 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
 
     final results = await query.get();
     return results.map((row) => row.readTable(categories)).toList();
+  }
+
+  /// Folds [loserClientId] into [winnerClientId]: re-tags everything the
+  /// duplicate categorised, moves budgets that targeted it, deletes it, and
+  /// clears its stuck outbox entry. Returns the number of re-tagged rows.
+  ///
+  /// Repairs a create the API *rejected* (400, sent without a client id): the
+  /// duplicate never received a server id, so it is the loser. A create that
+  /// did send one gets 200 and the existing record instead, which
+  /// [adoptCategoryServerId] reconciles the other way round.
+  Future<int> mergeDuplicateCategory({
+    required String loserClientId,
+    required String winnerClientId,
+  }) =>
+      _mergeCategory(loserClientId, winnerClientId, requireWinner: true);
+
+  /// Hands [serverId] to [clientId], folding away whichever local category
+  /// holds it. See [_adoptServerId].
+  Future<void> adoptCategoryServerId({
+    required int? serverId,
+    required String clientId,
+  }) =>
+      _adoptServerId('categories', serverId, clientId, _mergeCategory);
+
+  /// Hands [serverId] to [clientId], folding away whichever local wallet
+  /// holds it. See [_adoptServerId].
+  Future<void> adoptWalletServerId({
+    required int? serverId,
+    required String clientId,
+  }) =>
+      _adoptServerId('wallets', serverId, clientId, _mergeWallet);
+
+  /// Hands [serverId] to [clientId], folding away whichever local party
+  /// holds it. See [_adoptServerId].
+  Future<void> adoptPartyServerId({
+    required int? serverId,
+    required String clientId,
+  }) =>
+      _adoptServerId('parties', serverId, clientId, _mergeParty);
+
+  /// Hands [serverId] to [clientId], folding away whichever local group
+  /// holds it. See [_adoptServerId].
+  Future<void> adoptGroupServerId({
+    required int? serverId,
+    required String clientId,
+  }) =>
+      _adoptServerId('groups', serverId, clientId, _mergeGroup);
+
+  /// Makes [serverId] available to [clientId] by merging the row that owns it
+  /// into [clientId]. A no-op unless some *other* local row owns it. Call it
+  /// immediately before writing the row, inside the same transaction.
+  ///
+  /// The create endpoints answer a name the user already has with 200 and the
+  /// existing record, after moving the posted client id onto it — so the server
+  /// id that comes back is one this device filed under a different client id,
+  /// and `SyncTable.id` is unique locally. Downloads reach the same state from
+  /// the other side. Either way the server now points at the incoming copy, so
+  /// the older one gives up its references.
+  Future<void> _adoptServerId(
+    String table,
+    int? serverId,
+    String clientId,
+    Future<int> Function(String loser, String winner,
+            {required bool requireWinner})
+        merge,
+  ) async {
+    if (serverId == null || clientId.isEmpty) return;
+
+    final holder = await customSelect(
+      'SELECT client_id FROM $table WHERE id = ? LIMIT 1',
+      variables: [Variable<int>(serverId)],
+    ).getSingleOrNull();
+    if (holder == null) return;
+
+    final holderClientId = holder.read<String>('client_id');
+    if (holderClientId.isEmpty || holderClientId == clientId) return;
+
+    // The caller writes the survivor next; on a download its row does not
+    // exist yet.
+    await merge(holderClientId, clientId, requireWinner: false);
+  }
+
+  Future<int> _mergeCategory(
+    String loser,
+    String winner, {
+    required bool requireWinner,
+  }) {
+    return _mergeDuplicate(
+      entityType: SyncEntity.category,
+      table: 'categories',
+      loserClientId: loser,
+      winnerClientId: winner,
+      targetType: BudgetTargetType.category,
+      requireWinner: requireWinner,
+      repoint: () async {
+        // Re-tag by insert-then-delete rather than by update: a transaction
+        // already tagged with both categories would collide on the
+        // (source, type, category) primary key.
+        await customStatement(
+          'INSERT OR IGNORE INTO categorizables '
+          '(categorizable_id, categorizable_type, category_client_id) '
+          'SELECT categorizable_id, categorizable_type, ? FROM categorizables '
+          'WHERE category_client_id = ?',
+          [winner, loser],
+        );
+        return (delete(categorizables)
+              ..where((c) => c.categoryClientId.equals(loser)))
+            .go();
+      },
+    );
+  }
+
+  Future<int> _mergeWallet(
+    String loser,
+    String winner, {
+    required bool requireWinner,
+  }) {
+    return _mergeDuplicate(
+      entityType: SyncEntity.wallet,
+      table: 'wallets',
+      loserClientId: loser,
+      winnerClientId: winner,
+      targetType: BudgetTargetType.wallet,
+      requireWinner: requireWinner,
+      repoint: () async {
+        var moved = await (update(transactions)
+              ..where((t) => t.walletClientId.equals(loser)))
+            .write(TransactionsCompanion(walletClientId: Value(winner)));
+        moved += await (update(transfers)
+              ..where((t) => t.fromWalletClientId.equals(loser)))
+            .write(TransfersCompanion(fromWalletClientId: Value(winner)));
+        moved += await (update(transfers)
+              ..where((t) => t.toWalletClientId.equals(loser)))
+            .write(TransfersCompanion(toWalletClientId: Value(winner)));
+        return moved;
+      },
+    );
+  }
+
+  Future<int> _mergeParty(
+    String loser,
+    String winner, {
+    required bool requireWinner,
+  }) {
+    return _mergeDuplicate(
+      entityType: SyncEntity.party,
+      table: 'parties',
+      loserClientId: loser,
+      winnerClientId: winner,
+      // Parties cannot be budget targets.
+      targetType: null,
+      requireWinner: requireWinner,
+      repoint: () => (update(transactions)
+            ..where((t) => t.partyClientId.equals(loser)))
+          .write(TransactionsCompanion(partyClientId: Value(winner))),
+    );
+  }
+
+  Future<int> _mergeGroup(
+    String loser,
+    String winner, {
+    required bool requireWinner,
+  }) {
+    return _mergeDuplicate(
+      entityType: SyncEntity.group,
+      table: 'groups',
+      loserClientId: loser,
+      winnerClientId: winner,
+      targetType: BudgetTargetType.group,
+      requireWinner: requireWinner,
+      repoint: () => (update(transactions)
+            ..where((t) => t.groupClientId.equals(loser)))
+          .write(TransactionsCompanion(groupClientId: Value(winner))),
+    );
+  }
+
+  /// Shared body of the merges. [repoint] moves the rows that referenced the
+  /// duplicate and reports how many; everything around it is the same for
+  /// every entity.
+  Future<int> _mergeDuplicate({
+    required SyncEntity entityType,
+    required String table,
+    required String loserClientId,
+    required String winnerClientId,
+    required BudgetTargetType? targetType,
+    required bool requireWinner,
+    required Future<int> Function() repoint,
+  }) {
+    if (loserClientId == winnerClientId) {
+      throw ArgumentError.value(
+        loserClientId,
+        'loserClientId',
+        'A ${entityType.key} cannot be merged into itself',
+      );
+    }
+
+    return transaction(() async {
+      final required = [
+        loserClientId,
+        if (requireWinner) winnerClientId,
+      ];
+      for (final clientId in required) {
+        final exists = await customSelect(
+          'SELECT 1 FROM $table WHERE client_id = ? LIMIT 1',
+          variables: [Variable<String>(clientId)],
+        ).getSingleOrNull();
+        if (exists == null) {
+          throw StateError('No ${entityType.key} with client id $clientId');
+        }
+      }
+
+      final repointed = await repoint();
+      if (targetType != null) {
+        await _repointBudgetTargets(targetType, loserClientId, winnerClientId);
+      }
+
+      // Its queued write cannot stand alone, and re-pointing it would collide
+      // with the survivor's entry on (entity_id, entity_type).
+      await (delete(localChanges)
+            ..where((lc) =>
+                lc.entityType.equals(entityType.key) &
+                lc.entityId.equals(loserClientId)))
+          .go();
+      await (delete(deferredRemoteItems)
+            ..where((d) =>
+                d.entityType.equals(entityType.key) &
+                d.clientId.equals(loserClientId)))
+          .go();
+
+      await _repointPayloads(loserClientId, winnerClientId);
+
+      await customStatement(
+        'DELETE FROM $table WHERE client_id = ?',
+        [loserClientId],
+      );
+
+      return repointed;
+    });
+  }
+
+  /// Budget targets are keyed by (budget, type, target), so a budget that
+  /// targeted both copies would collide on the primary key — add what is
+  /// missing, then drop the duplicate's rows.
+  Future<void> _repointBudgetTargets(
+    BudgetTargetType targetType,
+    String loserClientId,
+    String winnerClientId,
+  ) async {
+    await customStatement(
+      'INSERT OR IGNORE INTO budget_targets '
+      '(budget_client_id, target_type, target_client_id) '
+      'SELECT budget_client_id, target_type, ? FROM budget_targets '
+      'WHERE target_type = ? AND target_client_id = ?',
+      [winnerClientId, targetType.name, loserClientId],
+    );
+    await (delete(budgetTargets)
+          ..where((t) =>
+              t.targetType.equalsValue(targetType) &
+              t.targetClientId.equals(loserClientId)))
+        .go();
+  }
+
+  /// Rewrites references to [loserClientId] inside the queued outbox payloads
+  /// and the parked download payloads.
+  ///
+  /// They are immutable JSON snapshots of whole DTO graphs — a queued
+  /// transaction embeds its wallet object, which is written back verbatim and
+  /// would resurrect the row this merge just deleted. References sit under many
+  /// keys, in both camelCase and snake_case, at any depth; client ids are
+  /// unique enough that swapping the text hits exactly them.
+  Future<void> _repointPayloads(
+    String loserClientId,
+    String winnerClientId,
+  ) async {
+    for (final table in const ['local_changes', 'deferred_remote_items']) {
+      await customStatement(
+        'UPDATE $table SET data = replace(data, ?, ?) WHERE data LIKE ?',
+        [loserClientId, winnerClientId, '%$loserClientId%'],
+      );
+    }
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:trakli/data/datasources/budget/dtos/budget_complete_dto.dart';
 import 'package:trakli/data/datasources/budget/dtos/budget_period_state_dto.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class BudgetRemoteDataSource {
   Future<List<BudgetCompleteDto>> getAllBudgets({
@@ -60,10 +61,11 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
       final response = await dio.get('budgets', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginated = PaginationResponse.fromJson(
+      final paginated = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) =>
             BudgetCompleteDto.fromServerJson(json! as Map<String, dynamic>),
+        entityType: SyncEntity.budget,
       );
 
       allItems.addAll(paginated.data);
@@ -99,7 +101,7 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
   Future<BudgetCompleteDto> updateBudget(BudgetCompleteDto dto) async {
     final response = await dio.put(
       'budgets/${dto.budget.id}',
-      data: dto.toServerJson(),
+      data: dto.toServerJson(includeClientId: false),
     );
     final apiResponse = ApiResponse.fromJson(response.data);
     return BudgetCompleteDto.fromServerJson(
@@ -162,11 +164,12 @@ class BudgetRemoteDataSourceImpl implements BudgetRemoteDataSource {
       );
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginated = PaginationResponse.fromJson(
+      final paginated = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => BudgetPeriodStateDto.fromJson(
           JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>),
         ),
+        entityType: SyncEntity.budgetPeriodState,
       );
 
       allItems.addAll(paginated.data);

@@ -101,7 +101,13 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
       lastSyncedAt: Value(entity.lastSyncedAt),
     );
 
-    await table.insertOne(group, mode: InsertMode.insertOrReplace);
+    await db.transaction(() async {
+      await db.adoptGroupServerId(
+        serverId: entity.id,
+        clientId: entity.clientId,
+      );
+      await table.insertOne(group, mode: InsertMode.insertOrReplace);
+    });
   }
 
   @override
@@ -126,7 +132,13 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
           icon: Value(entity.icon),
           lastSyncedAt: Value(entity.lastSyncedAt),
         );
-        await table.insertOnConflictUpdate(group);
+        await db.transaction(() async {
+          await db.adoptGroupServerId(
+            serverId: entity.id,
+            clientId: entity.clientId,
+          );
+          await table.insertOnConflictUpdate(group);
+        });
       }
     }
   }

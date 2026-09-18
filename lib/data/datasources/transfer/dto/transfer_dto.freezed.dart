@@ -26,10 +26,10 @@ mixin _$TransferDto {
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientId => throw _privateConstructorUsedError;
   String? get rev => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
-  DateTime get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'deleted_at')
   DateTime? get deletedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_synced_at')
@@ -50,7 +50,8 @@ mixin _$TransferDto {
   String? get toWalletClientId => throw _privateConstructorUsedError;
   @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
   double? get exchangeRate => throw _privateConstructorUsedError;
-  DateTime get datetime => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: safeParseDateTime)
+  DateTime? get datetime => throw _privateConstructorUsedError;
   @JsonKey(name: 'expense_transaction_client_id')
   String? get expenseTransactionClientId => throw _privateConstructorUsedError;
   @JsonKey(name: 'income_transaction_client_id')
@@ -78,8 +79,10 @@ abstract class $TransferDtoCopyWith<$Res> {
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientId,
       String? rev,
-      @JsonKey(name: 'created_at') DateTime createdAt,
-      @JsonKey(name: 'updated_at') DateTime updatedAt,
+      @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+      DateTime? createdAt,
+      @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+      DateTime? updatedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
       @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
       @JsonKey(fromJson: parseAmount) double amount,
@@ -91,7 +94,7 @@ abstract class $TransferDtoCopyWith<$Res> {
       @JsonKey(name: 'to_wallet_client_id') String? toWalletClientId,
       @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
       double? exchangeRate,
-      DateTime datetime,
+      @JsonKey(fromJson: safeParseDateTime) DateTime? datetime,
       @JsonKey(name: 'expense_transaction_client_id')
       String? expenseTransactionClientId,
       @JsonKey(name: 'income_transaction_client_id')
@@ -120,8 +123,8 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
     Object? userId = freezed,
     Object? clientId = null,
     Object? rev = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? deletedAt = freezed,
     Object? lastSyncedAt = freezed,
     Object? amount = null,
@@ -132,7 +135,7 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
     Object? fromWalletClientId = freezed,
     Object? toWalletClientId = freezed,
     Object? exchangeRate = freezed,
-    Object? datetime = null,
+    Object? datetime = freezed,
     Object? expenseTransactionClientId = freezed,
     Object? incomeTransactionClientId = freezed,
   }) {
@@ -153,14 +156,14 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
           ? _value.rev
           : rev // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
+              as DateTime?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       deletedAt: freezed == deletedAt
           ? _value.deletedAt
           : deletedAt // ignore: cast_nullable_to_non_nullable
@@ -201,10 +204,10 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
           ? _value.exchangeRate
           : exchangeRate // ignore: cast_nullable_to_non_nullable
               as double?,
-      datetime: null == datetime
+      datetime: freezed == datetime
           ? _value.datetime
           : datetime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       expenseTransactionClientId: freezed == expenseTransactionClientId
           ? _value.expenseTransactionClientId
           : expenseTransactionClientId // ignore: cast_nullable_to_non_nullable
@@ -259,8 +262,10 @@ abstract class _$$TransferDtoImplCopyWith<$Res>
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientId,
       String? rev,
-      @JsonKey(name: 'created_at') DateTime createdAt,
-      @JsonKey(name: 'updated_at') DateTime updatedAt,
+      @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+      DateTime? createdAt,
+      @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+      DateTime? updatedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
       @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
       @JsonKey(fromJson: parseAmount) double amount,
@@ -272,7 +277,7 @@ abstract class _$$TransferDtoImplCopyWith<$Res>
       @JsonKey(name: 'to_wallet_client_id') String? toWalletClientId,
       @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
       double? exchangeRate,
-      DateTime datetime,
+      @JsonKey(fromJson: safeParseDateTime) DateTime? datetime,
       @JsonKey(name: 'expense_transaction_client_id')
       String? expenseTransactionClientId,
       @JsonKey(name: 'income_transaction_client_id')
@@ -301,8 +306,8 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
     Object? userId = freezed,
     Object? clientId = null,
     Object? rev = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
     Object? deletedAt = freezed,
     Object? lastSyncedAt = freezed,
     Object? amount = null,
@@ -313,7 +318,7 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
     Object? fromWalletClientId = freezed,
     Object? toWalletClientId = freezed,
     Object? exchangeRate = freezed,
-    Object? datetime = null,
+    Object? datetime = freezed,
     Object? expenseTransactionClientId = freezed,
     Object? incomeTransactionClientId = freezed,
   }) {
@@ -334,14 +339,14 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
           ? _value.rev
           : rev // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdAt: null == createdAt
+      createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: null == updatedAt
+              as DateTime?,
+      updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       deletedAt: freezed == deletedAt
           ? _value.deletedAt
           : deletedAt // ignore: cast_nullable_to_non_nullable
@@ -382,10 +387,10 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
           ? _value.exchangeRate
           : exchangeRate // ignore: cast_nullable_to_non_nullable
               as double?,
-      datetime: null == datetime
+      datetime: freezed == datetime
           ? _value.datetime
           : datetime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       expenseTransactionClientId: freezed == expenseTransactionClientId
           ? _value.expenseTransactionClientId
           : expenseTransactionClientId // ignore: cast_nullable_to_non_nullable
@@ -408,8 +413,8 @@ class _$TransferDtoImpl extends _TransferDto {
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       required this.clientId,
       this.rev,
-      @JsonKey(name: 'created_at') required this.createdAt,
-      @JsonKey(name: 'updated_at') required this.updatedAt,
+      @JsonKey(name: 'created_at', fromJson: safeParseDateTime) this.createdAt,
+      @JsonKey(name: 'updated_at', fromJson: safeParseDateTime) this.updatedAt,
       @JsonKey(name: 'deleted_at') this.deletedAt,
       @JsonKey(name: 'last_synced_at') this.lastSyncedAt,
       @JsonKey(fromJson: parseAmount) required this.amount,
@@ -421,7 +426,7 @@ class _$TransferDtoImpl extends _TransferDto {
       @JsonKey(name: 'to_wallet_client_id') this.toWalletClientId,
       @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
       this.exchangeRate,
-      required this.datetime,
+      @JsonKey(fromJson: safeParseDateTime) this.datetime,
       @JsonKey(name: 'expense_transaction_client_id')
       this.expenseTransactionClientId,
       @JsonKey(name: 'income_transaction_client_id')
@@ -442,11 +447,11 @@ class _$TransferDtoImpl extends _TransferDto {
   @override
   final String? rev;
   @override
-  @JsonKey(name: 'created_at')
-  final DateTime createdAt;
+  @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+  final DateTime? createdAt;
   @override
-  @JsonKey(name: 'updated_at')
-  final DateTime updatedAt;
+  @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+  final DateTime? updatedAt;
   @override
   @JsonKey(name: 'deleted_at')
   final DateTime? deletedAt;
@@ -478,7 +483,8 @@ class _$TransferDtoImpl extends _TransferDto {
   @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
   final double? exchangeRate;
   @override
-  final DateTime datetime;
+  @JsonKey(fromJson: safeParseDateTime)
+  final DateTime? datetime;
   @override
   @JsonKey(name: 'expense_transaction_client_id')
   final String? expenseTransactionClientId;
@@ -583,8 +589,10 @@ abstract class _TransferDto extends TransferDto {
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       required final String clientId,
       final String? rev,
-      @JsonKey(name: 'created_at') required final DateTime createdAt,
-      @JsonKey(name: 'updated_at') required final DateTime updatedAt,
+      @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+      final DateTime? createdAt,
+      @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+      final DateTime? updatedAt,
       @JsonKey(name: 'deleted_at') final DateTime? deletedAt,
       @JsonKey(name: 'last_synced_at') final DateTime? lastSyncedAt,
       @JsonKey(fromJson: parseAmount) required final double amount,
@@ -596,7 +604,7 @@ abstract class _TransferDto extends TransferDto {
       @JsonKey(name: 'to_wallet_client_id') final String? toWalletClientId,
       @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
       final double? exchangeRate,
-      required final DateTime datetime,
+      @JsonKey(fromJson: safeParseDateTime) final DateTime? datetime,
       @JsonKey(name: 'expense_transaction_client_id')
       final String? expenseTransactionClientId,
       @JsonKey(name: 'income_transaction_client_id')
@@ -617,11 +625,11 @@ abstract class _TransferDto extends TransferDto {
   @override
   String? get rev;
   @override
-  @JsonKey(name: 'created_at')
-  DateTime get createdAt;
+  @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+  DateTime? get createdAt;
   @override
-  @JsonKey(name: 'updated_at')
-  DateTime get updatedAt;
+  @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+  DateTime? get updatedAt;
   @override
   @JsonKey(name: 'deleted_at')
   DateTime? get deletedAt;
@@ -653,7 +661,8 @@ abstract class _TransferDto extends TransferDto {
   @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
   double? get exchangeRate;
   @override
-  DateTime get datetime;
+  @JsonKey(fromJson: safeParseDateTime)
+  DateTime? get datetime;
   @override
   @JsonKey(name: 'expense_transaction_client_id')
   String? get expenseTransactionClientId;

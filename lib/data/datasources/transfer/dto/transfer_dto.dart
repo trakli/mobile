@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/datasources/core/amount_parser.dart';
+import 'package:trakli/data/datasources/core/util.dart';
 import 'package:trakli/data/datasources/wallet/dtos/wallet_dto.dart';
 
 part 'transfer_dto.freezed.dart';
@@ -16,8 +17,10 @@ class TransferDto with _$TransferDto {
     @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
     required String clientId,
     String? rev,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    @JsonKey(name: 'created_at', fromJson: safeParseDateTime)
+    DateTime? createdAt,
+    @JsonKey(name: 'updated_at', fromJson: safeParseDateTime)
+    DateTime? updatedAt,
     @JsonKey(name: 'deleted_at') DateTime? deletedAt,
     @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
     @JsonKey(fromJson: parseAmount) required double amount,
@@ -29,7 +32,7 @@ class TransferDto with _$TransferDto {
     @JsonKey(name: 'to_wallet_client_id') String? toWalletClientId,
     @JsonKey(name: 'exchange_rate', fromJson: parseAmountNullable)
     double? exchangeRate,
-    required DateTime datetime,
+    @JsonKey(fromJson: safeParseDateTime) DateTime? datetime,
     @JsonKey(name: 'expense_transaction_client_id')
     String? expenseTransactionClientId,
     @JsonKey(name: 'income_transaction_client_id')
@@ -61,13 +64,28 @@ class TransferDto with _$TransferDto {
         incomeTransactionClientId: transfer.incomeTransactionClientId,
       );
 
+  /// The server's `transfers.datetime` column is nullable and was only
+  /// populated from the 2026-02-23 backend change onwards, so transfers
+  /// created before then arrive as `null`. The date columns are all
+  /// non-nullable locally, and a single unparseable row used to throw out of
+  /// the page parse and fail the whole transfer down-sync, so resolve them
+  /// here instead of casting in the generated parser.
+  DateTime get _createdAt => createdAt ?? updatedAt ?? datetime ?? _epoch;
+
+  DateTime get _updatedAt => updatedAt ?? _createdAt;
+
+  DateTime get _datetime => datetime ?? _createdAt;
+
+  static final DateTime _epoch =
+      DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+
   Transfer toTransfer() => Transfer(
         id: id,
         userId: userId,
         clientId: clientId,
         rev: rev,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
+        createdAt: _createdAt,
+        updatedAt: _updatedAt,
         deletedAt: deletedAt,
         lastSyncedAt: lastSyncedAt,
         amount: amount,
@@ -76,7 +94,7 @@ class TransferDto with _$TransferDto {
         fromWalletClientId: sourceWallet?.clientId ?? fromWalletClientId,
         toWalletClientId: destinationWallet?.clientId ?? toWalletClientId,
         exchangeRate: exchangeRate,
-        datetime: datetime,
+        datetime: _datetime,
         expenseTransactionClientId: expenseTransactionClientId,
         incomeTransactionClientId: incomeTransactionClientId,
       );

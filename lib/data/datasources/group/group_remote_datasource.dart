@@ -5,6 +5,7 @@ import 'package:trakli/core/utils/json_defaults.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/core/api_response.dart';
 import 'package:trakli/data/datasources/core/pagination_response.dart';
+import 'package:trakli/core/sync/sync_entity.dart';
 
 abstract class GroupRemoteDataSource {
   Future<List<Group>> getAllGroups({DateTime? syncedSince, bool? noClientId});
@@ -51,10 +52,11 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
       final response = await dio.get('groups', queryParameters: queryParams);
       final apiResponse = ApiResponse.fromJson(response.data);
 
-      final paginatedResponse = PaginationResponse.fromJson(
+      final paginatedResponse = PaginationResponse.lenient(
         apiResponse.data as Map<String, dynamic>,
         (Object? json) => Group.fromJson(
             JsonDefaultsHelper.addDefaults(json! as Map<String, dynamic>)),
+        entityType: SyncEntity.group,
       );
 
       allItems.addAll(paginatedResponse.data);
@@ -96,7 +98,6 @@ class GroupRemoteDataSourceImpl implements GroupRemoteDataSource {
   Future<Group> updateGroup(Group group) async {
     final response = await dio.put('groups/${group.id}', data: {
       'name': group.name,
-      'client_id': group.clientId,
       'description': group.description,
       if (group.icon != null) ...{
         'icon': group.icon?.content,

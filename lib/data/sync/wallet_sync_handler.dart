@@ -125,7 +125,13 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
       stats: Value(entity.stats),
       icon: Value(entity.icon),
     );
-    await table.insertOne(companion, mode: InsertMode.insertOrReplace);
+    await db.transaction(() async {
+      await db.adoptWalletServerId(
+        serverId: entity.id,
+        clientId: entity.clientId,
+      );
+      await table.insertOne(companion, mode: InsertMode.insertOrReplace);
+    });
   }
 
   @override
@@ -155,7 +161,13 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
           stats: Value(entity.stats),
           icon: Value(entity.icon),
         );
-        await table.insertOnConflictUpdate(companion);
+        await db.transaction(() async {
+          await db.adoptWalletServerId(
+            serverId: entity.id,
+            clientId: entity.clientId,
+          );
+          await table.insertOnConflictUpdate(companion);
+        });
       }
     }
   }

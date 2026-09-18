@@ -12,8 +12,8 @@ _$TransferDtoImpl _$$TransferDtoImplFromJson(Map<String, dynamic> json) =>
       userId: (json['user_id'] as num?)?.toInt(),
       clientId: json['client_generated_id'] as String? ?? '',
       rev: json['rev'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      createdAt: safeParseDateTime(json['created_at']),
+      updatedAt: safeParseDateTime(json['updated_at']),
       deletedAt: json['deleted_at'] == null
           ? null
           : DateTime.parse(json['deleted_at'] as String),
@@ -33,7 +33,7 @@ _$TransferDtoImpl _$$TransferDtoImplFromJson(Map<String, dynamic> json) =>
       fromWalletClientId: json['from_wallet_client_id'] as String?,
       toWalletClientId: json['to_wallet_client_id'] as String?,
       exchangeRate: parseAmountNullable(json['exchange_rate']),
-      datetime: DateTime.parse(json['datetime'] as String),
+      datetime: safeParseDateTime(json['datetime']),
       expenseTransactionClientId:
           json['expense_transaction_client_id'] as String?,
       incomeTransactionClientId:
@@ -46,8 +46,8 @@ Map<String, dynamic> _$$TransferDtoImplToJson(_$TransferDtoImpl instance) =>
       'user_id': instance.userId,
       'client_generated_id': instance.clientId,
       'rev': instance.rev,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
       'deleted_at': instance.deletedAt?.toIso8601String(),
       'last_synced_at': instance.lastSyncedAt?.toIso8601String(),
       'amount': instance.amount,
@@ -58,7 +58,7 @@ Map<String, dynamic> _$$TransferDtoImplToJson(_$TransferDtoImpl instance) =>
       'from_wallet_client_id': instance.fromWalletClientId,
       'to_wallet_client_id': instance.toWalletClientId,
       'exchange_rate': instance.exchangeRate,
-      'datetime': instance.datetime.toIso8601String(),
+      'datetime': instance.datetime?.toIso8601String(),
       'expense_transaction_client_id': instance.expenseTransactionClientId,
       'income_transaction_client_id': instance.incomeTransactionClientId,
     };
