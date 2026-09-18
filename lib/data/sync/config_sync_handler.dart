@@ -64,6 +64,7 @@ class ConfigSyncHandler extends SyncTypeHandler<Config, String, int>
       key: entity.key,
       clientId: entity.clientId,
       updatedAt: entity.updatedAt,
+      value: entity.value,
     );
   }
 

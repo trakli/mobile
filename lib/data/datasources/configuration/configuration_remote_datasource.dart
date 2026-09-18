@@ -25,6 +25,7 @@ abstract class ConfigRemoteDataSource {
     required String key,
     required String clientId,
     required DateTime updatedAt,
+    required dynamic value,
   });
 
   Future<void> deleteConfig(String id);
@@ -112,10 +113,16 @@ class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
     required String key,
     required String clientId,
     required DateTime updatedAt,
+    required dynamic value,
   }) async {
     final response = await dio.put('configurations/$key', data: {
       'client_id': clientId,
       'updated_at': formatServerIsoDateTimeString(updatedAt),
+      // A claim is still a PUT, and the endpoint documents `value` as
+      // required, so a leaner body risks a 422 before the client id is ever
+      // recorded. The entity comes straight from the server, so this echoes
+      // the value back rather than writing a stale local one.
+      'value': value,
     });
     final apiResponse = ApiResponse.fromJson(response.data);
     return Config.fromJson(apiResponse.data);

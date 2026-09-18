@@ -239,9 +239,13 @@ void main() {
             key: config.key,
             clientId: 'device:config',
             updatedAt: DateTime(2026, 9, 9),
+            value: config.value,
           ));
 
       expect(sent!['client_id'], 'device:config');
+      // PUT /configurations/{key} documents `value` as required, so the claim
+      // must carry it or the validator rejects it before the id is recorded.
+      expect(sent!['value'], config.value);
     });
   });
 
