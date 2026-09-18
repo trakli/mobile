@@ -37,9 +37,10 @@ class TransferLocalDataSourceImpl implements TransferLocalDataSource {
   @override
   Future<Transfer> insertTransfer(TransfersCompanion companion) async {
     final now = getNewFormattedUtcDateTime();
-    final clientId = companion.clientId.present && companion.clientId.value.isNotEmpty
-        ? companion.clientId.value
-        : await generateDeviceScopedId();
+    final clientId =
+        companion.clientId.present && companion.clientId.value.isNotEmpty
+            ? companion.clientId.value
+            : await generateDeviceScopedId();
     final toInsert = companion.copyWith(
       clientId: Value(clientId),
       createdAt: Value(now),
@@ -69,7 +70,6 @@ class TransferLocalDataSourceImpl implements TransferLocalDataSource {
     );
     return updated.first;
   }
-
 
   @override
   Future<Transfer> deleteTransfer(String clientId) async {

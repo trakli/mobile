@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/presentation/utils/enums.dart';
@@ -59,19 +60,16 @@ class WalletLocalDataSourceImpl implements WalletLocalDataSource {
     String name,
     String currency, {
     String? excluding,
-  }) {
-    final normalizedName = name.trim().toLowerCase();
-    final normalizedCurrency = currency.trim().toLowerCase();
-    return (database.select(database.wallets)
-          ..where((w) {
-            final matches = w.name.trim().lower().equals(normalizedName) &
-                w.currency.trim().lower().equals(normalizedCurrency);
-            return excluding == null
-                ? matches
-                : matches & w.clientId.isNotValue(excluding);
-          })
-          ..limit(1))
-        .getSingleOrNull();
+  }) async {
+    final normalizedCurrency = normalizeName(currency);
+    final rows = await database.select(database.wallets).get();
+    return firstMatchingName(
+      rows.where((w) => normalizeName(w.currency) == normalizedCurrency),
+      name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+      excluding: excluding,
+    );
   }
 
   @override

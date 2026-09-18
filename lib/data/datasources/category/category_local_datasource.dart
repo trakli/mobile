@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/data/models/media.dart';
 import 'package:trakli/core/utils/id_helper.dart';
@@ -42,17 +43,15 @@ class CategoryLocalDataSourceImpl implements CategoryLocalDataSource {
 
   /// The same name is the same category, whatever its type, case and
   /// surrounding spaces aside.
-  Future<Category?> _findByServerName(String name, {String? excluding}) {
-    final normalized = name.trim().toLowerCase();
-    return (database.select(database.categories)
-          ..where((c) {
-            final matches = c.name.trim().lower().equals(normalized);
-            return excluding == null
-                ? matches
-                : matches & c.clientId.isNotValue(excluding);
-          })
-          ..limit(1))
-        .getSingleOrNull();
+  Future<Category?> _findByServerName(String name, {String? excluding}) async {
+    final rows = await database.select(database.categories).get();
+    return firstMatchingName(
+      rows,
+      name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+      excluding: excluding,
+    );
   }
 
   @override

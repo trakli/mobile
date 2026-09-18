@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/core/error/exceptions.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/core/utils/id_helper.dart';
@@ -143,17 +144,15 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
   }
 
   /// The same name is the same budget, case and surrounding spaces aside.
-  Future<Budget?> _findByName(String name, {String? excluding}) {
-    final normalized = name.trim().toLowerCase();
-    return (database.select(database.budgets)
-          ..where((b) {
-            final matches = b.name.trim().lower().equals(normalized);
-            return excluding == null
-                ? matches
-                : matches & b.clientId.isNotValue(excluding);
-          })
-          ..limit(1))
-        .getSingleOrNull();
+  Future<Budget?> _findByName(String name, {String? excluding}) async {
+    final rows = await database.select(database.budgets).get();
+    return firstMatchingName(
+      rows,
+      name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+      excluding: excluding,
+    );
   }
 
   @override
@@ -250,9 +249,8 @@ class BudgetLocalDataSourceImpl implements BudgetLocalDataSource {
           slug: slug != null ? Value(slug) : const Value.absent(),
           amount: amount != null ? Value(amount) : const Value.absent(),
           currency: currency != null ? Value(currency) : const Value.absent(),
-          periodType: periodType != null
-              ? Value(periodType)
-              : const Value.absent(),
+          periodType:
+              periodType != null ? Value(periodType) : const Value.absent(),
           startDate:
               startDate != null ? Value(startDate) : const Value.absent(),
           endDate: endDate != null ? Value(endDate) : const Value.absent(),

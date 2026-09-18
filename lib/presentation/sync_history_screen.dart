@@ -5,6 +5,7 @@ import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/di/injection.dart';
@@ -141,13 +142,16 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
       return;
     }
 
-    final winner = await (_db.select(_db.categories)
+    final synced = await (_db.select(_db.categories)
           ..where((c) =>
-              c.clientId.isNotValue(duplicate.clientId) &
-              c.id.isNotNull() &
-              c.name.trim().lower().equals(duplicate.name.trim().toLowerCase()))
-          ..limit(1))
-        .getSingleOrNull();
+              c.clientId.isNotValue(duplicate.clientId) & c.id.isNotNull()))
+        .get();
+    final winner = firstMatchingName(
+      synced,
+      duplicate.name,
+      nameOf: (row) => row.name,
+      clientIdOf: (row) => row.clientId,
+    );
     if (winner == null) {
       _showMessage(
         'No synced category named "${duplicate.name.trim()}" to merge into. '

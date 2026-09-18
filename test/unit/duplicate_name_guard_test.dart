@@ -48,6 +48,25 @@ void main() {
       });
     }
 
+    // SQLite's lower() folds ASCII only, so comparing a Dart-folded literal
+    // against a SQL-folded column never matched for non-ASCII names: 'CAFÉ'
+    // lowered to 'cafÉ' in SQL but 'café' in Dart. The duplicate was written
+    // locally and folded on sync, which is the symptom the guard prevents.
+    test('insert rejects a name differing only in an accented letter\'s case',
+        () async {
+      await db.wallets.insertOne(WalletsCompanion.insert(
+        name: 'CAFÉ',
+        type: WalletType.cash,
+        currency: 'USD',
+        clientId: const Value('device:cafe'),
+      ));
+
+      expect(
+        () => source.insertWallet('café', WalletType.bank, 0, 'USD'),
+        throwsA(isA<DuplicateException>()),
+      );
+    });
+
     test('insert rejects a currency differing only in case', () {
       expect(
         () => source.insertWallet('Cash', WalletType.cash, 0, 'usd'),
