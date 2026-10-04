@@ -942,5 +942,28 @@ abstract class  LocaleKeys {
   static const quarantinedHint = 'quarantinedHint';
   static const exchangeRateRequired = 'exchangeRateRequired';
   static const currencySwitchRatesUnavailable = 'currencySwitchRatesUnavailable';
+  static const toCsv = 'toCsv';
+  static const exportStatement = 'exportStatement';
+  static const exportStatementDesc = 'exportStatementDesc';
+  static const feedback = 'feedback';
+  static const feedbackDesc = 'feedbackDesc';
+  static const feedbackHeadline = 'feedbackHeadline';
+  static const feedbackIntro = 'feedbackIntro';
+  static const feedbackType = 'feedbackType';
+  static const feedbackTypeGeneral = 'feedbackTypeGeneral';
+  static const feedbackTypeBug = 'feedbackTypeBug';
+  static const feedbackTypeFeature = 'feedbackTypeFeature';
+  static const feedbackTypeQuestion = 'feedbackTypeQuestion';
+  static const feedbackSubject = 'feedbackSubject';
+  static const feedbackSubjectHint = 'feedbackSubjectHint';
+  static const feedbackMessage = 'feedbackMessage';
+  static const feedbackMessageHint = 'feedbackMessageHint';
+  static const feedbackMessageRequired = 'feedbackMessageRequired';
+  static const feedbackMessageTooShort = 'feedbackMessageTooShort';
+  static const feedbackSend = 'feedbackSend';
+  static const feedbackSent = 'feedbackSent';
+  static const feedbackHistory = 'feedbackHistory';
+  static const feedbackEmptyTitle = 'feedbackEmptyTitle';
+  static const feedbackEmptyBody = 'feedbackEmptyBody';
 
 }

@@ -31,4 +31,21 @@ class ExportRepositoryImpl implements ExportRepository {
       ),
     );
   }
+
+  @override
+  Future<Either<Failure, Uint8List>> exportStatement({
+    required ExportFormat format,
+    required DateTime start,
+    required DateTime end,
+    List<int> walletIds = const [],
+  }) {
+    return RepositoryErrorHandler.handleApiCall(
+      () => _remote.exportStatement(
+        format: format,
+        start: start,
+        end: end,
+        walletIds: walletIds,
+      ),
+    );
+  }
 }

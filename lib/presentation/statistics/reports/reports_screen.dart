@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,8 +6,12 @@ import 'package:trakli/core/services/auth_service.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/data/database/app_database.dart';
+import 'package:trakli/data/datasources/export/export_remote_datasource.dart';
 import 'package:trakli/data/datasources/stats/stats_remote_datasource.dart';
 import 'package:trakli/di/injection.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/exports/cubit/export_cubit.dart';
+import 'package:trakli/presentation/exports/widgets/export_result_listener.dart';
 import 'package:trakli/presentation/statistics/cubit/report_stats_cubit.dart';
 import 'package:trakli/presentation/statistics/month_in_review/month_in_review_data.dart';
 import 'package:trakli/presentation/statistics/month_in_review/month_in_review_screen.dart';
@@ -21,6 +26,7 @@ import 'package:trakli/presentation/statistics/widgets/month_in_review_card.dart
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 /// Full reports surface, modelled after pages/reports.vue:
 /// - Recap teaser at the top
@@ -58,13 +64,18 @@ class _ReportsScreenState extends State<ReportsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ReportStatsCubit(
-        remote: getIt<StatsRemoteDataSource>(),
-        authService: getIt<AuthService>(),
-        db: getIt<AppDatabase>(),
-        syncStream: getIt<SynchAppDatabase>().syncStateStream,
-      )..load(_periodDays),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ReportStatsCubit(
+            remote: getIt<StatsRemoteDataSource>(),
+            authService: getIt<AuthService>(),
+            db: getIt<AppDatabase>(),
+            syncStream: getIt<SynchAppDatabase>().syncStateStream,
+          )..load(_periodDays),
+        ),
+        BlocProvider(create: (_) => getIt<ExportCubit>()),
+      ],
       child: BlocBuilder<TransactionCubit, TransactionState>(
         builder: (context, state) {
           return BlocBuilder<ReportStatsCubit, ReportStatsState>(
@@ -99,57 +110,68 @@ class _ReportsScreenState extends State<ReportsScreen>
                         ),
                     ];
 
-              return Scaffold(
-                appBar: const PageAppBar(title: 'Reports'),
-                body: SingleChildScrollView(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      MonthInReviewCard(
-                        data: recap,
-                        onTap: recap == null
-                            ? null
-                            : () => MonthInReviewScreen.show(context, recap),
+              return ExportResultListener(
+                child: Scaffold(
+                  appBar: PageAppBar(
+                    title: 'Reports',
+                    actions: [
+                      PageAppBarAction(
+                        icon: Icons.ios_share,
+                        tooltip: LocaleKeys.exportStatement.tr(),
+                        onTap: () => _chooseStatementFormat(context),
                       ),
-                      SizedBox(height: 16.h),
-                      _PeriodChips(
-                        selected: _periodDays,
-                        onChange: (v) {
-                          setState(() => _periodDays = v);
-                          context.read<ReportStatsCubit>().load(v);
-                        },
-                      ),
-                      SizedBox(height: 16.h),
-                      _StatsSourceNote(statsState: statsState),
-                      _KpiGrid(totals: totals),
-                      SizedBox(height: 16.h),
-                      _SectionCard(
-                        title: 'Cashflow',
-                        subtitle: 'Income vs expense across the period',
-                        child: CashflowChart(daily: data.daily),
-                      ),
-                      SizedBox(height: 16.h),
-                      _TabbedCard(
-                        controller: _tabs,
-                        tabs: const [
-                          _TabSpec(
-                              label: 'Categories', icon: Icons.donut_small),
-                          _TabSpec(
-                              label: 'Daily', icon: Icons.calendar_view_day),
-                          _TabSpec(label: 'Calendar', icon: Icons.grid_on),
-                          _TabSpec(label: 'Ratios', icon: Icons.percent),
-                        ],
-                        children: [
-                          _BreakdownTab(categories: expenseCategories),
-                          _DailyTab(data: data),
-                          _CalendarTab(data: data),
-                          _RatiosTab(totals: totals),
-                        ],
-                      ),
-                      SizedBox(height: 24.h),
                     ],
+                  ),
+                  body: SingleChildScrollView(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        MonthInReviewCard(
+                          data: recap,
+                          onTap: recap == null
+                              ? null
+                              : () => MonthInReviewScreen.show(context, recap),
+                        ),
+                        SizedBox(height: 16.h),
+                        _PeriodChips(
+                          selected: _periodDays,
+                          onChange: (v) {
+                            setState(() => _periodDays = v);
+                            context.read<ReportStatsCubit>().load(v);
+                          },
+                        ),
+                        SizedBox(height: 16.h),
+                        _StatsSourceNote(statsState: statsState),
+                        _KpiGrid(totals: totals),
+                        SizedBox(height: 16.h),
+                        _SectionCard(
+                          title: 'Cashflow',
+                          subtitle: 'Income vs expense across the period',
+                          child: CashflowChart(daily: data.daily),
+                        ),
+                        SizedBox(height: 16.h),
+                        _TabbedCard(
+                          controller: _tabs,
+                          tabs: const [
+                            _TabSpec(
+                                label: 'Categories', icon: Icons.donut_small),
+                            _TabSpec(
+                                label: 'Daily', icon: Icons.calendar_view_day),
+                            _TabSpec(label: 'Calendar', icon: Icons.grid_on),
+                            _TabSpec(label: 'Ratios', icon: Icons.percent),
+                          ],
+                          children: [
+                            _BreakdownTab(categories: expenseCategories),
+                            _DailyTab(data: data),
+                            _CalendarTab(data: data),
+                            _RatiosTab(totals: totals),
+                          ],
+                        ),
+                        SizedBox(height: 24.h),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -157,6 +179,63 @@ class _ReportsScreenState extends State<ReportsScreen>
           );
         },
       ),
+    );
+  }
+
+  /// The statement covers the same window as the period chips, so the file
+  /// matches the figures on screen.
+  void _chooseStatementFormat(BuildContext context) {
+    final cubit = context.read<ExportCubit>();
+    if (cubit.state.isExporting) return;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                LocaleKeys.exportStatement.tr(),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
+              ),
+              subtitle: Text(LocaleKeys.exportStatementDesc.tr()),
+            ),
+            for (final option in const [
+              (format: ExportFormat.pdf, icon: Icons.picture_as_pdf_outlined),
+              (format: ExportFormat.xlsx, icon: Icons.table_chart_outlined),
+              (format: ExportFormat.csv, icon: Icons.description_outlined),
+            ])
+              ListTile(
+                leading: Icon(option.icon),
+                title: Text(_formatLabel(option.format)),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _exportStatement(cubit, option.format);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatLabel(ExportFormat format) => switch (format) {
+        ExportFormat.pdf => LocaleKeys.toPdf.tr(),
+        ExportFormat.xlsx => LocaleKeys.toExcel.tr(),
+        ExportFormat.csv => LocaleKeys.toCsv.tr(),
+      };
+
+  void _exportStatement(ExportCubit cubit, ExportFormat format) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    showSnackBar(message: LocaleKeys.exportPreparing.tr(), isSuccess: true);
+
+    cubit.exportStatement(
+      format: format,
+      start: today.subtract(Duration(days: _periodDays - 1)),
+      end: today,
     );
   }
 }
@@ -230,9 +309,8 @@ class _PeriodChips extends StatelessWidget {
               curve: AppMotion.standard,
               padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: selected == opt.value
-                    ? tones.brand.deep
-                    : tones.bgSurface,
+                color:
+                    selected == opt.value ? tones.brand.deep : tones.bgSurface,
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(color: tones.borderLight),
               ),
@@ -241,9 +319,8 @@ class _PeriodChips extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
-                  color: selected == opt.value
-                      ? Colors.white
-                      : tones.textPrimary,
+                  color:
+                      selected == opt.value ? Colors.white : tones.textPrimary,
                 ),
               ),
             ),
