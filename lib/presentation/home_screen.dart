@@ -19,6 +19,7 @@ import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/info_interfaces/empty_home_widget.dart';
 import 'package:trakli/presentation/notifications/notifications_screen.dart';
 import 'package:trakli/presentation/profile_screen.dart';
+import 'package:trakli/presentation/streaks/widgets/streak_chip.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/all_wallets_tile.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -388,12 +389,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ],
-                    Text(
-                      LocaleKeys.transactions.tr(),
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            LocaleKeys.transactions.tr(),
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const StreakChip(),
+                      ],
                     ),
                     SizedBox(height: 8.h),
                     Row(

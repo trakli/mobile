@@ -77,6 +77,7 @@ import '../data/datasources/reminder/reminder_remote_datasource.dart' as _i390;
 import '../data/datasources/stats/financial_position_local_datasource.dart'
     as _i11;
 import '../data/datasources/stats/stats_remote_datasource.dart' as _i738;
+import '../data/datasources/streak/streak_remote_datasource.dart' as _i19;
 import '../data/datasources/subscription/subscription_remote_data_source.dart'
     as _i682;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
@@ -104,6 +105,7 @@ import '../data/repositories/media_repository_impl.dart' as _i74;
 import '../data/repositories/notification_repository_impl.dart' as _i888;
 import '../data/repositories/party_repository_impl.dart' as _i168;
 import '../data/repositories/reminder_repository_impl.dart' as _i1029;
+import '../data/repositories/streak_repository_impl.dart' as _i870;
 import '../data/repositories/subscription_repository_imp.dart' as _i1047;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/repositories/transfer_repository_impl.dart' as _i268;
@@ -138,6 +140,7 @@ import '../domain/repositories/media_repository.dart' as _i442;
 import '../domain/repositories/notification_repository.dart' as _i965;
 import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/reminder_repository.dart' as _i868;
+import '../domain/repositories/streak_repository.dart' as _i1013;
 import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/transfer_repository.dart' as _i55;
@@ -238,6 +241,7 @@ import '../domain/usecases/reminder/update_reminder_usecase.dart' as _i781;
 import '../domain/usecases/reminder/usecase.dart' as _i14;
 import '../domain/usecases/remote_config/get_remote_feature_config_usecase.dart'
     as _i466;
+import '../domain/usecases/streak/get_streaks_usecase.dart' as _i645;
 import '../domain/usecases/subscription/fetch_subscription_usecase.dart'
     as _i314;
 import '../domain/usecases/sync/check_pending_changes_usecase.dart' as _i662;
@@ -301,6 +305,7 @@ import '../presentation/plans/cubit/plans_cubit.dart' as _i977;
 import '../presentation/reminders/cubit/reminder_cubit.dart' as _i1071;
 import '../presentation/remote_config/cubit/remote_config_cubit.dart' as _i594;
 import '../presentation/statistics/cubit/statistics_filter_cubit.dart' as _i363;
+import '../presentation/streaks/cubit/streak_cubit.dart' as _i165;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 import '../presentation/transfers/cubit/transfer_cubit.dart' as _i611;
 import '../presentation/utils/sync_cubit.dart' as _i1041;
@@ -431,6 +436,8 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i875.ExportRemoteDataSource>(
       () => _i875.ExportRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.factory<_i19.StreakRemoteDataSource>(
+      () => _i19.StreakRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i76.ImportRemoteDataSource>(
       () => _i76.ImportRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i624.WalletRemoteDataSource>(
@@ -439,6 +446,8 @@ _i174.GetIt $initGetIt(
       () => _i501.FeedbackRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i481.UserContextService>(
       () => _i481.UserContextService(gh<_i538.CrashReportingService>()));
+  gh.lazySingleton<_i1013.StreakRepository>(
+      () => _i870.StreakRepositoryImpl(gh<_i19.StreakRemoteDataSource>()));
   gh.factory<_i632.ExchangeRateRemoteDataSource>(
       () => _i632.ExchangeRateRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.lazySingleton<_i542.AiRepository>(
@@ -590,6 +599,8 @@ _i174.GetIt $initGetIt(
       () => _i60.AnalyzeDocumentUseCase(gh<_i32.ImportRepository>()));
   gh.lazySingleton<_i3.ExportRepository>(
       () => _i739.ExportRepositoryImpl(gh<_i875.ExportRemoteDataSource>()));
+  gh.factory<_i645.GetStreaksUseCase>(
+      () => _i645.GetStreaksUseCase(gh<_i1013.StreakRepository>()));
   gh.factory<_i56.DeletePartyUseCase>(
       () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i84.AddPartyUseCase>(
@@ -625,6 +636,8 @@ _i174.GetIt $initGetIt(
       () => _i505.ListSessionsUseCase(gh<_i542.AiRepository>()));
   gh.factory<_i559.AppUpdateCubit>(
       () => _i559.AppUpdateCubit(gh<_i150.CheckAppUpdateUseCase>()));
+  gh.factory<_i165.StreakCubit>(
+      () => _i165.StreakCubit(gh<_i645.GetStreaksUseCase>()));
   gh.factory<_i552.GetFeedbackUseCase>(
       () => _i552.GetFeedbackUseCase(gh<_i93.FeedbackRepository>()));
   gh.factory<_i903.SubmitFeedbackUseCase>(

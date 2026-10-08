@@ -965,5 +965,10 @@ abstract class  LocaleKeys {
   static const feedbackHistory = 'feedbackHistory';
   static const feedbackEmptyTitle = 'feedbackEmptyTitle';
   static const feedbackEmptyBody = 'feedbackEmptyBody';
+  static const streaksTitle = 'streaksTitle';
+  static const streaksHint = 'streaksHint';
+  static const streakTracking = 'streakTracking';
+  static const streakCheckIn = 'streakCheckIn';
+  static const streakBest = 'streakBest';
 
 }

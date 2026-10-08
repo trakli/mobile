@@ -960,5 +960,10 @@
   "feedbackSent": "Merci, votre avis est parvenu à l'équipe.",
   "feedbackHistory": "Vos avis",
   "feedbackEmptyTitle": "Rien d'envoyé pour l'instant",
-  "feedbackEmptyBody": "Vos messages et leur statut apparaîtront ici."
+  "feedbackEmptyBody": "Vos messages et leur statut apparaîtront ici.",
+  "streaksTitle": "Vos séries",
+  "streaksHint": "Une transaction compte pour votre série de suivi une fois synchronisée. Ouvrir Trakli en étant connecté entretient votre série de visites.",
+  "streakTracking": "Suivi",
+  "streakCheckIn": "Visites",
+  "streakBest": "Record : {}"
 }

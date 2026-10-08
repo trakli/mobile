@@ -960,5 +960,10 @@
   "feedbackSent": "Gracias, tus comentarios llegaron al equipo.",
   "feedbackHistory": "Tus comentarios",
   "feedbackEmptyTitle": "Aún no has enviado nada",
-  "feedbackEmptyBody": "Tus mensajes y su estado aparecerán aquí."
+  "feedbackEmptyBody": "Tus mensajes y su estado aparecerán aquí.",
+  "streaksTitle": "Tus rachas",
+  "streaksHint": "Una transacción cuenta para tu racha de registro cuando se sincroniza. Abrir Trakli con la sesión iniciada mantiene tu racha de visitas.",
+  "streakTracking": "Registro",
+  "streakCheckIn": "Visitas",
+  "streakBest": "Mejor: {}"
 }

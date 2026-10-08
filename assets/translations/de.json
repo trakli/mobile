@@ -960,5 +960,10 @@
   "feedbackSent": "Danke, dein Feedback ist beim Team angekommen.",
   "feedbackHistory": "Dein Feedback",
   "feedbackEmptyTitle": "Noch nichts gesendet",
-  "feedbackEmptyBody": "Deine Nachrichten und ihr Status erscheinen hier."
+  "feedbackEmptyBody": "Deine Nachrichten und ihr Status erscheinen hier.",
+  "streaksTitle": "Deine Serien",
+  "streaksHint": "Eine Transaktion zählt für deine Tracking-Serie, sobald sie synchronisiert ist. Öffne Trakli angemeldet, um deine Check-in-Serie fortzuführen.",
+  "streakTracking": "Tracking",
+  "streakCheckIn": "Check-in",
+  "streakBest": "Rekord: {}"
 }

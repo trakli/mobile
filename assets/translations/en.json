@@ -960,5 +960,10 @@
   "feedbackSent": "Thanks, your feedback reached the team.",
   "feedbackHistory": "Your feedback",
   "feedbackEmptyTitle": "Nothing sent yet",
-  "feedbackEmptyBody": "Your messages and their status will appear here."
+  "feedbackEmptyBody": "Your messages and their status will appear here.",
+  "streaksTitle": "Your streaks",
+  "streaksHint": "A transaction counts toward your tracking streak once it syncs. Opening Trakli while signed in keeps your check-in streak going.",
+  "streakTracking": "Tracking",
+  "streakCheckIn": "Checking in",
+  "streakBest": "Best: {}"
 }
