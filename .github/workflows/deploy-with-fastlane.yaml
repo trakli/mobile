@@ -50,7 +50,7 @@ jobs:
         run: bundle exec pod install
 
       - name: Deploy to TestFlight
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@v3.2.0
         with:
           lane: "release_app_store"
           subdirectory: "ios"
@@ -108,7 +108,7 @@ jobs:
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
 
-      - uses: maierj/fastlane-action@v3.1.0
+      - uses: maierj/fastlane-action@v3.2.0
         with:
           lane: "release_play_store"
           subdirectory: android
