@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 
 /// Error boundary for widgets that may throw while building, such as
 /// third-party debug tools. Shows a contained fallback with the error and
@@ -82,7 +84,11 @@ class _SafeViewFallback extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            Icon(
+              Icons.error_outline,
+              size: 48.sp,
+              color: context.tones.expense.deep,
+            ),
             const SizedBox(height: 12),
             Text(
               LocaleKeys.unknownErrorDesc.tr(),
