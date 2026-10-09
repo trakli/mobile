@@ -56,6 +56,7 @@ import '../data/datasources/exchange-rate/exchange_rate_local_datasource.dart'
 import '../data/datasources/exchange-rate/exchange_rate_remote_datasource.dart'
     as _i632;
 import '../data/datasources/export/export_remote_datasource.dart' as _i875;
+import '../data/datasources/feedback/feedback_remote_datasource.dart' as _i501;
 import '../data/datasources/group/group_local_datasource.dart' as _i873;
 import '../data/datasources/group/group_remote_datasource.dart' as _i478;
 import '../data/datasources/holding/holding_local_datasource.dart' as _i1057;
@@ -76,6 +77,7 @@ import '../data/datasources/reminder/reminder_remote_datasource.dart' as _i390;
 import '../data/datasources/stats/financial_position_local_datasource.dart'
     as _i11;
 import '../data/datasources/stats/stats_remote_datasource.dart' as _i738;
+import '../data/datasources/streak/streak_remote_datasource.dart' as _i19;
 import '../data/datasources/subscription/subscription_remote_data_source.dart'
     as _i682;
 import '../data/datasources/transaction/transaction_local_datasource.dart'
@@ -94,6 +96,7 @@ import '../data/repositories/cloud_benefit_repository_imp.dart' as _i415;
 import '../data/repositories/config_repository_impl.dart' as _i379;
 import '../data/repositories/exchange_rate_imp.dart' as _i827;
 import '../data/repositories/export_repository_impl.dart' as _i739;
+import '../data/repositories/feedback_repository_impl.dart' as _i296;
 import '../data/repositories/financial_position_repository_impl.dart' as _i569;
 import '../data/repositories/group_repository_impl.dart' as _i875;
 import '../data/repositories/holding_repository_impl.dart' as _i204;
@@ -102,6 +105,7 @@ import '../data/repositories/media_repository_impl.dart' as _i74;
 import '../data/repositories/notification_repository_impl.dart' as _i888;
 import '../data/repositories/party_repository_impl.dart' as _i168;
 import '../data/repositories/reminder_repository_impl.dart' as _i1029;
+import '../data/repositories/streak_repository_impl.dart' as _i870;
 import '../data/repositories/subscription_repository_imp.dart' as _i1047;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/repositories/transfer_repository_impl.dart' as _i268;
@@ -127,6 +131,7 @@ import '../domain/repositories/cloud_benefit_repository.dart' as _i11;
 import '../domain/repositories/config_repository.dart' as _i899;
 import '../domain/repositories/exchange_rate_repository.dart' as _i1057;
 import '../domain/repositories/export_repository.dart' as _i3;
+import '../domain/repositories/feedback_repository.dart' as _i93;
 import '../domain/repositories/financial_position_repository.dart' as _i581;
 import '../domain/repositories/group_repository.dart' as _i957;
 import '../domain/repositories/holding_repository.dart' as _i645;
@@ -135,6 +140,7 @@ import '../domain/repositories/media_repository.dart' as _i442;
 import '../domain/repositories/notification_repository.dart' as _i965;
 import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/reminder_repository.dart' as _i868;
+import '../domain/repositories/streak_repository.dart' as _i1013;
 import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/transfer_repository.dart' as _i55;
@@ -191,7 +197,10 @@ import '../domain/usecases/configs/update_config_usecase.dart' as _i436;
 import '../domain/usecases/exchange_rate/listen_to_exchange_rate.dart' as _i397;
 import '../domain/usecases/exchange_rate/update_default_currency_usecase.dart'
     as _i798;
+import '../domain/usecases/export/export_statement_usecase.dart' as _i465;
 import '../domain/usecases/export/export_transactions_usecase.dart' as _i795;
+import '../domain/usecases/feedback/get_feedback_usecase.dart' as _i552;
+import '../domain/usecases/feedback/submit_feedback_usecase.dart' as _i903;
 import '../domain/usecases/financial_position/get_financial_position_usecase.dart'
     as _i26;
 import '../domain/usecases/group/add_group_usecase.dart' as _i353;
@@ -232,6 +241,7 @@ import '../domain/usecases/reminder/update_reminder_usecase.dart' as _i781;
 import '../domain/usecases/reminder/usecase.dart' as _i14;
 import '../domain/usecases/remote_config/get_remote_feature_config_usecase.dart'
     as _i466;
+import '../domain/usecases/streak/get_streaks_usecase.dart' as _i645;
 import '../domain/usecases/subscription/fetch_subscription_usecase.dart'
     as _i314;
 import '../domain/usecases/sync/check_pending_changes_usecase.dart' as _i662;
@@ -283,6 +293,7 @@ import '../presentation/config/theme_cubit/theme_cubit.dart' as _i627;
 import '../presentation/currency/cubit/currency_cubit.dart' as _i484;
 import '../presentation/exchange_rate/cubit/exchange_rate_cubit.dart' as _i311;
 import '../presentation/exports/cubit/export_cubit.dart' as _i435;
+import '../presentation/feedback/cubit/feedback_cubit.dart' as _i1054;
 import '../presentation/financial_position/cubit/financial_position_cubit.dart'
     as _i261;
 import '../presentation/groups/cubit/group_cubit.dart' as _i676;
@@ -294,6 +305,7 @@ import '../presentation/plans/cubit/plans_cubit.dart' as _i977;
 import '../presentation/reminders/cubit/reminder_cubit.dart' as _i1071;
 import '../presentation/remote_config/cubit/remote_config_cubit.dart' as _i594;
 import '../presentation/statistics/cubit/statistics_filter_cubit.dart' as _i363;
+import '../presentation/streaks/cubit/streak_cubit.dart' as _i165;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 import '../presentation/transfers/cubit/transfer_cubit.dart' as _i611;
 import '../presentation/utils/sync_cubit.dart' as _i1041;
@@ -424,12 +436,18 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i875.ExportRemoteDataSource>(
       () => _i875.ExportRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.factory<_i19.StreakRemoteDataSource>(
+      () => _i19.StreakRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i76.ImportRemoteDataSource>(
       () => _i76.ImportRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i624.WalletRemoteDataSource>(
       () => _i624.WalletRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.factory<_i501.FeedbackRemoteDataSource>(
+      () => _i501.FeedbackRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i481.UserContextService>(
       () => _i481.UserContextService(gh<_i538.CrashReportingService>()));
+  gh.lazySingleton<_i1013.StreakRepository>(
+      () => _i870.StreakRepositoryImpl(gh<_i19.StreakRemoteDataSource>()));
   gh.factory<_i632.ExchangeRateRemoteDataSource>(
       () => _i632.ExchangeRateRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.lazySingleton<_i542.AiRepository>(
@@ -440,6 +458,8 @@ _i174.GetIt $initGetIt(
       () => _i587.ConfigRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i79.TransactionRemoteDataSource>(
       () => _i79.TransactionRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.lazySingleton<_i93.FeedbackRepository>(
+      () => _i296.FeedbackRepositoryImpl(gh<_i501.FeedbackRemoteDataSource>()));
   gh.factory<_i390.ReminderRemoteDataSource>(
       () => _i390.ReminderRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i358.HoldingRemoteDataSource>(
@@ -579,6 +599,8 @@ _i174.GetIt $initGetIt(
       () => _i60.AnalyzeDocumentUseCase(gh<_i32.ImportRepository>()));
   gh.lazySingleton<_i3.ExportRepository>(
       () => _i739.ExportRepositoryImpl(gh<_i875.ExportRemoteDataSource>()));
+  gh.factory<_i645.GetStreaksUseCase>(
+      () => _i645.GetStreaksUseCase(gh<_i1013.StreakRepository>()));
   gh.factory<_i56.DeletePartyUseCase>(
       () => _i56.DeletePartyUseCase(gh<_i661.PartyRepository>()));
   gh.factory<_i84.AddPartyUseCase>(
@@ -614,6 +636,12 @@ _i174.GetIt $initGetIt(
       () => _i505.ListSessionsUseCase(gh<_i542.AiRepository>()));
   gh.factory<_i559.AppUpdateCubit>(
       () => _i559.AppUpdateCubit(gh<_i150.CheckAppUpdateUseCase>()));
+  gh.factory<_i165.StreakCubit>(
+      () => _i165.StreakCubit(gh<_i645.GetStreaksUseCase>()));
+  gh.factory<_i552.GetFeedbackUseCase>(
+      () => _i552.GetFeedbackUseCase(gh<_i93.FeedbackRepository>()));
+  gh.factory<_i903.SubmitFeedbackUseCase>(
+      () => _i903.SubmitFeedbackUseCase(gh<_i93.FeedbackRepository>()));
   gh.factory<_i538.ImportCubit>(() => _i538.ImportCubit(
         analyzeDocumentUseCase: gh<_i60.AnalyzeDocumentUseCase>(),
         confirmSessionUseCase: gh<_i36.ConfirmSessionUseCase>(),
@@ -698,6 +726,10 @@ _i174.GetIt $initGetIt(
         db: gh<_i704.AppDatabase>(),
         requestAuthorizationService: gh<_i877.RequestAuthorizationService>(),
       ));
+  gh.factory<_i1054.FeedbackCubit>(() => _i1054.FeedbackCubit(
+        gh<_i552.GetFeedbackUseCase>(),
+        gh<_i903.SubmitFeedbackUseCase>(),
+      ));
   gh.factory<_i132.GetConfigsUseCase>(
       () => _i132.GetConfigsUseCase(gh<_i899.ConfigRepository>()));
   gh.factory<_i608.ListenToConfigsUseCase>(
@@ -753,11 +785,19 @@ _i174.GetIt $initGetIt(
       ));
   gh.factory<_i795.ExportTransactionsUseCase>(
       () => _i795.ExportTransactionsUseCase(gh<_i3.ExportRepository>()));
+  gh.factory<_i465.ExportStatementUseCase>(
+      () => _i465.ExportStatementUseCase(gh<_i3.ExportRepository>()));
   gh.factory<_i15.LoginCubit>(() => _i15.LoginCubit(
         gh<_i768.LoginWithEmailPassword>(),
         gh<_i723.LoginWithPhonePassword>(),
         gh<_i542.PasswordResetCodeUseCase>(),
         gh<_i494.PasswordResetUseCase>(),
+      ));
+  gh.factory<_i435.ExportCubit>(() => _i435.ExportCubit(
+        gh<_i795.ExportTransactionsUseCase>(),
+        gh<_i465.ExportStatementUseCase>(),
+        gh<_i377.AuthService>(),
+        gh<_i704.AppDatabase>(),
       ));
   gh.factory<_i831.RegisterCubit>(() => _i831.RegisterCubit(
         gh<_i705.RegisterUseCase>(),
@@ -789,11 +829,6 @@ _i174.GetIt $initGetIt(
         saveConfigUseCase: gh<_i833.SaveConfigUseCase>(),
         ensureDefaultWalletExistsUseCase:
             gh<_i225.EnsureDefaultWalletExistsUseCase>(),
-      ));
-  gh.factory<_i435.ExportCubit>(() => _i435.ExportCubit(
-        gh<_i795.ExportTransactionsUseCase>(),
-        gh<_i377.AuthService>(),
-        gh<_i704.AppDatabase>(),
       ));
   gh.factory<_i397.ListenExchangeRate>(
       () => _i397.ListenExchangeRate(gh<_i1057.ExchangeRateRepository>()));

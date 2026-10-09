@@ -2,12 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:fpdart/fpdart.dart' show Either;
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/core/services/auth_service.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/data/datasources/export/export_remote_datasource.dart';
+import 'package:trakli/domain/usecases/export/export_statement_usecase.dart';
 import 'package:trakli/domain/usecases/export/export_transactions_usecase.dart';
 
 part 'export_state.dart';
@@ -20,11 +22,13 @@ part 'export_cubit.freezed.dart';
 @injectable
 class ExportCubit extends Cubit<ExportState> {
   final ExportTransactionsUseCase _exportTransactions;
+  final ExportStatementUseCase _exportStatement;
   final AuthService _authService;
   final AppDatabase _db;
 
   ExportCubit(
     this._exportTransactions,
+    this._exportStatement,
     this._authService,
     this._db,
   ) : super(const ExportState());
@@ -35,6 +39,43 @@ class ExportCubit extends Cubit<ExportState> {
     DateTime? to,
     List<int> walletIds = const [],
     List<int> categoryIds = const [],
+  }) {
+    return _export(
+      format: format,
+      baseName: 'transactions',
+      download: () => _exportTransactions(ExportTransactionsParams(
+        format: format,
+        from: from,
+        to: to,
+        walletIds: walletIds,
+        categoryIds: categoryIds,
+      )),
+    );
+  }
+
+  /// Downloads the financial statement covering [start]..[end].
+  Future<void> exportStatement({
+    required ExportFormat format,
+    required DateTime start,
+    required DateTime end,
+    List<int> walletIds = const [],
+  }) {
+    return _export(
+      format: format,
+      baseName: 'statement',
+      download: () => _exportStatement(ExportStatementParams(
+        format: format,
+        start: start,
+        end: end,
+        walletIds: walletIds,
+      )),
+    );
+  }
+
+  Future<void> _export({
+    required ExportFormat format,
+    required String baseName,
+    required Future<Either<Failure, Uint8List>> Function() download,
   }) async {
     if (state.isExporting) return;
 
@@ -51,17 +92,12 @@ class ExportCubit extends Cubit<ExportState> {
     }
 
     if (await _db.hasPendingTransactionChanges()) {
-      emit(state.copyWith(inProgress: null, blocker: ExportBlocker.pendingSync));
+      emit(
+          state.copyWith(inProgress: null, blocker: ExportBlocker.pendingSync));
       return;
     }
 
-    final result = await _exportTransactions(ExportTransactionsParams(
-      format: format,
-      from: from,
-      to: to,
-      walletIds: walletIds,
-      categoryIds: categoryIds,
-    ));
+    final result = await download();
 
     result.fold(
       (failure) => emit(state.copyWith(inProgress: null, failure: failure)),
@@ -69,7 +105,7 @@ class ExportCubit extends Cubit<ExportState> {
         inProgress: null,
         file: ExportedFile(
           bytes: bytes,
-          name: _fileName(format),
+          name: _fileName(baseName, format),
           mimeType: format.mimeType,
         ),
       )),
@@ -80,8 +116,8 @@ class ExportCubit extends Cubit<ExportState> {
   /// rebuild does not open it a second time.
   void clearFile() => emit(state.copyWith(file: null));
 
-  String _fileName(ExportFormat format) {
+  String _fileName(String baseName, ExportFormat format) {
     final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    return 'transactions-$stamp.${format.key}';
+    return '$baseName-$stamp.${format.key}';
   }
 }

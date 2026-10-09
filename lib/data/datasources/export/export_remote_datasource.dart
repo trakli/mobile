@@ -28,6 +28,15 @@ abstract class ExportRemoteDataSource {
     List<int> walletIds = const [],
     List<int> categoryIds = const [],
   });
+
+  /// Downloads the financial statement for [start]..[end], built from the
+  /// same figures as the stats endpoint.
+  Future<Uint8List> exportStatement({
+    required ExportFormat format,
+    required DateTime start,
+    required DateTime end,
+    List<int> walletIds = const [],
+  });
 }
 
 @Injectable(as: ExportRemoteDataSource)
@@ -53,6 +62,29 @@ class ExportRemoteDataSourceImpl implements ExportRemoteDataSource {
           if (to != null) 'date_to': _ymd(to),
           if (walletIds.isNotEmpty) 'wallet_ids': walletIds.join(','),
           if (categoryIds.isNotEmpty) 'category_ids': categoryIds.join(','),
+        },
+        options: Options(responseType: ResponseType.bytes),
+      ),
+    );
+
+    return Uint8List.fromList(response.data ?? []);
+  }
+
+  @override
+  Future<Uint8List> exportStatement({
+    required ExportFormat format,
+    required DateTime start,
+    required DateTime end,
+    List<int> walletIds = const [],
+  }) async {
+    final response = await ErrorHandler.handleApiCall(
+      () => dio.get<List<int>>(
+        'reports/export',
+        queryParameters: {
+          'format': format.key,
+          'start_date': _ymd(start),
+          'end_date': _ymd(end),
+          if (walletIds.isNotEmpty) 'wallet_ids': walletIds.join(','),
         },
         options: Options(responseType: ResponseType.bytes),
       ),

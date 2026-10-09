@@ -13,4 +13,12 @@ abstract class ExportRepository {
     List<int> walletIds = const [],
     List<int> categoryIds = const [],
   });
+
+  /// Download the financial statement for a date range rendered by the server.
+  Future<Either<Failure, Uint8List>> exportStatement({
+    required ExportFormat format,
+    required DateTime start,
+    required DateTime end,
+    List<int> walletIds = const [],
+  });
 }

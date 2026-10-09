@@ -16,6 +16,7 @@ import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/defaults_settings_screen.dart';
 import 'package:trakli/presentation/display_settings_screen.dart';
+import 'package:trakli/presentation/feedback/feedback_screen.dart';
 import 'package:trakli/presentation/notification_settings/notification_settings_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/about_app_bottom_sheet.dart';
@@ -212,6 +213,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         title: Text(LocaleKeys.notificationSettings.tr()),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16.sp,
+                        ),
+                      );
+                    },
+                  ),
+                  // Feedback (authenticated only; it is sent to the server)
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, authState) {
+                      if (!authState.isAuthenticated) {
+                        return const SizedBox.shrink();
+                      }
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        onTap: () {
+                          AppNavigator.push(context, const FeedbackScreen());
+                        },
+                        leading: Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.r),
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.2),
+                          ),
+                          child: Icon(
+                            Icons.feedback_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        title: Text(LocaleKeys.feedback.tr()),
+                        subtitle: Text(LocaleKeys.feedbackDesc.tr()),
                         trailing: Icon(
                           Icons.arrow_forward_ios,
                           size: 16.sp,
