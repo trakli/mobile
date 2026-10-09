@@ -22,7 +22,7 @@ jobs:
       ios: ${{ steps.filter.outputs.ios }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Detect changes
         id: filter
         uses: dorny/paths-filter@v3
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -65,7 +65,7 @@ jobs:
     needs: analyze
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
