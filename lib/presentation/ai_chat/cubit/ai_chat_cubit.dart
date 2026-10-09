@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:trakli/core/error/failures/failures.dart';
+import 'package:trakli/core/realtime/pusher_protocol.dart';
+import 'package:trakli/core/realtime/reverb_socket_client.dart';
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/core/utils/services/logger.dart';
 import 'package:trakli/data/datasources/ai/dto/chat_message_dto.dart';
@@ -40,6 +42,8 @@ class AiChatCubit extends Cubit<AiChatState> {
   final ConfirmActionUseCase _confirmActionUseCase;
   final RejectActionUseCase _rejectActionUseCase;
   final UploadFilesUseCase _uploadFilesUseCase;
+  final ReverbSocketClient _socket;
+  StreamSubscription<ChatTurnFrame>? _turnSub;
 
   static const List<Duration> _pollBackoff = [
     Duration(seconds: 2),
@@ -67,6 +71,7 @@ class AiChatCubit extends Cubit<AiChatState> {
     required ConfirmActionUseCase confirmActionUseCase,
     required RejectActionUseCase rejectActionUseCase,
     required UploadFilesUseCase uploadFilesUseCase,
+    required ReverbSocketClient socket,
   })  : _listSessionsUseCase = listSessionsUseCase,
         _getSessionUseCase = getSessionUseCase,
         _createSessionUseCase = createSessionUseCase,
@@ -75,7 +80,10 @@ class AiChatCubit extends Cubit<AiChatState> {
         _confirmActionUseCase = confirmActionUseCase,
         _rejectActionUseCase = rejectActionUseCase,
         _uploadFilesUseCase = uploadFilesUseCase,
-        super(AiChatState.initial());
+        _socket = socket,
+        super(AiChatState.initial()) {
+    _turnSub = _socket.turnEvents.listen(_onTurnEvent);
+  }
 
   /// Shows the landing on the first open per launch; later opens resume the most recent chat.
   Future<void> openInitial() async {
@@ -120,10 +128,48 @@ class AiChatCubit extends Cubit<AiChatState> {
     final result = await _getSessionUseCase(GetSessionParams(id: id));
     result.fold(
       (failure) => emit(state.copyWith(failure: failure)),
-      (session) => emit(
-        state.copyWith(session: session, messages: session.messages),
-      ),
+      (session) {
+        emit(state.copyWith(
+          session: session,
+          messages: session.messages,
+          progressByMessageId: const {},
+        ));
+        unawaited(_socket.subscribeToSession(id));
+      },
     );
+  }
+
+  /// Handles a live turn update from [ReverbSocketClient]. `progress`
+  /// appends a step label for the in-flight message; `settled` refetches
+  /// immediately instead of waiting for the next poll tick. Polling stays
+  /// running regardless — this only makes the common case faster.
+  void _onTurnEvent(ChatTurnFrame frame) {
+    final sessionId = state.session?.id;
+    if (sessionId == null) return;
+    final belongsToCurrent =
+        state.messages.any((m) => m.id == frame.messageId);
+    if (!belongsToCurrent) return;
+
+    if (frame.isProgress && frame.label != null) {
+      final updated = Map<int, List<String>>.from(state.progressByMessageId);
+      updated[frame.messageId] = [
+        ...(updated[frame.messageId] ?? const []),
+        frame.label!,
+      ];
+      emit(state.copyWith(progressByMessageId: updated));
+    } else if (frame.isSettled) {
+      unawaited(_refreshAfterSettled(sessionId));
+    }
+  }
+
+  Future<void> _refreshAfterSettled(int sessionId) async {
+    final result = await _getSessionUseCase(GetSessionParams(id: sessionId));
+    result.fold((_) {}, (fresh) {
+      if (state.session?.id != sessionId) return;
+      emit(state.copyWith(session: fresh, messages: fresh.messages));
+      final latest = state.latestAssistantMessage;
+      if (latest == null || !latest.isInFlight) _stopPolling();
+    });
   }
 
   Future<void> openSession(int id) async {
@@ -143,6 +189,7 @@ class AiChatCubit extends Cubit<AiChatState> {
       (_) {
         if (state.session?.id == id) {
           _stopPolling();
+          _socket.unsubscribe();
           emit(AiChatState.initial());
         }
       },
@@ -151,6 +198,7 @@ class AiChatCubit extends Cubit<AiChatState> {
 
   void startNewChat() {
     _stopPolling();
+    _socket.unsubscribe();
     emit(AiChatState.initial());
   }
 
@@ -253,6 +301,7 @@ class AiChatCubit extends Cubit<AiChatState> {
       if (created == null) return;
       emit(state.copyWith(session: created, messages: created.messages));
       sessionId = created.id;
+      unawaited(_socket.subscribeToSession(sessionId));
       for (final m in created.messages) {
         if (m.isUser) {
           userMessageId = m.id;
@@ -454,6 +503,8 @@ class AiChatCubit extends Cubit<AiChatState> {
   @override
   Future<void> close() {
     _stopPolling();
+    _turnSub?.cancel();
+    _socket.unsubscribe();
     return super.close();
   }
 }
