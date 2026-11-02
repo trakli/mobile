@@ -95,6 +95,8 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
       description: Value(entity.description),
       clientId: Value(entity.clientId),
       userId: Value(entity.userId),
+      ownerType: Value(entity.ownerType),
+      ownerId: Value(entity.ownerId),
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
       icon: Value(entity.icon),
@@ -121,6 +123,8 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
           description: Value(entity.description),
           clientId: Value(entity.clientId),
           userId: Value(entity.userId),
+          ownerType: Value(entity.ownerType),
+          ownerId: Value(entity.ownerId),
           createdAt: Value(entity.createdAt),
           updatedAt: Value(entity.updatedAt),
           icon: Value(entity.icon),
@@ -139,9 +143,7 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
   @override
   Future<void> deleteLocalNotIn(Set<String> clientIds) async {
     if (clientIds.isEmpty) return;
-    await (db.delete(table)
-          ..where((t) => t.clientId.isNotIn(clientIds)))
-        .go();
+    await (db.delete(table)..where((t) => t.clientId.isNotIn(clientIds))).go();
   }
 
   @override
@@ -159,6 +161,8 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
         description: row.description,
         clientId: row.clientId,
         userId: row.userId,
+        ownerType: row.ownerType,
+        ownerId: row.ownerId,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
         icon: row.icon,
@@ -179,6 +183,8 @@ class GroupSyncHandler extends SyncTypeHandler<Group, String, int>
         description: row.description,
         clientId: row.clientId,
         userId: row.userId,
+        ownerType: row.ownerType,
+        ownerId: row.ownerId,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
         icon: row.icon,

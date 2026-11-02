@@ -17,7 +17,9 @@ TransactionDTO _$TransactionDTOFromJson(Map<String, dynamic> json) =>
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       walletId: parseInt(json['wallet_id']),
-      userId: (json['user_id'] as num).toInt(),
+      userId: (json['user_id'] as num?)?.toInt(),
+      ownerType: json['owner_type'] as String?,
+      ownerId: (json['owner_id'] as num?)?.toInt(),
       wallet: json['wallet'] == null
           ? null
           : WalletDto.fromJson(json['wallet'] as Map<String, dynamic>),
@@ -48,6 +50,8 @@ Map<String, dynamic> _$TransactionDTOToJson(TransactionDTO instance) =>
       'updated_at': instance.updatedAt,
       'wallet_id': instance.walletId,
       'user_id': instance.userId,
+      'owner_type': instance.ownerType,
+      'owner_id': instance.ownerId,
       'wallet': instance.wallet?.toJson(),
       'categories': instance.categories,
       'last_synced_at': instance.lastSyncedAt.toIso8601String(),

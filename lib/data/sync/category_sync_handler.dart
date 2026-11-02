@@ -96,9 +96,7 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
   @override
   Future<void> deleteLocalNotIn(Set<String> clientIds) async {
     if (clientIds.isEmpty) return;
-    await (db.delete(table)
-          ..where((t) => t.clientId.isNotIn(clientIds)))
-        .go();
+    await (db.delete(table)..where((t) => t.clientId.isNotIn(clientIds))).go();
   }
 
   @override
@@ -116,6 +114,8 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
       clientId: Value(entity.clientId),
       slug: Value(entity.slug),
       userId: Value(entity.userId),
+      ownerType: Value(entity.ownerType),
+      ownerId: Value(entity.ownerId),
       createdAt: Value(entity.createdAt),
       lastSyncedAt: Value(entity.lastSyncedAt),
       icon: Value(entity.icon),
@@ -142,6 +142,8 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
           clientId: Value(entity.clientId),
           slug: Value(entity.slug),
           userId: Value(entity.userId),
+          ownerType: Value(entity.ownerType),
+          ownerId: Value(entity.ownerId),
           createdAt: Value(entity.createdAt),
           lastSyncedAt: Value(entity.lastSyncedAt),
           icon: Value(entity.icon),
@@ -174,6 +176,8 @@ class CategorySyncHandler extends SyncTypeHandler<Category, String, int>
         clientId: row.clientId,
         slug: row.slug,
         userId: row.userId,
+        ownerType: row.ownerType,
+        ownerId: row.ownerId,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       );

@@ -13,6 +13,8 @@ class TransferDto with _$TransferDto {
   const factory TransferDto({
     int? id,
     @JsonKey(name: 'user_id') int? userId,
+    @JsonKey(name: 'owner_type') String? ownerType,
+    @JsonKey(name: 'owner_id') int? ownerId,
     @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
     required String clientId,
     String? rev,
@@ -44,6 +46,8 @@ class TransferDto with _$TransferDto {
   factory TransferDto.fromTransfer(Transfer transfer) => TransferDto(
         id: transfer.id,
         userId: transfer.userId,
+        ownerType: transfer.ownerType,
+        ownerId: transfer.ownerId,
         clientId: transfer.clientId,
         rev: transfer.rev,
         createdAt: transfer.createdAt,
@@ -64,6 +68,8 @@ class TransferDto with _$TransferDto {
   Transfer toTransfer() => Transfer(
         id: id,
         userId: userId,
+        ownerType: ownerType,
+        ownerId: ownerId,
         clientId: clientId,
         rev: rev,
         createdAt: createdAt,

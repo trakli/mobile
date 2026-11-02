@@ -9,6 +9,8 @@ class TransactionEntity with _$TransactionEntity {
   const factory TransactionEntity({
     required String clientId,
     int? id,
+    String? ownerType,
+    int? ownerId,
     required double amount,
     required String description,
     required DateTime createdAt,

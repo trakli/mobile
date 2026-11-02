@@ -9,6 +9,8 @@ class CategoryMapper {
       slug: c.slug,
       type: c.type,
       userId: c.userId,
+      ownerType: c.ownerType,
+      ownerId: c.ownerId,
       description: c.description,
       clientId: c.clientId,
       createdAt: c.createdAt,

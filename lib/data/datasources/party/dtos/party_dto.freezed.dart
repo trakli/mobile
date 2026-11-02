@@ -33,7 +33,12 @@ mixin _$PartyDto {
   DateTime get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'deleted_at')
   DateTime? get deletedAt => throw _privateConstructorUsedError;
-  int get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_id')
+  int? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_type')
+  String? get ownerType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_id')
+  int? get ownerId => throw _privateConstructorUsedError;
   Media? get media => throw _privateConstructorUsedError;
 
   /// Serializes this PartyDto to a JSON map.
@@ -60,7 +65,9 @@ abstract class $PartyDtoCopyWith<$Res> {
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
-      int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       Media? media});
 }
 
@@ -87,7 +94,9 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? deletedAt = freezed,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? media = freezed,
   }) {
     return _then(_value.copyWith(
@@ -123,10 +132,18 @@ class _$PartyDtoCopyWithImpl<$Res, $Val extends PartyDto>
           ? _value.deletedAt
           : deletedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       media: freezed == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
@@ -152,7 +169,9 @@ abstract class _$$PartyDtoImplCopyWith<$Res>
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
-      int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       Media? media});
 }
 
@@ -177,7 +196,9 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? deletedAt = freezed,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? media = freezed,
   }) {
     return _then(_$PartyDtoImpl(
@@ -213,10 +234,18 @@ class __$$PartyDtoImplCopyWithImpl<$Res>
           ? _value.deletedAt
           : deletedAt // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       media: freezed == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
@@ -237,7 +266,9 @@ class _$PartyDtoImpl extends _PartyDto {
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'updated_at') required this.updatedAt,
       @JsonKey(name: 'deleted_at') this.deletedAt,
-      required this.userId,
+      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'owner_type') this.ownerType,
+      @JsonKey(name: 'owner_id') this.ownerId,
       this.media})
       : super._();
 
@@ -266,13 +297,20 @@ class _$PartyDtoImpl extends _PartyDto {
   @JsonKey(name: 'deleted_at')
   final DateTime? deletedAt;
   @override
-  final int userId;
+  @JsonKey(name: 'user_id')
+  final int? userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  final String? ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  final int? ownerId;
   @override
   final Media? media;
 
   @override
   String toString() {
-    return 'PartyDto(id: $id, name: $name, description: $description, type: $type, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, userId: $userId, media: $media)';
+    return 'PartyDto(id: $id, name: $name, description: $description, type: $type, clientId: $clientId, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, userId: $userId, ownerType: $ownerType, ownerId: $ownerId, media: $media)';
   }
 
   @override
@@ -294,13 +332,28 @@ class _$PartyDtoImpl extends _PartyDto {
             (identical(other.deletedAt, deletedAt) ||
                 other.deletedAt == deletedAt) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.media, media) || other.media == media));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, description, type,
-      clientId, createdAt, updatedAt, deletedAt, userId, media);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      description,
+      type,
+      clientId,
+      createdAt,
+      updatedAt,
+      deletedAt,
+      userId,
+      ownerType,
+      ownerId,
+      media);
 
   /// Create a copy of PartyDto
   /// with the given fields replaced by the non-null parameter values.
@@ -328,7 +381,9 @@ abstract class _PartyDto extends PartyDto {
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       @JsonKey(name: 'updated_at') required final DateTime updatedAt,
       @JsonKey(name: 'deleted_at') final DateTime? deletedAt,
-      required final int userId,
+      @JsonKey(name: 'user_id') final int? userId,
+      @JsonKey(name: 'owner_type') final String? ownerType,
+      @JsonKey(name: 'owner_id') final int? ownerId,
       final Media? media}) = _$PartyDtoImpl;
   const _PartyDto._() : super._();
 
@@ -357,7 +412,14 @@ abstract class _PartyDto extends PartyDto {
   @JsonKey(name: 'deleted_at')
   DateTime? get deletedAt;
   @override
-  int get userId;
+  @JsonKey(name: 'user_id')
+  int? get userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  String? get ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  int? get ownerId;
   @override
   Media? get media;
 

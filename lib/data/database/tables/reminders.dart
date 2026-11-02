@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
+import 'package:trakli/data/database/tables/finance_owner.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 
 /// Reminders are server-triggered
 @DataClassName('Reminder')
-class Reminders extends Table with SyncTable {
+class Reminders extends Table with SyncTable, FinanceOwner {
   @JsonKey('title')
   TextColumn get title => text()();
 

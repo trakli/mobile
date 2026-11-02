@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:trakli/data/database/tables/finance_owner.dart';
 import 'package:trakli/data/database/tables/groups.dart';
 import 'package:trakli/data/database/tables/parties.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
@@ -8,7 +9,7 @@ import 'package:trakli/presentation/utils/enums.dart';
 @DataClassName('Transaction')
 
 // @UseRowClass(Transaction)
-class Transactions extends Table with SyncTable {
+class Transactions extends Table with SyncTable, FinanceOwner {
   // Note: id and clientId are inherited from SyncTable
   // id is for server, clientId is for local
 

@@ -15,6 +15,8 @@ class WalletMapper {
       createdAt: wallet.createdAt,
       id: wallet.id,
       userId: wallet.userId,
+      ownerType: wallet.ownerType,
+      ownerId: wallet.ownerId,
       updatedAt: wallet.updatedAt,
       stats: WalletStatsMapper.toDomainNullable(wallet.stats),
       icon: wallet.icon != null ? MediaEntity.fromModel(wallet.icon!) : null,

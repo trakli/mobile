@@ -1,11 +1,12 @@
 import 'package:drift/drift.dart';
+import 'package:trakli/data/database/tables/finance_owner.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/converters/wallet_stats_converter.dart';
 import 'package:trakli/data/database/converters/media_converter.dart';
 import 'package:trakli/data/database/converters/wallet_type_converter.dart';
 
 @DataClassName('Wallet')
-class Wallets extends Table with SyncTable {
+class Wallets extends Table with SyncTable, FinanceOwner {
   TextColumn get name => text()();
   TextColumn get type => text().map(const WalletTypeConverter())();
   RealColumn get balance => real().withDefault(const Constant(0.0))();

@@ -21,7 +21,9 @@ class CategoryDto with _$CategoryDto {
     required DateTime createdAt,
     int? id,
     required String slug,
-    @JsonKey(name: 'user_id') required int userId,
+    @JsonKey(name: 'user_id') int? userId,
+    @JsonKey(name: 'owner_type') String? ownerType,
+    @JsonKey(name: 'owner_id') int? ownerId,
     @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
     required DateTime updatedAt,
     @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)

@@ -238,6 +238,8 @@ class TransactionCompleteDto with _$TransactionCompleteDto {
       description: transactionDto.description,
       id: transactionDto.id,
       userId: transactionDto.userId,
+      ownerType: transactionDto.ownerType,
+      ownerId: transactionDto.ownerId,
       walletId: wallet.id,
       partyClientId: party?.clientId,
       groupClientId: group?.clientId,

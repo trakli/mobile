@@ -13,6 +13,8 @@ class CategoryEntity with _$CategoryEntity {
     String? description,
     required DateTime createdAt,
     int? id,
+    String? ownerType,
+    int? ownerId,
     String? slug,
     int? userId,
     DateTime? updatedAt,

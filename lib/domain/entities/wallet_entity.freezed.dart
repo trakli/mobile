@@ -24,6 +24,8 @@ mixin _$WalletEntity {
   String get currencyCode => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
+  String? get ownerType => throw _privateConstructorUsedError;
+  int? get ownerId => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   WalletStatsEntity? get stats => throw _privateConstructorUsedError;
@@ -51,6 +53,8 @@ abstract class $WalletEntityCopyWith<$Res> {
       String currencyCode,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       int? userId,
       DateTime updatedAt,
       WalletStatsEntity? stats,
@@ -82,6 +86,8 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
     Object? currencyCode = null,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? stats = freezed,
@@ -119,6 +125,14 @@ class _$WalletEntityCopyWithImpl<$Res, $Val extends WalletEntity>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       userId: freezed == userId
           ? _value.userId
@@ -171,6 +185,8 @@ abstract class _$$WalletEntityImplCopyWith<$Res>
       String currencyCode,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       int? userId,
       DateTime updatedAt,
       WalletStatsEntity? stats,
@@ -201,6 +217,8 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
     Object? currencyCode = null,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? stats = freezed,
@@ -239,6 +257,14 @@ class __$$WalletEntityImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
@@ -271,6 +297,8 @@ class _$WalletEntityImpl extends _WalletEntity {
       required this.currencyCode,
       required this.createdAt,
       this.id,
+      this.ownerType,
+      this.ownerId,
       this.userId,
       required this.updatedAt,
       this.stats,
@@ -294,6 +322,10 @@ class _$WalletEntityImpl extends _WalletEntity {
   @override
   final int? id;
   @override
+  final String? ownerType;
+  @override
+  final int? ownerId;
+  @override
   final int? userId;
   @override
   final DateTime updatedAt;
@@ -304,7 +336,7 @@ class _$WalletEntityImpl extends _WalletEntity {
 
   @override
   String toString() {
-    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, stats: $stats, icon: $icon)';
+    return 'WalletEntity(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currencyCode: $currencyCode, createdAt: $createdAt, id: $id, ownerType: $ownerType, ownerId: $ownerId, userId: $userId, updatedAt: $updatedAt, stats: $stats, icon: $icon)';
   }
 
   @override
@@ -324,6 +356,9 @@ class _$WalletEntityImpl extends _WalletEntity {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
@@ -342,6 +377,8 @@ class _$WalletEntityImpl extends _WalletEntity {
       currencyCode,
       createdAt,
       id,
+      ownerType,
+      ownerId,
       userId,
       updatedAt,
       stats,
@@ -366,6 +403,8 @@ abstract class _WalletEntity extends WalletEntity {
       required final String currencyCode,
       required final DateTime createdAt,
       final int? id,
+      final String? ownerType,
+      final int? ownerId,
       final int? userId,
       required final DateTime updatedAt,
       final WalletStatsEntity? stats,
@@ -388,6 +427,10 @@ abstract class _WalletEntity extends WalletEntity {
   DateTime get createdAt;
   @override
   int? get id;
+  @override
+  String? get ownerType;
+  @override
+  int? get ownerId;
   @override
   int? get userId;
   @override

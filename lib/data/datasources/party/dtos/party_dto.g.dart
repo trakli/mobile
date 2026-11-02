@@ -18,7 +18,9 @@ _$PartyDtoImpl _$$PartyDtoImplFromJson(Map<String, dynamic> json) =>
       deletedAt: json['deleted_at'] == null
           ? null
           : DateTime.parse(json['deleted_at'] as String),
-      userId: (json['userId'] as num).toInt(),
+      userId: (json['user_id'] as num?)?.toInt(),
+      ownerType: json['owner_type'] as String?,
+      ownerId: (json['owner_id'] as num?)?.toInt(),
       media: json['media'] == null
           ? null
           : Media.fromJson(json['media'] as Map<String, dynamic>),
@@ -34,7 +36,9 @@ Map<String, dynamic> _$$PartyDtoImplToJson(_$PartyDtoImpl instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'deleted_at': instance.deletedAt?.toIso8601String(),
-      'userId': instance.userId,
+      'user_id': instance.userId,
+      'owner_type': instance.ownerType,
+      'owner_id': instance.ownerId,
       'media': instance.media?.toJson(),
     };
 

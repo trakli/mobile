@@ -78,7 +78,7 @@ class AppDatabase extends _$AppDatabase with SynchronizerDb {
         super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration {
@@ -508,6 +508,36 @@ extension Migrations on GeneratedDatabase {
             schema.syncMetadata,
             schema.syncMetadata.lastError,
           );
+        },
+        from9To10: (Migrator m, Schema10 schema) async {
+          await m.addColumn(schema.wallets, schema.wallets.ownerType);
+          await m.addColumn(schema.wallets, schema.wallets.ownerId);
+          await m.addColumn(schema.transactions, schema.transactions.ownerType);
+          await m.addColumn(schema.transactions, schema.transactions.ownerId);
+          await m.addColumn(schema.categories, schema.categories.ownerType);
+          await m.addColumn(schema.categories, schema.categories.ownerId);
+          await m.addColumn(schema.groups, schema.groups.ownerType);
+          await m.addColumn(schema.groups, schema.groups.ownerId);
+          await m.addColumn(schema.parties, schema.parties.ownerType);
+          await m.addColumn(schema.parties, schema.parties.ownerId);
+          await m.addColumn(schema.transfers, schema.transfers.ownerType);
+          await m.addColumn(schema.transfers, schema.transfers.ownerId);
+          await m.addColumn(schema.reminders, schema.reminders.ownerType);
+          await m.addColumn(schema.reminders, schema.reminders.ownerId);
+          for (final name in [
+            'wallets',
+            'transactions',
+            'categories',
+            'groups',
+            'parties',
+            'transfers',
+            'reminders',
+          ]) {
+            await customStatement(
+              'UPDATE $name SET owner_type = ?, owner_id = user_id WHERE user_id IS NOT NULL',
+              [r'App\Models\User'],
+            );
+          }
         },
       );
 }

@@ -9,6 +9,8 @@ class TransferEntity extends Equatable {
     required this.updatedAt,
     this.id,
     this.userId,
+    this.ownerType,
+    this.ownerId,
     this.fromWalletId,
     this.toWalletId,
     this.fromWalletClientId,
@@ -25,6 +27,8 @@ class TransferEntity extends Equatable {
   final DateTime updatedAt;
   final int? id;
   final int? userId;
+  final String? ownerType;
+  final int? ownerId;
   final int? fromWalletId;
   final int? toWalletId;
   final String? fromWalletClientId;
@@ -42,6 +46,8 @@ class TransferEntity extends Equatable {
         updatedAt,
         id,
         userId,
+        ownerType,
+        ownerId,
         fromWalletId,
         toWalletId,
         fromWalletClientId,

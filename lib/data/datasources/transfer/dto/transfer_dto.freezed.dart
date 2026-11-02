@@ -23,6 +23,10 @@ mixin _$TransferDto {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'user_id')
   int? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_type')
+  String? get ownerType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_id')
+  int? get ownerId => throw _privateConstructorUsedError;
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientId => throw _privateConstructorUsedError;
   String? get rev => throw _privateConstructorUsedError;
@@ -75,6 +79,8 @@ abstract class $TransferDtoCopyWith<$Res> {
   $Res call(
       {int? id,
       @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientId,
       String? rev,
@@ -118,6 +124,8 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
   $Res call({
     Object? id = freezed,
     Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? clientId = null,
     Object? rev = freezed,
     Object? createdAt = null,
@@ -144,6 +152,14 @@ class _$TransferDtoCopyWithImpl<$Res, $Val extends TransferDto>
       userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       clientId: null == clientId
           ? _value.clientId
@@ -256,6 +272,8 @@ abstract class _$$TransferDtoImplCopyWith<$Res>
   $Res call(
       {int? id,
       @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       String clientId,
       String? rev,
@@ -299,6 +317,8 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? clientId = null,
     Object? rev = freezed,
     Object? createdAt = null,
@@ -325,6 +345,14 @@ class __$$TransferDtoImplCopyWithImpl<$Res>
       userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       clientId: null == clientId
           ? _value.clientId
@@ -405,6 +433,8 @@ class _$TransferDtoImpl extends _TransferDto {
   const _$TransferDtoImpl(
       {this.id,
       @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'owner_type') this.ownerType,
+      @JsonKey(name: 'owner_id') this.ownerId,
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       required this.clientId,
       this.rev,
@@ -436,6 +466,12 @@ class _$TransferDtoImpl extends _TransferDto {
   @override
   @JsonKey(name: 'user_id')
   final int? userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  final String? ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  final int? ownerId;
   @override
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   final String clientId;
@@ -488,7 +524,7 @@ class _$TransferDtoImpl extends _TransferDto {
 
   @override
   String toString() {
-    return 'TransferDto(id: $id, userId: $userId, clientId: $clientId, rev: $rev, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, lastSyncedAt: $lastSyncedAt, amount: $amount, fromWalletId: $fromWalletId, toWalletId: $toWalletId, sourceWallet: $sourceWallet, destinationWallet: $destinationWallet, fromWalletClientId: $fromWalletClientId, toWalletClientId: $toWalletClientId, exchangeRate: $exchangeRate, datetime: $datetime, expenseTransactionClientId: $expenseTransactionClientId, incomeTransactionClientId: $incomeTransactionClientId)';
+    return 'TransferDto(id: $id, userId: $userId, ownerType: $ownerType, ownerId: $ownerId, clientId: $clientId, rev: $rev, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, lastSyncedAt: $lastSyncedAt, amount: $amount, fromWalletId: $fromWalletId, toWalletId: $toWalletId, sourceWallet: $sourceWallet, destinationWallet: $destinationWallet, fromWalletClientId: $fromWalletClientId, toWalletClientId: $toWalletClientId, exchangeRate: $exchangeRate, datetime: $datetime, expenseTransactionClientId: $expenseTransactionClientId, incomeTransactionClientId: $incomeTransactionClientId)';
   }
 
   @override
@@ -498,6 +534,9 @@ class _$TransferDtoImpl extends _TransferDto {
             other is _$TransferDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.clientId, clientId) ||
                 other.clientId == clientId) &&
             (identical(other.rev, rev) || other.rev == rev) &&
@@ -541,6 +580,8 @@ class _$TransferDtoImpl extends _TransferDto {
         runtimeType,
         id,
         userId,
+        ownerType,
+        ownerId,
         clientId,
         rev,
         createdAt,
@@ -580,6 +621,8 @@ abstract class _TransferDto extends TransferDto {
   const factory _TransferDto(
       {final int? id,
       @JsonKey(name: 'user_id') final int? userId,
+      @JsonKey(name: 'owner_type') final String? ownerType,
+      @JsonKey(name: 'owner_id') final int? ownerId,
       @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
       required final String clientId,
       final String? rev,
@@ -611,6 +654,12 @@ abstract class _TransferDto extends TransferDto {
   @override
   @JsonKey(name: 'user_id')
   int? get userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  String? get ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  int? get ownerId;
   @override
   @JsonKey(name: 'client_generated_id', defaultValue: defaultClientId)
   String get clientId;

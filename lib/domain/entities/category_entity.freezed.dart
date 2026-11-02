@@ -22,6 +22,8 @@ mixin _$CategoryEntity {
   String? get description => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
+  String? get ownerType => throw _privateConstructorUsedError;
+  int? get ownerId => throw _privateConstructorUsedError;
   String? get slug => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
@@ -48,6 +50,8 @@ abstract class $CategoryEntityCopyWith<$Res> {
       String? description,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       String? slug,
       int? userId,
       DateTime? updatedAt,
@@ -76,6 +80,8 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
     Object? description = freezed,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? slug = freezed,
     Object? userId = freezed,
     Object? updatedAt = freezed,
@@ -106,6 +112,14 @@ class _$CategoryEntityCopyWithImpl<$Res, $Val extends CategoryEntity>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       slug: freezed == slug
           ? _value.slug
@@ -146,6 +160,8 @@ abstract class _$$CategoryEntityImplCopyWith<$Res>
       String? description,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       String? slug,
       int? userId,
       DateTime? updatedAt,
@@ -172,6 +188,8 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? slug = freezed,
     Object? userId = freezed,
     Object? updatedAt = freezed,
@@ -202,6 +220,14 @@ class __$$CategoryEntityImplCopyWithImpl<$Res>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       slug: freezed == slug
           ? _value.slug
@@ -237,6 +263,8 @@ class _$CategoryEntityImpl implements _CategoryEntity {
       this.description,
       required this.createdAt,
       this.id,
+      this.ownerType,
+      this.ownerId,
       this.slug,
       this.userId,
       this.updatedAt,
@@ -256,6 +284,10 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   @override
   final int? id;
   @override
+  final String? ownerType;
+  @override
+  final int? ownerId;
+  @override
   final String? slug;
   @override
   final int? userId;
@@ -268,7 +300,7 @@ class _$CategoryEntityImpl implements _CategoryEntity {
 
   @override
   String toString() {
-    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, icon: $icon)';
+    return 'CategoryEntity(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, ownerType: $ownerType, ownerId: $ownerId, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, icon: $icon)';
   }
 
   @override
@@ -285,6 +317,9 @@ class _$CategoryEntityImpl implements _CategoryEntity {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.slug, slug) || other.slug == slug) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -295,8 +330,21 @@ class _$CategoryEntityImpl implements _CategoryEntity {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, clientId, type, name,
-      description, createdAt, id, slug, userId, updatedAt, lastSyncedAt, icon);
+  int get hashCode => Object.hash(
+      runtimeType,
+      clientId,
+      type,
+      name,
+      description,
+      createdAt,
+      id,
+      ownerType,
+      ownerId,
+      slug,
+      userId,
+      updatedAt,
+      lastSyncedAt,
+      icon);
 
   /// Create a copy of CategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -316,6 +364,8 @@ abstract class _CategoryEntity implements CategoryEntity {
       final String? description,
       required final DateTime createdAt,
       final int? id,
+      final String? ownerType,
+      final int? ownerId,
       final String? slug,
       final int? userId,
       final DateTime? updatedAt,
@@ -334,6 +384,10 @@ abstract class _CategoryEntity implements CategoryEntity {
   DateTime get createdAt;
   @override
   int? get id;
+  @override
+  String? get ownerType;
+  @override
+  int? get ownerId;
   @override
   String? get slug;
   @override

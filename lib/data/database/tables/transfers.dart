@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:trakli/data/database/tables/finance_owner.dart';
 import 'package:trakli/data/database/tables/sync_table.dart';
 import 'package:trakli/data/database/tables/transactions.dart';
 import 'package:trakli/data/database/tables/wallets.dart';
 
 @DataClassName('Transfer')
-class Transfers extends Table with SyncTable {
+class Transfers extends Table with SyncTable, FinanceOwner {
   @JsonKey('amount')
   RealColumn get amount => real()();
 
@@ -29,11 +30,10 @@ class Transfers extends Table with SyncTable {
   DateTimeColumn get datetime => dateTime()();
 
   @JsonKey('expense_transaction_client_id')
-  TextColumn get expenseTransactionClientId => text().references(Transactions, #clientId).nullable()();
+  TextColumn get expenseTransactionClientId =>
+      text().references(Transactions, #clientId).nullable()();
 
   @JsonKey('income_transaction_client_id')
-  TextColumn get incomeTransactionClientId => text().references(Transactions, #clientId).nullable()();
+  TextColumn get incomeTransactionClientId =>
+      text().references(Transactions, #clientId).nullable()();
 }
-
-
-

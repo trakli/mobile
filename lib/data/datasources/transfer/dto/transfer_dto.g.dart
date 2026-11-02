@@ -10,6 +10,8 @@ _$TransferDtoImpl _$$TransferDtoImplFromJson(Map<String, dynamic> json) =>
     _$TransferDtoImpl(
       id: (json['id'] as num?)?.toInt(),
       userId: (json['user_id'] as num?)?.toInt(),
+      ownerType: json['owner_type'] as String?,
+      ownerId: (json['owner_id'] as num?)?.toInt(),
       clientId: json['client_generated_id'] as String? ?? '',
       rev: json['rev'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -44,6 +46,8 @@ Map<String, dynamic> _$$TransferDtoImplToJson(_$TransferDtoImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
+      'owner_type': instance.ownerType,
+      'owner_id': instance.ownerId,
       'client_generated_id': instance.clientId,
       'rev': instance.rev,
       'created_at': instance.createdAt.toIso8601String(),

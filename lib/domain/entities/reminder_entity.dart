@@ -32,6 +32,8 @@ class ReminderEntity extends Equatable {
   final String clientId;
   final int? id;
   final int? userId;
+  final String? ownerType;
+  final int? ownerId;
   final String title;
   final String? description;
   final String type;
@@ -52,6 +54,8 @@ class ReminderEntity extends Equatable {
     required this.clientId,
     this.id,
     this.userId,
+    this.ownerType,
+    this.ownerId,
     required this.title,
     this.description,
     this.type = ReminderType.custom,
@@ -78,6 +82,8 @@ class ReminderEntity extends Equatable {
         clientId,
         id,
         userId,
+        ownerType,
+        ownerId,
         title,
         description,
         type,

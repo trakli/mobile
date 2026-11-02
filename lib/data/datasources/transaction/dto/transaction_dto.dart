@@ -24,7 +24,11 @@ class TransactionDTO {
   @JsonKey(name: 'wallet_id', fromJson: parseInt)
   final int? walletId;
   @JsonKey(name: 'user_id')
-  final int userId;
+  final int? userId;
+  @JsonKey(name: 'owner_type')
+  final String? ownerType;
+  @JsonKey(name: 'owner_id')
+  final int? ownerId;
   final WalletDto? wallet;
   @JsonKey(defaultValue: <dynamic>[])
   final List<dynamic> categories;
@@ -55,7 +59,9 @@ class TransactionDTO {
     required this.createdAt,
     required this.updatedAt,
     this.walletId,
-    required this.userId,
+    this.userId,
+    this.ownerType,
+    this.ownerId,
     this.wallet,
     required this.categories,
     required this.lastSyncedAt,

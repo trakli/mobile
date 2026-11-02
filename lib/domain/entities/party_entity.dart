@@ -94,6 +94,8 @@ class PartyEntity extends Equatable {
   final DateTime updatedAt;
   final int? id;
   final int? userId;
+  final String? ownerType;
+  final int? ownerId;
   final MediaEntity? icon;
   final PartyType? type;
 
@@ -105,6 +107,8 @@ class PartyEntity extends Equatable {
     required this.updatedAt,
     this.id,
     this.userId,
+    this.ownerType,
+    this.ownerId,
     this.icon,
     this.type,
   });
@@ -118,6 +122,8 @@ class PartyEntity extends Equatable {
         updatedAt,
         id,
         userId,
+        ownerType,
+        ownerId,
         icon,
         type,
       ];

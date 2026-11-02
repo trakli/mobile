@@ -79,9 +79,7 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
   @override
   Future<void> deleteLocalNotIn(Set<String> clientIds) async {
     if (clientIds.isEmpty) return;
-    await (db.delete(table)
-          ..where((t) => t.clientId.isNotIn(clientIds)))
-        .go();
+    await (db.delete(table)..where((t) => t.clientId.isNotIn(clientIds))).go();
   }
 
   @override
@@ -118,6 +116,8 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
       description: Value(entity.description),
       clientId: Value(entity.clientId),
       userId: Value(entity.userId),
+      ownerType: Value(entity.ownerType),
+      ownerId: Value(entity.ownerId),
       rev: Value(entity.rev),
       createdAt: Value(entity.createdAt),
       updatedAt: Value(entity.updatedAt),
@@ -142,6 +142,8 @@ class WalletSyncHandler extends SyncTypeHandler<Wallet, String, int>
         final companion = WalletsCompanion(
           clientId: Value(entity.clientId),
           userId: Value(entity.userId),
+          ownerType: Value(entity.ownerType),
+          ownerId: Value(entity.ownerId),
           rev: Value(entity.rev),
           createdAt: Value(entity.createdAt),
           updatedAt: Value(entity.updatedAt),

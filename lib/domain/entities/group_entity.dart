@@ -11,6 +11,8 @@ class GroupEntity with _$GroupEntity {
     String? description,
     required DateTime createdAt,
     int? id,
+    String? ownerType,
+    int? ownerId,
     int? userId,
     required DateTime updatedAt,
     MediaEntity? icon,

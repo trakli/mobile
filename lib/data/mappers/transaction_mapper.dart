@@ -14,6 +14,8 @@ class _TransactionMapper {
     return TransactionEntity(
       clientId: row.clientId,
       id: row.id,
+      ownerType: row.ownerType,
+      ownerId: row.ownerId,
       amount: row.amount,
       description: row.description ?? '',
       lastSyncedAt: row.lastSyncedAt,

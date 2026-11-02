@@ -51,6 +51,14 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -93,6 +101,8 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         name,
         type,
         balance,
@@ -128,6 +138,10 @@ class $WalletsTable extends Wallets with TableInfo<$WalletsTable, Wallet> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       type: $WalletsTable.$convertertype.fromSql(attachedDatabase.typeMapping
@@ -171,6 +185,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final String name;
   final WalletType type;
   final double balance;
@@ -187,6 +203,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.name,
       required this.type,
       required this.balance,
@@ -214,6 +232,12 @@ class Wallet extends DataClass implements Insertable<Wallet> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['name'] = Variable<String>(name);
     {
@@ -249,6 +273,12 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       name: Value(name),
       type: Value(type),
       balance: Value(balance),
@@ -274,6 +304,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       name: serializer.fromJson<String>(json['name']),
       type: $WalletsTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
@@ -298,6 +330,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'name': serializer.toJson<String>(name),
       'type':
           serializer.toJson<String>($WalletsTable.$convertertype.toJson(type)),
@@ -320,6 +354,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           String? name,
           WalletType? type,
           double? balance,
@@ -337,6 +373,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         name: name ?? this.name,
         type: type ?? this.type,
         balance: balance ?? this.balance,
@@ -357,6 +395,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       name: data.name.present ? data.name.value : this.name,
       type: data.type.present ? data.type.value : this.type,
       balance: data.balance.present ? data.balance.value : this.balance,
@@ -379,6 +419,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('type: $type, ')
           ..write('balance: $balance, ')
@@ -400,6 +442,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
       updatedAt,
       deletedAt,
       lastSyncedAt,
+      ownerType,
+      ownerId,
       name,
       type,
       balance,
@@ -419,6 +463,8 @@ class Wallet extends DataClass implements Insertable<Wallet> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.name == this.name &&
           other.type == this.type &&
           other.balance == this.balance &&
@@ -437,6 +483,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<String> name;
   final Value<WalletType> type;
   final Value<double> balance;
@@ -454,6 +502,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.name = const Value.absent(),
     this.type = const Value.absent(),
     this.balance = const Value.absent(),
@@ -472,6 +522,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required String name,
     required WalletType type,
     this.balance = const Value.absent(),
@@ -492,6 +544,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<String>? name,
     Expression<String>? type,
     Expression<double>? balance,
@@ -510,6 +564,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (name != null) 'name': name,
       if (type != null) 'type': type,
       if (balance != null) 'balance': balance,
@@ -530,6 +586,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<String>? name,
       Value<WalletType>? type,
       Value<double>? balance,
@@ -547,6 +605,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       name: name ?? this.name,
       type: type ?? this.type,
       balance: balance ?? this.balance,
@@ -584,6 +644,12 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
     }
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -626,6 +692,8 @@ class WalletsCompanion extends UpdateCompanion<Wallet> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('type: $type, ')
           ..write('balance: $balance, ')
@@ -687,6 +755,14 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -714,6 +790,8 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         name,
         description,
         icon,
@@ -746,6 +824,10 @@ class $PartiesTable extends Parties with TableInfo<$PartiesTable, Party> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
@@ -781,6 +863,8 @@ class Party extends DataClass implements Insertable<Party> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final String name;
   final String? description;
   final Media? icon;
@@ -794,6 +878,8 @@ class Party extends DataClass implements Insertable<Party> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.name,
       this.description,
       this.icon,
@@ -818,6 +904,12 @@ class Party extends DataClass implements Insertable<Party> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
@@ -847,6 +939,12 @@ class Party extends DataClass implements Insertable<Party> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -868,6 +966,8 @@ class Party extends DataClass implements Insertable<Party> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       icon: $PartiesTable.$convertericonn
@@ -888,6 +988,8 @@ class Party extends DataClass implements Insertable<Party> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'icon': serializer.toJson<Map<String, Object?>?>(
@@ -906,6 +1008,8 @@ class Party extends DataClass implements Insertable<Party> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           String? name,
           Value<String?> description = const Value.absent(),
           Value<Media?> icon = const Value.absent(),
@@ -920,6 +1024,8 @@ class Party extends DataClass implements Insertable<Party> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         icon: icon.present ? icon.value : this.icon,
@@ -937,6 +1043,8 @@ class Party extends DataClass implements Insertable<Party> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       name: data.name.present ? data.name.value : this.name,
       description:
           data.description.present ? data.description.value : this.description,
@@ -956,6 +1064,8 @@ class Party extends DataClass implements Insertable<Party> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('icon: $icon, ')
@@ -965,8 +1075,21 @@ class Party extends DataClass implements Insertable<Party> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, deletedAt, lastSyncedAt, name, description, icon, type);
+  int get hashCode => Object.hash(
+      id,
+      userId,
+      clientId,
+      rev,
+      createdAt,
+      updatedAt,
+      deletedAt,
+      lastSyncedAt,
+      ownerType,
+      ownerId,
+      name,
+      description,
+      icon,
+      type);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -979,6 +1102,8 @@ class Party extends DataClass implements Insertable<Party> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.name == this.name &&
           other.description == this.description &&
           other.icon == this.icon &&
@@ -994,6 +1119,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<String> name;
   final Value<String?> description;
   final Value<Media?> icon;
@@ -1008,6 +1135,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
@@ -1023,6 +1152,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
@@ -1038,6 +1169,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? icon,
@@ -1053,6 +1186,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (icon != null) 'icon': icon,
@@ -1070,6 +1205,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<String>? name,
       Value<String?>? description,
       Value<Media?>? icon,
@@ -1084,6 +1221,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       name: name ?? this.name,
       description: description ?? this.description,
       icon: icon ?? this.icon,
@@ -1119,6 +1258,12 @@ class PartiesCompanion extends UpdateCompanion<Party> {
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -1150,6 +1295,8 @@ class PartiesCompanion extends UpdateCompanion<Party> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('icon: $icon, ')
@@ -1208,6 +1355,14 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -1230,6 +1385,8 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         name,
         description,
         icon
@@ -1261,6 +1418,10 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
@@ -1290,6 +1451,8 @@ class Group extends DataClass implements Insertable<Group> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final String name;
   final String? description;
   final Media? icon;
@@ -1302,6 +1465,8 @@ class Group extends DataClass implements Insertable<Group> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.name,
       this.description,
       this.icon});
@@ -1325,6 +1490,12 @@ class Group extends DataClass implements Insertable<Group> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || description != null) {
@@ -1351,6 +1522,12 @@ class Group extends DataClass implements Insertable<Group> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       name: Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -1371,6 +1548,8 @@ class Group extends DataClass implements Insertable<Group> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       icon: $GroupsTable.$convertericonn
@@ -1389,6 +1568,8 @@ class Group extends DataClass implements Insertable<Group> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'icon': serializer.toJson<Map<String, Object?>?>(
@@ -1405,6 +1586,8 @@ class Group extends DataClass implements Insertable<Group> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           String? name,
           Value<String?> description = const Value.absent(),
           Value<Media?> icon = const Value.absent()}) =>
@@ -1418,6 +1601,8 @@ class Group extends DataClass implements Insertable<Group> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         icon: icon.present ? icon.value : this.icon,
@@ -1434,6 +1619,8 @@ class Group extends DataClass implements Insertable<Group> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       name: data.name.present ? data.name.value : this.name,
       description:
           data.description.present ? data.description.value : this.description,
@@ -1452,6 +1639,8 @@ class Group extends DataClass implements Insertable<Group> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('icon: $icon')
@@ -1460,8 +1649,20 @@ class Group extends DataClass implements Insertable<Group> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, deletedAt, lastSyncedAt, name, description, icon);
+  int get hashCode => Object.hash(
+      id,
+      userId,
+      clientId,
+      rev,
+      createdAt,
+      updatedAt,
+      deletedAt,
+      lastSyncedAt,
+      ownerType,
+      ownerId,
+      name,
+      description,
+      icon);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1474,6 +1675,8 @@ class Group extends DataClass implements Insertable<Group> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.name == this.name &&
           other.description == this.description &&
           other.icon == this.icon);
@@ -1488,6 +1691,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<String> name;
   final Value<String?> description;
   final Value<Media?> icon;
@@ -1501,6 +1706,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
@@ -1515,6 +1722,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
     this.icon = const Value.absent(),
@@ -1529,6 +1738,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? icon,
@@ -1543,6 +1754,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (icon != null) 'icon': icon,
@@ -1559,6 +1772,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<String>? name,
       Value<String?>? description,
       Value<Media?>? icon,
@@ -1572,6 +1787,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       name: name ?? this.name,
       description: description ?? this.description,
       icon: icon ?? this.icon,
@@ -1606,6 +1823,12 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -1633,6 +1856,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('icon: $icon, ')
@@ -1690,6 +1915,14 @@ class $TransactionsTable extends Transactions
   late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumn<double> amount = GeneratedColumn<double>(
       'amount', aliasedName, false,
@@ -1793,6 +2026,8 @@ class $TransactionsTable extends Transactions
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         amount,
         type,
         intent,
@@ -1840,6 +2075,10 @@ class $TransactionsTable extends Transactions
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
       type: $TransactionsTable.$convertertype.fromSql(attachedDatabase
@@ -1901,6 +2140,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final double amount;
   final TransactionType type;
   final String intent;
@@ -1929,6 +2170,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.amount,
       required this.type,
       required this.intent,
@@ -1968,6 +2211,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['amount'] = Variable<double>(amount);
     {
@@ -2038,6 +2287,12 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       amount: Value(amount),
       type: Value(type),
       intent: Value(intent),
@@ -2101,6 +2356,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       amount: serializer.fromJson<double>(json['amount']),
       type: $TransactionsTable.$convertertype
           .fromJson(serializer.fromJson<String>(json['type'])),
@@ -2140,6 +2397,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'amount': serializer.toJson<double>(amount),
       'type': serializer
           .toJson<String>($TransactionsTable.$convertertype.toJson(type)),
@@ -2174,6 +2433,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           double? amount,
           TransactionType? type,
           String? intent,
@@ -2203,6 +2464,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         amount: amount ?? this.amount,
         type: type ?? this.type,
         intent: intent ?? this.intent,
@@ -2249,6 +2512,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       amount: data.amount.present ? data.amount.value : this.amount,
       type: data.type.present ? data.type.value : this.type,
       intent: data.intent.present ? data.intent.value : this.intent,
@@ -2302,6 +2567,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('amount: $amount, ')
           ..write('type: $type, ')
           ..write('intent: $intent, ')
@@ -2335,6 +2602,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         amount,
         type,
         intent,
@@ -2367,6 +2636,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.amount == this.amount &&
           other.type == this.type &&
           other.intent == this.intent &&
@@ -2397,6 +2668,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<double> amount;
   final Value<TransactionType> type;
   final Value<String> intent;
@@ -2426,6 +2699,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.amount = const Value.absent(),
     this.type = const Value.absent(),
     this.intent = const Value.absent(),
@@ -2456,6 +2731,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required double amount,
     required TransactionType type,
     this.intent = const Value.absent(),
@@ -2488,6 +2765,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<double>? amount,
     Expression<String>? type,
     Expression<String>? intent,
@@ -2518,6 +2797,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (amount != null) 'amount': amount,
       if (type != null) 'type': type,
       if (intent != null) 'intent': intent,
@@ -2552,6 +2833,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<double>? amount,
       Value<TransactionType>? type,
       Value<String>? intent,
@@ -2581,6 +2864,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       amount: amount ?? this.amount,
       type: type ?? this.type,
       intent: intent ?? this.intent,
@@ -2632,6 +2917,12 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
     }
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
     }
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
@@ -2710,6 +3001,8 @@ class TransactionsCompanion extends UpdateCompanion<Transaction> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('amount: $amount, ')
           ..write('type: $type, ')
           ..write('intent: $intent, ')
@@ -2784,6 +3077,14 @@ class $CategoriesTable extends Categories
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string,
@@ -2817,6 +3118,8 @@ class $CategoriesTable extends Categories
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         name,
         slug,
         description,
@@ -2850,6 +3153,10 @@ class $CategoriesTable extends Categories
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       slug: attachedDatabase.typeMapping
@@ -2886,6 +3193,8 @@ class Category extends DataClass implements Insertable<Category> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final String name;
   final String slug;
   final String? description;
@@ -2900,6 +3209,8 @@ class Category extends DataClass implements Insertable<Category> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.name,
       required this.slug,
       this.description,
@@ -2925,6 +3236,12 @@ class Category extends DataClass implements Insertable<Category> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['name'] = Variable<String>(name);
     map['slug'] = Variable<String>(slug);
@@ -2957,6 +3274,12 @@ class Category extends DataClass implements Insertable<Category> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       name: Value(name),
       slug: Value(slug),
       description: description == null && nullToAbsent
@@ -2979,6 +3302,8 @@ class Category extends DataClass implements Insertable<Category> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       name: serializer.fromJson<String>(json['name']),
       slug: serializer.fromJson<String>(json['slug']),
       description: serializer.fromJson<String?>(json['description']),
@@ -3000,6 +3325,8 @@ class Category extends DataClass implements Insertable<Category> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'name': serializer.toJson<String>(name),
       'slug': serializer.toJson<String>(slug),
       'description': serializer.toJson<String?>(description),
@@ -3019,6 +3346,8 @@ class Category extends DataClass implements Insertable<Category> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           String? name,
           String? slug,
           Value<String?> description = const Value.absent(),
@@ -3034,6 +3363,8 @@ class Category extends DataClass implements Insertable<Category> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         name: name ?? this.name,
         slug: slug ?? this.slug,
         description: description.present ? description.value : this.description,
@@ -3052,6 +3383,8 @@ class Category extends DataClass implements Insertable<Category> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       name: data.name.present ? data.name.value : this.name,
       slug: data.slug.present ? data.slug.value : this.slug,
       description:
@@ -3072,6 +3405,8 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('slug: $slug, ')
           ..write('description: $description, ')
@@ -3082,8 +3417,22 @@ class Category extends DataClass implements Insertable<Category> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, clientId, rev, createdAt,
-      updatedAt, deletedAt, lastSyncedAt, name, slug, description, type, icon);
+  int get hashCode => Object.hash(
+      id,
+      userId,
+      clientId,
+      rev,
+      createdAt,
+      updatedAt,
+      deletedAt,
+      lastSyncedAt,
+      ownerType,
+      ownerId,
+      name,
+      slug,
+      description,
+      type,
+      icon);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3096,6 +3445,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.name == this.name &&
           other.slug == this.slug &&
           other.description == this.description &&
@@ -3112,6 +3463,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<String> name;
   final Value<String> slug;
   final Value<String?> description;
@@ -3127,6 +3480,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.name = const Value.absent(),
     this.slug = const Value.absent(),
     this.description = const Value.absent(),
@@ -3143,6 +3498,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required String name,
     required String slug,
     this.description = const Value.absent(),
@@ -3161,6 +3518,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<String>? name,
     Expression<String>? slug,
     Expression<String>? description,
@@ -3177,6 +3536,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (name != null) 'name': name,
       if (slug != null) 'slug': slug,
       if (description != null) 'description': description,
@@ -3195,6 +3556,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<String>? name,
       Value<String>? slug,
       Value<String?>? description,
@@ -3210,6 +3573,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       name: name ?? this.name,
       slug: slug ?? this.slug,
       description: description ?? this.description,
@@ -3246,6 +3611,12 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
     }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -3280,6 +3651,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('name: $name, ')
           ..write('slug: $slug, ')
           ..write('description: $description, ')
@@ -6221,6 +6594,14 @@ class $TransfersTable extends Transfers
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<double> amount = GeneratedColumn<double>(
       'amount', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
@@ -6279,6 +6660,8 @@ class $TransfersTable extends Transfers
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         amount,
         fromWalletId,
         toWalletId,
@@ -6316,6 +6699,10 @@ class $TransfersTable extends Transfers
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
       fromWalletId: attachedDatabase.typeMapping
@@ -6354,6 +6741,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final double amount;
   final int? fromWalletId;
   final int? toWalletId;
@@ -6372,6 +6761,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.amount,
       this.fromWalletId,
       this.toWalletId,
@@ -6401,6 +6792,12 @@ class Transfer extends DataClass implements Insertable<Transfer> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['amount'] = Variable<double>(amount);
     if (!nullToAbsent || fromWalletId != null) {
@@ -6445,6 +6842,12 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       amount: Value(amount),
       fromWalletId: fromWalletId == null && nullToAbsent
           ? const Value.absent()
@@ -6485,6 +6888,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       amount: serializer.fromJson<double>(json['amount']),
       fromWalletId: serializer.fromJson<int?>(json['from_wallet_id']),
       toWalletId: serializer.fromJson<int?>(json['to_wallet_id']),
@@ -6512,6 +6917,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'amount': serializer.toJson<double>(amount),
       'from_wallet_id': serializer.toJson<int?>(fromWalletId),
       'to_wallet_id': serializer.toJson<int?>(toWalletId),
@@ -6535,6 +6942,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           double? amount,
           Value<int?> fromWalletId = const Value.absent(),
           Value<int?> toWalletId = const Value.absent(),
@@ -6554,6 +6963,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         amount: amount ?? this.amount,
         fromWalletId:
             fromWalletId.present ? fromWalletId.value : this.fromWalletId,
@@ -6586,6 +6997,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       amount: data.amount.present ? data.amount.value : this.amount,
       fromWalletId: data.fromWalletId.present
           ? data.fromWalletId.value
@@ -6622,6 +7035,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('amount: $amount, ')
           ..write('fromWalletId: $fromWalletId, ')
           ..write('toWalletId: $toWalletId, ')
@@ -6645,6 +7060,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
       updatedAt,
       deletedAt,
       lastSyncedAt,
+      ownerType,
+      ownerId,
       amount,
       fromWalletId,
       toWalletId,
@@ -6666,6 +7083,8 @@ class Transfer extends DataClass implements Insertable<Transfer> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.amount == this.amount &&
           other.fromWalletId == this.fromWalletId &&
           other.toWalletId == this.toWalletId &&
@@ -6686,6 +7105,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<double> amount;
   final Value<int?> fromWalletId;
   final Value<int?> toWalletId;
@@ -6705,6 +7126,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.amount = const Value.absent(),
     this.fromWalletId = const Value.absent(),
     this.toWalletId = const Value.absent(),
@@ -6725,6 +7148,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required double amount,
     this.fromWalletId = const Value.absent(),
     this.toWalletId = const Value.absent(),
@@ -6746,6 +7171,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<double>? amount,
     Expression<int>? fromWalletId,
     Expression<int>? toWalletId,
@@ -6766,6 +7193,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (amount != null) 'amount': amount,
       if (fromWalletId != null) 'from_wallet_id': fromWalletId,
       if (toWalletId != null) 'to_wallet_id': toWalletId,
@@ -6791,6 +7220,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<double>? amount,
       Value<int?>? fromWalletId,
       Value<int?>? toWalletId,
@@ -6810,6 +7241,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       amount: amount ?? this.amount,
       fromWalletId: fromWalletId ?? this.fromWalletId,
       toWalletId: toWalletId ?? this.toWalletId,
@@ -6851,6 +7284,12 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
     }
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
     }
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
@@ -6898,6 +7337,8 @@ class TransfersCompanion extends UpdateCompanion<Transfer> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('amount: $amount, ')
           ..write('fromWalletId: $fromWalletId, ')
           ..write('toWalletId: $toWalletId, ')
@@ -9429,6 +9870,14 @@ class $RemindersTable extends Reminders
       'last_synced_at', aliasedName, true,
       type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
+  late final GeneratedColumn<String> ownerType = GeneratedColumn<String>(
+      'owner_type', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  late final GeneratedColumn<int> ownerId = GeneratedColumn<int>(
+      'owner_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
       'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
@@ -9492,6 +9941,8 @@ class $RemindersTable extends Reminders
         updatedAt,
         deletedAt,
         lastSyncedAt,
+        ownerType,
+        ownerId,
         title,
         description,
         type,
@@ -9532,6 +9983,10 @@ class $RemindersTable extends Reminders
           .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
       lastSyncedAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}last_synced_at']),
+      ownerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}owner_type']),
+      ownerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}owner_id']),
       title: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       description: attachedDatabase.typeMapping
@@ -9574,6 +10029,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
   final DateTime updatedAt;
   final DateTime? deletedAt;
   final DateTime? lastSyncedAt;
+  final String? ownerType;
+  final int? ownerId;
   final String title;
   final String? description;
   final String type;
@@ -9595,6 +10052,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
       required this.updatedAt,
       this.deletedAt,
       this.lastSyncedAt,
+      this.ownerType,
+      this.ownerId,
       required this.title,
       this.description,
       required this.type,
@@ -9627,6 +10086,12 @@ class Reminder extends DataClass implements Insertable<Reminder> {
     }
     if (!nullToAbsent || lastSyncedAt != null) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    }
+    if (!nullToAbsent || ownerType != null) {
+      map['owner_type'] = Variable<String>(ownerType);
+    }
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<int>(ownerId);
     }
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
@@ -9674,6 +10139,12 @@ class Reminder extends DataClass implements Insertable<Reminder> {
       lastSyncedAt: lastSyncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastSyncedAt),
+      ownerType: ownerType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerType),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
       title: Value(title),
       description: description == null && nullToAbsent
           ? const Value.absent()
@@ -9716,6 +10187,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
       updatedAt: serializer.fromJson<DateTime>(json['updated_at']),
       deletedAt: serializer.fromJson<DateTime?>(json['deleted_at']),
       lastSyncedAt: serializer.fromJson<DateTime?>(json['last_synced_at']),
+      ownerType: serializer.fromJson<String?>(json['owner_type']),
+      ownerId: serializer.fromJson<int?>(json['owner_id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       type: serializer.fromJson<String>(json['type']),
@@ -9743,6 +10216,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
       'updated_at': serializer.toJson<DateTime>(updatedAt),
       'deleted_at': serializer.toJson<DateTime?>(deletedAt),
       'last_synced_at': serializer.toJson<DateTime?>(lastSyncedAt),
+      'owner_type': serializer.toJson<String?>(ownerType),
+      'owner_id': serializer.toJson<int?>(ownerId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'type': serializer.toJson<String>(type),
@@ -9767,6 +10242,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
           DateTime? updatedAt,
           Value<DateTime?> deletedAt = const Value.absent(),
           Value<DateTime?> lastSyncedAt = const Value.absent(),
+          Value<String?> ownerType = const Value.absent(),
+          Value<int?> ownerId = const Value.absent(),
           String? title,
           Value<String?> description = const Value.absent(),
           String? type,
@@ -9789,6 +10266,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         lastSyncedAt:
             lastSyncedAt.present ? lastSyncedAt.value : this.lastSyncedAt,
+        ownerType: ownerType.present ? ownerType.value : this.ownerType,
+        ownerId: ownerId.present ? ownerId.value : this.ownerId,
         title: title ?? this.title,
         description: description.present ? description.value : this.description,
         type: type ?? this.type,
@@ -9818,6 +10297,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
       lastSyncedAt: data.lastSyncedAt.present
           ? data.lastSyncedAt.value
           : this.lastSyncedAt,
+      ownerType: data.ownerType.present ? data.ownerType.value : this.ownerType,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
       title: data.title.present ? data.title.value : this.title,
       description:
           data.description.present ? data.description.value : this.description,
@@ -9852,6 +10333,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('type: $type, ')
@@ -9869,27 +10352,30 @@ class Reminder extends DataClass implements Insertable<Reminder> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      userId,
-      clientId,
-      rev,
-      createdAt,
-      updatedAt,
-      deletedAt,
-      lastSyncedAt,
-      title,
-      description,
-      type,
-      triggerAt,
-      dueAt,
-      repeatRule,
-      timezone,
-      status,
-      priority,
-      snoozedUntil,
-      lastTriggeredAt,
-      nextTriggerAt);
+  int get hashCode => Object.hashAll([
+        id,
+        userId,
+        clientId,
+        rev,
+        createdAt,
+        updatedAt,
+        deletedAt,
+        lastSyncedAt,
+        ownerType,
+        ownerId,
+        title,
+        description,
+        type,
+        triggerAt,
+        dueAt,
+        repeatRule,
+        timezone,
+        status,
+        priority,
+        snoozedUntil,
+        lastTriggeredAt,
+        nextTriggerAt
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9902,6 +10388,8 @@ class Reminder extends DataClass implements Insertable<Reminder> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.lastSyncedAt == this.lastSyncedAt &&
+          other.ownerType == this.ownerType &&
+          other.ownerId == this.ownerId &&
           other.title == this.title &&
           other.description == this.description &&
           other.type == this.type &&
@@ -9925,6 +10413,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<DateTime?> lastSyncedAt;
+  final Value<String?> ownerType;
+  final Value<int?> ownerId;
   final Value<String> title;
   final Value<String?> description;
   final Value<String> type;
@@ -9947,6 +10437,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.type = const Value.absent(),
@@ -9970,6 +10462,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.lastSyncedAt = const Value.absent(),
+    this.ownerType = const Value.absent(),
+    this.ownerId = const Value.absent(),
     required String title,
     this.description = const Value.absent(),
     this.type = const Value.absent(),
@@ -9993,6 +10487,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? lastSyncedAt,
+    Expression<String>? ownerType,
+    Expression<int>? ownerId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<String>? type,
@@ -10016,6 +10512,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (ownerType != null) 'owner_type': ownerType,
+      if (ownerId != null) 'owner_id': ownerId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (type != null) 'type': type,
@@ -10041,6 +10539,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
       Value<DateTime>? updatedAt,
       Value<DateTime?>? deletedAt,
       Value<DateTime?>? lastSyncedAt,
+      Value<String?>? ownerType,
+      Value<int?>? ownerId,
       Value<String>? title,
       Value<String?>? description,
       Value<String>? type,
@@ -10063,6 +10563,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      ownerType: ownerType ?? this.ownerType,
+      ownerId: ownerId ?? this.ownerId,
       title: title ?? this.title,
       description: description ?? this.description,
       type: type ?? this.type,
@@ -10105,6 +10607,12 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
     }
     if (lastSyncedAt.present) {
       map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (ownerType.present) {
+      map['owner_type'] = Variable<String>(ownerType.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<int>(ownerId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -10159,6 +10667,8 @@ class RemindersCompanion extends UpdateCompanion<Reminder> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('ownerType: $ownerType, ')
+          ..write('ownerId: $ownerId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('type: $type, ')
@@ -10481,6 +10991,8 @@ typedef $$WalletsTableCreateCompanionBuilder = WalletsCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required String name,
   required WalletType type,
   Value<double> balance,
@@ -10499,6 +11011,8 @@ typedef $$WalletsTableUpdateCompanionBuilder = WalletsCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<String> name,
   Value<WalletType> type,
   Value<double> balance,
@@ -10562,6 +11076,12 @@ class $$WalletsTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
@@ -10646,6 +11166,12 @@ class $$WalletsTableOrderingComposer
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
@@ -10700,6 +11226,12 @@ class $$WalletsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -10775,6 +11307,8 @@ class $$WalletsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<WalletType> type = const Value.absent(),
             Value<double> balance = const Value.absent(),
@@ -10793,6 +11327,8 @@ class $$WalletsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             type: type,
             balance: balance,
@@ -10811,6 +11347,8 @@ class $$WalletsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required String name,
             required WalletType type,
             Value<double> balance = const Value.absent(),
@@ -10829,6 +11367,8 @@ class $$WalletsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             type: type,
             balance: balance,
@@ -10890,6 +11430,8 @@ typedef $$PartiesTableCreateCompanionBuilder = PartiesCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required String name,
   Value<String?> description,
   Value<Media?> icon,
@@ -10905,6 +11447,8 @@ typedef $$PartiesTableUpdateCompanionBuilder = PartiesCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<String> name,
   Value<String?> description,
   Value<Media?> icon,
@@ -10965,6 +11509,12 @@ class $$PartiesTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
@@ -11038,6 +11588,12 @@ class $$PartiesTableOrderingComposer
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
@@ -11083,6 +11639,12 @@ class $$PartiesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -11149,6 +11711,8 @@ class $$PartiesTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
@@ -11164,6 +11728,8 @@ class $$PartiesTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             description: description,
             icon: icon,
@@ -11179,6 +11745,8 @@ class $$PartiesTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required String name,
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
@@ -11194,6 +11762,8 @@ class $$PartiesTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             description: description,
             icon: icon,
@@ -11252,6 +11822,8 @@ typedef $$GroupsTableCreateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required String name,
   Value<String?> description,
   Value<Media?> icon,
@@ -11266,6 +11838,8 @@ typedef $$GroupsTableUpdateCompanionBuilder = GroupsCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<String> name,
   Value<String?> description,
   Value<Media?> icon,
@@ -11325,6 +11899,12 @@ class $$GroupsTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
@@ -11393,6 +11973,12 @@ class $$GroupsTableOrderingComposer
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
@@ -11435,6 +12021,12 @@ class $$GroupsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -11498,6 +12090,8 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
@@ -11512,6 +12106,8 @@ class $$GroupsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             description: description,
             icon: icon,
@@ -11526,6 +12122,8 @@ class $$GroupsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required String name,
             Value<String?> description = const Value.absent(),
             Value<Media?> icon = const Value.absent(),
@@ -11540,6 +12138,8 @@ class $$GroupsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             description: description,
             icon: icon,
@@ -11597,6 +12197,8 @@ typedef $$TransactionsTableCreateCompanionBuilder = TransactionsCompanion
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required double amount,
   required TransactionType type,
   Value<String> intent,
@@ -11628,6 +12230,8 @@ typedef $$TransactionsTableUpdateCompanionBuilder = TransactionsCompanion
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<double> amount,
   Value<TransactionType> type,
   Value<String> intent,
@@ -11732,6 +12336,12 @@ class $$TransactionsTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnFilters(column));
@@ -11884,6 +12494,12 @@ class $$TransactionsTableOrderingComposer
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnOrderings(column));
 
@@ -12032,6 +12648,12 @@ class $$TransactionsTableAnnotationComposer
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
 
@@ -12173,6 +12795,8 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<double> amount = const Value.absent(),
             Value<TransactionType> type = const Value.absent(),
             Value<String> intent = const Value.absent(),
@@ -12203,6 +12827,8 @@ class $$TransactionsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             amount: amount,
             type: type,
             intent: intent,
@@ -12233,6 +12859,8 @@ class $$TransactionsTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required double amount,
             required TransactionType type,
             Value<String> intent = const Value.absent(),
@@ -12263,6 +12891,8 @@ class $$TransactionsTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             amount: amount,
             type: type,
             intent: intent,
@@ -12376,6 +13006,8 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required String name,
   required String slug,
   Value<String?> description,
@@ -12392,6 +13024,8 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<String> name,
   Value<String> slug,
   Value<String?> description,
@@ -12453,6 +13087,12 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
@@ -12529,6 +13169,12 @@ class $$CategoriesTableOrderingComposer
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
@@ -12577,6 +13223,12 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
@@ -12646,6 +13298,8 @@ class $$CategoriesTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> slug = const Value.absent(),
             Value<String?> description = const Value.absent(),
@@ -12662,6 +13316,8 @@ class $$CategoriesTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             slug: slug,
             description: description,
@@ -12678,6 +13334,8 @@ class $$CategoriesTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required String name,
             required String slug,
             Value<String?> description = const Value.absent(),
@@ -12694,6 +13352,8 @@ class $$CategoriesTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             name: name,
             slug: slug,
             description: description,
@@ -14464,6 +15124,8 @@ typedef $$TransfersTableCreateCompanionBuilder = TransfersCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required double amount,
   Value<int?> fromWalletId,
   Value<int?> toWalletId,
@@ -14484,6 +15146,8 @@ typedef $$TransfersTableUpdateCompanionBuilder = TransfersCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<double> amount,
   Value<int?> fromWalletId,
   Value<int?> toWalletId,
@@ -14596,6 +15260,12 @@ class $$TransfersTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnFilters(column));
@@ -14726,6 +15396,12 @@ class $$TransfersTableOrderingComposer
   ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnOrderings(column));
@@ -14858,6 +15534,12 @@ class $$TransfersTableAnnotationComposer
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
 
@@ -14989,6 +15671,8 @@ class $$TransfersTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<double> amount = const Value.absent(),
             Value<int?> fromWalletId = const Value.absent(),
             Value<int?> toWalletId = const Value.absent(),
@@ -15009,6 +15693,8 @@ class $$TransfersTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             amount: amount,
             fromWalletId: fromWalletId,
             toWalletId: toWalletId,
@@ -15029,6 +15715,8 @@ class $$TransfersTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required double amount,
             Value<int?> fromWalletId = const Value.absent(),
             Value<int?> toWalletId = const Value.absent(),
@@ -15049,6 +15737,8 @@ class $$TransfersTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             amount: amount,
             fromWalletId: fromWalletId,
             toWalletId: toWalletId,
@@ -16882,6 +17572,8 @@ typedef $$RemindersTableCreateCompanionBuilder = RemindersCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   required String title,
   Value<String?> description,
   Value<String> type,
@@ -16905,6 +17597,8 @@ typedef $$RemindersTableUpdateCompanionBuilder = RemindersCompanion Function({
   Value<DateTime> updatedAt,
   Value<DateTime?> deletedAt,
   Value<DateTime?> lastSyncedAt,
+  Value<String?> ownerType,
+  Value<int?> ownerId,
   Value<String> title,
   Value<String?> description,
   Value<String> type,
@@ -16952,6 +17646,12 @@ class $$RemindersTableFilterComposer
 
   ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get title => $composableBuilder(
       column: $table.title, builder: (column) => ColumnFilters(column));
@@ -17024,6 +17724,12 @@ class $$RemindersTableOrderingComposer
   ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get ownerType => $composableBuilder(
+      column: $table.ownerType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get ownerId => $composableBuilder(
+      column: $table.ownerId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get title => $composableBuilder(
       column: $table.title, builder: (column) => ColumnOrderings(column));
@@ -17098,6 +17804,12 @@ class $$RemindersTableAnnotationComposer
   GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
       column: $table.lastSyncedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get ownerType =>
+      $composableBuilder(column: $table.ownerType, builder: (column) => column);
+
+  GeneratedColumn<int> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -17166,6 +17878,8 @@ class $$RemindersTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<String> type = const Value.absent(),
@@ -17189,6 +17903,8 @@ class $$RemindersTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             title: title,
             description: description,
             type: type,
@@ -17212,6 +17928,8 @@ class $$RemindersTableTableManager extends RootTableManager<
             Value<DateTime> updatedAt = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime?> lastSyncedAt = const Value.absent(),
+            Value<String?> ownerType = const Value.absent(),
+            Value<int?> ownerId = const Value.absent(),
             required String title,
             Value<String?> description = const Value.absent(),
             Value<String> type = const Value.absent(),
@@ -17235,6 +17953,8 @@ class $$RemindersTableTableManager extends RootTableManager<
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             lastSyncedAt: lastSyncedAt,
+            ownerType: ownerType,
+            ownerId: ownerId,
             title: title,
             description: description,
             type: type,

@@ -33,7 +33,11 @@ mixin _$WalletDto {
   DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'user_id')
-  int get userId => throw _privateConstructorUsedError;
+  int? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_type')
+  String? get ownerType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_id')
+  int? get ownerId => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   DateTime get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_synced_at')
@@ -73,7 +77,9 @@ abstract class $WalletDtoCopyWith<$Res> {
       String currency,
       @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
-      @JsonKey(name: 'user_id') int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
       @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
@@ -108,7 +114,9 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
     Object? currency = null,
     Object? createdAt = null,
     Object? id = freezed,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? deletedAt = freezed,
@@ -150,10 +158,18 @@ class _$WalletDtoCopyWithImpl<$Res, $Val extends WalletDto>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -214,7 +230,9 @@ abstract class _$$WalletDtoImplCopyWith<$Res>
       String currency,
       @JsonKey(name: 'created_at') DateTime createdAt,
       int? id,
-      @JsonKey(name: 'user_id') int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'updated_at') DateTime updatedAt,
       @JsonKey(name: 'last_synced_at') DateTime? lastSyncedAt,
       @JsonKey(name: 'deleted_at') DateTime? deletedAt,
@@ -248,7 +266,9 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
     Object? currency = null,
     Object? createdAt = null,
     Object? id = freezed,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? deletedAt = freezed,
@@ -290,10 +310,18 @@ class __$$WalletDtoImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -339,7 +367,9 @@ class _$WalletDtoImpl extends _WalletDto {
       required this.currency,
       @JsonKey(name: 'created_at') required this.createdAt,
       this.id,
-      @JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'owner_type') this.ownerType,
+      @JsonKey(name: 'owner_id') this.ownerId,
       @JsonKey(name: 'updated_at') required this.updatedAt,
       @JsonKey(name: 'last_synced_at') this.lastSyncedAt,
       @JsonKey(name: 'deleted_at') this.deletedAt,
@@ -374,7 +404,13 @@ class _$WalletDtoImpl extends _WalletDto {
   final int? id;
   @override
   @JsonKey(name: 'user_id')
-  final int userId;
+  final int? userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  final String? ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  final int? ownerId;
   @override
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
@@ -398,7 +434,7 @@ class _$WalletDtoImpl extends _WalletDto {
 
   @override
   String toString() {
-    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, rev: $rev, stats: $stats, icon: $icon)';
+    return 'WalletDto(clientId: $clientId, type: $type, name: $name, description: $description, balance: $balance, currency: $currency, createdAt: $createdAt, id: $id, userId: $userId, ownerType: $ownerType, ownerId: $ownerId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, rev: $rev, stats: $stats, icon: $icon)';
   }
 
   @override
@@ -419,6 +455,9 @@ class _$WalletDtoImpl extends _WalletDto {
                 other.createdAt == createdAt) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
@@ -445,6 +484,8 @@ class _$WalletDtoImpl extends _WalletDto {
       createdAt,
       id,
       userId,
+      ownerType,
+      ownerId,
       updatedAt,
       lastSyncedAt,
       deletedAt,
@@ -481,7 +522,9 @@ abstract class _WalletDto extends WalletDto {
       required final String currency,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       final int? id,
-      @JsonKey(name: 'user_id') required final int userId,
+      @JsonKey(name: 'user_id') final int? userId,
+      @JsonKey(name: 'owner_type') final String? ownerType,
+      @JsonKey(name: 'owner_id') final int? ownerId,
       @JsonKey(name: 'updated_at') required final DateTime updatedAt,
       @JsonKey(name: 'last_synced_at') final DateTime? lastSyncedAt,
       @JsonKey(name: 'deleted_at') final DateTime? deletedAt,
@@ -516,7 +559,13 @@ abstract class _WalletDto extends WalletDto {
   int? get id;
   @override
   @JsonKey(name: 'user_id')
-  int get userId;
+  int? get userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  String? get ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  int? get ownerId;
   @override
   @JsonKey(name: 'updated_at')
   DateTime get updatedAt;

@@ -22,6 +22,8 @@ TransactionEntity _$TransactionEntityFromJson(Map<String, dynamic> json) {
 mixin _$TransactionEntity {
   String get clientId => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
+  String? get ownerType => throw _privateConstructorUsedError;
+  int? get ownerId => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -62,6 +64,8 @@ abstract class $TransactionEntityCopyWith<$Res> {
   $Res call(
       {String clientId,
       int? id,
+      String? ownerType,
+      int? ownerId,
       double amount,
       String description,
       DateTime createdAt,
@@ -101,6 +105,8 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
   $Res call({
     Object? clientId = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? amount = null,
     Object? description = null,
     Object? createdAt = null,
@@ -130,6 +136,14 @@ class _$TransactionEntityCopyWithImpl<$Res, $Val extends TransactionEntity>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       amount: null == amount
           ? _value.amount
@@ -226,6 +240,8 @@ abstract class _$$TransactionEntityImplCopyWith<$Res>
   $Res call(
       {String clientId,
       int? id,
+      String? ownerType,
+      int? ownerId,
       double amount,
       String description,
       DateTime createdAt,
@@ -263,6 +279,8 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? clientId = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? amount = null,
     Object? description = null,
     Object? createdAt = null,
@@ -292,6 +310,14 @@ class __$$TransactionEntityImplCopyWithImpl<$Res>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       amount: null == amount
           ? _value.amount
@@ -383,6 +409,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   const _$TransactionEntityImpl(
       {required this.clientId,
       this.id,
+      this.ownerType,
+      this.ownerId,
       required this.amount,
       required this.description,
       required this.createdAt,
@@ -411,6 +439,10 @@ class _$TransactionEntityImpl implements _TransactionEntity {
   final String clientId;
   @override
   final int? id;
+  @override
+  final String? ownerType;
+  @override
+  final int? ownerId;
   @override
   final double amount;
   @override
@@ -457,7 +489,7 @@ class _$TransactionEntityImpl implements _TransactionEntity {
 
   @override
   String toString() {
-    return 'TransactionEntity(clientId: $clientId, id: $id, amount: $amount, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, datetime: $datetime, type: $type, intent: $intent, isRefund: $isRefund, refundOfTransactionId: $refundOfTransactionId, recurrencePeriod: $recurrencePeriod, recurrenceInterval: $recurrenceInterval, recurrenceEndsAt: $recurrenceEndsAt, recurrenceNextScheduledAt: $recurrenceNextScheduledAt, lastSyncedAt: $lastSyncedAt, rev: $rev, walletClientId: $walletClientId, partyClientId: $partyClientId, groupClientId: $groupClientId, transferId: $transferId, transferClientId: $transferClientId)';
+    return 'TransactionEntity(clientId: $clientId, id: $id, ownerType: $ownerType, ownerId: $ownerId, amount: $amount, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, datetime: $datetime, type: $type, intent: $intent, isRefund: $isRefund, refundOfTransactionId: $refundOfTransactionId, recurrencePeriod: $recurrencePeriod, recurrenceInterval: $recurrenceInterval, recurrenceEndsAt: $recurrenceEndsAt, recurrenceNextScheduledAt: $recurrenceNextScheduledAt, lastSyncedAt: $lastSyncedAt, rev: $rev, walletClientId: $walletClientId, partyClientId: $partyClientId, groupClientId: $groupClientId, transferId: $transferId, transferClientId: $transferClientId)';
   }
 
   @override
@@ -468,6 +500,9 @@ class _$TransactionEntityImpl implements _TransactionEntity {
             (identical(other.clientId, clientId) ||
                 other.clientId == clientId) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -513,6 +548,8 @@ class _$TransactionEntityImpl implements _TransactionEntity {
         runtimeType,
         clientId,
         id,
+        ownerType,
+        ownerId,
         amount,
         description,
         createdAt,
@@ -556,6 +593,8 @@ abstract class _TransactionEntity implements TransactionEntity {
   const factory _TransactionEntity(
       {required final String clientId,
       final int? id,
+      final String? ownerType,
+      final int? ownerId,
       required final double amount,
       required final String description,
       required final DateTime createdAt,
@@ -584,6 +623,10 @@ abstract class _TransactionEntity implements TransactionEntity {
   String get clientId;
   @override
   int? get id;
+  @override
+  String? get ownerType;
+  @override
+  int? get ownerId;
   @override
   double get amount;
   @override

@@ -21,6 +21,8 @@ mixin _$GroupEntity {
   String? get description => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
+  String? get ownerType => throw _privateConstructorUsedError;
+  int? get ownerId => throw _privateConstructorUsedError;
   int? get userId => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   MediaEntity? get icon => throw _privateConstructorUsedError;
@@ -44,6 +46,8 @@ abstract class $GroupEntityCopyWith<$Res> {
       String? description,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       int? userId,
       DateTime updatedAt,
       MediaEntity? icon});
@@ -69,6 +73,8 @@ class _$GroupEntityCopyWithImpl<$Res, $Val extends GroupEntity>
     Object? description = freezed,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? icon = freezed,
@@ -93,6 +99,14 @@ class _$GroupEntityCopyWithImpl<$Res, $Val extends GroupEntity>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       userId: freezed == userId
           ? _value.userId
@@ -124,6 +138,8 @@ abstract class _$$GroupEntityImplCopyWith<$Res>
       String? description,
       DateTime createdAt,
       int? id,
+      String? ownerType,
+      int? ownerId,
       int? userId,
       DateTime updatedAt,
       MediaEntity? icon});
@@ -147,6 +163,8 @@ class __$$GroupEntityImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? createdAt = null,
     Object? id = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? userId = freezed,
     Object? updatedAt = null,
     Object? icon = freezed,
@@ -171,6 +189,14 @@ class __$$GroupEntityImplCopyWithImpl<$Res>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
               as int?,
       userId: freezed == userId
           ? _value.userId
@@ -197,6 +223,8 @@ class _$GroupEntityImpl extends _GroupEntity {
       this.description,
       required this.createdAt,
       this.id,
+      this.ownerType,
+      this.ownerId,
       this.userId,
       required this.updatedAt,
       this.icon})
@@ -213,6 +241,10 @@ class _$GroupEntityImpl extends _GroupEntity {
   @override
   final int? id;
   @override
+  final String? ownerType;
+  @override
+  final int? ownerId;
+  @override
   final int? userId;
   @override
   final DateTime updatedAt;
@@ -221,7 +253,7 @@ class _$GroupEntityImpl extends _GroupEntity {
 
   @override
   String toString() {
-    return 'GroupEntity(clientId: $clientId, name: $name, description: $description, createdAt: $createdAt, id: $id, userId: $userId, updatedAt: $updatedAt, icon: $icon)';
+    return 'GroupEntity(clientId: $clientId, name: $name, description: $description, createdAt: $createdAt, id: $id, ownerType: $ownerType, ownerId: $ownerId, userId: $userId, updatedAt: $updatedAt, icon: $icon)';
   }
 
   @override
@@ -237,6 +269,9 @@ class _$GroupEntityImpl extends _GroupEntity {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
@@ -245,7 +280,7 @@ class _$GroupEntityImpl extends _GroupEntity {
 
   @override
   int get hashCode => Object.hash(runtimeType, clientId, name, description,
-      createdAt, id, userId, updatedAt, icon);
+      createdAt, id, ownerType, ownerId, userId, updatedAt, icon);
 
   /// Create a copy of GroupEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -263,6 +298,8 @@ abstract class _GroupEntity extends GroupEntity {
       final String? description,
       required final DateTime createdAt,
       final int? id,
+      final String? ownerType,
+      final int? ownerId,
       final int? userId,
       required final DateTime updatedAt,
       final MediaEntity? icon}) = _$GroupEntityImpl;
@@ -278,6 +315,10 @@ abstract class _GroupEntity extends GroupEntity {
   DateTime get createdAt;
   @override
   int? get id;
+  @override
+  String? get ownerType;
+  @override
+  int? get ownerId;
   @override
   int? get userId;
   @override

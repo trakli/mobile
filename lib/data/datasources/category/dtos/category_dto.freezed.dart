@@ -30,7 +30,11 @@ mixin _$CategoryDto {
   int? get id => throw _privateConstructorUsedError;
   String get slug => throw _privateConstructorUsedError;
   @JsonKey(name: 'user_id')
-  int get userId => throw _privateConstructorUsedError;
+  int? get userId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_type')
+  String? get ownerType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'owner_id')
+  int? get ownerId => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
   DateTime get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
@@ -66,7 +70,9 @@ abstract class $CategoryDtoCopyWith<$Res> {
       @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
       int? id,
       String slug,
-      @JsonKey(name: 'user_id') int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
@@ -100,7 +106,9 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
     Object? createdAt = null,
     Object? id = freezed,
     Object? slug = null,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? deletedAt = freezed,
@@ -136,10 +144,18 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
           ? _value.slug
           : slug // ignore: cast_nullable_to_non_nullable
               as String,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -191,7 +207,9 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
       @JsonKey(name: 'created_at', fromJson: DateTime.parse) DateTime createdAt,
       int? id,
       String slug,
-      @JsonKey(name: 'user_id') int userId,
+      @JsonKey(name: 'user_id') int? userId,
+      @JsonKey(name: 'owner_type') String? ownerType,
+      @JsonKey(name: 'owner_id') int? ownerId,
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse) DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
       DateTime? lastSyncedAt,
@@ -224,7 +242,9 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? id = freezed,
     Object? slug = null,
-    Object? userId = null,
+    Object? userId = freezed,
+    Object? ownerType = freezed,
+    Object? ownerId = freezed,
     Object? updatedAt = null,
     Object? lastSyncedAt = freezed,
     Object? deletedAt = freezed,
@@ -260,10 +280,18 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
           ? _value.slug
           : slug // ignore: cast_nullable_to_non_nullable
               as String,
-      userId: null == userId
+      userId: freezed == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
+      ownerType: freezed == ownerType
+          ? _value.ownerType
+          : ownerType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ownerId: freezed == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -301,7 +329,9 @@ class _$CategoryDtoImpl implements _CategoryDto {
       required this.createdAt,
       this.id,
       required this.slug,
-      @JsonKey(name: 'user_id') required this.userId,
+      @JsonKey(name: 'user_id') this.userId,
+      @JsonKey(name: 'owner_type') this.ownerType,
+      @JsonKey(name: 'owner_id') this.ownerId,
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
       required this.updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
@@ -331,7 +361,13 @@ class _$CategoryDtoImpl implements _CategoryDto {
   final String slug;
   @override
   @JsonKey(name: 'user_id')
-  final int userId;
+  final int? userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  final String? ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  final int? ownerId;
   @override
   @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
   final DateTime updatedAt;
@@ -349,7 +385,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
 
   @override
   String toString() {
-    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, icon: $icon)';
+    return 'CategoryDto(clientId: $clientId, type: $type, name: $name, description: $description, createdAt: $createdAt, id: $id, slug: $slug, userId: $userId, ownerType: $ownerType, ownerId: $ownerId, updatedAt: $updatedAt, lastSyncedAt: $lastSyncedAt, deletedAt: $deletedAt, syncState: $syncState, icon: $icon)';
   }
 
   @override
@@ -368,6 +404,9 @@ class _$CategoryDtoImpl implements _CategoryDto {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.slug, slug) || other.slug == slug) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.ownerType, ownerType) ||
+                other.ownerType == ownerType) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.lastSyncedAt, lastSyncedAt) ||
@@ -391,6 +430,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
       id,
       slug,
       userId,
+      ownerType,
+      ownerId,
       updatedAt,
       lastSyncedAt,
       deletedAt,
@@ -424,7 +465,9 @@ abstract class _CategoryDto implements CategoryDto {
       required final DateTime createdAt,
       final int? id,
       required final String slug,
-      @JsonKey(name: 'user_id') required final int userId,
+      @JsonKey(name: 'user_id') final int? userId,
+      @JsonKey(name: 'owner_type') final String? ownerType,
+      @JsonKey(name: 'owner_id') final int? ownerId,
       @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
       required final DateTime updatedAt,
       @JsonKey(name: 'last_synced_at', fromJson: DateTime.parse)
@@ -455,7 +498,13 @@ abstract class _CategoryDto implements CategoryDto {
   String get slug;
   @override
   @JsonKey(name: 'user_id')
-  int get userId;
+  int? get userId;
+  @override
+  @JsonKey(name: 'owner_type')
+  String? get ownerType;
+  @override
+  @JsonKey(name: 'owner_id')
+  int? get ownerId;
   @override
   @JsonKey(name: 'updated_at', fromJson: DateTime.parse)
   DateTime get updatedAt;

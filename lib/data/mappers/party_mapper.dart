@@ -11,6 +11,8 @@ class PartyMapper {
       updatedAt: party.updatedAt,
       id: party.id,
       userId: party.userId,
+      ownerType: party.ownerType,
+      ownerId: party.ownerId,
       icon: party.icon?.toEntity(),
       type: party.type,
     );

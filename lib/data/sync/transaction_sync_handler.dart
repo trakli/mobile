@@ -128,8 +128,7 @@ class TransactionSyncHandler
   }
 
   @override
-  Future<TransactionCompleteDto> claimClientId(
-      TransactionCompleteDto entity) {
+  Future<TransactionCompleteDto> claimClientId(TransactionCompleteDto entity) {
     return remoteDataSource.claimClientId(
       id: entity.transaction.id!,
       clientId: entity.transaction.clientId,
@@ -206,6 +205,8 @@ class TransactionSyncHandler
         partyId: Value(entity.party?.id),
         groupId: Value(entity.group?.id),
         userId: Value(entity.transaction.userId),
+        ownerType: Value(entity.transaction.ownerType),
+        ownerId: Value(entity.transaction.ownerId),
         rev: Value(entity.transaction.rev),
         deletedAt: Value(entity.transaction.deletedAt),
         transferId: Value(transferId),

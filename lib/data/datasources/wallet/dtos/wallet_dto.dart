@@ -26,7 +26,9 @@ class WalletDto with _$WalletDto {
     )
     required DateTime createdAt,
     int? id,
-    @JsonKey(name: 'user_id') required int userId,
+    @JsonKey(name: 'user_id') int? userId,
+    @JsonKey(name: 'owner_type') String? ownerType,
+    @JsonKey(name: 'owner_id') int? ownerId,
     @JsonKey(
       name: 'updated_at',
     )
@@ -51,6 +53,8 @@ class WalletDto with _$WalletDto {
     final wallet = Wallet(
       id: id,
       userId: userId,
+      ownerType: ownerType,
+      ownerId: ownerId,
       clientId: clientId,
       rev: rev,
       createdAt: createdAt,

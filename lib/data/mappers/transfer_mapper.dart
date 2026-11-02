@@ -11,6 +11,8 @@ class TransferMapper {
       updatedAt: transfer.updatedAt,
       id: transfer.id,
       userId: transfer.userId,
+      ownerType: transfer.ownerType,
+      ownerId: transfer.ownerId,
       fromWalletId: transfer.fromWalletId,
       toWalletId: transfer.toWalletId,
       fromWalletClientId: transfer.fromWalletClientId,

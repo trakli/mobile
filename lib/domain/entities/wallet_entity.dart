@@ -17,6 +17,8 @@ class WalletEntity with _$WalletEntity {
     required String currencyCode,
     required DateTime createdAt,
     int? id,
+    String? ownerType,
+    int? ownerId,
     int? userId,
     required DateTime updatedAt,
     WalletStatsEntity? stats,

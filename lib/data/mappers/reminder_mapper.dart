@@ -7,6 +7,8 @@ class ReminderMapper {
       clientId: row.clientId,
       id: row.id,
       userId: row.userId,
+      ownerType: row.ownerType,
+      ownerId: row.ownerId,
       title: row.title,
       description: row.description,
       type: row.type,

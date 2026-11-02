@@ -11,6 +11,8 @@ class GroupMapper {
       createdAt: group.createdAt,
       id: group.id,
       userId: group.userId,
+      ownerType: group.ownerType,
+      ownerId: group.ownerId,
       updatedAt: group.updatedAt,
       icon: group.icon != null ? MediaEntity.fromModel(group.icon!) : null,
     );

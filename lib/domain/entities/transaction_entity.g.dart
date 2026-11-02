@@ -11,6 +11,8 @@ _$TransactionEntityImpl _$$TransactionEntityImplFromJson(
     _$TransactionEntityImpl(
       clientId: json['clientId'] as String,
       id: (json['id'] as num?)?.toInt(),
+      ownerType: json['ownerType'] as String?,
+      ownerId: (json['ownerId'] as num?)?.toInt(),
       amount: (json['amount'] as num).toDouble(),
       description: json['description'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -45,6 +47,8 @@ Map<String, dynamic> _$$TransactionEntityImplToJson(
     <String, dynamic>{
       'clientId': instance.clientId,
       'id': instance.id,
+      'ownerType': instance.ownerType,
+      'ownerId': instance.ownerId,
       'amount': instance.amount,
       'description': instance.description,
       'createdAt': instance.createdAt.toIso8601String(),

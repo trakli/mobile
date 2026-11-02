@@ -59,6 +59,8 @@ class TransferRepositoryImpl
       final clientId = await generateDeviceScopedId();
 
       final companion = TransfersCompanion.insert(
+        ownerType: Value(entity.ownerType),
+        ownerId: Value(entity.ownerId),
         clientId: Value(clientId),
         amount: entity.amount,
         fromWalletId: Value(entity.fromWalletId),
@@ -83,6 +85,8 @@ class TransferRepositoryImpl
       final transfer = Transfer(
         id: entity.id,
         userId: entity.userId,
+        ownerType: entity.ownerType,
+        ownerId: entity.ownerId,
         clientId: entity.clientId,
         rev: null,
         createdAt: entity.createdAt,
