@@ -48,7 +48,6 @@ class ReverbSocketClient {
   Timer? _reconnectTimer;
   int _reconnectAttempt = 0;
   bool _disposed = false;
-  Completer<void>? _connecting;
 
   final _turnEventsController = StreamController<ChatTurnFrame>.broadcast();
 
@@ -67,8 +66,9 @@ class ReverbSocketClient {
     _targetSessionId = sessionId;
 
     if (_channel == null) {
-      await _connectSocket();
-      return; // subscription happens once connection_established arrives
+      // Subscription happens once connection_established arrives.
+      _connectSocket();
+      return;
     }
     if (_socketId != null) {
       await _subscribeToTarget();
@@ -76,9 +76,13 @@ class ReverbSocketClient {
   }
 
   /// Unsubscribes from the current channel without closing the socket, so
-  /// re-subscribing (e.g. reopening the same session) is instant.
+  /// re-subscribing (e.g. reopening the same session) is instant. Also
+  /// cancels any pending reconnect: with no target session there is
+  /// nothing to reconnect for.
   void unsubscribe() {
     _targetSessionId = null;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
     final channel = _subscribedChannel;
     if (channel != null && _channel != null) {
       _channel!.sink.add(encodeUnsubscribe(channel));
@@ -86,33 +90,32 @@ class ReverbSocketClient {
     _subscribedChannel = null;
   }
 
-  Future<void> _connectSocket() async {
-    if (_connecting != null) return _connecting!.future;
-    final completer = Completer<void>();
-    _connecting = completer;
-    try {
-      final channel = connectOverride(_config.socketUri);
-      _channel = channel;
-      _channelSub = channel.stream.listen(
-        _onMessage,
-        onError: (Object e, StackTrace st) {
-          logger.w('Reverb socket error: $e');
-          _scheduleReconnect();
-        },
-        onDone: () {
-          if (!_disposed) _scheduleReconnect();
-        },
-        cancelOnError: true,
-      );
-      // connection_established arrives asynchronously via _onMessage; this
-      // completer just tracks that a connection attempt is in flight.
-      unawaited(channel.ready.then((_) {}, onError: (_) {
-        _scheduleReconnect();
-      }));
-    } finally {
-      completer.complete();
-      _connecting = null;
-    }
+  /// Opens a socket unless one is already open. Every callback is bound to
+  /// the channel it was registered for and ignored once that channel has
+  /// been replaced, so a late error or close from an old socket can't tear
+  /// down the current one.
+  void _connectSocket() {
+    if (_disposed || _channel != null) return;
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+
+    final channel = connectOverride(_config.socketUri);
+    _channel = channel;
+    _channelSub = channel.stream.listen(
+      (raw) {
+        if (identical(_channel, channel)) _onMessage(raw);
+      },
+      onError: (Object e, StackTrace st) {
+        logger.w('Reverb socket error: $e');
+        _dropAndReconnect(channel);
+      },
+      onDone: () => _dropAndReconnect(channel),
+      cancelOnError: true,
+    );
+    unawaited(channel.ready.then((_) {}, onError: (Object e) {
+      logger.w('Reverb socket failed to connect: $e');
+      _dropAndReconnect(channel);
+    }));
   }
 
   void _onMessage(dynamic raw) {
@@ -138,14 +141,15 @@ class ReverbSocketClient {
   Future<void> _subscribeToTarget() async {
     final sessionId = _targetSessionId;
     final socketId = _socketId;
-    if (sessionId == null || socketId == null || _channel == null) return;
+    final ws = _channel;
+    if (sessionId == null || socketId == null || ws == null) return;
 
     final channel = chatSessionChannel(sessionId);
     if (channel == _subscribedChannel) return;
 
     final previous = _subscribedChannel;
     if (previous != null) {
-      _channel!.sink.add(encodeUnsubscribe(previous));
+      ws.sink.add(encodeUnsubscribe(previous));
       _subscribedChannel = null;
     }
 
@@ -159,21 +163,32 @@ class ReverbSocketClient {
         logger.w('Reverb auth response missing "auth" for $channel');
         return;
       }
-      // The target may have changed while the auth request was in flight.
+      // Anything may have changed while the auth request was in flight:
+      // the target session, or the socket itself. The signature is bound
+      // to [socketId], so it's useless on a reconnected socket, and that
+      // socket subscribes on its own connection_established.
       if (_targetSessionId != sessionId) return;
-      _channel?.sink.add(encodeSubscribe(channel: channel, auth: auth));
+      if (!identical(_channel, ws) || _socketId != socketId) return;
+      if (_subscribedChannel == channel) return;
+      ws.sink.add(encodeSubscribe(channel: channel, auth: auth));
       _subscribedChannel = channel;
     } on DioException catch (e) {
       logger.w('Reverb channel auth failed for $channel: $e');
     }
   }
 
-  void _scheduleReconnect() {
+  /// Tears down [channel] and schedules a reconnect with backoff. A no-op
+  /// if [channel] has already been replaced (a stale callback). Both the
+  /// stream and `ready` report a failed connect, so this runs at most once
+  /// per channel.
+  void _dropAndReconnect(WebSocketChannel channel) {
+    if (!identical(_channel, channel)) return;
     _channelSub?.cancel();
     _channelSub = null;
     _channel = null;
     _socketId = null;
     _subscribedChannel = null;
+    unawaited(channel.sink.close().catchError((_) {}));
     if (_disposed || _targetSessionId == null) return;
 
     _reconnectTimer?.cancel();
@@ -182,7 +197,11 @@ class ReverbSocketClient {
         : _reconnectBackoff.length - 1;
     _reconnectAttempt++;
     _reconnectTimer = Timer(_reconnectBackoff[i], () {
-      if (!_disposed) unawaited(_connectSocket());
+      _reconnectTimer = null;
+      // The session may have been closed, or a new socket opened by
+      // subscribeToSession, while this timer was pending.
+      if (_disposed || _targetSessionId == null || _channel != null) return;
+      _connectSocket();
     });
   }
 

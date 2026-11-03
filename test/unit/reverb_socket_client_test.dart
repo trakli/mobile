@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:stream_channel/stream_channel.dart';
@@ -19,6 +20,13 @@ class _FakeChannel with StreamChannelMixin implements WebSocketChannel {
   final List<String> sent = [];
   bool closed = false;
 
+  /// What [ready] resolves to; swap in a pending future to simulate a
+  /// connect that fails late.
+  Future<void> readyFuture = Future.value();
+
+  /// Simulates the server (or network) closing the connection.
+  void serverClose() => _incoming.close();
+
   void emit(String raw) => _incoming.add(raw);
   void emitFrame(String event, Object data, {String? channel}) => emit(
         jsonEncode({
@@ -35,7 +43,7 @@ class _FakeChannel with StreamChannelMixin implements WebSocketChannel {
   WebSocketSink get sink => _FakeSink(this);
 
   @override
-  Future<void> get ready => Future.value();
+  Future<void> get ready => readyFuture;
 
   @override
   String? get protocol => null;
@@ -142,8 +150,8 @@ void main() {
     stubAuth({'auth': 'app-key:signature'});
 
     final future = client.subscribeToSession(7);
-    channel.emitFrame(
-        'pusher:connection_established', {'socket_id': '111.222'});
+    channel
+        .emitFrame('pusher:connection_established', {'socket_id': '111.222'});
     await future;
     await Future<void>.delayed(Duration.zero); // let the auth POST settle
 
@@ -200,7 +208,8 @@ void main() {
     expect(_decode(channel.sent.single)['event'], 'pusher:pong');
   });
 
-  test('switching sessions unsubscribes the old channel before subscribing '
+  test(
+      'switching sessions unsubscribes the old channel before subscribing '
       'the new one', () async {
     stubAuth({'auth': 'k:sig'});
     final future = client.subscribeToSession(1);
@@ -275,5 +284,164 @@ void main() {
 
     expect(channel.closed, isTrue);
     await expectLater(client.turnEvents, emitsDone);
+  });
+
+  group('reconnect', () {
+    late List<_FakeChannel> opened;
+
+    setUp(() {
+      opened = [];
+      client.connectOverride = (_) {
+        final c = _FakeChannel();
+        opened.add(c);
+        return c;
+      };
+    });
+
+    void establish(_FakeChannel c, String socketId) =>
+        c.emitFrame('pusher:connection_established', {'socket_id': socketId});
+
+    List<Map<String, dynamic>> subscribes(_FakeChannel c) => c.sent
+        .map(_decode)
+        .where((m) => m['event'] == 'pusher:subscribe')
+        .toList();
+
+    /// Connects session [sessionId] on the first socket, then has the
+    /// server drop it, leaving a reconnect pending.
+    void connectThenDrop(FakeAsync async, int sessionId) {
+      client.subscribeToSession(sessionId);
+      establish(opened[0], 's1');
+      async.flushMicrotasks();
+      opened[0].serverClose();
+      async.flushMicrotasks();
+    }
+
+    test('a dropped socket reconnects after backoff and resubscribes', () {
+      fakeAsync((async) {
+        stubAuth({'auth': 'k:sig'});
+        connectThenDrop(async, 4);
+        expect(opened, hasLength(1));
+        expect(opened[0].closed, isTrue);
+
+        async.elapse(const Duration(seconds: 1));
+        expect(opened, hasLength(2));
+        establish(opened[1], 's2');
+        async.flushMicrotasks();
+
+        expect(subscribes(opened[1]).single['data']['channel'],
+            'private-chat-session.4');
+      });
+    });
+
+    test(
+        'a pending reconnect does not open a second socket once '
+        'subscribeToSession has reconnected', () {
+      fakeAsync((async) {
+        stubAuth({'auth': 'k:sig'});
+        connectThenDrop(async, 1);
+
+        client.subscribeToSession(2); // reconnects right away
+        async.flushMicrotasks();
+        expect(opened, hasLength(2));
+
+        async.elapse(const Duration(minutes: 1));
+        expect(opened, hasLength(2));
+        expect(opened[1].closed, isFalse);
+      });
+    });
+
+    test('a reconnect pending when unsubscribe() is called never fires', () {
+      fakeAsync((async) {
+        stubAuth({'auth': 'k:sig'});
+        connectThenDrop(async, 1);
+
+        client.unsubscribe();
+        async.elapse(const Duration(minutes: 1));
+
+        expect(opened, hasLength(1));
+      });
+    });
+
+    group('a socket drop while channel auth is in flight', () {
+      late Completer<Response<Map<String, dynamic>>> staleAuth;
+
+      // Each test creates [staleAuth] inside its fakeAsync zone: a completer
+      // made outside it resumes the awaiting code on the real microtask
+      // queue, after the test's assertions have already run.
+      setUp(() {
+        var calls = 0;
+        when(() => dio.post<Map<String, dynamic>>(
+              any(),
+              data: any(named: 'data'),
+            )).thenAnswer((_) {
+          calls++;
+          return calls == 1
+              ? staleAuth.future
+              : Future.value(authResponse({'auth': 'k:fresh'}));
+        });
+      });
+
+      test('does not stop the backoff reconnect from resubscribing', () {
+        fakeAsync((async) {
+          staleAuth = Completer();
+          connectThenDrop(async, 7); // auth for s1 still pending
+          staleAuth.complete(authResponse({'auth': 'k:stale'}));
+          async.flushMicrotasks();
+
+          async.elapse(const Duration(seconds: 1));
+          establish(opened[1], 's2');
+          async.flushMicrotasks();
+
+          expect(subscribes(opened[0]), isEmpty);
+          final subs = subscribes(opened[1]);
+          expect(subs, hasLength(1));
+          expect(subs.single['data']['auth'], 'k:fresh');
+        });
+      });
+
+      test('never sends the old socket\'s signature on the new socket', () {
+        fakeAsync((async) {
+          staleAuth = Completer();
+          connectThenDrop(async, 7);
+          client.subscribeToSession(7); // new socket opens right away
+          async.flushMicrotasks();
+          staleAuth.complete(authResponse({'auth': 'k:stale'}));
+          async.flushMicrotasks();
+
+          establish(opened[1], 's2');
+          async.flushMicrotasks();
+
+          final subs = subscribes(opened[1]);
+          expect(subs, hasLength(1));
+          expect(subs.single['data']['auth'], 'k:fresh');
+        });
+      });
+    });
+
+    test('a late failure from a replaced socket leaves the current one alone',
+        () {
+      fakeAsync((async) {
+        stubAuth({'auth': 'k:sig'});
+        final lateFailure = Completer<void>();
+        client.connectOverride = (_) {
+          final c = _FakeChannel();
+          if (opened.isEmpty) c.readyFuture = lateFailure.future;
+          opened.add(c);
+          return c;
+        };
+
+        connectThenDrop(async, 1);
+        client.subscribeToSession(1);
+        establish(opened[1], 's2');
+        async.flushMicrotasks();
+
+        lateFailure.completeError(Exception('connect failed'));
+        async.elapse(const Duration(minutes: 1));
+
+        expect(opened, hasLength(2));
+        expect(opened[1].closed, isFalse);
+        expect(subscribes(opened[1]), hasLength(1));
+      });
+    });
   });
 }
