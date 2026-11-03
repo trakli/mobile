@@ -9,6 +9,7 @@ class AiChatState with _$AiChatState {
     ChatSessionDto? session,
     ChatSessionDto? recentSession,
     @Default(<ChatMessageDto>[]) List<ChatMessageDto> messages,
+    @Default(<int, List<String>>{}) Map<int, List<String>> progressByMessageId,
     Failure? failure,
   }) = _AiChatState;
 
@@ -19,6 +20,11 @@ class AiChatState with _$AiChatState {
   bool get hasSession => session != null;
   bool get isEmpty => messages.isEmpty;
   bool get isBusy => isSending || isPolling;
+
+  /// Live tool-step labels received over the websocket for [messageId]
+  /// while its turn is in flight (e.g. "Checking your budgets…").
+  List<String> progressFor(int messageId) =>
+      progressByMessageId[messageId] ?? const [];
 
   ChatMessageDto? get latestAssistantMessage {
     for (var i = messages.length - 1; i >= 0; i--) {

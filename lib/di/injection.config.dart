@@ -25,8 +25,10 @@ import '../core/error/crash_reporting/implementations/firebase_crashlytics_servi
     as _i529;
 import '../core/error/crash_reporting/user_context_service.dart' as _i481;
 import '../core/module/http_module.dart' as _i488;
+import '../core/module/realtime_module.dart' as _i571;
 import '../core/module/sync_module.dart' as _i680;
 import '../core/network/network_info.dart' as _i6;
+import '../core/realtime/reverb_socket_client.dart' as _i337;
 import '../core/services/auth_service.dart' as _i377;
 import '../core/services/oauth_service.dart' as _i624;
 import '../core/services/request_authorization_service.dart' as _i1066;
@@ -315,6 +317,7 @@ _i174.GetIt $initGetIt(
   );
   final syncModule = _$SyncModule();
   final injectHttpClientModule = _$InjectHttpClientModule();
+  final realtimeModule = _$RealtimeModule();
   gh.factory<_i624.OAuthService>(() => _i624.OAuthService());
   gh.factory<_i1041.SyncCubit>(() => _i1041.SyncCubit());
   gh.factory<_i363.StatisticsFilterCubit>(() => _i363.StatisticsFilterCubit());
@@ -406,6 +409,8 @@ _i174.GetIt $initGetIt(
       () => _i538.CrashReportingService(gh<_i414.CrashReportingInterface>()));
   gh.factory<_i682.SubscriptionRemoteDataSource>(
       () => _i682.SubscriptionRemoteDataSourceImpl(gh<_i361.Dio>()));
+  gh.lazySingleton<_i571.ReverbConfig>(
+      () => realtimeModule.reverbConfig(gh<String>(instanceName: 'HttpUrl')));
   gh.factory<_i900.ExchangeRateLocalDataSource>(() =>
       _i900.ExchangeRateLocalDataSourceImpl(gh<_i683.PreferenceManager>()));
   gh.lazySingleton<_i410.CategoryRepository>(() => _i324.CategoryRepositoryImpl(
@@ -418,6 +423,10 @@ _i174.GetIt $initGetIt(
       () => _i947.SyncCrashReporterImpl(gh<_i538.CrashReportingService>()));
   gh.factory<_i514.AiRemoteDataSource>(
       () => _i514.AiRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
+  gh.lazySingleton<_i337.ReverbSocketClient>(() => _i337.ReverbSocketClient(
+        gh<_i571.ReverbConfig>(),
+        gh<_i361.Dio>(),
+      ));
   gh.lazySingleton<_i280.PartySyncHandler>(() => _i280.PartySyncHandler(
         gh<_i704.AppDatabase>(),
         gh<_i656.PartyRemoteDataSource>(),
@@ -674,6 +683,17 @@ _i174.GetIt $initGetIt(
         repriceHoldingsUseCase: gh<_i583.RepriceHoldingsUseCase>(),
         searchCoinsUseCase: gh<_i15.SearchCoinsUseCase>(),
       ));
+  gh.lazySingleton<_i415.AiChatCubit>(() => _i415.AiChatCubit(
+        listSessionsUseCase: gh<_i505.ListSessionsUseCase>(),
+        getSessionUseCase: gh<_i752.GetSessionUseCase>(),
+        createSessionUseCase: gh<_i995.CreateSessionUseCase>(),
+        sendMessageUseCase: gh<_i308.SendMessageUseCase>(),
+        deleteSessionUseCase: gh<_i236.DeleteSessionUseCase>(),
+        confirmActionUseCase: gh<_i82.ConfirmActionUseCase>(),
+        rejectActionUseCase: gh<_i391.RejectActionUseCase>(),
+        uploadFilesUseCase: gh<_i633.UploadFilesUseCase>(),
+        socket: gh<_i337.ReverbSocketClient>(),
+      ));
   gh.factory<_i80.AddWalletUseCase>(
       () => _i80.AddWalletUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i418.UpdateWalletUseCase>(
@@ -720,16 +740,6 @@ _i174.GetIt $initGetIt(
       _i225.EnsureDefaultWalletExistsUseCase(gh<_i368.WalletRepository>()));
   gh.factory<_i82.ListenToWalletsUseCase>(
       () => _i82.ListenToWalletsUseCase(gh<_i368.WalletRepository>()));
-  gh.lazySingleton<_i415.AiChatCubit>(() => _i415.AiChatCubit(
-        listSessionsUseCase: gh<_i505.ListSessionsUseCase>(),
-        getSessionUseCase: gh<_i752.GetSessionUseCase>(),
-        createSessionUseCase: gh<_i995.CreateSessionUseCase>(),
-        sendMessageUseCase: gh<_i308.SendMessageUseCase>(),
-        deleteSessionUseCase: gh<_i236.DeleteSessionUseCase>(),
-        confirmActionUseCase: gh<_i82.ConfirmActionUseCase>(),
-        rejectActionUseCase: gh<_i391.RejectActionUseCase>(),
-        uploadFilesUseCase: gh<_i633.UploadFilesUseCase>(),
-      ));
   gh.factory<_i524.LoginWithEmailUseCase>(
       () => _i524.LoginWithEmailUseCase(gh<_i800.AuthRepository>()));
   gh.factory<_i705.RegisterUseCase>(
@@ -1025,3 +1035,5 @@ _i174.GetIt $initGetIt(
 class _$SyncModule extends _i680.SyncModule {}
 
 class _$InjectHttpClientModule extends _i488.InjectHttpClientModule {}
+
+class _$RealtimeModule extends _i571.RealtimeModule {}

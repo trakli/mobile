@@ -22,6 +22,8 @@ mixin _$AiChatState {
   ChatSessionDto? get session => throw _privateConstructorUsedError;
   ChatSessionDto? get recentSession => throw _privateConstructorUsedError;
   List<ChatMessageDto> get messages => throw _privateConstructorUsedError;
+  Map<int, List<String>> get progressByMessageId =>
+      throw _privateConstructorUsedError;
   Failure? get failure => throw _privateConstructorUsedError;
 
   /// Create a copy of AiChatState
@@ -44,6 +46,7 @@ abstract class $AiChatStateCopyWith<$Res> {
       ChatSessionDto? session,
       ChatSessionDto? recentSession,
       List<ChatMessageDto> messages,
+      Map<int, List<String>> progressByMessageId,
       Failure? failure});
 
   $ChatSessionDtoCopyWith<$Res>? get session;
@@ -72,6 +75,7 @@ class _$AiChatStateCopyWithImpl<$Res, $Val extends AiChatState>
     Object? session = freezed,
     Object? recentSession = freezed,
     Object? messages = null,
+    Object? progressByMessageId = null,
     Object? failure = freezed,
   }) {
     return _then(_value.copyWith(
@@ -99,6 +103,10 @@ class _$AiChatStateCopyWithImpl<$Res, $Val extends AiChatState>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<ChatMessageDto>,
+      progressByMessageId: null == progressByMessageId
+          ? _value.progressByMessageId
+          : progressByMessageId // ignore: cast_nullable_to_non_nullable
+              as Map<int, List<String>>,
       failure: freezed == failure
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
@@ -164,6 +172,7 @@ abstract class _$$AiChatStateImplCopyWith<$Res>
       ChatSessionDto? session,
       ChatSessionDto? recentSession,
       List<ChatMessageDto> messages,
+      Map<int, List<String>> progressByMessageId,
       Failure? failure});
 
   @override
@@ -193,6 +202,7 @@ class __$$AiChatStateImplCopyWithImpl<$Res>
     Object? session = freezed,
     Object? recentSession = freezed,
     Object? messages = null,
+    Object? progressByMessageId = null,
     Object? failure = freezed,
   }) {
     return _then(_$AiChatStateImpl(
@@ -220,6 +230,10 @@ class __$$AiChatStateImplCopyWithImpl<$Res>
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<ChatMessageDto>,
+      progressByMessageId: null == progressByMessageId
+          ? _value._progressByMessageId
+          : progressByMessageId // ignore: cast_nullable_to_non_nullable
+              as Map<int, List<String>>,
       failure: freezed == failure
           ? _value.failure
           : failure // ignore: cast_nullable_to_non_nullable
@@ -238,8 +252,11 @@ class _$AiChatStateImpl extends _AiChatState {
       this.session,
       this.recentSession,
       final List<ChatMessageDto> messages = const <ChatMessageDto>[],
+      final Map<int, List<String>> progressByMessageId =
+          const <int, List<String>>{},
       this.failure})
       : _messages = messages,
+        _progressByMessageId = progressByMessageId,
         super._();
 
   @override
@@ -264,12 +281,22 @@ class _$AiChatStateImpl extends _AiChatState {
     return EqualUnmodifiableListView(_messages);
   }
 
+  final Map<int, List<String>> _progressByMessageId;
+  @override
+  @JsonKey()
+  Map<int, List<String>> get progressByMessageId {
+    if (_progressByMessageId is EqualUnmodifiableMapView)
+      return _progressByMessageId;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_progressByMessageId);
+  }
+
   @override
   final Failure? failure;
 
   @override
   String toString() {
-    return 'AiChatState(isInitializing: $isInitializing, isSending: $isSending, isPolling: $isPolling, session: $session, recentSession: $recentSession, messages: $messages, failure: $failure)';
+    return 'AiChatState(isInitializing: $isInitializing, isSending: $isSending, isPolling: $isPolling, session: $session, recentSession: $recentSession, messages: $messages, progressByMessageId: $progressByMessageId, failure: $failure)';
   }
 
   @override
@@ -287,6 +314,8 @@ class _$AiChatStateImpl extends _AiChatState {
             (identical(other.recentSession, recentSession) ||
                 other.recentSession == recentSession) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
+            const DeepCollectionEquality()
+                .equals(other._progressByMessageId, _progressByMessageId) &&
             (identical(other.failure, failure) || other.failure == failure));
   }
 
@@ -299,6 +328,7 @@ class _$AiChatStateImpl extends _AiChatState {
       session,
       recentSession,
       const DeepCollectionEquality().hash(_messages),
+      const DeepCollectionEquality().hash(_progressByMessageId),
       failure);
 
   /// Create a copy of AiChatState
@@ -318,6 +348,7 @@ abstract class _AiChatState extends AiChatState {
       final ChatSessionDto? session,
       final ChatSessionDto? recentSession,
       final List<ChatMessageDto> messages,
+      final Map<int, List<String>> progressByMessageId,
       final Failure? failure}) = _$AiChatStateImpl;
   const _AiChatState._() : super._();
 
@@ -333,6 +364,8 @@ abstract class _AiChatState extends AiChatState {
   ChatSessionDto? get recentSession;
   @override
   List<ChatMessageDto> get messages;
+  @override
+  Map<int, List<String>> get progressByMessageId;
   @override
   Failure? get failure;
 
