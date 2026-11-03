@@ -134,6 +134,8 @@ jobs:
         run: bundle exec fastlane release_play_store
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
+          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
+          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}
 
       - name: Release to App Store
         if: matrix.os == 'ios'
@@ -145,3 +147,5 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
           APP_BUNDLE_ID: ${{ vars.APP_BUNDLE_ID }}
+          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
+          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}

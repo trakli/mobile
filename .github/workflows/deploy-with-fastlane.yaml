@@ -60,6 +60,8 @@ jobs:
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_BUNDLE_ID: ${{ vars.APP_BUNDLE_ID }}
+          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
+          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}
 
   build_android:
     name: Build Android
@@ -115,3 +117,5 @@ jobs:
           options: '{ "environment": "prod" }'
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
+          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
+          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}

@@ -85,6 +85,8 @@ jobs:
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          DART_DEFINES_STAGING: ${{ vars.DART_DEFINES_STAGING }}
+          DART_DEFINES_STAGING_SECRETS: ${{ secrets.DART_DEFINES_STAGING_SECRETS }}
 
   ios:
     name: iOS (Staging → TestFlight)
@@ -158,3 +160,5 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          DART_DEFINES_STAGING: ${{ vars.DART_DEFINES_STAGING }}
+          DART_DEFINES_STAGING_SECRETS: ${{ secrets.DART_DEFINES_STAGING_SECRETS }}

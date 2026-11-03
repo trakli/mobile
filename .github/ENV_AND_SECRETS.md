@@ -41,6 +41,44 @@ Use **Secrets** for sensitive values; use **Variables** for non-sensitive identi
 
 ---
 
+## Build-time parameters (`--dart-define`)
+
+The Fastfile merges JSON objects per environment and passes them to
+`flutter build` with `--dart-define-from-file`, so values never appear in the
+build command fastlane logs. Public values go in **Variables**; sensitive values
+go in **Secrets**. Adding a new build-time parameter is a JSON key — no workflow
+or Fastfile change. Values must be strings, numbers or booleans.
+
+| Name | Type | Used by | Description |
+|------|------|---------|-------------|
+| `DART_DEFINES_PROD` | Variable | release (prod) lanes | JSON object of `--dart-define` key/value pairs for production. |
+| `DART_DEFINES_STAGING` | Variable | staging/dev lanes | JSON object of `--dart-define` key/value pairs for staging and dev builds. |
+| `DART_DEFINES` | Variable | all lanes | Shared fallback when the per-environment variable is unset. |
+| `DART_DEFINES_PROD_SECRETS` | Secret | release (prod) lanes | Secret `--dart-define` values for production; merged last, wins on key clash. |
+| `DART_DEFINES_STAGING_SECRETS` | Secret | staging/dev lanes | Secret `--dart-define` values for staging/dev; merged last. |
+
+Example `DART_DEFINES_PROD` value:
+
+```json
+{
+  "REVERB_APP_KEY": "8c4462fdb4a2ec58ed60a97b5f0f7abc",
+  "REVERB_HOST": "reverb.trakli.app",
+  "REVERB_PORT": "443",
+  "REVERB_SCHEME": "https"
+}
+```
+
+`DART_DEFINES_STAGING` is the same shape with the staging Reverb values
+(`reverb.dev.trakli.app`). Secret values use the same JSON shape, e.g.
+`DART_DEFINES_PROD_SECRETS` = `{"SENTRY_DSN": "…", "MAPS_API_KEY": "…"}`.
+
+The Fastfile merges them with precedence **per-env Secrets → per-env Variables
+→ shared `DART_DEFINES`**, and logs the key names (never the values) it passes.
+If all are unset, nothing is passed and the app uses its built-in defaults:
+without `REVERB_APP_KEY`, AI chat updates by polling only.
+
+---
+
 ## Summary checklist
 
 **Secrets (Actions → Secrets):**
@@ -56,10 +94,12 @@ Use **Secrets** for sensitive values; use **Variables** for non-sensitive identi
 - `ANDROID_KEYSTORE_PASSWORD`
 - `FIREBASE_APP_ID` (if using Android or iOS Firebase App Distribution)
 - `FIREBASE_APP_ID_IOS_DEV` (optional; for iOS dev Firebase track; falls back to `FIREBASE_APP_ID`)
+- `DART_DEFINES_PROD_SECRETS`, `DART_DEFINES_STAGING_SECRETS` (optional JSON)
 
 **Variables (Actions → Variables):**
 
 - `APP_BUNDLE_ID` (e.g. `com.whilesmart.trakli`)
 - `APP_PACKAGE_NAME` (e.g. `com.whilesmart.trakli`)
+- `DART_DEFINES_PROD`, `DART_DEFINES_STAGING` (optional JSON; `DART_DEFINES` fallback)
 
 **Certificates repo:** Ensure the repo used by Match (default: `git@github.com:whilesmart/certificates.git`) exists and that the deploy key has access. Run **iOS Certificate Setup** (ios-setup.yml) once via workflow_dispatch to generate/update certs and profiles for `com.whilesmart.trakli`, `com.whilesmart.trakli.dev`, and `com.whilesmart.trakli.stg`. Staging uses bundle ID `com.whilesmart.trakli.stg`; no extra secrets beyond MATCH/ASC_*.
