@@ -144,7 +144,8 @@ class _AiChatViewState extends State<_AiChatView> {
           BlocConsumer<AiChatCubit, AiChatState>(
             listenWhen: (a, b) =>
                 a.messages.length != b.messages.length ||
-                (a.isPolling && !b.isPolling),
+                (a.isPolling && !b.isPolling) ||
+                a.progressByMessageId != b.progressByMessageId,
             listener: (context, state) {
               WidgetsBinding.instance
                   .addPostFrameCallback((_) => _scrollToBottom());
@@ -183,7 +184,10 @@ class _AiChatViewState extends State<_AiChatView> {
                             itemCount: state.messages.length,
                             itemBuilder: (context, i) {
                               final message = state.messages[i];
-                              return MessageRow(message: message);
+                              return MessageRow(
+                                message: message,
+                                progress: state.progressFor(message.id),
+                              );
                             },
                           ),
                   ),
