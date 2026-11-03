@@ -146,8 +146,7 @@ class AiChatCubit extends Cubit<AiChatState> {
   void _onTurnEvent(ChatTurnFrame frame) {
     final sessionId = state.session?.id;
     if (sessionId == null) return;
-    final belongsToCurrent =
-        state.messages.any((m) => m.id == frame.messageId);
+    final belongsToCurrent = state.messages.any((m) => m.id == frame.messageId);
     if (!belongsToCurrent) return;
 
     if (frame.isProgress && frame.label != null) {
@@ -199,6 +198,18 @@ class AiChatCubit extends Cubit<AiChatState> {
   void startNewChat() {
     _stopPolling();
     _socket.unsubscribe();
+    emit(AiChatState.initial());
+  }
+
+  /// Drops everything tied to the signed-in account: the open chat, its live
+  /// channel subscription, polling and any pending upload retry. This cubit
+  /// is a singleton that outlives logout, so without this the next account
+  /// would try to reopen (and stay subscribed to) the previous one's chat.
+  void reset() {
+    _stopPolling();
+    _socket.unsubscribe();
+    _retryableUpload = null;
+    _landingShown = false;
     emit(AiChatState.initial());
   }
 
