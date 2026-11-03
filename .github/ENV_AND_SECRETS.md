@@ -61,7 +61,7 @@ Example `DART_DEFINES_PROD` value:
 
 ```json
 {
-  "REVERB_APP_KEY": "8c4462fdb4a2ec58ed60a97b5f0f7abc",
+  "REVERB_APP_KEY": "<production Reverb app key>",
   "REVERB_HOST": "reverb.trakli.app",
   "REVERB_PORT": "443",
   "REVERB_SCHEME": "https"
