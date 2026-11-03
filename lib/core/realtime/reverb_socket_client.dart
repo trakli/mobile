@@ -123,6 +123,7 @@ class ReverbSocketClient {
     final frame = parsePusherFrame(raw);
     switch (frame) {
       case ConnectionEstablished(:final socketId):
+        logger.d('Reverb connected to ${_config.host} (socket $socketId)');
         _socketId = socketId;
         _reconnectAttempt = 0;
         unawaited(_subscribeToTarget());
@@ -130,9 +131,11 @@ class ReverbSocketClient {
         _channel?.sink.add(encodePong());
       case PusherError(:final message):
         logger.w('Reverb protocol error: $message');
-      case ChatTurnFrame():
+      case ChatTurnFrame(:final messageId, :final kind, :final label):
+        logger.d('Reverb turn $kind for message $messageId: ${label ?? ''}');
         _turnEventsController.add(frame);
-      case SubscriptionSucceeded():
+      case SubscriptionSucceeded(:final channel):
+        logger.d('Reverb subscribed to $channel');
       case UnknownFrame():
         break;
     }
