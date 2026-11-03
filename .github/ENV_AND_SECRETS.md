@@ -43,39 +43,50 @@ Use **Secrets** for sensitive values; use **Variables** for non-sensitive identi
 
 ## Build-time parameters (`--dart-define`)
 
-The Fastfile merges JSON objects per environment and passes them to
-`flutter build` with `--dart-define-from-file`, so values never appear in the
-build command fastlane logs. Public values go in **Variables**; sensitive values
-go in **Secrets**. Adding a new build-time parameter is a JSON key — no workflow
-or Fastfile change. Values must be strings, numbers or booleans.
+Any environment variable named `DART_DEFINE_<NAME>` on the fastlane step is
+passed to `flutter build` as the dart-define `<NAME>`, which the app reads with
+`String.fromEnvironment('<NAME>')`. The Fastfile writes them to a temporary
+`--dart-define-from-file` JSON file, so values never appear in the build
+command fastlane logs; it logs the names only and deletes the file after the
+build. Empty values are skipped, so an unset variable leaves the app's default.
+
+The workflows map repo settings to those names. Each workflow builds a single
+environment, so it uses one prefix: `release.yaml` and
+`deploy-with-fastlane.yaml` read `PROD_*`, `staging-distribute.yml` reads
+`STG_*`.
 
 | Name | Type | Used by | Description |
 |------|------|---------|-------------|
-| `DART_DEFINES_PROD` | Variable | release (prod) lanes | JSON object of `--dart-define` key/value pairs for production. |
-| `DART_DEFINES_STAGING` | Variable | staging/dev lanes | JSON object of `--dart-define` key/value pairs for staging and dev builds. |
-| `DART_DEFINES` | Variable | all lanes | Shared fallback when the per-environment variable is unset. |
-| `DART_DEFINES_PROD_SECRETS` | Secret | release (prod) lanes | Secret `--dart-define` values for production; merged last, wins on key clash. |
-| `DART_DEFINES_STAGING_SECRETS` | Secret | staging/dev lanes | Secret `--dart-define` values for staging/dev; merged last. |
+| `PROD_REVERB_APP_KEY` / `STG_REVERB_APP_KEY` | Secret | prod / staging builds | Reverb app key. Without it the AI chat socket stays off and chat updates by polling only. |
+| `PROD_REVERB_HOST` / `STG_REVERB_HOST` | Variable | prod / staging builds | Reverb server: `reverb.trakli.app` / `reverb.dev.trakli.app`. A full URL such as `wss://reverb.trakli.app` also works. Defaults to the API host. |
+| `PROD_REVERB_PORT` / `STG_REVERB_PORT` | Variable | prod / staging builds | Optional. Defaults to 443 (80 when the scheme is `http`/`ws`). |
+| `PROD_REVERB_SCHEME` / `STG_REVERB_SCHEME` | Variable | prod / staging builds | Optional. `https` (default, TLS) or `http`. |
 
-Example `DART_DEFINES_PROD` value:
+Plain values are mapped once at the top of each workflow:
 
-```json
-{
-  "REVERB_APP_KEY": "<production Reverb app key>",
-  "REVERB_HOST": "reverb.trakli.app",
-  "REVERB_PORT": "443",
-  "REVERB_SCHEME": "https"
-}
+```yaml
+env:
+  DART_DEFINE_REVERB_HOST: ${{ vars.PROD_REVERB_HOST }}
 ```
 
-`DART_DEFINES_STAGING` is the same shape with the staging Reverb values
-(`reverb.dev.trakli.app`). Secret values use the same JSON shape, e.g.
-`DART_DEFINES_PROD_SECRETS` = `{"SENTRY_DSN": "…", "MAPS_API_KEY": "…"}`.
+Secrets are mapped on the fastlane step only, so no other action in the job
+receives them:
 
-The Fastfile merges them with precedence **per-env Secrets → per-env Variables
-→ shared `DART_DEFINES`**, and logs the key names (never the values) it passes.
-If all are unset, nothing is passed and the app uses its built-in defaults:
-without `REVERB_APP_KEY`, AI chat updates by polling only.
+```yaml
+- name: Release to Play Store
+  run: bundle exec fastlane release_play_store
+  env:
+    DART_DEFINE_REVERB_APP_KEY: ${{ secrets.PROD_REVERB_APP_KEY }}
+```
+
+**Adding a build-time value** needs no Fastfile change: create the variable or
+secret, add its `DART_DEFINE_<NAME>` line to the workflows that need it, and
+read `String.fromEnvironment('<NAME>')` in the app. Values compiled into the
+app can be read by anyone who unpacks it, so this suits keys that are meant to
+ship in the client (like the Reverb app key), not server credentials.
+
+For a local fastlane build, export the same names first, e.g.
+`DART_DEFINE_REVERB_APP_KEY=… bundle exec fastlane …`.
 
 ---
 
@@ -94,12 +105,12 @@ without `REVERB_APP_KEY`, AI chat updates by polling only.
 - `ANDROID_KEYSTORE_PASSWORD`
 - `FIREBASE_APP_ID` (if using Android or iOS Firebase App Distribution)
 - `FIREBASE_APP_ID_IOS_DEV` (optional; for iOS dev Firebase track; falls back to `FIREBASE_APP_ID`)
-- `DART_DEFINES_PROD_SECRETS`, `DART_DEFINES_STAGING_SECRETS` (optional JSON)
+- `PROD_REVERB_APP_KEY`, `STG_REVERB_APP_KEY`
 
 **Variables (Actions → Variables):**
 
 - `APP_BUNDLE_ID` (e.g. `com.whilesmart.trakli`)
 - `APP_PACKAGE_NAME` (e.g. `com.whilesmart.trakli`)
-- `DART_DEFINES_PROD`, `DART_DEFINES_STAGING` (optional JSON; `DART_DEFINES` fallback)
+- `PROD_REVERB_HOST`, `STG_REVERB_HOST` (optional: `*_REVERB_PORT`, `*_REVERB_SCHEME`)
 
 **Certificates repo:** Ensure the repo used by Match (default: `git@github.com:whilesmart/certificates.git`) exists and that the deploy key has access. Run **iOS Certificate Setup** (ios-setup.yml) once via workflow_dispatch to generate/update certs and profiles for `com.whilesmart.trakli`, `com.whilesmart.trakli.dev`, and `com.whilesmart.trakli.stg`. Staging uses bundle ID `com.whilesmart.trakli.stg`; no extra secrets beyond MATCH/ASC_*.

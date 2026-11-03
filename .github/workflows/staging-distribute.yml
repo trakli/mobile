@@ -23,6 +23,12 @@ env:
   XCODE_VERSION: "26"
   JAVA_VERSION: "17"
   RUBY_VERSION: "3.2"
+  # Build-time app settings: every DART_DEFINE_<NAME> reaches the app as
+  # String.fromEnvironment('<NAME>'). Plain values here; secrets go on the
+  # fastlane step only. See .github/ENV_AND_SECRETS.md.
+  DART_DEFINE_REVERB_HOST: ${{ vars.STG_REVERB_HOST }}
+  DART_DEFINE_REVERB_PORT: ${{ vars.STG_REVERB_PORT }}
+  DART_DEFINE_REVERB_SCHEME: ${{ vars.STG_REVERB_SCHEME }}
 
 jobs:
   android:
@@ -85,8 +91,7 @@ jobs:
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          DART_DEFINES_STAGING: ${{ vars.DART_DEFINES_STAGING }}
-          DART_DEFINES_STAGING_SECRETS: ${{ secrets.DART_DEFINES_STAGING_SECRETS }}
+          DART_DEFINE_REVERB_APP_KEY: ${{ secrets.STG_REVERB_APP_KEY }}
 
   ios:
     name: iOS (Staging → TestFlight)
@@ -160,5 +165,4 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-          DART_DEFINES_STAGING: ${{ vars.DART_DEFINES_STAGING }}
-          DART_DEFINES_STAGING_SECRETS: ${{ secrets.DART_DEFINES_STAGING_SECRETS }}
+          DART_DEFINE_REVERB_APP_KEY: ${{ secrets.STG_REVERB_APP_KEY }}

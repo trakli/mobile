@@ -26,31 +26,30 @@ lane :lint do
   sh_on_root(command: "flutter format --suppress-analytics --set-exit-if-changed -n lib/main.dart lib/src/ test/")
 end
 
-# Generic --dart-define injection. Register build parameters as JSON objects in
-# repo Variables (public) and Secrets (sensitive), and they are passed to the
-# build — adding a new build-time value is a JSON key, not a code change here.
+# Generic --dart-define injection. Every DART_DEFINE_<NAME> variable in the
+# environment is passed to `flutter build` as the dart-define <NAME>, so a new
+# build-time value only needs a new line in the workflow:
 #
-#   DART_DEFINES_PROD            {"REVERB_APP_KEY": "…", "REVERB_HOST": "reverb.trakli.app"}
-#   DART_DEFINES_STAGING         {"REVERB_APP_KEY": "…", "REVERB_HOST": "reverb.dev.trakli.app"}
-#   DART_DEFINES                 shared fallback when the per-env variable is unset
-#   DART_DEFINES_PROD_SECRETS    {"SENTRY_DSN": "…"}  — merged last, wins on key clash
-#   DART_DEFINES_STAGING_SECRETS {"SENTRY_DSN": "…"}
+#   DART_DEFINE_REVERB_HOST: ${{ vars.PROD_REVERB_HOST }}            (plain value)
+#   DART_DEFINE_REVERB_APP_KEY: ${{ secrets.PROD_REVERB_APP_KEY }}   (secret)
 #
-# Precedence: per-env Secrets > per-env Variables > shared fallback.
-# Staging and dev builds both read the STAGING values.
-def merged_dart_defines(environment)
-  base = environment.to_s == 'prod' ? 'DART_DEFINES_PROD' : 'DART_DEFINES_STAGING'
+# Empty values are skipped, so an unset variable leaves the app's default.
+DART_DEFINE_PREFIX = 'DART_DEFINE_'.freeze
 
-  merged = parse_dart_defines('DART_DEFINES')
-  merged.merge!(parse_dart_defines(base))
-  merged.merge!(parse_dart_defines("#{base}_SECRETS"))
-  merged
+def collect_dart_defines
+  ENV.each_with_object({}) do |(name, value), out|
+    next unless name.start_with?(DART_DEFINE_PREFIX)
+
+    key = name.delete_prefix(DART_DEFINE_PREFIX)
+    value = value.to_s.strip
+    out[key] = value unless key.empty? || value.empty?
+  end
 end
 
-# Writes the merged values to a JSON file for --dart-define-from-file and
-# returns its path, or nil when nothing is set. A file instead of
-# --dart-define flags keeps values out of the build command, which fastlane's
-# `sh` prints to the CI log, and needs no shell escaping.
+# Writes the values to a JSON file for --dart-define-from-file and returns its
+# path, or nil when there are none. A file instead of --dart-define flags keeps
+# values out of the build command, which fastlane's `sh` prints to the CI log,
+# and needs no shell escaping. Only the key names are logged.
 def write_dart_defines_file(defines, environment)
   return nil if defines.empty?
 
@@ -61,28 +60,6 @@ def write_dart_defines_file(defines, environment)
   File.write(path, JSON.generate(defines))
   File.chmod(0o600, path)
   path
-end
-
-# Parses the JSON object in ENV[name]. Errors name the variable but never
-# echo its content, which may be a secret.
-def parse_dart_defines(name)
-  raw = ENV[name]
-  return {} if raw.to_s.strip.empty?
-
-  require 'json'
-  begin
-    parsed = JSON.parse(raw)
-  rescue JSON::ParserError
-    UI.user_error!("#{name} is not valid JSON")
-  end
-  UI.user_error!("#{name} must be a JSON object of key/value pairs") unless parsed.is_a?(Hash)
-
-  parsed.each_with_object({}) do |(key, value), out|
-    unless value.is_a?(String) || value.is_a?(Numeric) || value == true || value == false
-      UI.user_error!("#{name}: \"#{key}\" must be a string, number or boolean")
-    end
-    out[key] = value.to_s
-  end
 end
 
 lane :build_flutter_app do |options|
@@ -102,8 +79,6 @@ lane :build_flutter_app do |options|
   command = "flutter build #{type} --release --no-pub --suppress-analytics"
   command += " --flavor #{flavor}" if flavor.to_s != ""
   command += " --target #{target}" if target.to_s != ""
-  # Parsed up front so a malformed value fails before the slow steps below.
-  dart_defines = merged_dart_defines(environment)
   command += " --build-number=#{build_number}" if build_number.to_s != ""
   command += " --build-name=#{version_number}" if version_number.to_s != ""
   command += " --no-codesign" if no_codesign
@@ -122,7 +97,7 @@ lane :build_flutter_app do |options|
     end
   end
 
-  dart_defines_file = write_dart_defines_file(dart_defines, environment)
+  dart_defines_file = write_dart_defines_file(collect_dart_defines, environment)
   command += " --dart-define-from-file=#{dart_defines_file}" if dart_defines_file
   begin
     sh_on_root(command: command)

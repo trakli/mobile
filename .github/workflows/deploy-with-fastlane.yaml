@@ -7,6 +7,12 @@ env:
   FLUTTER_CHANNEL: "stable"
   FLUTTER_VERSION: "3.38.9"
   RUBY_VERSION: "3.2.2"
+  # Build-time app settings: every DART_DEFINE_<NAME> reaches the app as
+  # String.fromEnvironment('<NAME>'). Plain values here; secrets go on the
+  # fastlane step only. See .github/ENV_AND_SECRETS.md.
+  DART_DEFINE_REVERB_HOST: ${{ vars.PROD_REVERB_HOST }}
+  DART_DEFINE_REVERB_PORT: ${{ vars.PROD_REVERB_PORT }}
+  DART_DEFINE_REVERB_SCHEME: ${{ vars.PROD_REVERB_SCHEME }}
 
 jobs:
   build_ios:
@@ -60,8 +66,7 @@ jobs:
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APP_BUNDLE_ID: ${{ vars.APP_BUNDLE_ID }}
-          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
-          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}
+          DART_DEFINE_REVERB_APP_KEY: ${{ secrets.PROD_REVERB_APP_KEY }}
 
   build_android:
     name: Build Android
@@ -117,5 +122,4 @@ jobs:
           options: '{ "environment": "prod" }'
         env:
           APP_PACKAGE_NAME: ${{ vars.APP_PACKAGE_NAME }}
-          DART_DEFINES_PROD: ${{ vars.DART_DEFINES_PROD }}
-          DART_DEFINES_PROD_SECRETS: ${{ secrets.DART_DEFINES_PROD_SECRETS }}
+          DART_DEFINE_REVERB_APP_KEY: ${{ secrets.PROD_REVERB_APP_KEY }}
