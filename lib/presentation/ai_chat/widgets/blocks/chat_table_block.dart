@@ -35,35 +35,44 @@ class ChatTableBlock extends StatelessWidget {
           return v == null || v is num || num.tryParse('$v') != null;
         });
 
+    // Equal-share columns collapse to ~1 character each past a handful.
     return ChatBlockCard(
       title: block.title,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.r),
-        child: Table(
-          columnWidths: {
-            for (var i = 0; i < columns.length; i++) i: const FlexColumnWidth(),
-          },
-          border: TableBorder(
-            horizontalInside: BorderSide(color: tones.borderLight),
-          ),
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-          children: [
-            TableRow(
-              decoration: BoxDecoration(color: tones.brand.deep.withAlpha(28)),
-              children: columns
-                  .map((c) => _cell(tones, prettyKey(c),
-                      bold: true, right: isNumericCol(c)))
-                  .toList(),
-            ),
-            ...rows.map(
-              (r) => TableRow(
-                children: columns
-                    .map((c) =>
-                        _cell(tones, fmtNum(r[c]), right: isNumericCol(c)))
-                    .toList(),
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            // Keeps a narrow table filling the card instead of huddling left.
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: Table(
+                defaultColumnWidth: const IntrinsicColumnWidth(),
+                border: TableBorder(
+                  horizontalInside: BorderSide(color: tones.borderLight),
+                ),
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                children: [
+                  TableRow(
+                    decoration:
+                        BoxDecoration(color: tones.brand.deep.withAlpha(28)),
+                    children: columns
+                        .map((c) => _cell(tones, prettyKey(c),
+                            bold: true, right: isNumericCol(c)))
+                        .toList(),
+                  ),
+                  ...rows.map(
+                    (r) => TableRow(
+                      children: columns
+                          .map((c) =>
+                              _cell(tones, fmtNum(r[c]), right: isNumericCol(c)))
+                          .toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -74,13 +83,17 @@ Widget _cell(AppTones tones, String text,
     {bool bold = false, bool right = false}) {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-    child: Text(
-      text,
-      textAlign: right ? TextAlign.right : TextAlign.left,
-      style: TextStyle(
-        fontSize: 12.sp,
-        fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
-        color: tones.textPrimary,
+    // Stops one long value stretching its column; past this the text wraps.
+    child: ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 160.w),
+      child: Text(
+        text,
+        textAlign: right ? TextAlign.right : TextAlign.left,
+        style: TextStyle(
+          fontSize: 12.sp,
+          fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+          color: tones.textPrimary,
+        ),
       ),
     ),
   );
