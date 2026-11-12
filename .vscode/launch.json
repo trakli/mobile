@@ -11,7 +11,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
-            "args": ["--flavor", "development", "--target", "lib/main_development.dart"]
+            "args": ["--flavor", "development", "--target", "lib/main_development.dart", "--dart-define-from-file", "dart_defines/development.json"]
         },
         {
             "name": "mobile:staging",
@@ -20,7 +20,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
-            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart"]
+            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart", "--dart-define-from-file", "dart_defines/staging.json"]
         },
         {
             "name": "mobile:production",
@@ -29,7 +29,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug",
-            "args": ["--flavor", "production", "--target", "lib/main_production.dart"]
+            "args": ["--flavor", "production", "--target", "lib/main_production.dart", "--dart-define-from-file", "dart_defines/production.json"]
         },
         {
             "name": "mobile:development (profile)",
@@ -38,7 +38,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "args": ["--flavor", "development", "--target", "lib/main_development.dart"]
+            "args": ["--flavor", "development", "--target", "lib/main_development.dart", "--dart-define-from-file", "dart_defines/development.json"]
         },
         {
             "name": "mobile:staging (profile)",
@@ -47,7 +47,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart"]
+            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart", "--dart-define-from-file", "dart_defines/staging.json"]
         },
         {
             "name": "mobile:production (profile)",
@@ -56,7 +56,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "args": ["--flavor", "production", "--target", "lib/main_production.dart"]
+            "args": ["--flavor", "production", "--target", "lib/main_production.dart", "--dart-define-from-file", "dart_defines/production.json"]
         },
         {
             "name": "mobile:development (release)",
@@ -65,7 +65,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "args": ["--flavor", "development", "--target", "lib/main_development.dart"]
+            "args": ["--flavor", "development", "--target", "lib/main_development.dart", "--dart-define-from-file", "dart_defines/development.json"]
         },
         {
             "name": "mobile:staging (release)",
@@ -74,7 +74,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart"]
+            "args": ["--flavor", "staging", "--target", "lib/main_staging.dart", "--dart-define-from-file", "dart_defines/staging.json"]
         },
         {
             "name": "mobile:production (release)",
@@ -83,7 +83,7 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "args": ["--flavor", "production", "--target", "lib/main_production.dart"]
+            "args": ["--flavor", "production", "--target", "lib/main_production.dart", "--dart-define-from-file", "dart_defines/production.json"]
         }
     ]
 }
