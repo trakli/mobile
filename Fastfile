@@ -26,6 +26,42 @@ lane :lint do
   sh_on_root(command: "flutter format --suppress-analytics --set-exit-if-changed -n lib/main.dart lib/src/ test/")
 end
 
+# Generic --dart-define injection. Every DART_DEFINE_<NAME> variable in the
+# environment is passed to `flutter build` as the dart-define <NAME>, so a new
+# build-time value only needs a new line in the workflow:
+#
+#   DART_DEFINE_REVERB_HOST: ${{ vars.PROD_REVERB_HOST }}            (plain value)
+#   DART_DEFINE_REVERB_APP_KEY: ${{ secrets.PROD_REVERB_APP_KEY }}   (secret)
+#
+# Empty values are skipped, so an unset variable leaves the app's default.
+DART_DEFINE_PREFIX = 'DART_DEFINE_'.freeze
+
+def collect_dart_defines
+  ENV.each_with_object({}) do |(name, value), out|
+    next unless name.start_with?(DART_DEFINE_PREFIX)
+
+    key = name.delete_prefix(DART_DEFINE_PREFIX)
+    value = value.to_s.strip
+    out[key] = value unless key.empty? || value.empty?
+  end
+end
+
+# Writes the values to a JSON file for --dart-define-from-file and returns its
+# path, or nil when there are none. A file instead of --dart-define flags keeps
+# values out of the build command, which fastlane's `sh` prints to the CI log,
+# and needs no shell escaping. Only the key names are logged.
+def write_dart_defines_file(defines, environment)
+  return nil if defines.empty?
+
+  require 'json'
+  require 'tmpdir'
+  UI.message("dart-defines for #{environment}: #{defines.keys.sort.join(', ')}")
+  path = File.join(Dir.tmpdir, "trakli-dart-defines-#{Process.pid}.json")
+  File.write(path, JSON.generate(defines))
+  File.chmod(0o600, path)
+  path
+end
+
 lane :build_flutter_app do |options|
   type = options[:type]
   app_identifier_arg = options[:app_identifier]
@@ -61,7 +97,13 @@ lane :build_flutter_app do |options|
     end
   end
 
-  sh_on_root(command: command)
+  dart_defines_file = write_dart_defines_file(collect_dart_defines, environment)
+  command += " --dart-define-from-file=#{dart_defines_file}" if dart_defines_file
+  begin
+    sh_on_root(command: command)
+  ensure
+    File.delete(dart_defines_file) if dart_defines_file && File.exist?(dart_defines_file)
+  end
 end
 
 # Tasks to be reused on each platform flow

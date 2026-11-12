@@ -1,0 +1,6 @@
+{
+  "REVERB_APP_KEY": "",
+  "REVERB_HOST": "wss://reverb.trakli.app",
+  "REVERB_PORT": "443",
+  "REVERB_SCHEME": "https"
+}

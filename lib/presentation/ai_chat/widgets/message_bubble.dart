@@ -16,7 +16,15 @@ import 'package:trakli/presentation/utils/design_tokens.dart';
 
 class MessageRow extends StatelessWidget {
   final ChatMessageDto message;
-  const MessageRow({super.key, required this.message});
+
+  /// Live tool-step labels for this message while its turn is in flight.
+  final List<String> progress;
+
+  const MessageRow({
+    super.key,
+    required this.message,
+    this.progress = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +70,7 @@ class MessageRow extends StatelessWidget {
           const _AssistantAvatar(),
           if (showBubble) ...[
             SizedBox(height: 8.h),
-            _Bubble(message: message),
+            _Bubble(message: message, progress: progress),
           ],
           for (final block in blocks)
             if (block is ProposedActionBlock)
@@ -84,7 +92,8 @@ class MessageRow extends StatelessWidget {
 
 class _Bubble extends StatelessWidget {
   final ChatMessageDto message;
-  const _Bubble({required this.message});
+  final List<String> progress;
+  const _Bubble({required this.message, this.progress = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +148,9 @@ class _Bubble extends StatelessWidget {
             : message.displayText;
 
     final Widget body;
-    if (inFlight) {
+    if (inFlight && progress.isNotEmpty) {
+      body = _ProgressSteps(steps: progress);
+    } else if (inFlight) {
       body = Padding(
         padding: EdgeInsets.symmetric(vertical: 4.h),
         child: _ThinkingDots(color: tones.brand.deep.withAlpha(180)),
@@ -225,6 +236,78 @@ class _Bubble extends StatelessWidget {
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
+    );
+  }
+}
+
+/// The assistant's tool steps for an in-flight turn, streamed over the
+/// websocket: finished steps get a check, the current one a spinner.
+class _ProgressSteps extends StatelessWidget {
+  final List<String> steps;
+  const _ProgressSteps({required this.steps});
+
+  @override
+  Widget build(BuildContext context) {
+    final tones = context.tones;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < steps.length; i++)
+            Padding(
+              padding: EdgeInsets.only(top: i == 0 ? 0 : 4.h),
+              child: _ProgressStep(
+                label: steps[i],
+                done: i < steps.length - 1,
+                tones: tones,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProgressStep extends StatelessWidget {
+  final String label;
+  final bool done;
+  final AppTones tones;
+  const _ProgressStep({
+    required this.label,
+    required this.done,
+    required this.tones,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = done ? tones.textMuted : tones.brand.deep;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 14.r,
+          height: 14.r,
+          child: done
+              ? Icon(Icons.check_rounded, size: 14.sp, color: color)
+              : Padding(
+                  padding: EdgeInsets.all(1.5.r),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: color,
+                    backgroundColor: tones.brand.background,
+                  ),
+                ),
+        ),
+        SizedBox(width: 8.w),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(color: color, fontSize: 13.sp, height: 1.3),
+          ),
+        ),
+      ],
     );
   }
 }

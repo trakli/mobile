@@ -18,6 +18,7 @@ import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/ai_chat/cubit/ai_chat_cubit.dart';
 import 'package:trakli/presentation/app_update/app_update_gate_screen.dart';
 import 'package:trakli/presentation/app_update/cubit/in_app_update_cubit.dart';
 import 'package:trakli/presentation/app_update/update_ready_banner.dart';
@@ -232,6 +233,7 @@ class _AppViewState extends State<AppView> {
       },
       unauthenticated: () async {
         getIt<SynchAppDatabase>().cancel();
+        getIt<AiChatCubit>().reset();
         context.read<TransactionCubit>().setCurrentGroup(null);
         context.read<ConfigCubit>().resetDebugMode();
 

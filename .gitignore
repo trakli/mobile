@@ -73,3 +73,7 @@ android/vendor/
 trakli_demo/
 # VSCode workspace file
 trakli-mobile.code-workspace
+
+# Local --dart-define values (hold secrets); the .example files are tracked.
+/dart_defines/*.json
+!/dart_defines/*.example.json
