@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/extensions/string_extension.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
@@ -18,6 +19,7 @@ import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
@@ -71,6 +73,7 @@ class _AddTransactionFormCompactLayoutState
   CategoryEntity? _selectedCategory;
   WalletEntity? _selectedWallet;
   PartyEntity? _selectedParty;
+  GroupEntity? _selectedGroup;
   TransactionIntent _selectedIntent = TransactionIntent.regular;
   final _extras = TransactionExtrasController();
   List<String> attachedFilePaths = [];
@@ -149,6 +152,7 @@ class _AddTransactionFormCompactLayoutState
       if (widget.transactionCompleteEntity?.party != null) {
         _selectedParty = widget.transactionCompleteEntity!.party;
       }
+      _selectedGroup = widget.transactionCompleteEntity!.group;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final list = widget.transactionCompleteEntity!.files;
         setState(() => existingMedia = list);
@@ -157,6 +161,7 @@ class _AddTransactionFormCompactLayoutState
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
+      _selectedGroup = context.read<TransactionCubit>().state.selectedGroup;
 
       final currencyState = context.read<CurrencyCubit>().state;
       currentCurrency = currencyState.currency ?? currentCurrency;
@@ -511,6 +516,34 @@ class _AddTransactionFormCompactLayoutState
                 ],
               ),
             ),
+            BlocBuilder<GroupCubit, GroupState>(
+              buildWhen: (a, b) => a.groups != b.groups,
+              builder: (context, state) {
+                if (state.groups.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: EdgeInsets.only(top: 16.h),
+                  child: CustomAutoCompleteSearch<GroupEntity>(
+                    key: const ValueKey('transaction-group-picker'),
+                    label: LocaleKeys.group.tr(),
+                    accentColor: widget.accentColor,
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.isEmpty) return state.groups;
+                      return state.groups.where((group) => group.name
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase()));
+                    },
+                    displayStringForOption: (GroupEntity option) =>
+                        option.name.capitalizeFirst(),
+                    onSelected: (value) {
+                      setState(() {
+                        _selectedGroup = value;
+                      });
+                    },
+                    initialValue: _selectedGroup,
+                  ),
+                );
+              },
+            ),
             SizedBox(height: 16.h),
             IntrinsicHeight(
               child: Row(
@@ -673,6 +706,7 @@ class _AddTransactionFormCompactLayoutState
                                       : [],
                                   walletClientId: _selectedWallet?.clientId,
                                   partyClientId: _selectedParty?.clientId,
+                                  groupClientId: _selectedGroup?.clientId,
                                   attachedFilePaths: attachedFilePaths,
                                   recurrence: _extras.recurrence,
                                   clearRecurrence: _extras.clearRecurrence,
@@ -693,6 +727,7 @@ class _AddTransactionFormCompactLayoutState
                                   walletClientId:
                                       _selectedWallet?.clientId ?? '',
                                   partyClientId: _selectedParty?.clientId,
+                                  groupClientId: _selectedGroup?.clientId,
                                   attachedFilePaths: attachedFilePaths,
                                   recurrence: _extras.recurrence,
                                   isRefund: _extras.isRefund,
