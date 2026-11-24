@@ -1,0 +1,88 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    "data": [
+      {
+        "id": 604,
+        "amount": 96,
+        "type": "expense",
+        "datetime": "2026-11-18T10:00:00+00:00",
+        "description": "EDF electricity",
+        "currency": "USD",
+        "wallet_id": null,
+        "wallet_name": null,
+        "contributor": "",
+        "source": "shared_transaction",
+        "can_edit": false,
+        "can_unshare": true,
+        "is_refund": false,
+        "category_ids": [
+          82
+        ],
+        "group_ids": []
+      },
+      {
+        "id": 481,
+        "amount": 84.2,
+        "type": "expense",
+        "datetime": "2026-11-03T10:00:00+00:00",
+        "description": "Carrefour Market",
+        "currency": "EUR",
+        "wallet_id": 28,
+        "wallet_name": "Household",
+        "contributor": "",
+        "source": "workspace",
+        "can_edit": true,
+        "can_unshare": false,
+        "is_refund": false,
+        "category_ids": [
+          81
+        ],
+        "group_ids": []
+      },
+      {
+        "id": 482,
+        "amount": 23.1,
+        "type": "expense",
+        "datetime": "2026-11-02T10:00:00+00:00",
+        "description": "Pharmacie du Centre",
+        "currency": "EUR",
+        "wallet_id": 28,
+        "wallet_name": "Household",
+        "contributor": "",
+        "source": "workspace",
+        "can_edit": true,
+        "can_unshare": false,
+        "is_refund": false,
+        "category_ids": [
+          83
+        ],
+        "group_ids": []
+      },
+      {
+        "id": 483,
+        "amount": 41.8,
+        "type": "expense",
+        "datetime": "2026-11-01T10:00:00+00:00",
+        "description": "Marche Saint-Quentin",
+        "currency": "EUR",
+        "wallet_id": 28,
+        "wallet_name": "Household",
+        "contributor": "",
+        "source": "workspace",
+        "can_edit": true,
+        "can_unshare": false,
+        "is_refund": false,
+        "category_ids": [
+          81
+        ],
+        "group_ids": []
+      }
+    ],
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 25,
+    "total": 4
+  }
+}

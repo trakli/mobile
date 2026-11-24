@@ -1,6 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/domain/entities/import/import_session_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/imports/suggestion_review_screen.dart';
@@ -46,25 +50,21 @@ class ImportActivityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 2.w),
-      child: ListTile(
-        leading: const Icon(Icons.auto_awesome_outlined),
-        title: Text(
-          ImportFilePicker.displayName(session.fileName),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(_subtitle()),
-        trailing: !session.isTerminal
-            ? SizedBox(
-                width: 20.w,
-                height: 20.h,
-                child: const CircularProgressIndicator(strokeWidth: 2),
-              )
-            : _relativeTime(context, session.updatedAt ?? session.createdAt),
-        onTap: () => _onTap(context),
-      ),
+    return LedgerRow(
+      leading: const LedgerCoin(icon: LucideIcons.fileText),
+      title: ImportFilePicker.displayName(session.fileName),
+      subtitle: _subtitle(),
+      trailing: !session.isTerminal
+          ? SizedBox(
+              width: 18.lx,
+              height: 18.lx,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: context.tones.brandFill,
+              ),
+            )
+          : _relativeTime(context, session.updatedAt ?? session.createdAt),
+      onTap: () => _onTap(context),
     );
   }
 }
@@ -134,8 +134,6 @@ Widget _relativeTime(BuildContext context, DateTime? dt) {
   }
   return Text(
     text,
-    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+    style: LedgerText.money(size: 12.lx, color: context.tones.textMuted),
   );
 }

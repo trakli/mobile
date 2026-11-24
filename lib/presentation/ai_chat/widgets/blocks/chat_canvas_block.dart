@@ -17,7 +17,7 @@ class ChatCanvasBlock extends StatelessWidget {
     final tones = context.tones;
     final b = block;
     return InkWell(
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.circular(AppRadii.md),
       onTap: () => _openCanvas(context, b.title ?? '', b.blocks),
       child: ChatBlockCard(
         child: Row(
@@ -61,8 +61,8 @@ class ChatCanvasBlock extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: tones.bgPage,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
       ),
       builder: (sheetContext) => DraggableScrollableSheet(
         expand: false,

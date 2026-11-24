@@ -74,6 +74,7 @@ import '../data/datasources/party/party_local_datasource.dart' as _i655;
 import '../data/datasources/party/party_remote_datasource.dart' as _i656;
 import '../data/datasources/reminder/reminder_local_datasource.dart' as _i111;
 import '../data/datasources/reminder/reminder_remote_datasource.dart' as _i390;
+import '../data/datasources/space/space_remote_datasource.dart' as _i642;
 import '../data/datasources/stats/financial_position_local_datasource.dart'
     as _i11;
 import '../data/datasources/stats/stats_remote_datasource.dart' as _i738;
@@ -103,6 +104,7 @@ import '../data/repositories/media_repository_impl.dart' as _i74;
 import '../data/repositories/notification_repository_impl.dart' as _i888;
 import '../data/repositories/party_repository_impl.dart' as _i168;
 import '../data/repositories/reminder_repository_impl.dart' as _i1029;
+import '../data/repositories/space_repository_impl.dart' as _i325;
 import '../data/repositories/subscription_repository_imp.dart' as _i1047;
 import '../data/repositories/transaction_repository_impl.dart' as _i114;
 import '../data/repositories/transfer_repository_impl.dart' as _i268;
@@ -136,6 +138,7 @@ import '../domain/repositories/media_repository.dart' as _i442;
 import '../domain/repositories/notification_repository.dart' as _i965;
 import '../domain/repositories/party_repository.dart' as _i661;
 import '../domain/repositories/reminder_repository.dart' as _i868;
+import '../domain/repositories/space_repository.dart' as _i971;
 import '../domain/repositories/subscription_repository.dart' as _i804;
 import '../domain/repositories/transaction_repository.dart' as _i118;
 import '../domain/repositories/transfer_repository.dart' as _i55;
@@ -233,6 +236,24 @@ import '../domain/usecases/reminder/update_reminder_usecase.dart' as _i781;
 import '../domain/usecases/reminder/usecase.dart' as _i14;
 import '../domain/usecases/remote_config/get_remote_feature_config_usecase.dart'
     as _i466;
+import '../domain/usecases/space/accept_space_invitation_usecase.dart'
+    as _i1069;
+import '../domain/usecases/space/active_space_usecase.dart' as _i883;
+import '../domain/usecases/space/close_space_budget_period_usecase.dart'
+    as _i860;
+import '../domain/usecases/space/create_space_usecase.dart' as _i262;
+import '../domain/usecases/space/decline_space_invitation_usecase.dart'
+    as _i451;
+import '../domain/usecases/space/get_space_budget_transactions_usecase.dart'
+    as _i623;
+import '../domain/usecases/space/get_space_members_usecase.dart' as _i1034;
+import '../domain/usecases/space/get_space_overview_usecase.dart' as _i199;
+import '../domain/usecases/space/get_space_transactions_usecase.dart' as _i407;
+import '../domain/usecases/space/get_spaces_usecase.dart' as _i387;
+import '../domain/usecases/space/preview_space_invitation_usecase.dart'
+    as _i382;
+import '../domain/usecases/space/share_transaction_to_space_usecase.dart'
+    as _i318;
 import '../domain/usecases/subscription/fetch_subscription_usecase.dart'
     as _i314;
 import '../domain/usecases/sync/check_pending_changes_usecase.dart' as _i662;
@@ -295,6 +316,7 @@ import '../presentation/parties/cubit/party_cubit.dart' as _i841;
 import '../presentation/plans/cubit/plans_cubit.dart' as _i977;
 import '../presentation/reminders/cubit/reminder_cubit.dart' as _i1071;
 import '../presentation/remote_config/cubit/remote_config_cubit.dart' as _i594;
+import '../presentation/spaces/cubit/space_cubit.dart' as _i123;
 import '../presentation/statistics/cubit/statistics_filter_cubit.dart' as _i363;
 import '../presentation/transactions/cubit/transaction_cubit.dart' as _i117;
 import '../presentation/transfers/cubit/transfer_cubit.dart' as _i611;
@@ -400,6 +422,8 @@ _i174.GetIt $initGetIt(
       () => _i513.NotificationRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i1057.HoldingLocalDataSource>(
       () => _i1057.HoldingLocalDataSourceImpl(gh<_i704.AppDatabase>()));
+  gh.factory<_i642.SpaceRemoteDataSource>(
+      () => _i642.SpaceRemoteDataSourceImpl(dio: gh<_i361.Dio>()));
   gh.factory<_i594.RemoteConfigCubit>(
       () => _i594.RemoteConfigCubit(gh<_i466.GetRemoteFeatureConfigUseCase>()));
   gh.factory<_i877.RequestAuthorizationService>(
@@ -408,6 +432,8 @@ _i174.GetIt $initGetIt(
       () => _i61.CloudBenefitRemoteDataSourceImpl(gh<_i361.Dio>()));
   gh.factory<_i496.AuthRemoteDataSource>(
       () => _i496.AuthRemoteDataSourceImpl(gh<_i361.Dio>()));
+  gh.lazySingleton<_i971.SpaceRepository>(() =>
+      _i325.SpaceRepositoryImpl(remote: gh<_i642.SpaceRemoteDataSource>()));
   gh.factory<_i538.CrashReportingService>(
       () => _i538.CrashReportingService(gh<_i414.CrashReportingInterface>()));
   gh.factory<_i682.SubscriptionRemoteDataSource>(
@@ -509,6 +535,32 @@ _i174.GetIt $initGetIt(
             gh<_i704.AppDatabase>(),
             gh<_i79.TransactionRemoteDataSource>(),
           ));
+  gh.factory<_i883.GetActiveSpaceSlugUseCase>(
+      () => _i883.GetActiveSpaceSlugUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i883.SetActiveSpaceSlugUseCase>(
+      () => _i883.SetActiveSpaceSlugUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i318.ShareTransactionToSpaceUseCase>(
+      () => _i318.ShareTransactionToSpaceUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i382.PreviewSpaceInvitationUseCase>(
+      () => _i382.PreviewSpaceInvitationUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i407.GetSpaceTransactionsUseCase>(
+      () => _i407.GetSpaceTransactionsUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i451.DeclineSpaceInvitationUseCase>(
+      () => _i451.DeclineSpaceInvitationUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i262.CreateSpaceUseCase>(
+      () => _i262.CreateSpaceUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i1034.GetSpaceMembersUseCase>(
+      () => _i1034.GetSpaceMembersUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i387.GetSpacesUseCase>(
+      () => _i387.GetSpacesUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i860.CloseSpaceBudgetPeriodUseCase>(
+      () => _i860.CloseSpaceBudgetPeriodUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i199.GetSpaceOverviewUseCase>(
+      () => _i199.GetSpaceOverviewUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i623.GetSpaceBudgetTransactionsUseCase>(() =>
+      _i623.GetSpaceBudgetTransactionsUseCase(gh<_i971.SpaceRepository>()));
+  gh.factory<_i1069.AcceptSpaceInvitationUseCase>(
+      () => _i1069.AcceptSpaceInvitationUseCase(gh<_i971.SpaceRepository>()));
   gh.lazySingleton<_i661.PartyRepository>(() => _i168.PartyRepositoryImpl(
         syncHandler: gh<_i280.PartySyncHandler>(),
         localDataSource: gh<_i655.PartyLocalDataSource>(),
@@ -644,6 +696,21 @@ _i174.GetIt $initGetIt(
         localDataSource: gh<_i849.WalletLocalDataSource>(),
         db: gh<_i704.AppDatabase>(),
         requestAuthorizationService: gh<_i877.RequestAuthorizationService>(),
+      ));
+  gh.factory<_i123.SpaceCubit>(() => _i123.SpaceCubit(
+        getSpaces: gh<_i387.GetSpacesUseCase>(),
+        createSpaceUseCase: gh<_i262.CreateSpaceUseCase>(),
+        getOverview: gh<_i199.GetSpaceOverviewUseCase>(),
+        getTransactions: gh<_i407.GetSpaceTransactionsUseCase>(),
+        getMembers: gh<_i1034.GetSpaceMembersUseCase>(),
+        shareTransaction: gh<_i318.ShareTransactionToSpaceUseCase>(),
+        getBudgetTransactions: gh<_i623.GetSpaceBudgetTransactionsUseCase>(),
+        closeBudgetPeriodUseCase: gh<_i860.CloseSpaceBudgetPeriodUseCase>(),
+        previewInvitationUseCase: gh<_i382.PreviewSpaceInvitationUseCase>(),
+        acceptInvitationUseCase: gh<_i1069.AcceptSpaceInvitationUseCase>(),
+        declineInvitationUseCase: gh<_i451.DeclineSpaceInvitationUseCase>(),
+        getActiveSlug: gh<_i883.GetActiveSpaceSlugUseCase>(),
+        setActiveSlug: gh<_i883.SetActiveSpaceSlugUseCase>(),
       ));
   gh.factory<_i583.RepriceHoldingsUseCase>(
       () => _i583.RepriceHoldingsUseCase(gh<_i645.HoldingRepository>()));

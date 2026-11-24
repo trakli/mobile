@@ -16,14 +16,14 @@ class ChatActionPill extends StatelessWidget {
     final tones = context.tones;
     return Material(
       color: tones.bgCard,
-      borderRadius: BorderRadius.circular(20.r),
+      borderRadius: BorderRadius.circular(AppRadii.sm),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(AppRadii.sm),
         onTap: () => context.read<AiChatCubit>().sendMessage(message),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(AppRadii.sm),
             border: Border.all(color: tones.borderLight),
           ),
           child: Text(

@@ -43,7 +43,7 @@ class HistorySheetState extends State<HistorySheet> {
         return AlertDialog(
           backgroundColor: tones.bgCard,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(AppRadii.md),
           ),
           content: Text(
             LocaleKeys.aiChatDeleteConfirm.tr(),
@@ -92,7 +92,8 @@ class HistorySheetState extends State<HistorySheet> {
         return Container(
           decoration: BoxDecoration(
             color: tones.bgPage,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
           ),
           child: Column(
             children: [

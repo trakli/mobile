@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "message": "Transaction shared",
+  "data": {
+    "id": 604,
+    "amount": 96,
+    "type": "expense",
+    "datetime": "2026-11-18T10:00:00+00:00",
+    "description": "EDF electricity",
+    "currency": "USD",
+    "wallet_id": null,
+    "wallet_name": null,
+    "contributor": "",
+    "source": "shared_transaction",
+    "can_edit": false,
+    "can_unshare": true,
+    "is_refund": false,
+    "category_ids": [],
+    "group_ids": []
+  }
+}

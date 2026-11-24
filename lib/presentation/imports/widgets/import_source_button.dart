@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class ImportSourceButton extends StatelessWidget {
   final IconData icon;
@@ -19,48 +22,38 @@ class ImportSourceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final tones = context.tones;
     final disabled = onTap == null;
-    // Force white on the primary tile in both light and dark modes — the
-    // theme's onPrimary swings dark in dark mode and disappears against the
-    // brand green background.
-    final fg = isPrimary ? Colors.white : colors.onSurface;
-    final subFg = isPrimary
-        ? Colors.white.withValues(alpha: 0.8)
-        : colors.onSurfaceVariant;
-    final bg = isPrimary ? colors.primary : Colors.transparent;
-    final bubbleBg = isPrimary
-        ? Colors.white.withValues(alpha: 0.2)
-        : colors.secondaryContainer;
-    final bubbleFg = isPrimary ? Colors.white : colors.onSecondaryContainer;
+    final fg = isPrimary ? tones.onBrand : tones.textPrimary;
+    final subFg =
+        isPrimary ? tones.onBrand.withValues(alpha: 0.8) : tones.textMuted;
+    final bg = isPrimary ? tones.brandFill : tones.bgSurface;
+    final radius = BorderRadius.circular(AppRadii.md);
 
     return Opacity(
       opacity: disabled ? 0.5 : 1,
       child: Material(
         color: bg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: radius,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: radius,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border:
-                  isPrimary ? null : Border.all(color: colors.outlineVariant),
+              borderRadius: radius,
+              border: isPrimary ? null : Border.all(color: tones.borderLight),
             ),
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.lx),
             child: Row(
               children: [
-                Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: bubbleBg,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, color: bubbleFg, size: 22.sp),
+                LedgerCoin(
+                  icon: icon,
+                  size: 36,
+                  background:
+                      isPrimary ? tones.onBrand.withValues(alpha: 0.18) : null,
+                  foreground: isPrimary ? tones.onBrand : null,
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: 11.lx),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,19 +61,18 @@ class ImportSourceButton extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: fg,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style: TextStyle(
+                          fontSize: 13.5.lx,
+                          color: fg,
+                          fontWeight: FontWeight.w600,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: 1.lx),
                       Text(
                         subtitle,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: subFg,
-                            ),
+                        style: TextStyle(fontSize: 12.lx, color: subFg),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -108,25 +100,28 @@ class ImportFilePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tones = context.tones;
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.fromLTRB(10.lx, 6.lx, 4.lx, 6.lx),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        color: tones.surface2,
+        borderRadius: BorderRadius.circular(AppRadii.md),
       ),
       child: Row(
         children: [
-          const Icon(Icons.insert_drive_file_outlined),
-          SizedBox(width: 8.w),
+          Icon(LucideIcons.fileText, size: 16.lx, color: tones.textSecondary),
+          SizedBox(width: 8.lx),
           Expanded(
             child: Text(
               fileName,
               overflow: TextOverflow.ellipsis,
+              style: LedgerText.money(size: 12.lx, color: tones.textPrimary),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: onClear,
+          LedgerIconButton(
+            icon: LucideIcons.x,
+            tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+            onTap: onClear,
           ),
         ],
       ),

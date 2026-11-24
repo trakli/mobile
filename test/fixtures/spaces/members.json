@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": [
+    {
+      "user_id": 11,
+      "name": null,
+      "email": "<REDACTED>",
+      "role": "owner",
+      "joined_at": "2026-11-24T11:43:22Z"
+    }
+  ]
+}

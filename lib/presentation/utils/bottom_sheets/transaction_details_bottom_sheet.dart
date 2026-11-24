@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/spaces/share_to_space_sheet.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/path_helper.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_item.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_view.dart';
@@ -294,6 +297,18 @@ class _TransactionDetailsBottomSheetState
               ],
               SizedBox(height: 16.h),
               if (!widget.hideActions) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: LedgerButton(
+                    label: LocaleKeys.spaceShareTitle.tr(),
+                    icon: LucideIcons.share2,
+                    style: LedgerButtonStyle.outline,
+                    large: true,
+                    onPressed: () =>
+                        showShareToSpaceSheet(context, widget.transaction),
+                  ),
+                ),
+                SizedBox(height: 12.h),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   spacing: 16.w,

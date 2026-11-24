@@ -38,7 +38,7 @@ class ChatTableBlock extends StatelessWidget {
     return ChatBlockCard(
       title: block.title,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(AppRadii.sm),
         child: Table(
           columnWidths: {
             for (var i = 0; i < columns.length; i++) i: const FlexColumnWidth(),

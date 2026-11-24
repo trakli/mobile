@@ -17,23 +17,32 @@ import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/statistics/cubit/statistics_filter_cubit.dart';
+import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
+import 'package:trakli/presentation/statistics/calendar/calendar_tab.dart';
+import 'package:trakli/presentation/statistics/flow/flow_tab.dart';
 import 'package:trakli/presentation/statistics/reports/reports_screen.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/category_tile.dart';
 import 'package:trakli/presentation/utils/dashboard_expenses.dart';
 import 'package:trakli/presentation/utils/dashboard_pie_data.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/graph_widget.dart';
-import 'package:trakli/presentation/utils/icon_background_decor.dart';
-import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/utils/wallet_mini_tile.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/providers/chart_data_provider.dart';
 
+enum StatisticsTab { overview, calendar, flow, charts }
+
 class StatisticsScreen extends StatefulWidget {
-  const StatisticsScreen({super.key});
+  final StatisticsTab initialTab;
+
+  const StatisticsScreen({
+    super.key,
+    this.initialTab = StatisticsTab.overview,
+  });
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
@@ -43,6 +52,103 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   late PageController pageController;
+  late StatisticsTab _tab = widget.initialTab;
+  DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
+
+  @override
+  void dispose() {
+    tabController.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
+
+  String _tabLabel(StatisticsTab tab) => switch (tab) {
+        StatisticsTab.overview => LocaleKeys.statsTabOverview.tr(),
+        StatisticsTab.calendar => LocaleKeys.statsTabCalendar.tr(),
+        StatisticsTab.flow => LocaleKeys.statsTabFlow.tr(),
+        StatisticsTab.charts => LocaleKeys.statsTabCharts.tr(),
+      };
+
+  Widget _monthChip(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final now = DateTime.now();
+    final months = [
+      for (var i = 0; i < 12; i++) DateTime(now.year, now.month - i),
+    ];
+    return PopupMenuButton<DateTime>(
+      tooltip: '',
+      initialValue: _month,
+      onSelected: (m) => setState(() => _month = m),
+      itemBuilder: (_) => [
+        for (final m in months)
+          PopupMenuItem(
+            value: m,
+            child: Text(DateFormat.yMMMM(locale).format(m)),
+          ),
+      ],
+      child: LedgerChip(
+        _month.year == now.year
+            ? DateFormat.MMM(locale).format(_month)
+            : DateFormat.yMMM(locale).format(_month),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tones = context.tones;
+    final monthScoped =
+        _tab == StatisticsTab.calendar || _tab == StatisticsTab.flow;
+    return Scaffold(
+      backgroundColor: tones.bgPage,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.lx, 8.lx, 14.lx, 0),
+              child: LedgerScreenBar(
+                title: LocaleKeys.statistics.tr(),
+                actions: [if (monthScoped) _monthChip(context)],
+              ),
+            ),
+            SizedBox(height: 12.lx),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.lx),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: LedgerSeg<StatisticsTab>(
+                  options: [
+                    for (final tab in StatisticsTab.values)
+                      LedgerSegOption(tab, _tabLabel(tab)),
+                  ],
+                  selected: _tab,
+                  onChanged: (tab) => setState(() => _tab = tab),
+                ),
+              ),
+            ),
+            SizedBox(height: 12.lx),
+            Expanded(
+              child: switch (_tab) {
+                StatisticsTab.overview => _buildOverview(context),
+                StatisticsTab.calendar => StatisticsCalendarTab(
+                    month: _month,
+                    onOpenWallet: () => context
+                        .read<MainNavigationCubit>()
+                        .updateIndex(MainNavigationPageState.wallet),
+                  ),
+                StatisticsTab.flow => StatisticsFlowTab(month: _month),
+                StatisticsTab.charts => ReportsView(
+                    padding: EdgeInsets.fromLTRB(14.lx, 0, 14.lx, 120.lx),
+                  ),
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   @override
@@ -225,8 +331,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildOverview(BuildContext context) {
     return BlocBuilder<StatisticsFilterCubit, StatisticsFilterState>(
       builder: (context, filterState) {
         return BlocBuilder<TransactionCubit, TransactionState>(
@@ -288,27 +393,12 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             final expenseListData = expenseByCategory.entries
                 .map((e) => MapEntry(categoryMap[e.key]!, e.value))
                 .toList();
-            return Scaffold(
-              backgroundColor: tones.bgPage,
-              appBar: PageAppBar(
-                title: LocaleKeys.statistics.tr(),
-                showBack: false,
-                actions: [
-                  PageAppBarAction(
-                    icon: Icons.bar_chart_rounded,
-                    label: 'Reports',
-                    onTap: () =>
-                        AppNavigator.push(context, const ReportsScreen()),
-                  ),
-                ],
-              ),
-              body: Stack(
+            return Stack(
                 children: [
-                  IconBackgroundDecor(iconPath: Assets.images.chart),
                   SingleChildScrollView(
                     child: Column(
                       children: [
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 4.h),
                         Card(
                           margin: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -504,7 +594,6 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     ),
                   ),
                 ],
-              ),
             );
           },
         );

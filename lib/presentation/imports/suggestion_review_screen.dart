@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/import/import_session_entity.dart';
 import 'package:trakli/domain/entities/import/import_session_status.dart';
@@ -15,8 +16,12 @@ import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/imports/cubit/import_cubit.dart';
+import 'package:trakli/presentation/imports/import_review_status.dart';
 import 'package:trakli/presentation/imports/widgets/suggestion_card.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class SuggestionReviewScreen extends StatefulWidget {
@@ -30,6 +35,7 @@ class SuggestionReviewScreen extends StatefulWidget {
 class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
   final Map<int, TransactionSuggestionEntity> _edits = {};
   final Map<int, bool> _accepted = {};
+  ImportRowStatus? _filter;
 
   final Set<int> _autoMatchedSessions = {};
 
@@ -123,13 +129,16 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
     return v;
   }
 
+  bool _isAccepted(int i, TransactionSuggestionEntity base) =>
+      _accepted[i] ??
+      importRowStatus(_edits[i] ?? base) == ImportRowStatus.ready;
+
   List<AcceptedSuggestion> _acceptedSuggestions(ImportSessionEntity session) {
     final accepted = <AcceptedSuggestion>[];
     for (final entry in session.suggestions.asMap().entries) {
       final i = entry.key;
       final suggestion = entry.value;
-      final isAccepted = _accepted[i] ?? true;
-      if (!isAccepted) continue;
+      if (!_isAccepted(i, suggestion)) continue;
       accepted.add((
         index: i,
         suggestion: _edits[i] ?? suggestion,
@@ -221,15 +230,26 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tones = context.tones;
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.importReviewSuggestions.tr())),
+      backgroundColor: tones.bgPage,
       body: SafeArea(
         bottom: false,
-        child: BlocBuilder<ImportCubit, ImportState>(
-          builder: (context, state) {
-            final session = state.currentSession;
-            return _buildBody(session);
-          },
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 6.lx),
+              child: LedgerScreenBar(
+                title: LocaleKeys.importReviewTitle.tr(),
+                leadingIcon: LucideIcons.x,
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<ImportCubit, ImportState>(
+                builder: (context, state) => _buildBody(state.currentSession),
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BlocBuilder<ImportCubit, ImportState>(
@@ -239,29 +259,20 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
               session.status == ImportSessionStatus.ready &&
               session.suggestions.isNotEmpty;
           if (!showConfirm) return const SizedBox.shrink();
+          final count = _acceptedSuggestions(session).length;
           return SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(12.w),
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 10.lx),
               child: SizedBox(
-                height: 52.h,
                 width: double.infinity,
-                child: ElevatedButton(
+                child: LedgerButton(
+                  label: LocaleKeys.importReviewImportCount
+                      .tr(args: [count.toString()]),
+                  icon: LucideIcons.check,
+                  large: true,
+                  busy: state.isConfirming,
                   onPressed:
                       state.isConfirming ? null : () => _onConfirmTap(session),
-                  child: state.isConfirming
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.check_circle_outline),
-                            SizedBox(width: 8.w),
-                            Text(LocaleKeys.importConfirm.tr()),
-                          ],
-                        ),
                 ),
               ),
             ),
@@ -271,9 +282,58 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
     );
   }
 
+  String? _durationLabel(ImportSessionEntity session) {
+    final start = session.createdAt;
+    final end = session.updatedAt;
+    if (start == null || end == null) return null;
+    final seconds = end.difference(start).inSeconds;
+    if (seconds <= 0 || seconds > 600) return null;
+    return LocaleKeys.importReviewReadIn.tr(args: [seconds.toString()]);
+  }
+
+  Widget _fileCard(ImportSessionEntity session) {
+    final tones = context.tones;
+    final rows = session.suggestions.length;
+    final rowsText =
+        LocaleKeys.importReviewRowsRead.tr(args: [rows.toString()]);
+    final duration = _durationLabel(session);
+    return LedgerCard(
+      padding: EdgeInsets.all(10.lx),
+      child: Row(
+        children: [
+          const LedgerCoin(icon: LucideIcons.fileText, size: 40, height: 48),
+          SizedBox(width: 10.lx),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  session.fileName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12.5.lx,
+                    fontWeight: FontWeight.w600,
+                    color: tones.textPrimary,
+                  ),
+                ),
+                Text(
+                  duration == null ? rowsText : '$rowsText $duration',
+                  style: TextStyle(fontSize: 12.5.lx, color: tones.textMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBody(ImportSessionEntity? session) {
     if (session == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: CircularProgressIndicator(color: context.tones.brandFill),
+      );
     }
 
     if (session.status.isInFlight) {
@@ -284,7 +344,6 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
       );
     }
 
-    // Empty suggestions take priority over the failed-status banner.
     if (session.suggestions.isEmpty) {
       return const _NoSuggestions();
     }
@@ -298,20 +357,58 @@ class _SuggestionReviewScreenState extends State<SuggestionReviewScreen> {
       _maybeAutoMatch(session);
     });
 
+    final rows = [
+      for (final e in session.suggestions.asMap().entries)
+        (index: e.key, suggestion: _edits[e.key] ?? e.value),
+    ];
+    final counts = ImportReviewCounts.of(rows.map((r) => r.suggestion));
+    final visible = _filter == null
+        ? rows
+        : rows.where((r) => importRowStatus(r.suggestion) == _filter).toList();
+
+    void toggle(ImportRowStatus s) =>
+        setState(() => _filter = _filter == s ? null : s);
+
     return ListView(
-      padding: EdgeInsets.all(12.w),
-      children: session.suggestions.asMap().entries.map((entry) {
-        final i = entry.key;
-        final s = entry.value;
-        final accepted = _accepted[i] ?? true;
-        return SuggestionCard(
-          position: i,
-          suggestion: _edits[i] ?? s,
-          accepted: accepted,
-          onAcceptedChanged: (v) => setState(() => _accepted[i] = v),
-          onChanged: (updated) => setState(() => _edits[i] = updated),
-        );
-      }).toList(),
+      padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 12.lx),
+      children: [
+        _fileCard(session),
+        SizedBox(height: 12.lx),
+        LedgerChipRow(
+          children: [
+            LedgerFilterChip(
+              label: LocaleKeys.importReviewReadyCount
+                  .tr(args: [counts.ready.toString()]),
+              selected: _filter == ImportRowStatus.ready,
+              onTap: () => toggle(ImportRowStatus.ready),
+            ),
+            if (counts.needsCategory > 0)
+              LedgerFilterChip(
+                label: LocaleKeys.importReviewToCheckCount
+                    .tr(args: [counts.needsCategory.toString()]),
+                selected: _filter == ImportRowStatus.needsCategory,
+                onTap: () => toggle(ImportRowStatus.needsCategory),
+              ),
+            if (counts.duplicates > 0)
+              LedgerFilterChip(
+                label: LocaleKeys.importReviewDuplicatesCount
+                    .tr(args: [counts.duplicates.toString()]),
+                selected: _filter == ImportRowStatus.duplicate,
+                onTap: () => toggle(ImportRowStatus.duplicate),
+              ),
+          ],
+        ),
+        SizedBox(height: 6.lx),
+        for (final r in visible)
+          SuggestionCard(
+            key: ValueKey('suggestion_${session.id}_${r.index}'),
+            position: r.index,
+            suggestion: r.suggestion,
+            accepted: _isAccepted(r.index, session.suggestions[r.index]),
+            onAcceptedChanged: (v) => setState(() => _accepted[r.index] = v),
+            onChanged: (updated) => setState(() => _edits[r.index] = updated),
+          ),
+      ],
     );
   }
 
@@ -352,10 +449,11 @@ class _StageLoader extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(999.r),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
             ),
             child: Text(
-              'Step $step of $totalSteps',
+              LocaleKeys.importReviewStep
+                  .tr(args: [step.toString(), totalSteps.toString()]),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w600,

@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/di/injection.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/ai_chat/cubit/ai_chat_cubit.dart';
 import 'package:trakli/presentation/ai_chat/dictation/dictation_cubit.dart';
@@ -13,9 +11,10 @@ import 'package:trakli/presentation/ai_chat/widgets/chat_composer.dart';
 import 'package:trakli/presentation/ai_chat/widgets/chat_history_sheet.dart';
 import 'package:trakli/presentation/ai_chat/widgets/chat_landing.dart';
 import 'package:trakli/presentation/ai_chat/widgets/message_bubble.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
-import 'package:trakli/presentation/utils/icon_background_decor.dart';
-import 'package:trakli/presentation/utils/page_app_bar.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -118,91 +117,87 @@ class _AiChatViewState extends State<_AiChatView> {
     final tones = context.tones;
     return Scaffold(
       backgroundColor: tones.bgPage,
-      appBar: PageAppBar(
-        title: LocaleKeys.aiChatTitle.tr(),
-        showBack: true,
-        actions: [
-          PageAppBarAction(
-            icon: Icons.history_rounded,
-            tooltip: LocaleKeys.aiChatHistory.tr(),
-            onTap: () => _openHistorySheet(context),
-          ),
-          BlocBuilder<AiChatCubit, AiChatState>(
-            buildWhen: (a, b) => a.hasSession != b.hasSession,
-            builder: (context, state) {
-              if (!state.hasSession) return const SizedBox.shrink();
-              return Padding(
-                padding: EdgeInsets.only(left: 8.w),
-                child: PageAppBarAction(
-                  icon: Icons.add_comment_outlined,
-                  tooltip: LocaleKeys.aiChatNewChat.tr(),
-                  onTap: () => context.read<AiChatCubit>().startNewChat(),
+      body: SafeArea(
+        bottom: false,
+        child: BlocConsumer<AiChatCubit, AiChatState>(
+          listenWhen: (a, b) =>
+              a.messages.length != b.messages.length ||
+              (a.isPolling && !b.isPolling),
+          listener: (context, state) {
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => _scrollToBottom());
+          },
+          builder: (context, state) {
+            final hasContent =
+                state.messages.isNotEmpty || state.recentSession != null;
+            return Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 6.lx),
+                  child: LedgerScreenBar(
+                    title: LocaleKeys.aiChatTitle.tr(),
+                    leadingIcon: LucideIcons.chevronLeft,
+                    actions: [
+                      if (state.hasSession)
+                        LedgerIconButton(
+                          icon: LucideIcons.messageSquarePlus,
+                          tooltip: LocaleKeys.aiChatNewChat.tr(),
+                          onTap: () =>
+                              context.read<AiChatCubit>().startNewChat(),
+                        ),
+                      LedgerIconButton(
+                        icon: LucideIcons.history,
+                        tooltip: LocaleKeys.aiChatHistory.tr(),
+                        onTap: () => _openHistorySheet(context),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          IconBackgroundDecor(iconPath: Assets.images.sparkles),
-          BlocConsumer<AiChatCubit, AiChatState>(
-            listenWhen: (a, b) =>
-                a.messages.length != b.messages.length ||
-                (a.isPolling && !b.isPolling),
-            listener: (context, state) {
-              WidgetsBinding.instance
-                  .addPostFrameCallback((_) => _scrollToBottom());
-            },
-            builder: (context, state) {
-              final hasContent =
-                  state.messages.isNotEmpty || state.recentSession != null;
-              if (state.isInitializing && !hasContent) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return Column(
-                children: [
-                  if (state.isInitializing)
-                    LinearProgressIndicator(
-                      minHeight: 2.h,
-                      backgroundColor: Colors.transparent,
-                      color: tones.brand.deep,
-                    ),
-                  if (state.failure != null) _ErrorBanner(state: state),
-                  Expanded(
-                    child: state.isEmpty
-                        ? ChatLanding(
-                            onPick: _send,
-                            recentSession: state.recentSession,
-                            onContinue: () {
-                              final id = state.recentSession?.id;
-                              if (id != null) {
-                                context.read<AiChatCubit>().openSession(id);
-                              }
-                            },
-                          )
-                        : ListView.builder(
-                            controller: _scroll,
-                            padding:
-                                EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
-                            itemCount: state.messages.length,
-                            itemBuilder: (context, i) {
-                              final message = state.messages[i];
-                              return MessageRow(message: message);
-                            },
+                if (state.isInitializing && hasContent)
+                  LinearProgressIndicator(
+                    minHeight: 2,
+                    backgroundColor: Colors.transparent,
+                    color: tones.brandFill,
+                  ),
+                if (state.failure != null) _ErrorBanner(state: state),
+                Expanded(
+                  child: state.isInitializing && !hasContent
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: tones.brandFill,
                           ),
-                  ),
-                  Composer(
-                    controller: _composer,
-                    focus: _focus,
-                    isSending: state.isBusy,
-                    onSend: _sendMessage,
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+                        )
+                      : state.isEmpty
+                          ? ChatLanding(
+                              onPick: _send,
+                              recentSession: state.recentSession,
+                              onContinue: () {
+                                final id = state.recentSession?.id;
+                                if (id != null) {
+                                  context.read<AiChatCubit>().openSession(id);
+                                }
+                              },
+                            )
+                          : ListView.builder(
+                              controller: _scroll,
+                              padding: EdgeInsets.fromLTRB(
+                                  14.lx, 6.lx, 14.lx, 12.lx),
+                              itemCount: state.messages.length,
+                              itemBuilder: (context, i) {
+                                return MessageRow(message: state.messages[i]);
+                              },
+                            ),
+                ),
+                Composer(
+                  controller: _composer,
+                  focus: _focus,
+                  isSending: state.isBusy,
+                  onSend: _sendMessage,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -216,18 +211,16 @@ class _ErrorBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final tones = context.tones;
     return Container(
-      margin: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      margin: EdgeInsets.fromLTRB(14.lx, 4.lx, 14.lx, 4.lx),
+      padding: EdgeInsets.symmetric(horizontal: 12.lx, vertical: 9.lx),
       decoration: BoxDecoration(
-        color: tones.expense.background,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: tones.expense.accent.withAlpha(80)),
+        color: tones.expenseSoft,
+        borderRadius: BorderRadius.circular(AppRadii.md),
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded,
-              color: tones.expense.deep, size: 18.sp),
-          SizedBox(width: 10.w),
+          Icon(LucideIcons.circleAlert, color: tones.expenseColor, size: 16.lx),
+          SizedBox(width: 10.lx),
           Expanded(
             child: Text(
               state.failure?.maybeMap(
@@ -236,9 +229,9 @@ class _ErrorBanner extends StatelessWidget {
                   ) ??
                   LocaleKeys.aiChatError.tr(),
               style: TextStyle(
-                color: tones.expense.deep,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
+                color: tones.expenseColor,
+                fontSize: 12.5.lx,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

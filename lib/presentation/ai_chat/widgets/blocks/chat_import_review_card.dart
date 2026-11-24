@@ -84,7 +84,7 @@ class _ChatImportReviewCardState extends State<ChatImportReviewCard> {
       padding: EdgeInsets.all(14.r),
       decoration: BoxDecoration(
         color: tones.bgCard,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: tones.borderLight),
       ),
       child: Column(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -85,7 +86,7 @@ void main() {
   testWidgets('shows an idle mic with the regular hint', (tester) async {
     await pumpComposer(tester);
 
-    expect(find.byIcon(Icons.mic_none_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.mic), findsOneWidget);
     expect(hintText(tester), LocaleKeys.aiChatComposerPlaceholder);
   });
 
@@ -97,7 +98,7 @@ void main() {
     await tester.tap(find.byType(DictationButton));
     await tester.pump();
 
-    expect(find.byIcon(Icons.stop_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.square), findsOneWidget);
     expect(hintText(tester), LocaleKeys.aiChatDictationListening);
 
     onWords!('groceries this month');
@@ -116,7 +117,7 @@ void main() {
     await tester.pump();
 
     verify(() => speech.stop()).called(1);
-    expect(find.byIcon(Icons.mic_none_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.mic), findsOneWidget);
   });
 
   testWidgets('sending cancels dictation and ignores late words',
@@ -128,7 +129,7 @@ void main() {
     onWords!('rent paid');
     await tester.pump();
 
-    await tester.tap(find.byIcon(Icons.send_rounded));
+    await tester.tap(find.byIcon(LucideIcons.arrowUp));
     await tester.pump();
 
     expect(sent, ['rent paid']);
@@ -138,7 +139,7 @@ void main() {
     onWords!('rent paid twice');
     await tester.pump();
     expect(controller.text, isEmpty);
-    expect(find.byIcon(Icons.mic_none_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.mic), findsOneWidget);
   });
 
   testWidgets('disables the mic when the recognizer is unavailable',
@@ -152,7 +153,7 @@ void main() {
     await tester.tap(find.byType(DictationButton));
     await tester.pump();
 
-    expect(find.byIcon(Icons.mic_off_rounded), findsOneWidget);
+    expect(find.byIcon(LucideIcons.micOff), findsOneWidget);
     expect(
       tester.widget<Tooltip>(find.byType(Tooltip).last).message,
       LocaleKeys.aiChatDictationUnavailable,

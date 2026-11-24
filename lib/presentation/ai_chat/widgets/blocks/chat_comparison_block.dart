@@ -27,7 +27,7 @@ class ChatComparisonBlock extends StatelessWidget {
             padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: tones.bgPage,
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(AppRadii.md),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,8 +41,8 @@ class ChatComparisonBlock extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: tones.textPrimary)),
                   ),
-                ...pairs
-                    .map((e) => kvRow(tones, prettyKey(e.key), fmtNum(e.value))),
+                ...pairs.map(
+                    (e) => kvRow(tones, prettyKey(e.key), fmtNum(e.value))),
               ],
             ),
           );

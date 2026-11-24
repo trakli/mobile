@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "message": "Label created",
+  "data": {
+    "id": 81,
+    "name": "Groceries",
+    "type": "expense"
+  }
+}

@@ -41,8 +41,7 @@ class ChatLegacyResult extends StatelessWidget {
         break;
       case 'pair':
         final entries = rows.first.entries.toList();
-        final label =
-            entries.isNotEmpty ? prettyKey(entries.first.key) : '';
+        final label = entries.isNotEmpty ? prettyKey(entries.first.key) : '';
         final value = entries.length > 1
             ? entries[1].value
             : (entries.isNotEmpty ? entries.first.value : null);
@@ -99,7 +98,7 @@ class ChatLegacyResult extends StatelessWidget {
       padding: EdgeInsets.all(14.r),
       decoration: BoxDecoration(
         color: tones.bgCard,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: tones.borderLight),
       ),
       child: body,

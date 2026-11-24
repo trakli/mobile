@@ -1,0 +1,188 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    "wallets": [
+      {
+        "id": 28,
+        "name": "Household",
+        "type": "bank",
+        "currency": "EUR",
+        "balance": 1050.9,
+        "source": "workspace",
+        "transactions_count": 3,
+        "can_edit": true,
+        "can_unshare": false
+      }
+    ],
+    "budgets": [
+      {
+        "id": 1,
+        "owner_id": 1,
+        "owner_type": "App\\Models\\Workspace",
+        "name": "Groceries",
+        "slug": "groceries",
+        "description": null,
+        "amount": "600.0000",
+        "currency": "EUR",
+        "period_type": "monthly",
+        "start_date": "2026-11-01T00:00:00.000000Z",
+        "end_date": null,
+        "rollover_enabled": false,
+        "threshold_percent": 80,
+        "forecast_alerts_enabled": true,
+        "is_active": true,
+        "created_at": "2026-11-24T11:43:36.000000Z",
+        "updated_at": "2026-11-24T11:43:36.000000Z",
+        "deleted_at": null,
+        "last_synced_at": "2026-11-24 11:43:36",
+        "client_generated_id": null,
+        "targets": [
+          {
+            "type": "category",
+            "id": 81,
+            "client_generated_id": null,
+            "name": "Groceries"
+          }
+        ],
+        "progress": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "limit": 600,
+          "gross_spent": 126,
+          "refunds": 0,
+          "net_spent": 126,
+          "rollover_in": 0,
+          "effective_limit": 600,
+          "remaining": 474,
+          "percent_used": 21,
+          "projected_spend": 159.5001,
+          "status": "on_track",
+          "is_threshold_crossed": false,
+          "is_forecast_breach": false
+        }
+      },
+      {
+        "id": 2,
+        "owner_id": 1,
+        "owner_type": "App\\Models\\Workspace",
+        "name": "Utilities",
+        "slug": "utilities",
+        "description": null,
+        "amount": "260.0000",
+        "currency": "EUR",
+        "period_type": "monthly",
+        "start_date": "2026-11-01T00:00:00.000000Z",
+        "end_date": null,
+        "rollover_enabled": false,
+        "threshold_percent": 80,
+        "forecast_alerts_enabled": true,
+        "is_active": true,
+        "created_at": "2026-11-24T11:43:36.000000Z",
+        "updated_at": "2026-11-24T11:43:36.000000Z",
+        "deleted_at": null,
+        "last_synced_at": "2026-11-24 11:43:36",
+        "client_generated_id": null,
+        "targets": [
+          {
+            "type": "category",
+            "id": 82,
+            "client_generated_id": null,
+            "name": "Utilities"
+          }
+        ],
+        "progress": {
+          "period_start": "2026-11-01",
+          "period_end": "2026-11-30",
+          "limit": 260,
+          "gross_spent": 87.9015,
+          "refunds": 0,
+          "net_spent": 87.9015,
+          "rollover_in": 0,
+          "effective_limit": 260,
+          "remaining": 172.0985,
+          "percent_used": 33.81,
+          "projected_spend": 111.2723,
+          "status": "on_track",
+          "is_threshold_crossed": false,
+          "is_forecast_breach": false
+        }
+      }
+    ],
+    "categories": [
+      {
+        "id": 81,
+        "name": "Groceries",
+        "type": "expense",
+        "last_synced_at": "2026-11-24 11:43:28",
+        "client_generated_id": null,
+        "icon": null,
+        "sync_state": {
+          "id": 834,
+          "syncable_type": "App\\Models\\Category",
+          "syncable_id": 81,
+          "source": null,
+          "client_generated_id": null,
+          "device_id": null,
+          "last_synced_at": "2026-11-24 11:43:28",
+          "created_at": "2026-11-24T11:43:28.000000Z",
+          "updated_at": "2026-11-24T11:43:28.000000Z",
+          "device": null
+        }
+      },
+      {
+        "id": 83,
+        "name": "Home",
+        "type": "expense",
+        "last_synced_at": "2026-11-24 11:43:29",
+        "client_generated_id": null,
+        "icon": null,
+        "sync_state": {
+          "id": 836,
+          "syncable_type": "App\\Models\\Category",
+          "syncable_id": 83,
+          "source": null,
+          "client_generated_id": null,
+          "device_id": null,
+          "last_synced_at": "2026-11-24 11:43:29",
+          "created_at": "2026-11-24T11:43:29.000000Z",
+          "updated_at": "2026-11-24T11:43:29.000000Z",
+          "device": null
+        }
+      },
+      {
+        "id": 82,
+        "name": "Utilities",
+        "type": "expense",
+        "last_synced_at": "2026-11-24 11:43:29",
+        "client_generated_id": null,
+        "icon": null,
+        "sync_state": {
+          "id": 835,
+          "syncable_type": "App\\Models\\Category",
+          "syncable_id": 82,
+          "source": null,
+          "client_generated_id": null,
+          "device_id": null,
+          "last_synced_at": "2026-11-24 11:43:29",
+          "created_at": "2026-11-24T11:43:29.000000Z",
+          "updated_at": "2026-11-24T11:43:29.000000Z",
+          "device": null
+        }
+      }
+    ],
+    "groups": [],
+    "totals": [
+      {
+        "currency": "USD",
+        "income": 0,
+        "expenses": 96
+      },
+      {
+        "currency": "EUR",
+        "income": 0,
+        "expenses": 149.1
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    "id": 1,
+    "slug": "achu-family",
+    "name": "Achu family",
+    "description": "Home and groceries",
+    "role": "owner",
+    "read_only": false,
+    "can_manage": true,
+    "member_count": 1
+  }
+}

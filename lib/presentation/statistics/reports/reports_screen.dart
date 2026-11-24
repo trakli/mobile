@@ -32,14 +32,30 @@ import 'package:trakli/presentation/utils/design_tokens.dart';
 /// local transactions, exactly as the web's `useReportData` does. Local
 /// numbers win while signed out, offline, or while transactions are still
 /// waiting to sync.
-class ReportsScreen extends StatefulWidget {
+class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
 
   @override
-  State<ReportsScreen> createState() => _ReportsScreenState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      appBar: PageAppBar(title: 'Reports'),
+      body: ReportsView(),
+    );
+  }
 }
 
-class _ReportsScreenState extends State<ReportsScreen>
+/// The reports body, shown on its own route and as the Charts tab of the
+/// statistics screen.
+class ReportsView extends StatefulWidget {
+  final EdgeInsetsGeometry? padding;
+
+  const ReportsView({super.key, this.padding});
+
+  @override
+  State<ReportsView> createState() => _ReportsViewState();
+}
+
+class _ReportsViewState extends State<ReportsView>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
   int _periodDays = 90;
@@ -99,10 +115,8 @@ class _ReportsScreenState extends State<ReportsScreen>
                         ),
                     ];
 
-              return Scaffold(
-                appBar: const PageAppBar(title: 'Reports'),
-                body: SingleChildScrollView(
-                  padding:
+              return SingleChildScrollView(
+                  padding: widget.padding ??
                       EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -151,7 +165,6 @@ class _ReportsScreenState extends State<ReportsScreen>
                       SizedBox(height: 24.h),
                     ],
                   ),
-                ),
               );
             },
           );
@@ -163,7 +176,7 @@ class _ReportsScreenState extends State<ReportsScreen>
 
 /// One-line note under the period chips when the numbers aren't plain
 /// server truth: local estimate (signed in but no server stats yet) or
-/// partial conversion. Signed-out users see nothing — local is their truth.
+/// partial conversion. Signed-out users see nothing: local is their truth.
 class _StatsSourceNote extends StatelessWidget {
   final ReportStatsState statsState;
 
@@ -180,7 +193,7 @@ class _StatsSourceNote extends StatelessWidget {
           'Totals exclude ${server.unconvertedCurrencies.join(', ')} (no exchange rate)';
     } else if (server == null && !statsState.isLocalOnly) {
       note = statsState.deferredForPendingSync
-          ? 'Local estimate — sync pending'
+          ? 'Local estimate, sync pending'
           : 'Local estimate';
     }
     if (note == null) return const SizedBox.shrink();

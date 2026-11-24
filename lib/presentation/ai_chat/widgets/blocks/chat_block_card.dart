@@ -17,10 +17,10 @@ class ChatBlockCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: 8.h),
-      padding: EdgeInsets.all(14.r),
+      padding: EdgeInsets.all(12.r),
       decoration: BoxDecoration(
-        color: tones.bgCard,
-        borderRadius: BorderRadius.circular(14.r),
+        color: tones.bgSurface,
+        borderRadius: BorderRadius.circular(AppRadii.md),
         border: Border.all(color: tones.borderLight),
       ),
       child: Column(
@@ -28,11 +28,12 @@ class ChatBlockCard extends StatelessWidget {
         children: [
           if (title != null && title!.isNotEmpty) ...[
             Text(
-              title!,
+              title!.toUpperCase(),
               style: TextStyle(
-                color: tones.textPrimary,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700,
+                color: tones.textMuted,
+                fontSize: 11.sp,
+                letterSpacing: 1,
+                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: 10.h),

@@ -22,7 +22,17 @@ class BiggestExpense {
   });
 }
 
+class NoSpendRun {
+  final DateTime start;
+  final int days;
+
+  const NoSpendRun({required this.start, required this.days});
+
+  DateTime get end => start.add(Duration(days: days - 1));
+}
+
 class MonthInReviewData {
+  final DateTime? month;
   final String monthLabel;
   final double income;
   final double expense;
@@ -33,8 +43,11 @@ class MonthInReviewData {
   final BiggestExpense? biggestExpense;
   final int transactionCount;
   final int daysInMonth;
+  final NoSpendRun? longestNoSpendRun;
+  final bool noSpendRunIsYearBest;
 
   const MonthInReviewData({
+    this.month,
     required this.monthLabel,
     required this.income,
     required this.expense,
@@ -45,7 +58,68 @@ class MonthInReviewData {
     required this.biggestExpense,
     required this.transactionCount,
     required this.daysInMonth,
+    this.longestNoSpendRun,
+    this.noSpendRunIsYearBest = false,
   });
+}
+
+DateTime _dayOf(DateTime d) => DateTime(d.year, d.month, d.day);
+
+NoSpendRun? _longestRun(Set<DateTime> spendDays, DateTime from, DateTime to) {
+  NoSpendRun? best;
+  DateTime? runStart;
+  var runLen = 0;
+  for (var d = from; !d.isAfter(to); d = DateTime(d.year, d.month, d.day + 1)) {
+    if (spendDays.contains(d)) {
+      runStart = null;
+      runLen = 0;
+      continue;
+    }
+    runStart ??= d;
+    runLen++;
+    if (best == null || runLen > best.days) {
+      best = NoSpendRun(start: runStart, days: runLen);
+    }
+  }
+  return best;
+}
+
+/// Longest stretch of consecutive days without spending inside [month],
+/// counting only finished days ([now] excluded) on or after the first
+/// recorded transaction. [isYearBest] is true when no earlier stretch in the
+/// same year was longer.
+({NoSpendRun? run, bool isYearBest}) longestNoSpendRun(
+  List<TransactionCompleteEntity> transactions, {
+  required DateTime month,
+  required DateTime now,
+}) {
+  final real =
+      transactions.where((t) => !t.transaction.isTransferLeg).toList();
+  if (real.isEmpty) return (run: null, isYearBest: false);
+  final first = real
+      .map((t) => _dayOf(t.transaction.datetime))
+      .reduce((a, b) => a.isBefore(b) ? a : b);
+  final spendDays = {
+    for (final t in real)
+      if (t.transaction.type == TransactionType.expense)
+        _dayOf(t.transaction.datetime),
+  };
+  final yesterday = _dayOf(now).subtract(const Duration(days: 1));
+  final monthStart = DateTime(month.year, month.month, 1);
+  final monthEnd = DateTime(month.year, month.month + 1, 0);
+  final from = first.isAfter(monthStart) ? first : monthStart;
+  final to = yesterday.isBefore(monthEnd) ? yesterday : monthEnd;
+  if (to.isBefore(from)) return (run: null, isYearBest: false);
+  final run = _longestRun(spendDays, from, to);
+  if (run == null) return (run: null, isYearBest: false);
+
+  final yearStart = DateTime(month.year, 1, 1);
+  final yearFrom = first.isAfter(yearStart) ? first : yearStart;
+  final earlierEnd = monthStart.subtract(const Duration(days: 1));
+  final earlier = earlierEnd.isBefore(yearFrom)
+      ? null
+      : _longestRun(spendDays, yearFrom, earlierEnd);
+  return (run: run, isYearBest: earlier == null || run.days >= earlier.days);
 }
 
 /// Computes a recap for the month [offsetMonths] before the current one
@@ -119,7 +193,12 @@ MonthInReviewData? buildMonthInReview(
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
+  final noSpend = longestNoSpendRun(transactions, month: target, now: now);
+
   return MonthInReviewData(
+    month: target,
+    longestNoSpendRun: noSpend.run,
+    noSpendRunIsYearBest: noSpend.isYearBest,
     monthLabel: '${months[target.month - 1]} ${target.year}',
     income: income,
     expense: expense,

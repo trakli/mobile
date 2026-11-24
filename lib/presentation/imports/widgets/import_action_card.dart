@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ImportActionCard extends StatelessWidget {
   final IconData icon;
@@ -17,48 +20,43 @@ class ImportActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final radius = BorderRadius.circular(16.r);
-
-    return Material(
-      color: theme.colorScheme.surface,
-      elevation: 3,
-      shadowColor: Colors.black.withValues(alpha: 0.12),
-      borderRadius: radius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: radius,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
-          child: Row(
-            children: [
-              Icon(icon, size: 36.r, color: theme.colorScheme.primary),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (subtitle != null) ...[
-                      SizedBox(height: 4.h),
-                      Text(
-                        subtitle!,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+    final tones = context.tones;
+    return LedgerCard(
+      onTap: onTap,
+      padding: EdgeInsets.all(12.lx),
+      child: Row(
+        children: [
+          LedgerCoin(
+            icon: icon,
+            size: 40,
+            background: tones.brand.background,
+            foreground: tones.brandText,
           ),
-        ),
+          SizedBox(width: 12.lx),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.lx,
+                    fontWeight: FontWeight.w600,
+                    color: tones.textPrimary,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  SizedBox(height: 2.lx),
+                  Text(
+                    subtitle!,
+                    style: TextStyle(fontSize: 12.lx, color: tones.textMuted),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Icon(LucideIcons.chevronRight, size: 16.lx, color: tones.textMuted),
+        ],
       ),
     );
   }

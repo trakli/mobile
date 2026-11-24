@@ -1,14 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/budget_entity.dart';
 import 'package:trakli/domain/entities/budget_period_state_entity.dart';
 import 'package:trakli/domain/entities/budget_progress_entity.dart';
+import 'package:trakli/domain/entities/exchange_rate_entity.dart';
+import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/budget/add_budget_screen.dart';
+import 'package:trakli/presentation/budget/budget_activity.dart';
 import 'package:trakli/presentation/budget/cubit/budget_cubit.dart';
+import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
+import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/dialogs.dart'
@@ -16,6 +21,11 @@ import 'package:trakli/presentation/utils/dialogs.dart'
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
     show showSnackBar, formatDateYmd;
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+
+enum _BudgetAction { edit, closePeriod, delete }
 
 class BudgetDetailScreen extends StatefulWidget {
   final BudgetEntity budget;
@@ -74,36 +84,22 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
     }
   }
 
+  void _onAction(_BudgetAction action, BudgetEntity budget) {
+    switch (action) {
+      case _BudgetAction.edit:
+        AppNavigator.push(context, AddBudgetScreen(budget: budget));
+      case _BudgetAction.closePeriod:
+        _confirmClosePeriod(budget);
+      case _BudgetAction.delete:
+        _confirmDelete(budget);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
     return Scaffold(
       backgroundColor: tones.bgPage,
-      appBar: AppBar(
-        title: Text(LocaleKeys.budget.tr()),
-        actions: [
-          BlocBuilder<BudgetCubit, BudgetState>(
-            builder: (context, state) {
-              final budget = _currentBudget(state);
-              return Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: () => AppNavigator.push(
-                      context,
-                      AddBudgetScreen(budget: budget),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => _confirmDelete(budget),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
       body: SafeArea(
         child: BlocListener<BudgetCubit, BudgetState>(
           listenWhen: (prev, curr) {
@@ -140,45 +136,57 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
           child: BlocBuilder<BudgetCubit, BudgetState>(
             builder: (context, state) {
               final budget = _currentBudget(state);
-              final progress = budget.progress;
-              final targets = state.selectedBudgetTargets;
-              final periods = state.selectedBudgetPeriodStates;
+              final canClose = budget.rolloverEnabled && budget.id != null;
               return ListView(
-                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 24.lx),
                 children: [
-                  _HeaderCard(budget: budget, progress: progress),
-                  SizedBox(height: 14.h),
-                  if (progress != null)
-                    _KpiGrid(budget: budget, progress: progress)
-                  else if (budget.id == null)
-                    _InfoBanner(
-                      text: LocaleKeys.budgetNoProgress.tr(),
-                    ),
-                  SizedBox(height: 20.h),
-                  _SectionHeader(text: LocaleKeys.budgetTargetsLabel.tr()),
-                  _TargetsBlock(budget: budget, targets: targets),
-                  if (budget.rolloverEnabled) ...[
-                    SizedBox(height: 20.h),
-                    _SectionHeader(
-                        text: LocaleKeys.budgetPeriodHistoryLabel.tr()),
-                    _PeriodHistoryBlock(periods: periods),
-                  ],
-                  if (budget.rolloverEnabled && budget.id != null) ...[
-                    SizedBox(height: 24.h),
-                    FilledButton.icon(
-                      onPressed: state.isClosingPeriod
-                          ? null
-                          : () => _confirmClosePeriod(budget),
-                      icon: state.isClosingPeriod
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.lock_outline),
-                      label: Text(LocaleKeys.closePeriod.tr()),
-                    ),
-                  ],
+                  LedgerScreenBar(
+                    leadingIcon: LucideIcons.chevronLeft,
+                    title: budget.name,
+                    actions: [
+                      PopupMenuButton<_BudgetAction>(
+                        tooltip: LocaleKeys.budgetDetailMore.tr(),
+                        onSelected: (a) => _onAction(a, budget),
+                        itemBuilder: (_) => [
+                          PopupMenuItem(
+                            value: _BudgetAction.edit,
+                            child: _MenuLabel(
+                              icon: LucideIcons.pencil,
+                              text: LocaleKeys.edit.tr(),
+                            ),
+                          ),
+                          if (canClose)
+                            PopupMenuItem(
+                              value: _BudgetAction.closePeriod,
+                              enabled: !state.isClosingPeriod,
+                              child: _MenuLabel(
+                                icon: LucideIcons.lock,
+                                text: LocaleKeys.closePeriod.tr(),
+                              ),
+                            ),
+                          PopupMenuItem(
+                            value: _BudgetAction.delete,
+                            child: _MenuLabel(
+                              icon: LucideIcons.trash2,
+                              text: LocaleKeys.delete.tr(),
+                              color: tones.expenseColor,
+                            ),
+                          ),
+                        ],
+                        child: const LedgerIconButton(
+                          icon: LucideIcons.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.lx),
+                  _BudgetBody(
+                    budget: budget,
+                    periods: state.selectedBudgetPeriodStates,
+                    isClosingPeriod: state.isClosingPeriod,
+                    onClosePeriod:
+                        canClose ? () => _confirmClosePeriod(budget) : null,
+                  ),
                 ],
               );
             },
@@ -189,20 +197,273 @@ class _BudgetDetailScreenState extends State<BudgetDetailScreen> {
   }
 }
 
-class _HeaderCard extends StatelessWidget {
+class _MenuLabel extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color? color;
+
+  const _MenuLabel({required this.icon, required this.text, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? context.tones.textPrimary;
+    return Row(
+      children: [
+        Icon(icon, size: 16.lx, color: c),
+        SizedBox(width: 10.lx),
+        Text(text, style: TextStyle(fontSize: 13.5.lx, color: c)),
+      ],
+    );
+  }
+}
+
+class _BudgetBody extends StatelessWidget {
+  final BudgetEntity budget;
+  final List<BudgetPeriodStateEntity> periods;
+  final bool isClosingPeriod;
+  final VoidCallback? onClosePeriod;
+
+  const _BudgetBody({
+    required this.budget,
+    required this.periods,
+    required this.isClosingPeriod,
+    required this.onClosePeriod,
+  });
+
+  (DateTime, DateTime) _period(BudgetProgressEntity? progress) {
+    if (progress != null) return (progress.periodStart, progress.periodEnd);
+    final now = DateTime.now();
+    final start = budget.startDate;
+    final end = budget.endDate ??
+        switch (budget.periodType) {
+          BudgetPeriodType.weekly => start.add(const Duration(days: 6)),
+          BudgetPeriodType.monthly => DateTime(now.year, now.month + 1, 0),
+          BudgetPeriodType.yearly => DateTime(start.year, 12, 31),
+          BudgetPeriodType.custom => now,
+        };
+    final monthlyStart = budget.periodType == BudgetPeriodType.monthly
+        ? DateTime(now.year, now.month, 1)
+        : start;
+    return (monthlyStart, end);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    final progress = budget.progress;
+    final transactions = context.watch<TransactionCubit>().state.transactions;
+    final rates = context.watch<ExchangeRateCubit>().state.entity;
+    final (start, end) = _period(progress);
+    final matching = budgetTransactions(budget, transactions, start, end);
+    double amountOf(TransactionCompleteEntity tx) =>
+        amountInCurrency(tx, budget.currency, rates);
+
+    final limit = progress?.effectiveLimit ?? budget.amount;
+    final spent = progress?.netSpent ??
+        matching.fold<double>(0, (sum, tx) => sum + amountOf(tx));
+    final status = progress?.status;
+    final isOver = status == BudgetStatus.overBudget || spent > limit;
+    final isWarm = !isOver &&
+        (status == BudgetStatus.nearLimit ||
+            status == BudgetStatus.forecastBreach);
+    final overPace = isOver ||
+        (progress != null && progress.projectedSpend > progress.effectiveLimit);
+
+    String money(double v, {int? decimals}) =>
+        LedgerMoney.format(v, budget.currency, decimals: decimals);
+
+    final weeks = bucketBudgetWeeks(
+      transactions: matching,
+      start: start,
+      end: end,
+      amountOf: amountOf,
+      today: DateTime.now(),
+    );
+    final maxWeek =
+        weeks.fold<double>(0, (m, w) => w.amount > m ? w.amount : m);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LedgerBigNumber(
+          money(spent),
+          color: isOver ? t.expenseColor : t.textPrimary,
+        ),
+        SizedBox(height: 4.lx),
+        Text(
+          isOver
+              ? LocaleKeys.budgetDetailOfLimitOver.tr(namedArgs: {
+                  'limit': money(limit),
+                  'amount': money(spent - limit),
+                })
+              : LocaleKeys.budgetDetailOfLimitLeft.tr(namedArgs: {
+                  'limit': money(limit),
+                  'amount': money(limit - spent),
+                }),
+          style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
+        ),
+        SizedBox(height: 12.lx),
+        LedgerBar(
+          value: limit <= 0 ? (spent > 0 ? 1 : 0) : spent / limit,
+          height: 10,
+          color: isOver
+              ? t.expenseColor
+              : isWarm
+                  ? t.accentWarm
+                  : t.brandFill,
+        ),
+        SizedBox(height: 12.lx),
+        LedgerCard(
+          padding: EdgeInsets.fromLTRB(12.lx, 10.lx, 12.lx, 10.lx),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              LedgerH6(
+                weeks.isNotEmpty && weeks.first.byMonth
+                    ? LocaleKeys.budgetDetailByMonth.tr()
+                    : LocaleKeys.budgetDetailByWeek.tr(),
+              ),
+              SizedBox(height: 6.lx),
+              LedgerWeekBars(
+                bars: [
+                  for (final w in weeks)
+                    LedgerWeekBar(
+                      label: w.byMonth
+                          ? DateFormat.MMM().format(w.start)
+                          : w.start.day == w.end.day
+                              ? '${w.start.day}'
+                              : '${w.start.day}–${w.end.day}',
+                      value: w.amount,
+                      valueLabel: money(w.amount, decimals: 0),
+                      hot: overPace && maxWeek > 0 && w.amount == maxWeek,
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (progress != null) ...[
+          SizedBox(height: 12.lx),
+          LedgerInsight(
+            icon: LucideIcons.trendingUp,
+            child: _PaceText(
+              budget: budget,
+              progress: progress,
+              amount: money(progress.projectedSpend, decimals: 0),
+            ),
+          ),
+        ] else if (budget.id == null) ...[
+          SizedBox(height: 12.lx),
+          LedgerInsight(
+            icon: LucideIcons.info,
+            child: Text(LocaleKeys.budgetNoProgress.tr()),
+          ),
+        ],
+        SizedBox(height: 6.lx),
+        if (matching.isEmpty)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.lx),
+            child: Text(
+              LocaleKeys.budgetDetailNoSpending.tr(),
+              style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
+            ),
+          )
+        else
+          for (var i = 0; i < matching.length && i < 3; i++)
+            LedgerRow(
+              verticalPadding: 7,
+              divider: i < 2 && i < matching.length - 1,
+              title: matching[i].transaction.description.isNotEmpty
+                  ? matching[i].transaction.description
+                  : (matching[i].categories.isNotEmpty
+                      ? matching[i].categories.first.name
+                      : LocaleKeys.noDescription.tr()),
+              subtitle:
+                  '${DateFormat.MMMd().format(matching[i].transaction.datetime)} · ${matching[i].wallet.name}',
+              trailing: LedgerAmount(
+                LedgerMoney.format(
+                  -matching[i].transaction.amount,
+                  matching[i].wallet.currencyCode,
+                ),
+              ),
+            ),
+        SizedBox(height: 20.lx),
+        _DetailsSection(
+          budget: budget,
+          progress: progress,
+          rates: rates,
+        ),
+        SizedBox(height: 20.lx),
+        LedgerH6(LocaleKeys.budgetTargetsLabel.tr()),
+        SizedBox(height: 8.lx),
+        _TargetsBlock(budget: budget),
+        if (budget.rolloverEnabled) ...[
+          SizedBox(height: 20.lx),
+          LedgerH6(LocaleKeys.budgetPeriodHistoryLabel.tr()),
+          SizedBox(height: 8.lx),
+          _PeriodHistoryBlock(periods: periods),
+        ],
+        if (onClosePeriod != null) ...[
+          SizedBox(height: 20.lx),
+          LedgerButton(
+            label: LocaleKeys.closePeriod.tr(),
+            icon: LucideIcons.lock,
+            large: true,
+            busy: isClosingPeriod,
+            onPressed: isClosingPeriod ? null : onClosePeriod,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _PaceText extends StatelessWidget {
+  final BudgetEntity budget;
+  final BudgetProgressEntity progress;
+  final String amount;
+
+  const _PaceText({
+    required this.budget,
+    required this.progress,
+    required this.amount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const marker = '\u0000';
+    final sentence = budget.periodType == BudgetPeriodType.monthly
+        ? LocaleKeys.budgetDetailPaceMonth.tr(namedArgs: {
+            'month': DateFormat.MMMM().format(progress.periodEnd),
+            'amount': marker,
+          })
+        : LocaleKeys.budgetDetailPacePeriod.tr(namedArgs: {'amount': marker});
+    final parts = sentence.split(marker);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: parts.first),
+          TextSpan(
+            text: amount,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          if (parts.length > 1) TextSpan(text: parts.sublist(1).join()),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailsSection extends StatelessWidget {
   final BudgetEntity budget;
   final BudgetProgressEntity? progress;
-  const _HeaderCard({required this.budget, this.progress});
+  final ExchangeRateEntity? rates;
 
-  Color _statusColor(BuildContext context, BudgetStatus? status) {
-    final tones = context.tones;
-    return switch (status) {
-      BudgetStatus.overBudget => Colors.redAccent,
-      BudgetStatus.forecastBreach => Colors.orangeAccent,
-      BudgetStatus.nearLimit => Colors.amber.shade700,
-      BudgetStatus.onTrack || null => tones.brand.accent,
-    };
-  }
+  const _DetailsSection({
+    required this.budget,
+    required this.progress,
+    required this.rates,
+  });
 
   String _statusLabel(BudgetStatus? status) {
     return switch (status) {
@@ -211,6 +472,17 @@ class _HeaderCard extends StatelessWidget {
       BudgetStatus.nearLimit => LocaleKeys.budgetStatusNearLimit.tr(),
       BudgetStatus.onTrack => LocaleKeys.budgetStatusOnTrack.tr(),
       null => LocaleKeys.budgetStatusAwaitingSync.tr(),
+    };
+  }
+
+  LedgerChipTone _statusTone(BudgetStatus? status) {
+    return switch (status) {
+      BudgetStatus.overBudget => LedgerChipTone.bad,
+      BudgetStatus.forecastBreach ||
+      BudgetStatus.nearLimit =>
+        LedgerChipTone.warm,
+      BudgetStatus.onTrack => LedgerChipTone.good,
+      null => LedgerChipTone.neutral,
     };
   }
 
@@ -233,214 +505,90 @@ class _HeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
-    final statusColor = _statusColor(context, progress?.status);
-    final percent = progress?.percentUsed ?? 0;
-    final clampedPercent = (percent / 100).clamp(0.0, 1.0);
-
-    return Container(
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: tones.bgSurface,
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-        border: Border.all(color: tones.borderLight),
-        boxShadow: context.elevations.level1,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                _statusLabel(progress?.status),
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.0,
-                  color: statusColor,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            budget.name,
-            style: TextStyle(
-              fontSize: 22.sp,
-              fontWeight: FontWeight.w800,
-              color: tones.textPrimary,
+    final t = context.tones;
+    final p = progress;
+    String money(double v) => LedgerMoney.format(v, budget.currency);
+    final cells = p == null
+        ? const <(String, String)>[]
+        : [
+            (LocaleKeys.budgetKpiRemaining.tr(), money(p.remaining)),
+            (LocaleKeys.budgetKpiProjected.tr(), money(p.projectedSpend)),
+            (LocaleKeys.budgetKpiRefunds.tr(), money(p.refunds)),
+            (LocaleKeys.budgetKpiRolloverIn.tr(), money(p.rolloverIn)),
+          ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LedgerH6(LocaleKeys.budgetDetailDetails.tr()),
+        SizedBox(height: 8.lx),
+        Wrap(
+          spacing: 8.lx,
+          runSpacing: 6.lx,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            LedgerChip(
+              _statusLabel(p?.status),
+              tone: _statusTone(p?.status),
             ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            _periodLabel(),
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: tones.textSecondary,
-            ),
-          ),
-          if (budget.description != null && budget.description!.isNotEmpty) ...[
-            SizedBox(height: 8.h),
             Text(
-              budget.description!,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: tones.textSecondary,
-              ),
+              _periodLabel(),
+              style: TextStyle(fontSize: 12.lx, color: t.textMuted),
             ),
           ],
-          SizedBox(height: 16.h),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadii.pill),
-            child: LinearProgressIndicator(
-              value: clampedPercent,
-              minHeight: 14,
-              backgroundColor: tones.bgPage,
-              valueColor: AlwaysStoppedAnimation(statusColor),
-            ),
-          ),
-          SizedBox(height: 10.h),
-          if (progress != null)
-            Text(
-              '${budget.currency} ${progress!.netSpent.toStringAsFixed(2)}'
-              ' of '
-              '${budget.currency} ${progress!.effectiveLimit.toStringAsFixed(2)}'
-              ' · ${progress!.percentUsed.toStringAsFixed(0)}%',
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: tones.textPrimary,
-              ),
-            )
-          else
-            Text(
-              '${budget.currency} ${budget.amount.toStringAsFixed(2)} budget',
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: tones.textPrimary,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _KpiGrid extends StatelessWidget {
-  final BudgetEntity budget;
-  final BudgetProgressEntity progress;
-  const _KpiGrid({required this.budget, required this.progress});
-
-  @override
-  Widget build(BuildContext context) {
-    final cells = <_Kpi>[
-      _Kpi(LocaleKeys.budgetKpiRemaining.tr(),
-          '${budget.currency} ${progress.remaining.toStringAsFixed(2)}'),
-      _Kpi(LocaleKeys.budgetKpiProjected.tr(),
-          '${budget.currency} ${progress.projectedSpend.toStringAsFixed(2)}'),
-      _Kpi(LocaleKeys.budgetKpiRefunds.tr(),
-          '${budget.currency} ${progress.refunds.toStringAsFixed(2)}'),
-      _Kpi(LocaleKeys.budgetKpiRolloverIn.tr(),
-          '${budget.currency} ${progress.rolloverIn.toStringAsFixed(2)}'),
-    ];
-
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 10.h,
-      crossAxisSpacing: 10.w,
-      childAspectRatio: 2.4,
-      children: cells.map((c) => _KpiCard(kpi: c)).toList(),
-    );
-  }
-}
-
-class _Kpi {
-  final String label;
-  final String value;
-  const _Kpi(this.label, this.value);
-}
-
-class _KpiCard extends StatelessWidget {
-  final _Kpi kpi;
-  const _KpiCard({required this.kpi});
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    return Container(
-      padding: EdgeInsets.all(12.r),
-      decoration: BoxDecoration(
-        color: tones.bgSurface,
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        border: Border.all(color: tones.borderLight),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            kpi.label,
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
-              color: tones.textMuted,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            kpi.value,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w800,
-              color: tones.textPrimary,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String text;
-  const _SectionHeader({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.4,
-          color: context.tones.textSecondary,
         ),
-      ),
+        if (budget.description != null && budget.description!.isNotEmpty) ...[
+          SizedBox(height: 8.lx),
+          Text(
+            budget.description!,
+            style: TextStyle(fontSize: 12.5.lx, color: t.textSecondary),
+          ),
+        ],
+        if (cells.isNotEmpty) ...[
+          SizedBox(height: 10.lx),
+          for (var row = 0; row < cells.length; row += 2) ...[
+            if (row > 0) SizedBox(height: 8.lx),
+            Row(
+              children: [
+                for (var i = row; i < row + 2 && i < cells.length; i++) ...[
+                  if (i > row) SizedBox(width: 8.lx),
+                  Expanded(
+                    child: LedgerCard(
+                      padding: EdgeInsets.all(10.lx),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cells[i].$1,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11.lx,
+                              color: t.textMuted,
+                            ),
+                          ),
+                          SizedBox(height: 2.lx),
+                          LedgerAmount(
+                            cells[i].$2,
+                            size: 14,
+                            weight: FontWeight.w600,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ],
+      ],
     );
   }
 }
 
 class _TargetsBlock extends StatelessWidget {
   final BudgetEntity budget;
-  final List<dynamic> targets;
-  const _TargetsBlock({required this.budget, required this.targets});
+  const _TargetsBlock({required this.budget});
 
   String _typeLabel(BudgetTargetType type) {
     return switch (type) {
@@ -452,51 +600,35 @@ class _TargetsBlock extends StatelessWidget {
 
   IconData _iconFor(BudgetTargetType type) {
     return switch (type) {
-      BudgetTargetType.category => Icons.label_outline,
-      BudgetTargetType.wallet => Icons.account_balance_wallet_outlined,
-      BudgetTargetType.group => Icons.group_outlined,
+      BudgetTargetType.category => LucideIcons.tag,
+      BudgetTargetType.wallet => LucideIcons.wallet,
+      BudgetTargetType.group => LucideIcons.folder,
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     if (budget.targets.isEmpty) {
-      return Container(
-        padding: EdgeInsets.all(14.r),
-        decoration: BoxDecoration(
-          color: tones.bgSurface,
-          borderRadius: BorderRadius.circular(AppRadii.md),
-          border: Border.all(color: tones.borderLight),
-        ),
+      return LedgerCard(
         child: Text(
           LocaleKeys.budgetTargetsApplyAll.tr(),
-          style: TextStyle(fontSize: 13.sp, color: tones.textSecondary),
+          style: TextStyle(fontSize: 12.5.lx, color: t.textSecondary),
         ),
       );
     }
-    return Container(
-      decoration: BoxDecoration(
-        color: tones.bgSurface,
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        border: Border.all(color: tones.borderLight),
-      ),
+    return LedgerCard(
+      padding: EdgeInsets.symmetric(horizontal: 12.lx, vertical: 2.lx),
       child: Column(
         children: [
-          for (var i = 0; i < budget.targets.length; i++) ...[
-            ListTile(
-              leading: Icon(
-                _iconFor(budget.targets[i].type),
-                color: tones.textMuted,
-              ),
-              title: Text(budget.targets[i].name ??
-                  LocaleKeys.budgetTargetUnnamed.tr()),
-              subtitle: Text(_typeLabel(budget.targets[i].type)),
-              dense: true,
+          for (var i = 0; i < budget.targets.length; i++)
+            LedgerRow(
+              leading: LedgerCoin(icon: _iconFor(budget.targets[i].type)),
+              title: budget.targets[i].name ??
+                  LocaleKeys.budgetTargetUnnamed.tr(),
+              subtitle: _typeLabel(budget.targets[i].type),
+              divider: i != budget.targets.length - 1,
             ),
-            if (i != budget.targets.length - 1)
-              Divider(height: 1, color: tones.borderLight),
-          ],
         ],
       ),
     );
@@ -509,77 +641,34 @@ class _PeriodHistoryBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     if (periods.isEmpty) {
-      return Container(
-        padding: EdgeInsets.all(14.r),
-        decoration: BoxDecoration(
-          color: tones.bgSurface,
-          borderRadius: BorderRadius.circular(AppRadii.md),
-          border: Border.all(color: tones.borderLight),
-        ),
+      return LedgerCard(
         child: Text(
           LocaleKeys.budgetNoPeriods.tr(),
-          style: TextStyle(fontSize: 13.sp, color: tones.textSecondary),
+          style: TextStyle(fontSize: 12.5.lx, color: t.textSecondary),
         ),
       );
     }
-    return Container(
-      decoration: BoxDecoration(
-        color: tones.bgSurface,
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        border: Border.all(color: tones.borderLight),
-      ),
+    return LedgerCard(
+      padding: EdgeInsets.symmetric(horizontal: 12.lx, vertical: 2.lx),
       child: Column(
         children: [
-          for (var i = 0; i < periods.length; i++) ...[
-            ListTile(
-              dense: true,
-              title: Text(
-                '${formatDateYmd(periods[i].periodStart)} → ${formatDateYmd(periods[i].periodEnd)}',
-              ),
-              subtitle: Text(
-                'Spent ${periods[i].netSpent.toStringAsFixed(2)}'
-                ' · rollover in ${periods[i].rolloverIn.toStringAsFixed(2)}'
-                ' · rollover out ${periods[i].rolloverOut.toStringAsFixed(2)}',
-              ),
+          for (var i = 0; i < periods.length; i++)
+            LedgerRow(
+              title:
+                  '${formatDateYmd(periods[i].periodStart)} → ${formatDateYmd(periods[i].periodEnd)}',
+              subtitle: 'Spent ${periods[i].netSpent.toStringAsFixed(2)}'
+                  ' · rollover in ${periods[i].rolloverIn.toStringAsFixed(2)}'
+                  ' · rollover out ${periods[i].rolloverOut.toStringAsFixed(2)}',
               trailing: periods[i].closedAt == null
-                  ? Text(LocaleKeys.budgetPeriodOpen.tr(),
-                      style: const TextStyle(fontWeight: FontWeight.w600))
+                  ? LedgerChip(
+                      LocaleKeys.budgetPeriodOpen.tr(),
+                      tone: LedgerChipTone.good,
+                    )
                   : null,
+              divider: i != periods.length - 1,
             ),
-            if (i != periods.length - 1)
-              Divider(height: 1, color: tones.borderLight),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoBanner extends StatelessWidget {
-  final String text;
-  const _InfoBanner({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    return Container(
-      padding: EdgeInsets.all(12.r),
-      decoration: BoxDecoration(
-        color: tones.brand.accent.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppRadii.md),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.info_outline, color: tones.brand.accent, size: 18.sp),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 13.sp, color: tones.textPrimary),
-            ),
-          ),
         ],
       ),
     );

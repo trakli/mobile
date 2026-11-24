@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    "workspace": {
+      "name": "Achu family",
+      "slug": "achu-family"
+    },
+    "role": "member",
+    "invited_by": null,
+    "email": "<REDACTED>",
+    "expires_at": "2026-12-01T11:44:19Z",
+    "status": "pending",
+    "addressed_to_viewer": null
+  }
+}

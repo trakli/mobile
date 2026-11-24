@@ -48,7 +48,7 @@ class ChatProgressBlock extends StatelessWidget {
                 ),
                 SizedBox(height: 6.h),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(6.r),
+                  borderRadius: BorderRadius.circular(AppRadii.sm),
                   child: LinearProgressIndicator(
                     value: ratio.toDouble(),
                     minHeight: 7.h,

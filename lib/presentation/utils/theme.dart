@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 
 
 abstract class AppTheme{
@@ -10,7 +11,8 @@ abstract class AppTheme{
   static ThemeData get lightTheme {
     const tones = AppTones.light;
     return ThemeData(
-      primaryColor: tones.brand.deep,
+      primaryColor: tones.brandFill,
+      fontFamily: AppFonts.body,
       primaryColorLight: tones.brandSoft.background,
       primaryColorDark: tones.brand.deep,
       hintColor: appYellow,
@@ -20,8 +22,8 @@ abstract class AppTheme{
       colorScheme: ColorScheme.light(
         surface: tones.bgSurface,
         onSurface: tones.textPrimary,
-        primary: tones.brand.deep,
-        onPrimary: Colors.white,
+        primary: tones.brandFill,
+        onPrimary: tones.onBrand,
         secondary: tones.accentWarm,
         error: tones.expense.accent,
       ),
@@ -29,12 +31,12 @@ abstract class AppTheme{
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.md.r),
         ),
-        headerBackgroundColor: tones.brand.deep,
+        headerBackgroundColor: tones.brandFill,
         headerForegroundColor: Colors.white,
         backgroundColor: tones.bgSurface,
         rangePickerBackgroundColor: tones.bgSurface,
         rangeSelectionBackgroundColor: tones.brand.deep.withValues(alpha: 0.1),
-        todayBackgroundColor: WidgetStatePropertyAll(tones.brand.deep),
+        todayBackgroundColor: WidgetStatePropertyAll(tones.brandFill),
         todayForegroundColor: const WidgetStatePropertyAll(Colors.white),
         cancelButtonStyle: ButtonStyle(
           foregroundColor: WidgetStatePropertyAll(tones.brand.deep),
@@ -91,11 +93,11 @@ abstract class AppTheme{
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           textStyle: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            fontSize: 15.sp,
           ),
-          backgroundColor: tones.brand.deep,
-          foregroundColor: Colors.white,
+          backgroundColor: tones.brandFill,
+          foregroundColor: tones.onBrand,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md.r),
             side: BorderSide.none,
@@ -202,12 +204,38 @@ abstract class AppTheme{
           ),
         ),
       ),
+      dividerTheme: DividerThemeData(color: tones.borderLight, thickness: 1, space: 1),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: tones.bgSurface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: tones.bgSurface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+        ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: tones.bgPage,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: tones.textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.sm),
+        ),
+      ),
       cardTheme: CardThemeData(
         color: tones.bgSurface,
-        elevation: 2,
-        shadowColor: Colors.black.withValues(alpha: 0.1),
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadii.xl.r),
+          borderRadius: BorderRadius.circular(AppRadii.md),
           side: BorderSide(
             width: 1.0,
             color: tones.borderLight,
@@ -221,7 +249,8 @@ abstract class AppTheme{
   static ThemeData get darkTheme {
     const tones = AppTones.dark;
     return ThemeData(
-      primaryColor: tones.brand.deep,
+      primaryColor: tones.brandFill,
+      fontFamily: AppFonts.body,
       primaryColorLight: tones.brandSoft.background,
       primaryColorDark: Colors.black,
       hintColor: appYellow,
@@ -231,8 +260,8 @@ abstract class AppTheme{
       colorScheme: ColorScheme.dark(
         surface: tones.bgSurface,
         onSurface: tones.textPrimary,
-        primary: tones.brand.deep,
-        onPrimary: Colors.black,
+        primary: tones.brandFill,
+        onPrimary: tones.onBrand,
         secondary: tones.accentWarm,
         error: tones.expense.accent,
       ),
@@ -241,12 +270,12 @@ abstract class AppTheme{
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.md.r),
         ),
-        headerBackgroundColor: tones.brand.deep,
+        headerBackgroundColor: tones.brandFill,
         headerForegroundColor: Colors.white,
         backgroundColor: tones.bgSurface,
         rangePickerBackgroundColor: tones.bgSurface,
         rangeSelectionBackgroundColor: tones.brand.deep.withValues(alpha: 0.1),
-        todayBackgroundColor: WidgetStatePropertyAll(tones.brand.deep),
+        todayBackgroundColor: WidgetStatePropertyAll(tones.brandFill),
         todayForegroundColor: const WidgetStatePropertyAll(Colors.white),
         cancelButtonStyle: ButtonStyle(
           foregroundColor: WidgetStatePropertyAll(tones.brand.deep),
@@ -299,11 +328,11 @@ abstract class AppTheme{
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           textStyle: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            fontSize: 15.sp,
           ),
-          backgroundColor: tones.brand.deep,
-          foregroundColor: Colors.white,
+          backgroundColor: tones.brandFill,
+          foregroundColor: tones.onBrand,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md.r),
             side: BorderSide.none,
@@ -368,11 +397,38 @@ abstract class AppTheme{
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.md.r)),
         ),
       ),
+      dividerTheme: DividerThemeData(color: tones.borderLight, thickness: 1, space: 1),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: tones.bgSurface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: tones.bgSurface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+        ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: tones.bgPage,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: tones.textPrimary,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.sm),
+        ),
+      ),
       cardTheme: CardThemeData(
         color: tones.bgSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadii.xl.r),
+          borderRadius: BorderRadius.circular(AppRadii.md),
           side: BorderSide(color: tones.borderLight),
         ),
         margin: EdgeInsets.zero,
