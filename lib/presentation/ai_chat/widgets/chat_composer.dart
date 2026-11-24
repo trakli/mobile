@@ -3,11 +3,14 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/ai_chat/dictation/dictation_cubit.dart';
 import 'package:trakli/presentation/imports/widgets/import_file_picker.dart';
 import 'package:trakli/presentation/imports/widgets/import_source_button.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
 
 class Composer extends StatefulWidget {
   final TextEditingController controller;
@@ -32,6 +35,7 @@ class ComposerState extends State<Composer> {
   bool _hasText = false;
   final List<File> _files = [];
   String? _documentType;
+  String _dictationBase = '';
 
   @override
   void initState() {
@@ -53,12 +57,47 @@ class ComposerState extends State<Composer> {
   void _submit() {
     final text = widget.controller.text.trim();
     if (text.isEmpty && _files.isEmpty) return;
+    context.read<DictationCubit>().cancel();
     widget.onSend(text, List.of(_files), _documentType);
     setState(() {
       _files.clear();
       _documentType = null;
     });
   }
+
+  void _toggleDictation() {
+    context.read<DictationCubit>().toggle(
+          languageCode: Localizations.maybeLocaleOf(context)?.languageCode,
+        );
+  }
+
+  void _onDictationChanged(BuildContext context, DictationState state) {
+    if (state.status == DictationStatus.starting) {
+      _dictationBase = widget.controller.text.trimRight();
+      return;
+    }
+    if (state.error != DictationError.none) {
+      showSnackBar(message: _dictationErrorMessage(state.error));
+      return;
+    }
+    final words = state.recognizedWords.trim();
+    if (words.isEmpty) return;
+    final text = _dictationBase.isEmpty ? words : '$_dictationBase $words';
+    widget.controller.value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+
+  String _dictationErrorMessage(DictationError error) => switch (error) {
+        DictationError.permissionDenied =>
+          LocaleKeys.aiChatDictationPermissionDenied.tr(),
+        DictationError.unavailable =>
+          LocaleKeys.aiChatDictationUnavailable.tr(),
+        DictationError.failed ||
+        DictationError.none =>
+          LocaleKeys.aiChatDictationFailed.tr(),
+      };
 
   Future<void> _openAttachSheet() async {
     final tones = context.tones;
@@ -186,6 +225,19 @@ class ComposerState extends State<Composer> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<DictationCubit, DictationState>(
+      listenWhen: (a, b) =>
+          (a.status != b.status && b.status == DictationStatus.starting) ||
+          (a.error != b.error && b.error != DictationError.none) ||
+          a.recognizedWords != b.recognizedWords,
+      listener: _onDictationChanged,
+      buildWhen: (a, b) =>
+          a.status != b.status || a.isAvailable != b.isAvailable,
+      builder: _buildComposer,
+    );
+  }
+
+  Widget _buildComposer(BuildContext context, DictationState dictation) {
     final tones = context.tones;
     final canSend = (_hasText || _files.isNotEmpty) && !widget.isSending;
 
@@ -252,7 +304,9 @@ class ComposerState extends State<Composer> {
                           isCollapsed: true,
                           isDense: true,
                           contentPadding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
-                          hintText: LocaleKeys.aiChatComposerPlaceholder.tr(),
+                          hintText: dictation.isActive
+                              ? LocaleKeys.aiChatDictationListening.tr()
+                              : LocaleKeys.aiChatComposerPlaceholder.tr(),
                           hintStyle: TextStyle(
                             color: tones.textMuted,
                             fontSize: 14.sp,
@@ -261,7 +315,16 @@ class ComposerState extends State<Composer> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 4.w),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 4.h),
+                    child: DictationButton(
+                      isListening: dictation.isActive,
+                      isAvailable: dictation.isAvailable,
+                      onTap: _toggleDictation,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
                   Padding(
                     padding: EdgeInsets.only(bottom: 4.h),
                     child: _SendButton(
@@ -435,6 +498,69 @@ class _SendButton extends StatelessWidget {
                     color: enabled ? Colors.white : tones.textMuted,
                     size: 16.sp,
                   ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DictationButton extends StatelessWidget {
+  final bool isListening;
+  final bool isAvailable;
+  final VoidCallback onTap;
+  const DictationButton({
+    super.key,
+    required this.isListening,
+    required this.isAvailable,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tones = context.tones;
+    final tooltip = !isAvailable
+        ? LocaleKeys.aiChatDictationUnavailable.tr()
+        : isListening
+            ? LocaleKeys.aiChatDictationStop.tr()
+            : LocaleKeys.aiChatDictationStart.tr();
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: isAvailable,
+        label: tooltip,
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: isAvailable ? onTap : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              width: 36.r,
+              height: 36.r,
+              decoration: BoxDecoration(
+                color: isListening ? tones.expense.background : tones.bgCard,
+                shape: BoxShape.circle,
+                border: isListening
+                    ? Border.all(color: tones.expense.accent)
+                    : null,
+              ),
+              child: Icon(
+                !isAvailable
+                    ? Icons.mic_off_rounded
+                    : isListening
+                        ? Icons.stop_rounded
+                        : Icons.mic_none_rounded,
+                size: 20.sp,
+                color: !isAvailable
+                    ? tones.textMuted
+                    : isListening
+                        ? tones.expense.deep
+                        : tones.textSecondary,
+              ),
+            ),
           ),
         ),
       ),

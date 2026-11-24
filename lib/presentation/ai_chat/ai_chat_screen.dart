@@ -8,6 +8,7 @@ import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/ai_chat/cubit/ai_chat_cubit.dart';
+import 'package:trakli/presentation/ai_chat/dictation/dictation_cubit.dart';
 import 'package:trakli/presentation/ai_chat/widgets/chat_composer.dart';
 import 'package:trakli/presentation/ai_chat/widgets/chat_history_sheet.dart';
 import 'package:trakli/presentation/ai_chat/widgets/chat_landing.dart';
@@ -40,8 +41,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: _cubit),
+        BlocProvider(create: (_) => getIt<DictationCubit>()),
+      ],
       child: const _AiChatView(),
     );
   }
@@ -80,6 +84,7 @@ class _AiChatViewState extends State<_AiChatView> {
   void _send([String? overrideText]) {
     final text = (overrideText ?? _composer.text).trim();
     if (text.isEmpty) return;
+    context.read<DictationCubit>().cancel();
     context.read<AiChatCubit>().sendMessage(text);
     _composer.clear();
     _focus.unfocus();
