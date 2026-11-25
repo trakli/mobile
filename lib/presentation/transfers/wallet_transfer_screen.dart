@@ -807,7 +807,6 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
                           ? LocaleKeys.processing.tr()
                           : LocaleKeys.transferMoney.tr(),
                       backgroundColor: Theme.of(context).primaryColor,
-                      iconPath: Assets.images.arrowSwapHorizontal,
                       iconColor: Colors.white,
                       textDirection: ui.TextDirection.rtl,
                     ),

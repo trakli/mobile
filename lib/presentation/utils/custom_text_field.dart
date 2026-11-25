@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/gen/assets.gen.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -59,6 +60,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
+    InputBorder? border(Color color, [double width = 1]) {
+      if (widget.showNoBorders) return InputBorder.none;
+      if (widget.showBottomBorder) {
+        return UnderlineInputBorder(
+          borderSide: BorderSide(color: color, width: width),
+        );
+      }
+      return null;
+    }
+
     return TextFormField(
       readOnly: widget.readOnly,
       onTap: widget.onTap,
@@ -66,121 +78,44 @@ class _CustomTextFieldState extends State<CustomTextField> {
       onTapOutside: (c) => hideKeyBoard(),
       onFieldSubmitted: widget.onFieldSubmitted,
       validator: widget.validator,
-      enabled: true,
       controller: widget.controller,
       textInputAction: TextInputAction.next,
       keyboardType: widget.keyboardType,
       obscureText: widget.isPassword && obscureText,
       obscuringCharacter: '*',
-      cursorColor: Colors.black,
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,
-      textAlign: TextAlign.start,
-      // style: AppStyles.body2black,
+      style: TextStyle(fontSize: 14.lx, color: t.textPrimary),
       decoration: InputDecoration(
-        hintStyle: const TextStyle(
-          color: Colors.grey,
+        hintText: widget.hintText,
+        prefixIcon: widget.prefix == null
+            ? null
+            : Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.lx),
+                child: widget.prefix,
+              ),
+        prefixIconConstraints: BoxConstraints(
+          maxHeight: 40.lx,
+          maxWidth: 44.lx,
         ),
-        errorStyle: const TextStyle(
-          color: Colors.redAccent,
-        ),
-        // prefix: widget.prefix,
-        prefixIcon: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: widget.prefix,
-        ),
-        prefixIconConstraints:
-            const BoxConstraints(maxHeight: 50, maxWidth: 50),
         suffixIcon: widget.isPassword
             ? IconButton(
-                splashRadius: 1,
-                icon: SvgPicture.asset(
-                  obscureText ? Assets.images.eyeSlash : Assets.images.eye,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                  // color: ,
+                icon: Icon(
+                  obscureText ? LucideIcons.eyeOff : LucideIcons.eye,
+                  size: 17.lx,
+                  color: t.textMuted,
                 ),
                 onPressed: _changeTextVisibility,
               )
             : widget.suffixIcon,
-        hintText: widget.hintText,
-        error: null,
-        focusedErrorBorder: widget.showNoBorders == true
-            ? InputBorder.none
-            : widget.showBottomBorder == true
-                ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.redAccent,
-                      width: 2,
-                    ),
-                  )
-                : OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.redAccent,
-                      width: 2,
-                    ),
-                  ),
-        errorBorder: widget.showNoBorders == true
-            ? InputBorder.none
-            : widget.showBottomBorder == true
-                ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.redAccent,
-                      width: 2,
-                    ),
-                  )
-                : OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.redAccent,
-                      width: 2,
-                    ),
-                  ),
-        focusedBorder: widget.showNoBorders == true
-            ? InputBorder.none
-            : widget.showBottomBorder == true
-                ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 2,
-                    ),
-                  )
-                : OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: Theme.of(context).primaryColor,
-                      width: 2,
-                    ),
-                  ),
-        // border: OutlineInputBorder(
-        //   borderRadius: BorderRadius.circular(10),
-        // ),
-        focusColor: Colors.blue,
-        enabledBorder: widget.showNoBorders == true
-            ? InputBorder.none
-            : widget.showBottomBorder == true
-                ? UnderlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 2,
-                    ),
-                  )
-                : OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-        filled: widget.filled,
-        // filled: true,
+        border: border(t.borderLight),
+        enabledBorder: border(t.borderLight),
+        focusedBorder: border(t.brandFill, 1.4),
+        errorBorder: border(t.expenseColor),
+        focusedErrorBorder: border(t.expenseColor, 1.4),
+        filled: widget.showNoBorders || widget.showBottomBorder
+            ? widget.filled
+            : null,
       ),
     );
   }

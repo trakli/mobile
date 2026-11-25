@@ -1211,5 +1211,7 @@
   "detailAverage": "Average",
   "detailBiggest": "Biggest",
   "detailTotal": "Total",
-  "detailNetFlow": "Net flow"
+  "detailNetFlow": "Net flow",
+  "formCurrency": "Currency",
+  "formDescription": "Description"
 }

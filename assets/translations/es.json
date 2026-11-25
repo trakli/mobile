@@ -1211,5 +1211,7 @@
   "detailAverage": "Promedio",
   "detailBiggest": "Mayor",
   "detailTotal": "Total",
-  "detailNetFlow": "Flujo neto"
+  "detailNetFlow": "Flujo neto",
+  "formCurrency": "Moneda",
+  "formDescription": "Descripción"
 }

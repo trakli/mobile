@@ -1211,5 +1211,7 @@
   "detailAverage": "Media",
   "detailBiggest": "Più alta",
   "detailTotal": "Totale",
-  "detailNetFlow": "Flusso netto"
+  "detailNetFlow": "Flusso netto",
+  "formCurrency": "Valuta",
+  "formDescription": "Descrizione"
 }

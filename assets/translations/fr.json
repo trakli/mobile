@@ -1211,5 +1211,7 @@
   "detailAverage": "Moyenne",
   "detailBiggest": "Le plus élevé",
   "detailTotal": "Total",
-  "detailNetFlow": "Flux net"
+  "detailNetFlow": "Flux net",
+  "formCurrency": "Devise",
+  "formDescription": "Description"
 }

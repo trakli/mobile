@@ -1,20 +1,17 @@
-import 'dart:ui' as ui;
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/media_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/select_icon_bottom_sheet.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
-import 'package:trakli/presentation/widgets/image_widget.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_form.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class AddGroupsForm extends StatefulWidget {
   final GroupEntity? group;
@@ -71,138 +68,54 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
         }
       },
       builder: (context, state) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 16.h,
-          ),
-          child: Form(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        return Form(
+          child: Builder(
+            builder: (context) => ListView(
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  textDirection: ui.TextDirection.rtl,
-                  spacing: 8.w,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        showCustomBottomSheet(
-                          context,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          widget: SelectIconBottomSheet(
-                            onSelect: (mediaType, image) {
-                              setState(() {
-                                mediaEntity = MediaEntity(
-                                    content: image, mediaType: mediaType);
-                              });
-                            },
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 56.r,
-                        width: 56.r,
-                        decoration: BoxDecoration(
-                          color: appPrimaryColor.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: ImageWidget(
-                          mediaEntity: mediaEntity,
-                          accentColor: appPrimaryColor,
-                          placeholderImageAsset: Assets.images.galleryAdd,
-                        ),
-                      ),
+                LedgerNameCard(
+                  controller: _nameController,
+                  hint: LocaleKeys.groupEnterGroupName.tr(),
+                  media: mediaEntity,
+                  onPickIcon: () => showCustomBottomSheet(
+                    context,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    widget: SelectIconBottomSheet(
+                      onSelect: (mediaType, image) => setState(() {
+                        mediaEntity =
+                            MediaEntity(content: image, mediaType: mediaType);
+                      }),
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          hintText: LocaleKeys.groupEnterGroupName.tr(),
-                          labelText: LocaleKeys.groupGroupName.tr(),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return LocaleKeys.nameIsRequired.tr();
-                          }
-                          return null;
-                        },
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? LocaleKeys.nameIsRequired.tr()
+                      : null,
+                ),
+                SizedBox(height: 12.lx),
+                LedgerFieldsCard(
+                  children: [
+                    LedgerFieldRow(
+                      icon: LucideIcons.textAlignStart,
+                      label: LocaleKeys.formDescription.tr(),
+                      divider: false,
+                      valueWidget: LedgerInlineField(
+                        controller: _descriptionController,
+                        hint: LocaleKeys.typeHere.tr(),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 20.h),
-                TextFormField(
-                  controller: _descriptionController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: LocaleKeys.typeHere.tr(),
-                    labelText: LocaleKeys.groupGroupDescription.tr(),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                SizedBox(
-                  height: 54.h,
-                  width: double.infinity,
-                  child: Builder(builder: (context) {
-                    return ElevatedButton(
-                      onPressed: state.isSaving
-                          ? null
-                          : () {
-                              hideKeyBoard();
-                              if (Form.of(context).validate()) {
-                                if (widget.group == null) {
-                                  context.read<GroupCubit>().addGroup(
-                                        _nameController.text,
-                                        description:
-                                            _descriptionController.text.isEmpty
-                                                ? null
-                                                : _descriptionController.text,
-                                        media: mediaEntity?.content?.isEmpty ==
-                                                true
-                                            ? null
-                                            : mediaEntity,
-                                      );
-                                } else {
-                                  context.read<GroupCubit>().updateGroup(
-                                        widget.group!.clientId,
-                                        name: _nameController.text,
-                                        description:
-                                            _descriptionController.text.isEmpty
-                                                ? null
-                                                : _descriptionController.text,
-                                        media: mediaEntity?.content?.isEmpty ==
-                                                true
-                                            ? null
-                                            : mediaEntity,
-                                      );
-                                }
-                              }
-                            },
-                      child: Row(
-                        spacing: 8.w,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            widget.group == null
-                                ? LocaleKeys.groupCreateGroup.tr()
-                                : LocaleKeys.groupUpdate.tr(),
-                          ),
-                          SvgPicture.asset(
-                            widget.group == null
-                                ? Assets.images.add
-                                : Assets.images.galleryAdd,
-                            width: 24,
-                            height: 24,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.white,
-                              BlendMode.srcIn,
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
+                SizedBox(height: 18.lx),
+                LedgerButton(
+                  label: widget.group == null
+                      ? LocaleKeys.groupCreateGroup.tr()
+                      : LocaleKeys.groupUpdate.tr(),
+                  icon: widget.group == null
+                      ? LucideIcons.plus
+                      : LucideIcons.check,
+                  large: true,
+                  busy: state.isSaving,
+                  onPressed: () => _submit(context),
                 ),
               ],
             ),
@@ -210,5 +123,22 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
         );
       },
     );
+  }
+
+  void _submit(BuildContext context) {
+    hideKeyBoard();
+    if (!Form.of(context).validate()) return;
+    final description = _descriptionController.text.isEmpty
+        ? null
+        : _descriptionController.text;
+    final media = mediaEntity?.content?.isEmpty == true ? null : mediaEntity;
+    final cubit = context.read<GroupCubit>();
+    if (widget.group == null) {
+      cubit.addGroup(_nameController.text,
+          description: description, media: media);
+    } else {
+      cubit.updateGroup(widget.group!.clientId,
+          name: _nameController.text, description: description, media: media);
+    }
   }
 }

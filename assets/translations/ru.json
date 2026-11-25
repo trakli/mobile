@@ -1213,5 +1213,7 @@
   "detailAverage": "В среднем",
   "detailBiggest": "Крупнейшая",
   "detailTotal": "Итого",
-  "detailNetFlow": "Чистый поток"
+  "detailNetFlow": "Чистый поток",
+  "formCurrency": "Валюта",
+  "formDescription": "Описание"
 }

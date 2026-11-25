@@ -1213,5 +1213,7 @@ abstract class  LocaleKeys {
   static const detailBiggest = 'detailBiggest';
   static const detailTotal = 'detailTotal';
   static const detailNetFlow = 'detailNetFlow';
+  static const formCurrency = 'formCurrency';
+  static const formDescription = 'formDescription';
 
 }

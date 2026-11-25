@@ -1006,7 +1006,7 @@ class LedgerFieldRow extends StatelessWidget {
             Icon(icon, size: 16.lx, color: t.textMuted),
             SizedBox(width: 10.lx),
             SizedBox(
-              width: 70.lx,
+              width: 84.lx,
               child: Text(
                 label,
                 maxLines: 1,

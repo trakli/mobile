@@ -1211,5 +1211,7 @@
   "detailAverage": "Durchschnitt",
   "detailBiggest": "Größte",
   "detailTotal": "Gesamt",
-  "detailNetFlow": "Nettofluss"
+  "detailNetFlow": "Nettofluss",
+  "formCurrency": "Währung",
+  "formDescription": "Beschreibung"
 }
