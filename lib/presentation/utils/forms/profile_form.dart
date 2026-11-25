@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/user_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 
 class ProfileForm extends StatefulWidget {
   const ProfileForm({super.key});
@@ -51,12 +50,6 @@ class _ProfileFormState extends State<ProfileForm> {
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
               hintText: LocaleKeys.firstName.tr(),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: appPrimaryColor,
-                ),
-              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -79,12 +72,6 @@ class _ProfileFormState extends State<ProfileForm> {
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
               hintText: LocaleKeys.lastName.tr(),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: appPrimaryColor,
-                ),
-              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -107,12 +94,6 @@ class _ProfileFormState extends State<ProfileForm> {
             keyboardType: TextInputType.name,
             decoration: InputDecoration(
               hintText: LocaleKeys.phoneNumberHint.tr(),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: appPrimaryColor,
-                ),
-              ),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -140,12 +121,6 @@ class _ProfileFormState extends State<ProfileForm> {
                   shape: const Circle(),
                   "cm",
                   width: 24.w,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: appPrimaryColor,
                 ),
               ),
             ),

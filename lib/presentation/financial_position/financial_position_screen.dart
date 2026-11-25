@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/financial_position/financial_position_section.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
@@ -47,16 +47,13 @@ class FinancialPositionScreen extends StatelessWidget {
         title: LocaleKeys.fpSectionTitle.tr(),
         actions: [
           PageAppBarAction(
-            icon: Icons.help_outline,
+            icon: LucideIcons.circleQuestionMark,
             tooltip: LocaleKeys.fpHelpTitle.tr(),
             onTap: () => _showHelp(context),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
-        child: const FinancialPositionSection(),
-      ),
+      body: const FinancialPositionSection(),
     );
   }
 }

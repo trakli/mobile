@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/recurrence_input.dart';
@@ -74,11 +76,24 @@ class TransactionExtrasSection extends StatefulWidget {
     required this.controller,
     required this.transactionType,
     required this.accentColor,
+    this.includeRefund = true,
+    this.includeRecurrence = true,
+    this.recurrenceToggle = true,
+    this.refundToggle = true,
+    this.onChanged,
   });
 
   final TransactionExtrasController controller;
   final TransactionType transactionType;
   final Color accentColor;
+  final bool includeRefund;
+  final bool includeRecurrence;
+
+  /// When false the recurrence checkbox is hidden and the period controls
+  /// show whenever the controller is recurring; the caller owns the toggle.
+  final bool recurrenceToggle;
+  final bool refundToggle;
+  final VoidCallback? onChanged;
 
   @override
   State<TransactionExtrasSection> createState() =>
@@ -87,6 +102,12 @@ class TransactionExtrasSection extends StatefulWidget {
 
 class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
   DateFormat get _dateFormat => DateFormat('dd-MM-yyy');
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    widget.onChanged?.call();
+  }
 
   TransactionExtrasController get c => widget.controller;
 
@@ -165,7 +186,7 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
               triggerMode: TooltipTriggerMode.tap,
               showDuration: const Duration(seconds: 5),
               child: Icon(
-                Icons.help_outline,
+                LucideIcons.circleQuestionMark,
                 size: 16.sp,
                 color: tones.textMuted,
               ),
@@ -223,15 +244,16 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _checkRow(
-          context,
-          label: LocaleKeys.thisIsARefund.tr(),
-          value: c.isRefund,
-          onChanged: (v) => setState(() => c.isRefund = v),
-          helpText: LocaleKeys.refundHelper.tr(),
-        ),
+        if (widget.refundToggle)
+          _checkRow(
+            context,
+            label: LocaleKeys.thisIsARefund.tr(),
+            value: c.isRefund,
+            onChanged: (v) => setState(() => c.isRefund = v),
+            helpText: LocaleKeys.refundHelper.tr(),
+          ),
         if (c.isRefund) ...[
-          SizedBox(height: 8.h),
+          if (widget.refundToggle) SizedBox(height: 8.h),
           _grayCard(
             context,
             child: Column(
@@ -244,10 +266,10 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
                       labelText: LocaleKeys.refundOf.tr(),
                       fillColor: tones.bgSurface,
                       suffixIcon: c.refundOfLabel == null
-                          ? Icon(Icons.keyboard_arrow_down,
+                          ? Icon(LucideIcons.chevronDown,
                               color: tones.textMuted)
                           : IconButton(
-                              icon: Icon(Icons.clear,
+                              icon: Icon(LucideIcons.x,
                                   size: 20.sp, color: tones.textMuted),
                               onPressed: () => setState(() {
                                 c.refundOfClientId = null;
@@ -278,7 +300,7 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
             ),
           ),
         ],
-        SizedBox(height: 16.h),
+        if (widget.refundToggle || c.isRefund) SizedBox(height: 16.h),
       ],
     );
   }
@@ -288,14 +310,15 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _checkRow(
-          context,
-          label: LocaleKeys.makeRecurring.tr(),
-          value: c.isRecurring,
-          onChanged: (v) => setState(() => c.isRecurring = v),
-        ),
+        if (widget.recurrenceToggle)
+          _checkRow(
+            context,
+            label: LocaleKeys.makeRecurring.tr(),
+            value: c.isRecurring,
+            onChanged: (v) => setState(() => c.isRecurring = v),
+          ),
         if (c.isRecurring) ...[
-          SizedBox(height: 8.h),
+          if (widget.recurrenceToggle) SizedBox(height: 8.h),
           _grayCard(
             context,
             child: Column(
@@ -357,13 +380,13 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
                     children: [
                       if (c.recurrenceEndsAt != null)
                         IconButton(
-                          icon: Icon(Icons.clear, color: tones.textMuted),
+                          icon: Icon(LucideIcons.x, color: tones.textMuted),
                           onPressed: () =>
                               setState(() => c.recurrenceEndsAt = null),
                         ),
                       IconButton(
-                        icon:
-                            Icon(Icons.calendar_today, color: tones.textMuted),
+                        icon: Icon(LucideIcons.calendar,
+                            size: 16.lx, color: tones.textMuted),
                         onPressed: () async {
                           final now = DateTime.now();
                           final picked = await showDatePicker(
@@ -385,7 +408,7 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
             ),
           ),
         ],
-        SizedBox(height: 16.h),
+        if (widget.recurrenceToggle || c.isRecurring) SizedBox(height: 16.h),
       ],
     );
   }
@@ -395,9 +418,10 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.transactionType == TransactionType.income)
+        if (widget.includeRefund &&
+            widget.transactionType == TransactionType.income)
           _refundSection(context),
-        _recurrenceSection(context),
+        if (widget.includeRecurrence) _recurrenceSection(context),
       ],
     );
   }

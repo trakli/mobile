@@ -2,10 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/data/datasources/ai/dto/chat_session_dto.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/ai_chat/widgets/trakli_mark.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class ChatLanding extends StatefulWidget {
   final void Function(String) onPick;
@@ -78,17 +82,14 @@ class ChatLandingState extends State<ChatLanding>
         firstName.isEmpty ? _greeting() : '${_greeting()}, $firstName';
 
     final suggestions = <(String, IconData)>[
-      (
-        LocaleKeys.aiSuggestSpendMonth.tr(),
-        Icons.account_balance_wallet_rounded
-      ),
-      (LocaleKeys.aiSuggestTopCategory.tr(), Icons.pie_chart_rounded),
-      (LocaleKeys.aiSuggestIncomeVsExpense.tr(), Icons.show_chart_rounded),
-      (LocaleKeys.aiSuggestBalance.tr(), Icons.account_balance_rounded),
+      (LocaleKeys.aiSuggestSpendMonth.tr(), LucideIcons.wallet),
+      (LocaleKeys.aiSuggestTopCategory.tr(), LucideIcons.chartPie),
+      (LocaleKeys.aiSuggestIncomeVsExpense.tr(), LucideIcons.chartLine),
+      (LocaleKeys.aiSuggestBalance.tr(), LucideIcons.landmark),
     ];
 
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.lx, vertical: 24.lx),
       children: [
         SizedBox(height: 8.h),
         _stagger(0, _hero(tones)),
@@ -100,8 +101,9 @@ class ChatLandingState extends State<ChatLanding>
             textAlign: TextAlign.center,
             style: TextStyle(
               color: tones.textPrimary,
-              fontSize: 20.sp,
+              fontSize: 20.lx,
               fontWeight: FontWeight.w700,
+              letterSpacing: -0.4,
             ),
           ),
         ),
@@ -113,7 +115,7 @@ class ChatLandingState extends State<ChatLanding>
             textAlign: TextAlign.center,
             style: TextStyle(
               color: tones.textSecondary,
-              fontSize: 14.sp,
+              fontSize: 13.lx,
               height: 1.5,
             ),
           ),
@@ -138,33 +140,7 @@ class ChatLandingState extends State<ChatLanding>
   }
 
   Widget _hero(AppTones tones) {
-    return Center(
-      child: Container(
-        width: 76.r,
-        height: 76.r,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [tones.brand.accent, tones.brand.deep],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: tones.brand.deep.withAlpha(60),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.all(20.r),
-        child: Icon(
-          Icons.smart_toy_rounded,
-          color: Colors.white,
-          size: 34.r,
-        ),
-      ),
-    );
+    return const Center(child: TrakliMark(height: 44));
   }
 
   /// Compact, vertically-stacked resume options shown under the stats slider.
@@ -178,13 +154,13 @@ class ChatLandingState extends State<ChatLanding>
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: TextStyle(color: tones.textMuted, fontSize: 11.sp),
+          style: TextStyle(color: tones.textMuted, fontSize: 11.5.lx),
         ),
         SizedBox(height: 8.h),
         _pillButton(
           tones,
           label: LocaleKeys.aiContinueSession.tr(),
-          icon: Icons.history_rounded,
+          icon: LucideIcons.history,
           filled: true,
           onTap: widget.onContinue,
         ),
@@ -192,7 +168,7 @@ class ChatLandingState extends State<ChatLanding>
         _pillButton(
           tones,
           label: LocaleKeys.aiStartNewSession.tr(),
-          icon: Icons.add_rounded,
+          icon: LucideIcons.plus,
           filled: false,
           onTap: () => setState(() => _resumeDismissed = true),
         ),
@@ -207,71 +183,36 @@ class ChatLandingState extends State<ChatLanding>
     required bool filled,
     required VoidCallback onTap,
   }) {
-    final fg = filled ? Colors.white : tones.textPrimary;
     return Center(
-      child: Material(
-        color: filled ? tones.brand.deep : Colors.transparent,
-        borderRadius: BorderRadius.circular(20.r),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20.r),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.r),
-              border: filled ? null : Border.all(color: tones.borderLight),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 14.sp, color: fg),
-                SizedBox(width: 6.w),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: fg,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      child: LedgerButton(
+        label: label,
+        icon: icon,
+        style: filled ? LedgerButtonStyle.filled : LedgerButtonStyle.outline,
+        onPressed: onTap,
       ),
     );
   }
 
   Widget _suggestionChip(AppTones tones, String q, IconData icon) {
-    return InkWell(
+    return LedgerCard(
       onTap: () => widget.onPick(q),
-      borderRadius: BorderRadius.circular(14.r),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          color: tones.bgCard,
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: tones.borderLight),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 16.sp, color: tones.brand.deep),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Text(
-                q,
-                style: TextStyle(
-                  color: tones.textPrimary,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  height: 1.4,
-                ),
+      padding: EdgeInsets.symmetric(horizontal: 12.lx, vertical: 11.lx),
+      child: Row(
+        children: [
+          LedgerCoin(icon: icon, size: 28),
+          SizedBox(width: 10.lx),
+          Expanded(
+            child: Text(
+              q,
+              style: TextStyle(
+                color: tones.textPrimary,
+                fontSize: 13.lx,
+                height: 1.4,
               ),
             ),
-            Icon(Icons.arrow_outward_rounded,
-                size: 14.sp, color: tones.textMuted),
-          ],
-        ),
+          ),
+          Icon(LucideIcons.arrowUpRight, size: 15.lx, color: tones.textMuted),
+        ],
       ),
     );
   }

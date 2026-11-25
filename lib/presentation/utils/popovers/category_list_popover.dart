@@ -1,12 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_popover.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/design_tokens.dart';
-import 'package:trakli/presentation/widgets/image_widget.dart';
 
 class CategoryListPopover extends StatelessWidget {
   final String label;
@@ -34,73 +37,29 @@ class CategoryListPopover extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.isLoading) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(tones.brand.deep),
-            ),
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator.adaptive()),
           );
         }
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            vertical: 8.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 8.h),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: tones.textPrimary,
-                  fontWeight: FontWeight.w700,
+        return LedgerPopoverMenu(
+          title: label,
+          emptyText: LocaleKeys.noCategoriesFound.tr(),
+          items: [
+            for (final category in state.categories)
+              LedgerPopoverItem(
+                label: category.name,
+                leading: LedgerCoin(
+                  icon: LucideIcons.tag,
+                  media: category.icon,
+                  size: 26,
                 ),
+                onTap: () {
+                  onSelect(category);
+                  AppNavigator.pop(context);
+                },
               ),
-              state.categories.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No Categories yet',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: tones.textMuted,
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final category = state.categories[index];
-                        return ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                          ),
-                          onTap: () {
-                            onSelect(category);
-                            AppNavigator.pop(context);
-                          },
-                          title: Text(
-                            category.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: tones.textPrimary),
-                          ),
-                          trailing: ImageWidget(
-                            mediaEntity: category.icon,
-                            iconSize: 24.sp,
-                            emojiSize: 24.sp,
-                            accentColor: tones.brand.accent,
-                            placeholderIcon: Icons.category,
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 4.h);
-                      },
-                      itemCount: state.categories.length,
-                    ),
-            ],
-          ),
+          ],
         );
       },
     );

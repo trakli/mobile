@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/error/failures/failures.dart' show Failure;
 import 'package:trakli/core/usecases/usecase.dart';
 import 'package:trakli/di/injection.dart';
@@ -12,10 +13,11 @@ import 'package:trakli/presentation/auth/pages/login_screen.dart';
 import 'package:trakli/presentation/auth/pages/register_screen.dart';
 import 'package:trakli/presentation/benefits/cubit/benefits_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/benefit_tile.dart';
-import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
     show showSnackBar, showCustomDialog;
 
@@ -102,96 +104,72 @@ class BenefitsWidget extends StatelessWidget {
         final benefits = state.cloudBenefits?.benefits ?? [];
 
         if (state.isLoading) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-            ),
-          );
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
+        final t = context.tones;
+        final overview = state.cloudBenefits?.overview;
         return Column(
-          spacing: 24.h,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 16.h,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: neutralN500,
-                ),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
+            LedgerCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12.h,
                 children: [
                   Text(
                     LocaleKeys.dontHaveAccount.tr(),
                     style: TextStyle(
-                      fontSize: 20.sp,
+                      fontSize: 16.lx,
                       fontWeight: FontWeight.w700,
-                      color: appOrange,
+                      color: t.textPrimary,
                     ),
                   ),
-                  Text(
-                    state.cloudBenefits?.overview.description ?? "",
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  Text(
-                    state.cloudBenefits?.overview.title ?? "",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
+                  if (overview?.description.isNotEmpty == true) ...[
+                    SizedBox(height: 6.lx),
+                    Text(
+                      overview!.description,
+                      style: TextStyle(
+                        fontSize: 12.5.lx,
+                        height: 1.45,
+                        color: t.textSecondary,
+                      ),
                     ),
-                  ),
-                  if (benefits.isNotEmpty)
-                    ...benefits.map<Widget>((benefit) {
-                      return BenefitTile(
-                        benefit: benefit,
-                      );
-                    }),
+                  ],
+                  if (overview?.title.isNotEmpty == true) ...[
+                    SizedBox(height: 12.lx),
+                    LedgerH6(overview!.title),
+                  ],
+                  for (final b in benefits)
+                    LedgerRow(
+                      leading: Icon(
+                        LucideIcons.check,
+                        size: 16.lx,
+                        color: t.brandText,
+                      ),
+                      title: b.title,
+                      subtitle: b.description,
+                      divider: b != benefits.last,
+                    ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 52.h,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  AppNavigator.removeAllPreviousAndPushThenPush(
-                    context,
-                    const LoginScreen(),
-                    const RegisterScreen(),
-                  );
-                },
-                child: Text(
-                  LocaleKeys.createAccountNow.tr(),
-                ),
+            SizedBox(height: 16.lx),
+            LedgerButton(
+              label: LocaleKeys.createAccountNow.tr(),
+              large: true,
+              onPressed: () => AppNavigator.removeAllPreviousAndPushThenPush(
+                context,
+                const LoginScreen(),
+                const RegisterScreen(),
               ),
             ),
-            SizedBox(
-              height: 52.h,
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () async {
-                  await _handleLogout(context);
-                },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                    color: Colors.red,
-                    width: 2,
-                  ),
-                ),
-                child: Text(
-                  LocaleKeys.logOut.tr(),
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+            SizedBox(height: 8.lx),
+            LedgerButton(
+              label: LocaleKeys.logOut.tr(),
+              icon: LucideIcons.logOut,
+              large: true,
+              style: LedgerButtonStyle.outline,
+              foreground: t.expenseColor,
+              onPressed: () => _handleLogout(context),
             ),
           ],
         );

@@ -58,8 +58,8 @@ class _WalletTileMiniState extends State<WalletTileMini> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                RichText(
-                  text: TextSpan(
+                Text.rich(
+                  TextSpan(
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 14.sp,
                         ),

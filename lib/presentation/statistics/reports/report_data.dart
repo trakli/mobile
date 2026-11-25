@@ -128,9 +128,8 @@ ReportData buildReportData(
 
     if (t.transaction.type == TransactionType.income) {
       totalIncome += amount;
-      final name = t.categories.isNotEmpty
-          ? t.categories.first.name
-          : 'Uncategorized';
+      final name =
+          t.categories.isNotEmpty ? t.categories.first.name : 'Uncategorized';
       catIncome[name] = (catIncome[name] ?? 0) + amount;
     } else {
       totalExpense += amount;
@@ -211,30 +210,3 @@ class _DailyTally {
   double expense = 0;
   int txCount = 0;
 }
-
-/// Tonal palette used for stacking categories in donuts / ranking bars.
-const expensePalette = <int>[
-  0xFFE11D48,
-  0xFFF97316,
-  0xFFF59E0B,
-  0xFF84CC16,
-  0xFF10B981,
-  0xFF06B6D4,
-  0xFF3B82F6,
-  0xFF8B5CF6,
-  0xFFEC4899,
-  0xFF64748B,
-];
-
-const incomePalette = <int>[
-  0xFF16A34A,
-  0xFF10B981,
-  0xFF06B6D4,
-  0xFF3B82F6,
-  0xFF8B5CF6,
-  0xFFEC4899,
-  0xFFF59E0B,
-  0xFFF97316,
-  0xFFE11D48,
-  0xFF64748B,
-];

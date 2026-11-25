@@ -55,7 +55,8 @@ class TransferCubit extends Cubit<TransferState> {
     TransferEntity transfer, {
     required String transactionDescription,
   }) async {
-    emit(state.copyWith(isSaving: true, saveSuccess: false, failure: const Failure.none()));
+    emit(state.copyWith(
+        isSaving: true, saveSuccess: false, failure: const Failure.none()));
     final result = await createTransferWithTransactionsUseCase(
       CreateTransferParams(
         amount: transfer.amount,
@@ -89,4 +90,3 @@ class TransferCubit extends Cubit<TransferState> {
     emit(state.copyWith(saveSuccess: false, failure: const Failure.none()));
   }
 }
-

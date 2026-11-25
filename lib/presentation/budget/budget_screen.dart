@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/budget_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/budget/add_budget_screen.dart';
@@ -10,6 +10,9 @@ import 'package:trakli/presentation/budget/cubit/budget_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class BudgetScreen extends StatefulWidget {
@@ -45,7 +48,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
         onSearchChanged: (v) => setState(() => _query = v),
         searchHint: LocaleKeys.searchBudgets.tr(),
         actions: [
-          PageAppBarAction(icon: Icons.add, onTap: _add, primary: true),
+          PageAppBarAction(icon: LucideIcons.plus, onTap: _add, primary: true),
         ],
       ),
       body: SafeArea(
@@ -68,91 +71,49 @@ class _BudgetScreenState extends State<BudgetScreen> {
               return _EmptyState(onAdd: _add);
             }
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h),
-                    child: _FilterChips(
-                      onlyActive: _onlyActive,
-                      onChange: (v) => setState(() => _onlyActive = v),
+            return ListView(
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 120.lx),
+              children: [
+                LedgerChipRow(
+                  children: [
+                    LedgerFilterChip(
+                      label: LocaleKeys.filterAll.tr(),
+                      selected: !_onlyActive,
+                      onTap: () => setState(() => _onlyActive = false),
                     ),
-                  ),
-                  if (filtered.isEmpty)
-                    _NoMatches(query: _query)
-                  else
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-                      itemCount: filtered.length,
-                      separatorBuilder: (_, __) => SizedBox(height: 10.h),
-                      itemBuilder: (_, i) {
-                        final budget = filtered[i];
-                        return _BudgetCard(
-                          budget: budget,
-                          onTap: () => AppNavigator.push(
-                            context,
-                            BudgetDetailScreen(budget: budget),
-                          ),
-                          onEdit: () => AppNavigator.push(
-                            context,
-                            AddBudgetScreen(budget: budget),
-                          ),
-                          onDelete: () => context
-                              .read<BudgetCubit>()
-                              .deleteBudget(budget.clientId),
-                        );
-                      },
+                    LedgerFilterChip(
+                      label: LocaleKeys.filterActive.tr(),
+                      selected: _onlyActive,
+                      onTap: () => setState(() => _onlyActive = true),
                     ),
-                ],
-              ),
+                  ],
+                ),
+                SizedBox(height: 10.lx),
+                if (filtered.isEmpty)
+                  _NoMatches(query: _query)
+                else
+                  for (final budget in filtered) ...[
+                    _BudgetCard(
+                      budget: budget,
+                      onTap: () => AppNavigator.push(
+                        context,
+                        BudgetDetailScreen(budget: budget),
+                      ),
+                      onEdit: () => AppNavigator.push(
+                        context,
+                        AddBudgetScreen(budget: budget),
+                      ),
+                      onDelete: () => context
+                          .read<BudgetCubit>()
+                          .deleteBudget(budget.clientId),
+                    ),
+                    SizedBox(height: 8.lx),
+                  ],
+              ],
             );
           },
         ),
       ),
-    );
-  }
-}
-
-class _FilterChips extends StatelessWidget {
-  final bool onlyActive;
-  final ValueChanged<bool> onChange;
-  const _FilterChips({required this.onlyActive, required this.onChange});
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    Widget chip(String label, bool selected, VoidCallback onTap) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            color: selected ? tones.brand.accent : tones.bgSurface,
-            border: Border.all(
-              color: selected ? tones.brand.accent : tones.borderLight,
-            ),
-            borderRadius: BorderRadius.circular(AppRadii.pill),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: selected ? Colors.white : tones.textSecondary,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Row(
-      children: [
-        chip(LocaleKeys.filterAll.tr(), !onlyActive, () => onChange(false)),
-        SizedBox(width: 8.w),
-        chip(LocaleKeys.filterActive.tr(), onlyActive, () => onChange(true)),
-      ],
     );
   }
 }
@@ -197,16 +158,21 @@ class _BudgetCard extends StatelessWidget {
     }).toList();
   }
 
-  Color _statusColor(BuildContext context, BudgetStatus? status) {
-    final tones = context.tones;
-    return switch (status) {
-      BudgetStatus.overBudget => Colors.redAccent,
-      BudgetStatus.forecastBreach => Colors.orangeAccent,
-      BudgetStatus.nearLimit => Colors.amber.shade700,
-      BudgetStatus.onTrack => tones.brand.accent,
-      null => tones.textMuted,
-    };
-  }
+  Color _barColor(AppTones t, BudgetStatus? status) => switch (status) {
+        BudgetStatus.overBudget => t.expenseColor,
+        BudgetStatus.forecastBreach || BudgetStatus.nearLimit => t.accentWarm,
+        BudgetStatus.onTrack => t.incomeColor,
+        null => t.textMuted,
+      };
+
+  LedgerChipTone _statusTone(BudgetStatus? status) => switch (status) {
+        BudgetStatus.overBudget => LedgerChipTone.bad,
+        BudgetStatus.forecastBreach ||
+        BudgetStatus.nearLimit =>
+          LedgerChipTone.warm,
+        BudgetStatus.onTrack => LedgerChipTone.good,
+        null => LedgerChipTone.neutral,
+      };
 
   String _statusLabel(BudgetStatus? status) {
     return switch (status) {
@@ -218,201 +184,132 @@ class _BudgetCard extends StatelessWidget {
     };
   }
 
-  String _money(double value) {
-    return '${budget.currency} ${NumberFormat('#,##0.##').format(value)}';
-  }
+  String _money(double value) => LedgerMoney.format(value, budget.currency);
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     final progress = budget.progress;
-    final statusColor = _statusColor(context, progress?.status);
-    final netSpent = progress?.netSpent ?? 0.0;
+    final spent = progress?.netSpent ?? 0.0;
     final limit = progress?.effectiveLimit ?? budget.amount;
-    final remaining = progress?.remaining ?? limit;
-    final percent = progress?.percentUsed ?? 0.0;
     final refunds = progress?.refunds ?? 0.0;
-    final periodLine = progress != null
-        ? '${_periodLabel()} · ${DateFormat.MMMd().format(progress.periodStart)}'
-        : _periodLabel();
+    final isOver = spent > limit;
+    final locale = Localizations.localeOf(context).toString();
+    final meta = [
+      progress != null
+          ? '${_periodLabel()} · ${DateFormat.MMMd(locale).format(progress.periodStart)}'
+          : _periodLabel(),
+      ..._scopeLabels(),
+    ].join(' · ');
 
-    return InkWell(
+    return LedgerCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
-      child: Container(
-        padding: EdgeInsets.all(14.r),
-        decoration: BoxDecoration(
-          color: tones.bgSurface,
-          borderRadius: BorderRadius.circular(AppRadii.lg),
-          border: Border.all(color: tones.borderLight),
-          boxShadow: context.elevations.level1,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        budget.name,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w700,
-                          color: tones.textPrimary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        periodLine,
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          color: tones.textMuted,
-                        ),
-                      ),
-                    ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  budget.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14.5.lx,
+                    fontWeight: FontWeight.w600,
+                    color: t.textPrimary,
                   ),
                 ),
-                SizedBox(width: 8.w),
-                _MiniChip(label: _statusLabel(progress?.status), color: statusColor),
-                PopupMenuButton<String>(
-                  padding: EdgeInsets.zero,
-                  iconSize: 18.sp,
-                  itemBuilder: (_) => [
-                    PopupMenuItem(
-                        value: 'edit', child: Text(LocaleKeys.edit.tr())),
-                    PopupMenuItem(
-                        value: 'delete', child: Text(LocaleKeys.delete.tr())),
-                  ],
-                  onSelected: (v) {
-                    if (v == 'edit') onEdit();
-                    if (v == 'delete') onDelete();
-                  },
+              ),
+              if (!budget.isActive) ...[
+                LedgerChip(LocaleKeys.statusInactive.tr()),
+                SizedBox(width: 6.lx),
+              ],
+              LedgerChip(
+                _statusLabel(progress?.status),
+                tone: _statusTone(progress?.status),
+              ),
+              PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                tooltip: LocaleKeys.budgetDetailMore.tr(),
+                icon: Icon(
+                  LucideIcons.ellipsisVertical,
+                  size: 16.lx,
+                  color: t.textMuted,
                 ),
-              ],
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Text(LocaleKeys.edit.tr()),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text(LocaleKeys.delete.tr()),
+                  ),
+                ],
+                onSelected: (v) {
+                  if (v == 'edit') onEdit();
+                  if (v == 'delete') onDelete();
+                },
+              ),
+            ],
+          ),
+          Text(
+            meta,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12.lx, color: t.textMuted),
+          ),
+          SizedBox(height: 10.lx),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              LedgerAmount(
+                _money(spent),
+                size: 18,
+                weight: FontWeight.w600,
+                color: isOver ? t.expenseColor : t.textPrimary,
+              ),
+              SizedBox(width: 6.lx),
+              Expanded(
+                child: Text(
+                  isOver
+                      ? LocaleKeys.budgetDetailOfLimitOver.tr(namedArgs: {
+                          'limit': _money(limit),
+                          'amount': _money(spent - limit),
+                        })
+                      : LocaleKeys.budgetDetailOfLimitLeft.tr(namedArgs: {
+                          'limit': _money(limit),
+                          'amount': _money(limit - spent),
+                        }),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12.lx, color: t.textMuted),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.lx),
+          SizedBox(
+            width: double.infinity,
+            child: LedgerBar(
+              value: limit > 0 ? spent / limit : 0,
+              color: _barColor(t, progress?.status),
             ),
-            SizedBox(height: 8.h),
-            Wrap(
-              spacing: 6.w,
-              runSpacing: 6.h,
-              children: [
-                for (final label in _scopeLabels()) _MiniChip(label: label),
-                if (!budget.isActive)
-                  _MiniChip(label: LocaleKeys.statusInactive.tr(), muted: true),
-              ],
-            ),
-            SizedBox(height: 10.h),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppRadii.pill),
-              child: LinearProgressIndicator(
-                value: (percent / 100).clamp(0.0, 1.0),
-                minHeight: 8.h,
-                backgroundColor: tones.bgPage,
-                valueColor: AlwaysStoppedAnimation(statusColor),
+          ),
+          if (refunds > 0) ...[
+            SizedBox(height: 8.lx),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: LedgerChip(
+                _money(refunds),
+                icon: LucideIcons.undo2,
+                tone: LedgerChipTone.good,
               ),
             ),
-            SizedBox(height: 6.h),
-            Row(
-              children: [
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: _money(netSpent),
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        TextSpan(text: ' ${LocaleKeys.budgetOf.tr()} '),
-                        TextSpan(text: _money(limit)),
-                      ],
-                    ),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: tones.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Text(
-                  '${percent.round()}%',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: tones.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10.h),
-            Container(height: 1, color: tones.borderLight),
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                Text(
-                  LocaleKeys.budgetRemaining.tr().toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    letterSpacing: 0.5,
-                    color: tones.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(width: 6.w),
-                Expanded(
-                  child: Text(
-                    _money(remaining),
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                      color:
-                          remaining < 0 ? Colors.redAccent : tones.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (refunds > 0)
-                  _MiniChip(
-                    label: '↩ ${_money(refunds)}',
-                  ),
-              ],
-            ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MiniChip extends StatelessWidget {
-  final String label;
-  final bool muted;
-  final Color? color;
-  const _MiniChip({required this.label, this.muted = false, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    final accent = color ?? tones.brand.accent;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: muted ? tones.bgPage : accent.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadii.pill),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11.sp,
-          fontWeight: FontWeight.w600,
-          color: muted ? tones.textMuted : accent,
-        ),
+        ],
       ),
     );
   }
@@ -424,37 +321,34 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        padding: EdgeInsets.symmetric(horizontal: 32.lx),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.savings_outlined, size: 56.sp, color: tones.textMuted),
-            SizedBox(height: 16.h),
+            const LedgerCoin(icon: LucideIcons.target, size: 48),
+            SizedBox(height: 14.lx),
             Text(
               LocaleKeys.noBudgetsYet.tr(),
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: 17.lx,
                 fontWeight: FontWeight.w700,
-                color: tones.textPrimary,
+                color: t.textPrimary,
               ),
             ),
-            SizedBox(height: 6.h),
+            SizedBox(height: 6.lx),
             Text(
               LocaleKeys.noBudgetsDescription.tr(),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: tones.textSecondary,
-              ),
+              style: TextStyle(fontSize: 13.lx, color: t.textSecondary),
             ),
-            SizedBox(height: 20.h),
-            FilledButton.icon(
+            SizedBox(height: 18.lx),
+            LedgerButton(
+              label: LocaleKeys.createBudget.tr(),
+              icon: LucideIcons.plus,
               onPressed: onAdd,
-              icon: const Icon(Icons.add),
-              label: Text(LocaleKeys.createBudget.tr()),
             ),
           ],
         ),
@@ -469,17 +363,15 @@ class _NoMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
-      child: Center(
-        child: Text(
-          query.isEmpty
-              ? LocaleKeys.noBudgetsMatchFilter.tr()
-              : LocaleKeys.noMatchesForQuery.tr().replaceFirst('{0}', query),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14.sp, color: tones.textSecondary),
-        ),
+      padding: EdgeInsets.symmetric(vertical: 40.lx),
+      child: Text(
+        query.isEmpty
+            ? LocaleKeys.noBudgetsMatchFilter.tr()
+            : LocaleKeys.noMatchesForQuery.tr().replaceFirst('{0}', query),
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 13.lx, color: t.textSecondary),
       ),
     );
   }

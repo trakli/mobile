@@ -1,28 +1,26 @@
-import 'dart:ui' as ui;
-
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/spaces/share_to_space_sheet.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
+import 'package:trakli/presentation/transactions/ledger_transaction_row.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/path_helper.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_item.dart';
 import 'package:trakli/presentation/widgets/attachment/attachment_list_view.dart';
-import 'package:trakli/presentation/widgets/categories_widget.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/transfers/cubit/transfer_cubit.dart';
 import 'package:trakli/presentation/utils/transfer_counterpart_wallet.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/presentation/widgets/party_display_widget.dart';
 
 class TransactionDetailsBottomSheet extends StatefulWidget {
   const TransactionDetailsBottomSheet({
@@ -47,24 +45,17 @@ class TransactionDetailsBottomSheet extends StatefulWidget {
 
 class _TransactionDetailsBottomSheetState
     extends State<TransactionDetailsBottomSheet> {
-  SelectIconType? selectedIconType;
-
   /// 0 = Images, 1 = Files
   int _selectedAttachmentTab = 0;
-
-  DateFormat format = DateFormat('dd/MM/yyyy HH:mm');
 
   /// Description of the expense this refund reimburses, if resolvable locally.
   String? _refundOriginalLabel(BuildContext context) {
     final txn = widget.transaction.transaction;
     if (!txn.isRefund || txn.refundOfTransactionId == null) return null;
-    final original = context
-        .watch<TransactionCubit>()
-        .state
-        .transactions
-        .firstWhereOrNull(
-          (t) => t.transaction.id == txn.refundOfTransactionId,
-        );
+    final original =
+        context.watch<TransactionCubit>().state.transactions.firstWhereOrNull(
+              (t) => t.transaction.id == txn.refundOfTransactionId,
+            );
     if (original == null) return null;
     return original.transaction.description.isNotEmpty
         ? original.transaction.description
@@ -73,265 +64,293 @@ class _TransactionDetailsBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
     final wallets = context.watch<WalletCubit>().state.wallets;
     final transfers = context.watch<TransferCubit>().state.transfers;
-    final transferCounterpartWallet = transferCounterpartWalletFor(
+    final counterpart = transferCounterpartWalletFor(
       widget.transaction,
       transfers,
       wallets,
     );
 
-    final transaction = widget.transaction.transaction;
-    final category = widget.transaction.categories;
-    final party = widget.transaction.party;
-    final wallet = widget.transaction.wallet;
+    final complete = widget.transaction;
+    final transaction = complete.transaction;
+    final categories = complete.categories;
+    final party = complete.party;
+    final wallet = complete.wallet;
+    final isTransfer = transaction.isTransferLeg;
+    final isIncome = transaction.type == TransactionType.income;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final category = categories.isEmpty ? null : categories.first;
+    final title = transaction.description.trim().isNotEmpty
+        ? transaction.description.trim()
+        : (category?.name ?? party?.name ?? LocaleKeys.noDescription.tr());
+    final refundOf = _refundOriginalLabel(context);
+    final amountColor = isTransfer
+        ? t.textPrimary
+        : (isIncome ? t.incomeColor : t.expenseColor);
 
     return SafeArea(
-      child: SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16.w,
-            right: 16.w,
-            top: 16.h,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          14.lx,
+          10.lx,
+          14.lx,
+          14.lx + MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 8.h),
-              Stack(
+              const LedgerSheetHandle(),
+              SizedBox(height: 12.lx),
+              Row(
                 children: [
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.all(12.r),
-                      decoration: BoxDecoration(
-                        color: transaction.type == TransactionType.income
-                            ? transactionTileIncomeColor
-                            : transactionTileExpenseColor,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: SvgPicture.asset(
-                        transaction.type == TransactionType.income
-                            ? Assets.images.arrowSwapDown
-                            : Assets.images.arrowSwapUp,
-                        width: 20.r,
-                        height: 20.r,
-                        colorFilter: ColorFilter.mode(
-                          widget.accentColor,
-                          BlendMode.srcIn,
-                        ),
+                  LedgerCoin(
+                    media: category?.icon,
+                    icon: isTransfer
+                        ? LucideIcons.arrowLeftRight
+                        : (category == null
+                            ? (isIncome
+                                ? LucideIcons.arrowDownLeft
+                                : LucideIcons.arrowUpRight)
+                            : null),
+                  ),
+                  SizedBox(width: 10.lx),
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15.lx,
+                        fontWeight: FontWeight.w600,
+                        color: t.textPrimary,
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        width: 36.w,
-                        height: 36.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color:
-                              const Color(0xFF1D3229).withValues(alpha: 0.12),
-                        ),
-                        padding: EdgeInsets.all(8.r),
-                        child: Center(
-                          child: Icon(
-                            Icons.close,
-                            size: 16.r,
-                            color: widget.accentColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                  LedgerIconButton(
+                    icon: LucideIcons.x,
+                    tooltip:
+                        MaterialLocalizations.of(context).closeButtonTooltip,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
                 ],
               ),
-              SizedBox(height: 4.h),
-              Text(
-                CurrencyFormater.formatAmountWithSymbol(
-                  context,
-                  transaction.amount,
-                  compact: true,
-                  currency: widget.transaction.wallet.currency,
-                ),
-                style: TextStyle(
-                  color: widget.accentColor,
-                  fontSize: 25.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                format.format(transaction.datetime.toLocal()),
-                style: TextStyle(
-                  color: const Color(0xFF576760),
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+              SizedBox(height: 14.lx),
+              LedgerBigNumber(
+                ledgerSignedAmount(complete),
+                color: amountColor,
               ),
               if (transaction.isRefund ||
                   transaction.recurrencePeriod != null) ...[
-                SizedBox(height: 6.h),
+                SizedBox(height: 8.lx),
                 Wrap(
-                  spacing: 6.w,
-                  runSpacing: 4.h,
-                  alignment: WrapAlignment.center,
+                  spacing: 6.lx,
+                  runSpacing: 4.lx,
                   children: [
                     if (transaction.isRefund)
-                      _InfoChip(
-                        icon: Icons.assignment_return,
-                        label: LocaleKeys.refund.tr(),
-                        background:
-                            Theme.of(context).colorScheme.tertiaryContainer,
-                        foreground:
-                            Theme.of(context).colorScheme.onTertiaryContainer,
+                      LedgerChip(
+                        LocaleKeys.refund.tr(),
+                        icon: LucideIcons.undo2,
+                        tone: LedgerChipTone.good,
                       ),
                     if (transaction.recurrencePeriod != null)
-                      _InfoChip(
-                        icon: Icons.repeat,
-                        label: _recurrencePeriodLabel(
-                          transaction.recurrencePeriod!,
-                        ),
-                        background:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        foreground:
-                            Theme.of(context).colorScheme.onPrimaryContainer,
+                      LedgerChip(
+                        _recurrencePeriodLabel(transaction.recurrencePeriod!),
+                        icon: LucideIcons.repeat,
                       ),
                   ],
                 ),
-                if (_refundOriginalLabel(context) != null) ...[
-                  SizedBox(height: 4.h),
-                  Text(
-                    '${LocaleKeys.refundOf.tr()}: ${_refundOriginalLabel(context)}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: const Color(0xFF576760),
-                    ),
-                  ),
-                ],
               ],
-              SizedBox(height: 16.h),
-              if (transaction.description.isNotEmpty) ...[
+              if (refundOf != null) ...[
+                SizedBox(height: 6.lx),
                 Text(
-                  transaction.description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  '${LocaleKeys.refundOf.tr()}: $refundOf',
+                  style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
                 ),
-                SizedBox(height: 12.h),
               ],
-              PartyDisplayWidget(
-                type: widget.transaction.transaction.type,
-                party: party,
-                walletEntity: wallet,
-                transferCounterpartWallet: transferCounterpartWallet,
-                maxNameLength: 15,
-                fromTextSize: 16.sp,
-                labelSize: 12.sp,
-                toTextSize: 14.sp,
-                toIconSize: 14.w,
-                maxToWidth: 0.2.sw,
-              ),
-              SizedBox(height: 6.h),
-              CategoriesWidget(
-                categories: category,
-                accentColor: widget.accentColor,
-                placeholderSize: 20.sp,
-                emojiSize: 20.sp,
-                iconSize: 20.sp,
-              ),
-              if (widget.transaction.files.isNotEmpty) ...[
-                SizedBox(height: 12.h),
-                Center(
-                  child: Text(
-                    LocaleKeys.attachment.tr(),
-                    style: TextStyle(
-                      color: const Color(0xFF576760),
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 6.h),
-                Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _AttachmentTab(
-                        label: LocaleKeys.images.tr(),
-                        isSelected: _selectedAttachmentTab == 0,
-                        onTap: () => setState(() => _selectedAttachmentTab = 0),
-                        accentColor: widget.accentColor,
+              SizedBox(height: 14.lx),
+              LedgerCard(
+                padding: EdgeInsets.symmetric(horizontal: 12.lx),
+                child: Column(
+                  children: [
+                    if (isTransfer) ...[
+                      _Field(
+                        icon: LucideIcons.wallet,
+                        label: LocaleKeys.from.tr(),
+                        value:
+                            isIncome ? (counterpart?.name ?? '') : wallet.name,
                       ),
-                      SizedBox(width: 16.w),
-                      _AttachmentTab(
-                        label: LocaleKeys.files.tr(),
-                        isSelected: _selectedAttachmentTab == 1,
-                        onTap: () => setState(() => _selectedAttachmentTab = 1),
-                        accentColor: widget.accentColor,
+                      _Field(
+                        icon: LucideIcons.wallet,
+                        label: LocaleKeys.to.tr(),
+                        value:
+                            isIncome ? wallet.name : (counterpart?.name ?? ''),
+                      ),
+                    ] else ...[
+                      _Field(
+                        icon: LucideIcons.wallet,
+                        label: LocaleKeys.wallet.tr(),
+                        value: wallet.name,
+                      ),
+                      if (party != null)
+                        _Field(
+                          icon: LucideIcons.userRound,
+                          label: isIncome
+                              ? LocaleKeys.from.tr()
+                              : LocaleKeys.to.tr(),
+                          value: party.name,
+                        ),
+                      _Field(
+                        icon: LucideIcons.tag,
+                        label: LocaleKeys.category.tr(),
+                        value: categories.isEmpty
+                            ? LocaleKeys.none.tr()
+                            : categories.map((c) => c.name).join(', '),
+                        muted: categories.isEmpty,
                       ),
                     ],
-                  ),
+                    _Field(
+                      icon: LucideIcons.folder,
+                      label: LocaleKeys.group.tr(),
+                      value: complete.group?.name ?? LocaleKeys.none.tr(),
+                      muted: complete.group == null,
+                    ),
+                    _Field(
+                      icon: LucideIcons.calendar,
+                      label: LocaleKeys.txFormWhen.tr(),
+                      value: DateFormat('EEE, MMM d, y · HH:mm', locale)
+                          .format(transaction.datetime.toLocal()),
+                      divider: false,
+                    ),
+                  ],
                 ),
-                SizedBox(height: 8.h),
-                Center(
-                  child: _AttachmentTabContent(
-                    files: widget.transaction.files,
-                    selectedTab: _selectedAttachmentTab,
-                    accentColor: widget.accentColor,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-              ],
-              SizedBox(height: 16.h),
-              if (!widget.hideActions) ...[
+              ),
+              if (complete.files.isNotEmpty) ...[
+                SizedBox(height: 14.lx),
+                LedgerH6(LocaleKeys.attachment.tr()),
+                SizedBox(height: 6.lx),
                 Row(
-                  mainAxisSize: MainAxisSize.max,
-                  spacing: 16.w,
+                  children: [
+                    _AttachmentTab(
+                      label: LocaleKeys.images.tr(),
+                      isSelected: _selectedAttachmentTab == 0,
+                      onTap: () => setState(() => _selectedAttachmentTab = 0),
+                      accentColor: t.brandText,
+                    ),
+                    SizedBox(width: 16.lx),
+                    _AttachmentTab(
+                      label: LocaleKeys.files.tr(),
+                      isSelected: _selectedAttachmentTab == 1,
+                      onTap: () => setState(() => _selectedAttachmentTab = 1),
+                      accentColor: t.brandText,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.lx),
+                _AttachmentTabContent(
+                  files: complete.files,
+                  selectedTab: _selectedAttachmentTab,
+                  accentColor: t.brandText,
+                ),
+              ],
+              if (!widget.hideActions) ...[
+                SizedBox(height: 16.lx),
+                LedgerButton(
+                  label: LocaleKeys.spaceShareTitle.tr(),
+                  icon: LucideIcons.share2,
+                  style: LedgerButtonStyle.outline,
+                  large: true,
+                  onPressed: () => showShareToSpaceSheet(context, complete),
+                ),
+                SizedBox(height: 8.lx),
+                Row(
                   children: [
                     Expanded(
-                      child: PrimaryButton(
-                        onPress: () {
+                      child: LedgerButton(
+                        label: LocaleKeys.edit.tr(),
+                        icon: LucideIcons.pencil,
+                        large: true,
+                        onPressed: () {
                           Navigator.of(context).pop();
                           widget.onEdit();
                         },
-                        buttonText: LocaleKeys.edit.tr(),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        iconPath: Assets.images.edit2,
-                        iconColor: Colors.white,
-                        textDirection: ui.TextDirection.rtl,
                       ),
                     ),
+                    SizedBox(width: 8.lx),
                     Expanded(
-                      child: PrimaryButton(
-                        onPress: () {
+                      child: LedgerButton(
+                        label: LocaleKeys.delete.tr(),
+                        icon: LucideIcons.trash2,
+                        style: LedgerButtonStyle.outline,
+                        foreground: t.expenseColor,
+                        large: true,
+                        onPressed: () {
                           Navigator.of(context).pop();
                           widget.onDelete();
                         },
-                        buttonText: LocaleKeys.delete.tr(),
-                        backgroundColor: expenseRed,
-                        iconPath: Assets.images.trash,
-                        iconColor: const Color(0xFFEB5757),
-                        textDirection: ui.TextDirection.rtl,
-                        buttonTextColor: const Color(0xFFEB5757),
                       ),
                     ),
                   ],
                 ),
               ],
-              SizedBox(height: 36.h),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _Field extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool muted;
+  final bool divider;
+
+  const _Field({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.muted = false,
+    this.divider = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.lx),
+      decoration: BoxDecoration(
+        border:
+            divider ? Border(bottom: BorderSide(color: t.borderLight)) : null,
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16.lx, color: t.textMuted),
+          SizedBox(width: 10.lx),
+          SizedBox(
+            width: 70.lx,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 13.lx,
+                color: muted ? t.textMuted : t.textPrimary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -349,46 +368,6 @@ String _recurrencePeriodLabel(String period) {
       return LocaleKeys.yearly.tr();
     default:
       return period;
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-    required this.background,
-    required this.foreground,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color background;
-  final Color foreground;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14.sp, color: foreground),
-          SizedBox(width: 4.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w700,
-              color: foreground,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 
@@ -418,7 +397,7 @@ class _AttachmentTab extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: isSelected ? accentColor : const Color(0xFF576760),
+              color: isSelected ? accentColor : context.tones.textMuted,
             ),
           ),
           SizedBox(height: 4.h),
@@ -469,7 +448,7 @@ class _AttachmentTabContent extends StatelessWidget {
             emptyMessage,
             style: TextStyle(
               fontSize: 14.sp,
-              color: const Color(0xFF576760),
+              color: context.tones.textMuted,
             ),
           ),
         ),

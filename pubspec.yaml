@@ -108,6 +108,8 @@ dependencies:
   in_app_update: ^4.2.5
   firebase_remote_config: ^5.5.0
   gpt_markdown: ^1.1.7
+  speech_to_text: ^7.4.0
+  lucide_icons_flutter: ^3.1.12
 
 # Pinning these to the versions in pubspec.lock; the current Flutter SDK
 # pins newer matcher/test_api but other transitives (freezed, bloc_test)
@@ -159,6 +161,31 @@ flutter:
     - assets/translations/
     - assets/images/
     - assets/images/onboarding/
+
+  fonts:
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/Geist-Regular.ttf
+        - asset: assets/fonts/Geist-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Geist-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Geist-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Geist-ExtraBold.ttf
+          weight: 800
+    - family: GeistMono
+      fonts:
+        - asset: assets/fonts/GeistMono-Regular.ttf
+        - asset: assets/fonts/GeistMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/GeistMono-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/GeistMono-Bold.ttf
+          weight: 700
+    - family: BricolageGrotesque
+      fonts:
+        - asset: assets/fonts/BricolageGrotesque.ttf
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

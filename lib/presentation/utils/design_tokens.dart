@@ -52,6 +52,17 @@ class AppTones extends ThemeExtension<AppTones> {
   final Color accentWarm;
   final Color accentWarmSoft;
 
+  final Color surface2;
+  final Color surface3;
+
+  /// Filled brand surfaces (primary buttons, the selected wallet card).
+  /// Differs from [brandText] in dark mode, where text needs a lighter green
+  /// than a fill does to stay readable.
+  final Color brandFill;
+  final Color brandText;
+  final Color onBrand;
+  final Color warmText;
+
   const AppTones({
     required this.brand,
     required this.brandSoft,
@@ -76,108 +87,126 @@ class AppTones extends ThemeExtension<AppTones> {
     required this.expenseSoft,
     required this.accentWarm,
     required this.accentWarmSoft,
+    required this.surface2,
+    required this.surface3,
+    required this.brandFill,
+    required this.brandText,
+    required this.onBrand,
+    required this.warmText,
   });
 
   static const AppTones light = AppTones(
     brand: ToneColors(
-      background: Color(0xFFE6F2EC),
-      accent: Color(0xFF4AAD84),
+      background: Color(0xFFE2F1E8),
+      accent: Color(0xFF047844),
       deep: Color(0xFF047844),
-      ink: Color(0xFF111827),
+      ink: Color(0xFF0F1A14),
     ),
     brandSoft: ToneColors(
-      background: Color(0xFFF1F8F3),
-      accent: Color(0xFF7AC4A5),
-      deep: Color(0xFF036A3C),
-      ink: Color(0xFF111827),
+      background: Color(0xFFEEF2F0),
+      accent: Color(0xFF4AAD84),
+      deep: Color(0xFF035431),
+      ink: Color(0xFF0F1A14),
     ),
     income: ToneColors(
-      background: Color(0xFFE6F2EC),
-      accent: Color(0xFF16A34A),
-      deep: Color(0xFF15803D),
-      ink: Color(0xFF111827),
+      background: Color(0xFFE2F1E8),
+      accent: Color(0xFF047844),
+      deep: Color(0xFF047844),
+      ink: Color(0xFF0F1A14),
     ),
     expense: ToneColors(
-      background: Color(0xFFFDEDEF),
-      accent: Color(0xFFEF4F6B),
-      deep: Color(0xFFBE123C),
-      ink: Color(0xFF111827),
+      background: Color(0xFFFBE7EA),
+      accent: Color(0xFFC2364B),
+      deep: Color(0xFFC2364B),
+      ink: Color(0xFF0F1A14),
     ),
     neutral: ToneColors(
-      background: Color(0xFFFAFBFB),
-      accent: Color(0xFFC4CCC8),
-      deep: Color(0xFF4B5563),
-      ink: Color(0xFF111827),
+      background: Color(0xFFEEF2F0),
+      accent: Color(0xFFC9D3CD),
+      deep: Color(0xFF44554B),
+      ink: Color(0xFF0F1A14),
     ),
-    textPrimary: Color(0xFF111827),
-    textSecondary: Color(0xFF2D3748),
-    textMuted: Color(0xFF4B5563),
-    borderLight: Color(0xFFE2E5E9),
-    borderMedium: Color(0xFFCED4D8),
-    bgPage: Color(0xFFFAFBFC),
+    textPrimary: Color(0xFF0F1A14),
+    textSecondary: Color(0xFF44554B),
+    textMuted: Color(0xFF6E7E75),
+    borderLight: Color(0xFFDCE3DF),
+    borderMedium: Color(0xFFC9D3CD),
+    bgPage: Color(0xFFF4F6F5),
     bgSurface: Color(0xFFFFFFFF),
-    bgCard: Color(0xFFF5F7F6),
+    bgCard: Color(0xFFEEF2F0),
     glassBg: Color(0xC7FFFFFF),
     glassBgStrong: Color(0xEBFFFFFF),
     hoverOverlay: Color(0x0F000000),
     pressOverlay: Color(0x1F000000),
-    incomeColor: Color(0xFF16A34A),
-    expenseColor: Color(0xFFEF4F6B),
-    incomeSoft: Color(0x1F16A34A),
-    expenseSoft: Color(0x1FEF4F6B),
+    incomeColor: Color(0xFF047844),
+    expenseColor: Color(0xFFC2364B),
+    incomeSoft: Color(0xFFE2F1E8),
+    expenseSoft: Color(0xFFFBE7EA),
     accentWarm: Color(0xFFFF9500),
     accentWarmSoft: Color(0xFFFFF1DC),
+    surface2: Color(0xFFEEF2F0),
+    surface3: Color(0xFFE3E9E5),
+    brandFill: Color(0xFF047844),
+    brandText: Color(0xFF047844),
+    onBrand: Color(0xFFFFFFFF),
+    warmText: Color(0xFFB05C00),
   );
 
   static const AppTones dark = AppTones(
     brand: ToneColors(
-      background: Color(0x29059669),
-      accent: Color(0xFF6EE7B7),
-      deep: Color(0xFF34D399),
-      ink: Color(0xFFF9FAFB),
+      background: Color(0xFF123524),
+      accent: Color(0xFF4FD18F),
+      deep: Color(0xFF4FD18F),
+      ink: Color(0xFFE8F0EB),
     ),
     brandSoft: ToneColors(
-      background: Color(0x1A059669),
-      accent: Color(0xFFA7F3D0),
-      deep: Color(0xFF34D399),
-      ink: Color(0xFFF9FAFB),
+      background: Color(0xFF18251E),
+      accent: Color(0xFF4FD18F),
+      deep: Color(0xFF4FD18F),
+      ink: Color(0xFFE8F0EB),
     ),
     income: ToneColors(
-      background: Color(0x244ADE80),
-      accent: Color(0xFF4ADE80),
-      deep: Color(0xFF4ADE80),
-      ink: Color(0xFFF9FAFB),
+      background: Color(0xFF123524),
+      accent: Color(0xFF4FD18F),
+      deep: Color(0xFF4FD18F),
+      ink: Color(0xFFE8F0EB),
     ),
     expense: ToneColors(
-      background: Color(0x24FB7185),
-      accent: Color(0xFFFB7185),
-      deep: Color(0xFFFB7185),
-      ink: Color(0xFFF9FAFB),
+      background: Color(0xFF3B1A20),
+      accent: Color(0xFFFF7A8A),
+      deep: Color(0xFFFF7A8A),
+      ink: Color(0xFFE8F0EB),
     ),
     neutral: ToneColors(
-      background: Color(0x0AFFFFFF),
-      accent: Color(0xFF4B5563),
-      deep: Color(0xFFE5E7EB),
-      ink: Color(0xFFF9FAFB),
+      background: Color(0xFF18251E),
+      accent: Color(0xFF33443A),
+      deep: Color(0xFFA9BBB1),
+      ink: Color(0xFFE8F0EB),
     ),
-    textPrimary: Color(0xFFF9FAFB),
-    textSecondary: Color(0xFFE5E7EB),
-    textMuted: Color(0xFF9CA3AF),
-    borderLight: Color(0xFF374151),
-    borderMedium: Color(0xFF4B5563),
-    bgPage: Color(0xFF0F172A),
-    bgSurface: Color(0xFF111827),
-    bgCard: Color(0xFF1E293B),
+    textPrimary: Color(0xFFE8F0EB),
+    textSecondary: Color(0xFFA9BBB1),
+    textMuted: Color(0xFF7D8F85),
+    borderLight: Color(0xFF26352D),
+    borderMedium: Color(0xFF33443A),
+    bgPage: Color(0xFF0C1410),
+    bgSurface: Color(0xFF121C17),
+    bgCard: Color(0xFF18251E),
     glassBg: Color(0x24FFFFFF),
     glassBgStrong: Color(0x42FFFFFF),
     hoverOverlay: Color(0x14FFFFFF),
     pressOverlay: Color(0x29FFFFFF),
-    incomeColor: Color(0xFF4ADE80),
-    expenseColor: Color(0xFFFB7185),
-    incomeSoft: Color(0x2E4ADE80),
-    expenseSoft: Color(0x2EFB7185),
-    accentWarm: Color(0xFFFFB252),
-    accentWarmSoft: Color(0x29FFB252),
+    incomeColor: Color(0xFF4FD18F),
+    expenseColor: Color(0xFFFF7A8A),
+    incomeSoft: Color(0xFF123524),
+    expenseSoft: Color(0xFF3B1A20),
+    accentWarm: Color(0xFFFF9500),
+    accentWarmSoft: Color(0xFF3A2A12),
+    surface2: Color(0xFF18251E),
+    surface3: Color(0xFF1F2E26),
+    brandFill: Color(0xFF0A8A50),
+    brandText: Color(0xFF4FD18F),
+    onBrand: Color(0xFFFFFFFF),
+    warmText: Color(0xFFFFB347),
   );
 
   ToneColors tone(AppTone tone) {
@@ -196,7 +225,7 @@ class AppTones extends ThemeExtension<AppTones> {
         return ToneColors(
           background: accentWarmSoft,
           accent: accentWarm,
-          deep: accentWarm,
+          deep: warmText,
           ink: textPrimary,
         );
     }
@@ -345,26 +374,19 @@ class AppElevations extends ThemeExtension<AppElevations> {
 /// is intentionally tighter than the prior ad-hoc radii (~30% smaller) so
 /// surfaces read calmer on a phone.
 class AppRadii {
-  /// Tiny chip / inner element (4)
-  static const double xs = 4;
+  static const double xs = 3;
 
-  /// Small surface (6) — leading icon squares, small badges
-  static const double sm = 6;
+  static const double sm = 4;
 
-  /// Default tile / inner card (8)
-  static const double md = 8;
+  static const double md = 6;
 
-  /// Surface card (11)
-  static const double lg = 11;
+  static const double lg = 7;
 
-  /// Large feature card (14)
-  static const double xl = 14;
+  static const double xl = 8;
 
-  /// Hero card (17)
-  static const double xxl = 17;
+  static const double xxl = 8;
 
-  /// Pill / fully rounded
-  static const double pill = 999;
+  static const double pill = 8;
 }
 
 /// Motion tokens, matching the web's easings + durations so

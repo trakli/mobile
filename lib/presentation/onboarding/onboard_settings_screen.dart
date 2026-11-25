@@ -4,13 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/domain/repositories/config_repository.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart' show setOnboardingMode;
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
@@ -24,9 +22,14 @@ import 'package:trakli/presentation/onboarding/widgets/wallet_setup_widget.dart'
 import 'package:trakli/presentation/root/main_navigation_screen.dart';
 import 'package:trakli/presentation/splash/splash_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/ai_chat/widgets/trakli_mark.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_empty.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 // Reusable helper to resolve the default currency from configs
 Currency? getDefaultCurrencyFromConfig(BuildContext context) {
@@ -194,32 +197,13 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
         // Show error state if there's a failure
         if (configState.failure.hasError) {
           return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48.sp,
-                    color: Colors.red,
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    configState.failure.customMessage,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  SizedBox(height: 24.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ConfigCubit>().getConfigs();
-                    },
-                    child: Text(LocaleKeys.retry.tr()),
-                  ),
-                ],
+            backgroundColor: context.tones.bgPage,
+            body: SafeArea(
+              child: LedgerEmptyState(
+                icon: LucideIcons.cloudAlert,
+                title: configState.failure.customMessage,
+                actionLabel: LocaleKeys.retry.tr(),
+                onAction: () => context.read<ConfigCubit>().getConfigs(),
               ),
             ),
           );
@@ -276,93 +260,80 @@ class _OnboardSettingsScreenState extends State<OnboardSettingsScreen> {
         ),
       ],
       child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.only(
-            top: 0.08.sh,
-          ),
-          child: SafeArea(
-            top: false,
-            left: false,
-            right: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        Assets.images.logoGreen,
-                        height: 38.h,
+        backgroundColor: context.tones.bgPage,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.lx, 20.lx, 16.lx, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const TrakliLogo(height: 26),
+                    SizedBox(height: 18.lx),
+                    Text(
+                      LocaleKeys.welcomeText.tr(),
+                      style: LedgerText.display(
+                        size: 24.lx,
+                        color: context.tones.textPrimary,
                       ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        LocaleKeys.welcomeText.tr(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ),
+                    SizedBox(height: 6.lx),
+                    Text(
+                      LocaleKeys.welcomeDesc.tr(),
+                      style: TextStyle(
+                        fontSize: 13.5.lx,
+                        height: 1.4,
+                        color: context.tones.textSecondary,
                       ),
-                      SizedBox(height: 1.h),
-                      Text(
-                        LocaleKeys.welcomeDesc.tr(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 14.sp, color: Colors.grey.shade700),
-                      ),
-                      SizedBox(height: 4.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12.r),
-                              child: LinearProgressIndicator(
-                                value: pendingPages.isEmpty
-                                    ? 1
-                                    : (_currentPage + 1) /
-                                        (_totalSteps == 0 ? 1 : _totalSteps),
-                                backgroundColor: Colors.grey,
-                                valueColor:
-                                    AlwaysStoppedAnimation(appPrimaryColor),
-                                minHeight: 6.h,
-                              ),
-                            ),
+                    ),
+                    SizedBox(height: 14.lx),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LedgerBar(
+                            value: pendingPages.isEmpty
+                                ? 1
+                                : (_currentPage + 1) /
+                                    (_totalSteps == 0 ? 1 : _totalSteps),
                           ),
-                          Text(
-                            LocaleKeys.stepCounter.tr(
-                              args: [
-                                (_currentPage + 1).toString(),
-                                (_totalSteps == 0 ? 1 : _totalSteps).toString(),
-                              ],
-                            ),
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                Expanded(
-                  child: pendingPages.isEmpty
-                      ? const SizedBox.shrink()
-                      : PageView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                            hideKeyBoard();
-                          },
-                          children: pendingPages,
                         ),
+                        SizedBox(width: 10.lx),
+                        Text(
+                          LocaleKeys.stepCounter.tr(
+                            args: [
+                              (_currentPage + 1).toString(),
+                              (_totalSteps == 0 ? 1 : _totalSteps).toString(),
+                            ],
+                          ),
+                          style: LedgerText.money(
+                            size: 12.lx,
+                            color: context.tones.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 10.h),
+              Expanded(
+                child: pendingPages.isEmpty
+                    ? const SizedBox.shrink()
+                    : PageView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        controller: pageController,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                          hideKeyBoard();
+                        },
+                        children: pendingPages,
+                      ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,10 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/statistics/reports/report_data.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
-/// Savings rate and expense ratio summary. Each ratio renders as a tonal
-/// row with a progress fill and a percentage caption.
+/// Savings rate and expense ratio, each as a bar with a target marker.
 class FinancialRatios extends StatelessWidget {
   final ReportTotals totals;
 
@@ -13,26 +15,25 @@ class FinancialRatios extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
-    final savings = (totals.savingsRate * 100).clamp(-200, 100).toDouble();
-    final expense = (totals.expenseRatio * 100).clamp(0, 200).toDouble();
+    final savings = totals.savingsRate * 100;
+    final expense = totals.expenseRatio * 100;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _RatioBar(
-          label: 'Savings rate',
+          label: LocaleKeys.statsSavingsRate.tr(),
           percent: savings,
-          fillColor:
-              savings >= 0 ? tones.incomeColor : tones.expenseColor,
+          color: savings >= 20 ? tones.incomeColor : tones.accentWarm,
           target: 20,
+          note: LocaleKeys.statsSavingsGoal.tr(),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 14.lx),
         _RatioBar(
-          label: 'Expense ratio',
+          label: LocaleKeys.statsExpenseRatio.tr(),
           percent: expense,
-          fillColor:
-              expense <= 100 ? tones.brand.deep : tones.expenseColor,
+          color: expense <= 80 ? tones.incomeColor : tones.expenseColor,
           target: 80,
-          referenceLabel: 'Goal: keep under 80%',
+          note: LocaleKeys.statsExpenseGoal.tr(),
         ),
       ],
     );
@@ -42,91 +43,68 @@ class FinancialRatios extends StatelessWidget {
 class _RatioBar extends StatelessWidget {
   final String label;
   final double percent;
-  final Color fillColor;
+  final Color color;
   final double target;
-  final String? referenceLabel;
+  final String note;
 
   const _RatioBar({
     required this.label,
     required this.percent,
-    required this.fillColor,
+    required this.color,
     required this.target,
-    this.referenceLabel,
+    required this.note,
   });
 
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
-    final clamped = percent.clamp(0, 100).toDouble();
-
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
-                label.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w700,
-                  color: tones.textMuted,
-                ),
+                label,
+                style: TextStyle(fontSize: 13.lx, color: tones.textPrimary),
               ),
             ),
             Text(
               '${percent.toStringAsFixed(0)}%',
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w700,
-                color: tones.textPrimary,
-                fontFeatures: const [FontFeature.tabularFigures()],
+              style: LedgerText.money(
+                size: 13.lx,
+                weight: FontWeight.w600,
+                color: color,
               ),
             ),
           ],
         ),
-        SizedBox(height: 6.h),
-        Stack(
-          children: [
-            Container(
-              height: 8,
-              decoration: BoxDecoration(
-                color: tones.borderLight.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(999),
+        SizedBox(height: 6.lx),
+        LayoutBuilder(
+          builder: (context, box) => Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SizedBox(
+                width: box.maxWidth,
+                child: LedgerBar(value: percent / 100, height: 6, color: color),
               ),
-            ),
-            FractionallySizedBox(
-              widthFactor: clamped / 100,
-              child: Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  color: fillColor,
-                  borderRadius: BorderRadius.circular(999),
+              Positioned(
+                left: box.maxWidth * target / 100 - 1,
+                top: -3.lx,
+                child: Container(
+                  width: 2,
+                  height: 12.lx,
+                  color: tones.textSecondary,
                 ),
               ),
-            ),
-            // Target marker.
-            Positioned(
-              left: (target / 100) * MediaQuery.of(context).size.width * 0.85,
-              child: Container(
-                height: 14,
-                width: 2,
-                color: tones.textPrimary.withValues(alpha: 0.6),
-              ),
-            ),
-          ],
-        ),
-        if (referenceLabel != null) ...[
-          SizedBox(height: 4.h),
-          Text(
-            referenceLabel!,
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: tones.textMuted,
-            ),
+            ],
           ),
-        ],
+        ),
+        SizedBox(height: 4.lx),
+        Text(
+          note,
+          style: TextStyle(fontSize: 11.lx, color: tones.textMuted),
+        ),
       ],
     );
   }

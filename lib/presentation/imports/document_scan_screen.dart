@@ -4,6 +4,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/domain/entities/import/document_type.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/imports/cubit/import_cubit.dart';
@@ -72,27 +76,39 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tones = context.tones;
     return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.importScanDocument.tr())),
+      backgroundColor: tones.bgPage,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(48.lx),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 4.lx),
+            child: LedgerScreenBar(
+              title: LocaleKeys.importScanDocument.tr(),
+              leadingIcon: LucideIcons.x,
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: BlocBuilder<ImportCubit, ImportState>(
           builder: (context, state) {
             return SingleChildScrollView(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(14.lx),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     LocaleKeys.importScanDocumentDesc.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                    style: TextStyle(
+                      fontSize: 13.lx,
+                      height: 1.45,
+                      color: tones.textSecondary,
+                    ),
                   ),
                   SizedBox(height: 20.h),
-                  Text(
-                    LocaleKeys.importDocTypeLabel.tr(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                  LedgerH6(LocaleKeys.importDocTypeLabel.tr()),
                   SizedBox(height: 8.h),
                   DropdownButtonFormField<DocumentType>(
                     initialValue: _type,
@@ -112,13 +128,10 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                           },
                   ),
                   SizedBox(height: 20.h),
-                  Text(
-                    LocaleKeys.importSourceLabel.tr(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                  LedgerH6(LocaleKeys.importSourceLabel.tr()),
                   SizedBox(height: 8.h),
                   ImportSourceButton(
-                    icon: Icons.photo_camera_outlined,
+                    icon: LucideIcons.camera,
                     label: LocaleKeys.importSourceCamera.tr(),
                     subtitle: LocaleKeys.importSourceCameraDesc.tr(),
                     onTap: state.isUploading
@@ -128,7 +141,7 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                   ),
                   SizedBox(height: 8.h),
                   ImportSourceButton(
-                    icon: Icons.photo_library_outlined,
+                    icon: LucideIcons.images,
                     label: LocaleKeys.importSourceGallery.tr(),
                     subtitle: LocaleKeys.importSourceGalleryDesc.tr(),
                     onTap: state.isUploading
@@ -138,7 +151,7 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                   ),
                   SizedBox(height: 8.h),
                   ImportSourceButton(
-                    icon: Icons.folder_outlined,
+                    icon: LucideIcons.folder,
                     label: LocaleKeys.importSourceFile.tr(),
                     subtitle: LocaleKeys.importSourceFileDesc.tr(),
                     onTap: state.isUploading
@@ -156,22 +169,14 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                     ),
                   ],
                   SizedBox(height: 24.h),
-                  SizedBox(
-                    height: 52.h,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: (_picked == null || state.isUploading)
-                          ? null
-                          : _analyze,
-                      child: state.isUploading
-                          ? SizedBox(
-                              width: 20.w,
-                              height: 20.h,
-                              child: const CircularProgressIndicator(
-                                  strokeWidth: 2),
-                            )
-                          : Text(LocaleKeys.importAnalyze.tr()),
-                    ),
+                  LedgerButton(
+                    label: LocaleKeys.importAnalyze.tr(),
+                    icon: LucideIcons.sparkles,
+                    large: true,
+                    busy: state.isUploading,
+                    onPressed: (_picked == null || state.isUploading)
+                        ? null
+                        : _analyze,
                   ),
                 ],
               ),

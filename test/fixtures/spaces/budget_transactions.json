@@ -1,0 +1,50 @@
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {
+    "data": [
+      {
+        "id": 481,
+        "amount": 84.2,
+        "type": "expense",
+        "datetime": "2026-11-03T10:00:00+00:00",
+        "description": "Carrefour Market",
+        "currency": "EUR",
+        "wallet_id": 28,
+        "wallet_name": "Household",
+        "contributor": "",
+        "source": "workspace",
+        "can_edit": true,
+        "can_unshare": false,
+        "is_refund": false,
+        "category_ids": [
+          81
+        ],
+        "group_ids": []
+      },
+      {
+        "id": 483,
+        "amount": 41.8,
+        "type": "expense",
+        "datetime": "2026-11-01T10:00:00+00:00",
+        "description": "Marche Saint-Quentin",
+        "currency": "EUR",
+        "wallet_id": 28,
+        "wallet_name": "Household",
+        "contributor": "",
+        "source": "workspace",
+        "can_edit": true,
+        "can_unshare": false,
+        "is_refund": false,
+        "category_ids": [
+          81
+        ],
+        "group_ids": []
+      }
+    ],
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 25,
+    "total": 2
+  }
+}

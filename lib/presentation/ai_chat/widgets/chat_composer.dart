@@ -3,11 +3,16 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/ai_chat/dictation/dictation_cubit.dart';
 import 'package:trakli/presentation/imports/widgets/import_file_picker.dart';
 import 'package:trakli/presentation/imports/widgets/import_source_button.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 
 class Composer extends StatefulWidget {
   final TextEditingController controller;
@@ -32,6 +37,7 @@ class ComposerState extends State<Composer> {
   bool _hasText = false;
   final List<File> _files = [];
   String? _documentType;
+  String _dictationBase = '';
 
   @override
   void initState() {
@@ -53,6 +59,7 @@ class ComposerState extends State<Composer> {
   void _submit() {
     final text = widget.controller.text.trim();
     if (text.isEmpty && _files.isEmpty) return;
+    context.read<DictationCubit>().cancel();
     widget.onSend(text, List.of(_files), _documentType);
     setState(() {
       _files.clear();
@@ -60,14 +67,48 @@ class ComposerState extends State<Composer> {
     });
   }
 
+  void _toggleDictation() {
+    context.read<DictationCubit>().toggle(
+          languageCode: Localizations.maybeLocaleOf(context)?.languageCode,
+        );
+  }
+
+  void _onDictationChanged(BuildContext context, DictationState state) {
+    if (state.status == DictationStatus.starting) {
+      _dictationBase = widget.controller.text.trimRight();
+      return;
+    }
+    if (state.error != DictationError.none) {
+      showSnackBar(message: _dictationErrorMessage(state.error));
+      return;
+    }
+    final words = state.recognizedWords.trim();
+    if (words.isEmpty) return;
+    final text = _dictationBase.isEmpty ? words : '$_dictationBase $words';
+    widget.controller.value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+
+  String _dictationErrorMessage(DictationError error) => switch (error) {
+        DictationError.permissionDenied =>
+          LocaleKeys.aiChatDictationPermissionDenied.tr(),
+        DictationError.unavailable =>
+          LocaleKeys.aiChatDictationUnavailable.tr(),
+        DictationError.failed ||
+        DictationError.none =>
+          LocaleKeys.aiChatDictationFailed.tr(),
+      };
+
   Future<void> _openAttachSheet() async {
     final tones = context.tones;
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: tones.bgSurface,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
       ),
       builder: (sheetContext) {
         Future<void> pick(
@@ -119,7 +160,7 @@ class ComposerState extends State<Composer> {
                     children: [
                       Expanded(
                         child: _SourceSquare(
-                          icon: Icons.photo_camera_outlined,
+                          icon: LucideIcons.camera,
                           label: LocaleKeys.importSourceCamera.tr(),
                           onTap: () =>
                               pick(ImportFilePicker.captureFromCamera, null),
@@ -128,7 +169,7 @@ class ComposerState extends State<Composer> {
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _SourceSquare(
-                          icon: Icons.photo_library_outlined,
+                          icon: LucideIcons.images,
                           label: LocaleKeys.importSourceGallery.tr(),
                           onTap: () =>
                               pick(ImportFilePicker.pickFromGallery, null),
@@ -158,8 +199,7 @@ class ComposerState extends State<Composer> {
                     icon: Icons.receipt_long_outlined,
                     label: LocaleKeys.importDocReceipt.tr(),
                     subtitle: LocaleKeys.importSourceFileDesc.tr(),
-                    onTap: () =>
-                        pick(ImportFilePicker.pickDocument, 'receipt'),
+                    onTap: () => pick(ImportFilePicker.pickDocument, 'receipt'),
                   ),
                   SizedBox(height: 8.h),
                   ImportSourceButton(
@@ -186,11 +226,24 @@ class ComposerState extends State<Composer> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer<DictationCubit, DictationState>(
+      listenWhen: (a, b) =>
+          (a.status != b.status && b.status == DictationStatus.starting) ||
+          (a.error != b.error && b.error != DictationError.none) ||
+          a.recognizedWords != b.recognizedWords,
+      listener: _onDictationChanged,
+      buildWhen: (a, b) =>
+          a.status != b.status || a.isAvailable != b.isAvailable,
+      builder: _buildComposer,
+    );
+  }
+
+  Widget _buildComposer(BuildContext context, DictationState dictation) {
     final tones = context.tones;
     final canSend = (_hasText || _files.isNotEmpty) && !widget.isSending;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 10.h),
+      padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 10.lx),
       child: SafeArea(
         top: false,
         child: Column(
@@ -199,10 +252,10 @@ class ComposerState extends State<Composer> {
           children: [
             if (_files.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
+                padding: EdgeInsets.only(bottom: 8.lx),
                 child: Wrap(
-                  spacing: 6.w,
-                  runSpacing: 6.h,
+                  spacing: 6.lx,
+                  runSpacing: 6.lx,
                   children: List.generate(_files.length, (i) {
                     return _AttachmentPreview(
                       file: _files[i],
@@ -217,21 +270,18 @@ class ComposerState extends State<Composer> {
             Container(
               decoration: BoxDecoration(
                 color: tones.bgSurface,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(AppRadii.md),
                 border: Border.all(color: tones.borderLight),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              padding: EdgeInsets.fromLTRB(4.lx, 2.lx, 4.lx, 2.lx),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 4.h),
-                    child: _AttachButton(onTap: _openAttachSheet),
-                  ),
-                  SizedBox(width: 1.w),
+                  _AttachButton(onTap: _openAttachSheet),
+                  SizedBox(width: 2.lx),
                   Expanded(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: 120.h),
+                      constraints: BoxConstraints(maxHeight: 120.lx),
                       child: TextField(
                         controller: widget.controller,
                         focusNode: widget.focus,
@@ -241,7 +291,7 @@ class ComposerState extends State<Composer> {
                         keyboardType: TextInputType.multiline,
                         style: TextStyle(
                           color: tones.textPrimary,
-                          fontSize: 14.sp,
+                          fontSize: 13.lx,
                           height: 1.4,
                         ),
                         decoration: InputDecoration(
@@ -249,27 +299,34 @@ class ComposerState extends State<Composer> {
                           focusedBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           disabledBorder: InputBorder.none,
+                          filled: false,
                           isCollapsed: true,
                           isDense: true,
-                          contentPadding: EdgeInsets.fromLTRB(0, 12.h, 0, 12.h),
-                          hintText: LocaleKeys.aiChatComposerPlaceholder.tr(),
+                          contentPadding: EdgeInsets.fromLTRB(0, 9.lx, 0, 9.lx),
+                          hintText: dictation.isActive
+                              ? LocaleKeys.aiChatDictationListening.tr()
+                              : LocaleKeys.aiChatComposerPlaceholder.tr(),
                           hintStyle: TextStyle(
                             color: tones.textMuted,
-                            fontSize: 14.sp,
+                            fontSize: 13.lx,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 4.h),
-                    child: _SendButton(
+                  DictationButton(
+                    isListening: dictation.isActive,
+                    isAvailable: dictation.isAvailable,
+                    onTap: _toggleDictation,
+                  ),
+                  if (canSend || widget.isSending) ...[
+                    SizedBox(width: 2.lx),
+                    _SendButton(
                       canSend: canSend,
                       isSending: widget.isSending,
                       onTap: _submit,
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -324,7 +381,7 @@ class _AttachmentPreview extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(AppRadii.sm),
                 child: SizedBox(
                   width: size,
                   height: size,
@@ -369,12 +426,12 @@ class _AttachmentPreview extends StatelessWidget {
 
   Widget _docTile(AppTones tones) {
     return Container(
-      color: tones.bgCard,
+      color: tones.surface2,
       alignment: Alignment.center,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_docIcon, size: 22.sp, color: tones.brand.deep),
+          Icon(_docIcon, size: 22.sp, color: tones.brandText),
           if (_ext.isNotEmpty) ...[
             SizedBox(height: 2.h),
             Text(
@@ -406,35 +463,92 @@ class _SendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final tones = context.tones;
     final enabled = canSend && !isSending;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 36.r,
-      height: 36.r,
-      decoration: BoxDecoration(
-        color: enabled ? tones.brand.deep : tones.borderLight,
-        shape: BoxShape.circle,
+    return Material(
+      color: tones.brandFill,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadii.sm),
       ),
-      child: Material(
-        color: Colors.transparent,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: enabled ? onTap : null,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        child: SizedBox(
+          width: 34.lx,
+          height: 34.lx,
           child: Center(
             child: isSending
                 ? SizedBox(
-                    width: 14.r,
-                    height: 14.r,
-                    child: const CircularProgressIndicator(
-                      color: Colors.white,
+                    width: 14.lx,
+                    height: 14.lx,
+                    child: CircularProgressIndicator(
+                      color: tones.onBrand,
                       strokeWidth: 2,
                     ),
                   )
                 : Icon(
-                    Icons.send_rounded,
-                    color: enabled ? Colors.white : tones.textMuted,
-                    size: 16.sp,
+                    LucideIcons.arrowUp,
+                    color: tones.onBrand,
+                    size: 16.lx,
                   ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DictationButton extends StatelessWidget {
+  final bool isListening;
+  final bool isAvailable;
+  final VoidCallback onTap;
+  const DictationButton({
+    super.key,
+    required this.isListening,
+    required this.isAvailable,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tones = context.tones;
+    final tooltip = !isAvailable
+        ? LocaleKeys.aiChatDictationUnavailable.tr()
+        : isListening
+            ? LocaleKeys.aiChatDictationStop.tr()
+            : LocaleKeys.aiChatDictationStart.tr();
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        enabled: isAvailable,
+        label: tooltip,
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: isAvailable ? onTap : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              width: 34.lx,
+              height: 34.lx,
+              decoration: BoxDecoration(
+                color: isListening ? tones.expenseSoft : null,
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+              ),
+              child: Icon(
+                !isAvailable
+                    ? LucideIcons.micOff
+                    : isListening
+                        ? LucideIcons.square
+                        : LucideIcons.mic,
+                size: 16.lx,
+                color: !isAvailable
+                    ? tones.textMuted
+                    : isListening
+                        ? tones.expenseColor
+                        : tones.textMuted,
+              ),
+            ),
           ),
         ),
       ),
@@ -451,22 +565,16 @@ class _AttachButton extends StatelessWidget {
     final tones = context.tones;
     return Material(
       color: Colors.transparent,
-      shape: const CircleBorder(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadii.sm),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        customBorder: const CircleBorder(),
         onTap: onTap,
-        child: Container(
-          width: 36.r,
-          height: 36.r,
-          decoration: BoxDecoration(
-            color: tones.bgCard,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.add_rounded,
-            size: 20.sp,
-            color: tones.textSecondary,
-          ),
+        child: SizedBox(
+          width: 34.lx,
+          height: 34.lx,
+          child: Icon(LucideIcons.plus, size: 16.lx, color: tones.textMuted),
         ),
       ),
     );
@@ -487,21 +595,21 @@ class _SourceSquare extends StatelessWidget {
   Widget build(BuildContext context) {
     final tones = context.tones;
     return Material(
-      color: tones.bgCard,
-      borderRadius: BorderRadius.circular(14.r),
+      color: tones.bgSurface,
+      borderRadius: BorderRadius.circular(AppRadii.md),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         child: Container(
           height: 96.h,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14.r),
+            borderRadius: BorderRadius.circular(AppRadii.md),
             border: Border.all(color: tones.borderLight),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 28.sp, color: tones.brand.deep),
+              Icon(icon, size: 24.sp, color: tones.brandText),
               SizedBox(height: 8.h),
               Text(
                 label,

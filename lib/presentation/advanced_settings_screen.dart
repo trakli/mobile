@@ -1,12 +1,14 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/orphaned_media_cleanup_log_screen.dart';
 import 'package:trakli/presentation/sync_history_screen.dart';
-import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class AdvancedSettingsScreen extends StatelessWidget {
   const AdvancedSettingsScreen({super.key});
@@ -14,86 +16,32 @@ class AdvancedSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PageAppBar(
-        title: LocaleKeys.advanced.tr(),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 16.h,
-        ),
-        child: Column(
-          children: [
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              onTap: () {
-                AppNavigator.push(context, const SyncHistoryScreen());
-              },
-              leading: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                ),
-                child: Icon(
-                  Icons.sync,
-                  color: Theme.of(context).primaryColor,
-                ),
+      backgroundColor: context.tones.bgPage,
+      appBar: PageAppBar(title: LocaleKeys.advanced.tr()),
+      body: LedgerSettingsList(
+        children: [
+          LedgerSettingsGroup(
+            children: [
+              LedgerSettingsRow(
+                icon: LucideIcons.refreshCw,
+                title: LocaleKeys.synchronization.tr(),
+                subtitle: LocaleKeys.syncHistoryDesc.tr(),
+                onTap: () =>
+                    AppNavigator.push(context, const SyncHistoryScreen()),
               ),
-              title: Text(LocaleKeys.synchronization.tr()),
-              subtitle: Text(
-                LocaleKeys.syncHistoryDesc.tr(),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey[600],
-                ),
-              ),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                size: 16.sp,
-              ),
-            ),
-            if (kDebugMode) ...[
-              SizedBox(height: 24.h),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                onTap: () {
-                  AppNavigator.push(
+              if (kDebugMode)
+                LedgerSettingsRow(
+                  icon: LucideIcons.folderOpen,
+                  title: LocaleKeys.orphanedMediaCleanupLog.tr(),
+                  subtitle: LocaleKeys.orphanedMediaCleanupLogDesc.tr(),
+                  onTap: () => AppNavigator.push(
                     context,
                     const OrphanedMediaCleanupLogScreen(),
-                  );
-                },
-                leading: Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color:
-                        Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                  ),
-                  child: Icon(
-                    Icons.folder_open,
-                    color: Theme.of(context).primaryColor,
                   ),
                 ),
-                title: Text(LocaleKeys.orphanedMediaCleanupLog.tr()),
-                subtitle: Text(
-                  LocaleKeys.orphanedMediaCleanupLogDesc.tr(),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16.sp,
-                ),
-              ),
             ],
-            SizedBox(height: 24.h),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

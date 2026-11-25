@@ -1,19 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/constants/insights_frequency_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/notification_settings/helpers/notification_settings_helpers.dart';
-import 'package:trakli/presentation/notification_settings/widgets/insights_frequency_selector_bottom_sheet.dart';
-import 'package:trakli/presentation/notification_settings/widgets/notification_section_header.dart';
-import 'package:trakli/presentation/notification_settings/widgets/notification_selection_item.dart';
-import 'package:trakli/presentation/notification_settings/widgets/notification_toggle_item.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
     show showSnackBar, showLoader, hideLoader;
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class NotificationSettingsScreen extends StatelessWidget {
@@ -22,6 +21,7 @@ class NotificationSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.tones.bgPage,
       appBar: PageAppBar(
         title: LocaleKeys.notificationSettings.tr(),
       ),
@@ -74,7 +74,7 @@ class _NotificationSettingsBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CircularProgressIndicator(),
-            SizedBox(height: 16.h),
+            SizedBox(height: 16.lx),
             Text(LocaleKeys.loadingPreferences.tr()),
           ],
         ),
@@ -104,108 +104,100 @@ class _NotificationSettingsBody extends StatelessWidget {
           },
         ),
       ],
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(16.r),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Builder(builder: (context) {
+        final config = context.read<ConfigCubit>();
+        void save(String key, bool v) =>
+            config.saveConfig(key: key, type: ConfigType.bool, value: v);
+        return LedgerSettingsList(
           children: [
-            NotificationSectionHeader(
+            LedgerSettingsGroup(
               title: LocaleKeys.notificationChannels.tr(),
+              children: [
+                LedgerSettingsToggle(
+                  icon: LucideIcons.mail,
+                  title: LocaleKeys.emailNotifications.tr(),
+                  subtitle: LocaleKeys.emailNotificationsDesc.tr(),
+                  value: email,
+                  onChanged: (v) => save(ConfigConstants.notificationsEmail, v),
+                ),
+                LedgerSettingsToggle(
+                  icon: LucideIcons.smartphone,
+                  title: LocaleKeys.pushNotifications.tr(),
+                  subtitle: LocaleKeys.pushNotificationsDesc.tr(),
+                  value: push,
+                  onChanged: (v) => save(ConfigConstants.notificationsPush, v),
+                ),
+                LedgerSettingsToggle(
+                  icon: LucideIcons.bell,
+                  title: LocaleKeys.inAppNotifications.tr(),
+                  subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
+                  value: inapp,
+                  onChanged: (v) => save(ConfigConstants.notificationsInapp, v),
+                ),
+              ],
             ),
-            SizedBox(height: 12.h),
-            NotificationToggleItem(
-              icon: Icons.email_outlined,
-              title: LocaleKeys.emailNotifications.tr(),
-              subtitle: LocaleKeys.emailNotificationsDesc.tr(),
-              value: email,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsEmail,
-                    type: ConfigType.bool,
-                    value: v,
-                  ),
-            ),
-            SizedBox(height: 8.h),
-            NotificationToggleItem(
-              icon: Icons.phone_android_outlined,
-              title: LocaleKeys.pushNotifications.tr(),
-              subtitle: LocaleKeys.pushNotificationsDesc.tr(),
-              value: push,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsPush,
-                    type: ConfigType.bool,
-                    value: v,
-                  ),
-            ),
-            SizedBox(height: 8.h),
-            NotificationToggleItem(
-              icon: Icons.notifications_outlined,
-              title: LocaleKeys.inAppNotifications.tr(),
-              subtitle: LocaleKeys.inAppNotificationsDesc.tr(),
-              value: inapp,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsInapp,
-                    type: ConfigType.bool,
-                    value: v,
-                  ),
-            ),
-            SizedBox(height: 24.h),
-            NotificationSectionHeader(
+            LedgerSettingsGroup(
               title: LocaleKeys.notificationTypes.tr(),
-            ),
-            SizedBox(height: 12.h),
-            NotificationToggleItem(
-              icon: Icons.access_time_outlined,
-              title: LocaleKeys.reminders.tr(),
-              subtitle: LocaleKeys.remindersDesc.tr(),
-              value: reminders,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsReminders,
-                    type: ConfigType.bool,
-                    value: v,
-                  ),
-            ),
-            SizedBox(height: 8.h),
-            NotificationToggleItem(
-              icon: Icons.trending_up_outlined,
-              title: LocaleKeys.financialInsights.tr(),
-              subtitle: LocaleKeys.financialInsightsDesc.tr(),
-              value: insights,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsInsights,
-                    type: ConfigType.bool,
-                    value: v,
-                  ),
-            ),
-            if (insights) ...[
-              SizedBox(height: 8.h),
-              NotificationSelectionItem(
-                icon: Icons.calendar_today_outlined,
-                title: LocaleKeys.insightsFrequency.tr(),
-                subtitle: LocaleKeys.insightsFrequencyDesc.tr(),
-                value: NotificationSettingsHelpers.getFrequencyLabel(
-                  insightsFrequency,
+              children: [
+                LedgerSettingsToggle(
+                  icon: LucideIcons.alarmClock,
+                  title: LocaleKeys.reminders.tr(),
+                  subtitle: LocaleKeys.remindersDesc.tr(),
+                  value: reminders,
+                  onChanged: (v) =>
+                      save(ConfigConstants.notificationsReminders, v),
                 ),
-                onTap: () => InsightsFrequencySelectorBottomSheet.show(
-                  context,
-                  insightsFrequency,
+                LedgerSettingsToggle(
+                  icon: LucideIcons.trendingUp,
+                  title: LocaleKeys.financialInsights.tr(),
+                  subtitle: LocaleKeys.financialInsightsDesc.tr(),
+                  value: insights,
+                  onChanged: (v) =>
+                      save(ConfigConstants.notificationsInsights, v),
                 ),
-              ),
-            ],
-            SizedBox(height: 8.h),
-            NotificationToggleItem(
-              icon: Icons.person_outline,
-              title: LocaleKeys.engagementReminders.tr(),
-              subtitle: LocaleKeys.engagementRemindersDesc.tr(),
-              value: inactivity,
-              onChanged: (v) => context.read<ConfigCubit>().saveConfig(
-                    key: ConfigConstants.notificationsInactivity,
-                    type: ConfigType.bool,
-                    value: v,
+                if (insights)
+                  LedgerSettingsRow(
+                    icon: LucideIcons.calendarClock,
+                    title: LocaleKeys.insightsFrequency.tr(),
+                    subtitle: LocaleKeys.insightsFrequencyDesc.tr(),
+                    value: NotificationSettingsHelpers.getFrequencyLabel(
+                      insightsFrequency,
+                    ),
+                    onTap: () async {
+                      final picked = await showLedgerOptionsSheet<String>(
+                        context,
+                        title: LocaleKeys.selectFrequency.tr(),
+                        selected: insightsFrequency,
+                        options: [
+                          for (final f in InsightsFrequencyConstants.values)
+                            LedgerOption(
+                              f,
+                              NotificationSettingsHelpers.getFrequencyLabel(f),
+                            ),
+                        ],
+                      );
+                      if (picked != null) {
+                        config.saveConfig(
+                          key: ConfigConstants.insightsFrequency,
+                          type: ConfigType.string,
+                          value: picked,
+                        );
+                      }
+                    },
                   ),
+                LedgerSettingsToggle(
+                  icon: LucideIcons.userRound,
+                  title: LocaleKeys.engagementReminders.tr(),
+                  subtitle: LocaleKeys.engagementRemindersDesc.tr(),
+                  value: inactivity,
+                  onChanged: (v) =>
+                      save(ConfigConstants.notificationsInactivity, v),
+                ),
+              ],
             ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 }

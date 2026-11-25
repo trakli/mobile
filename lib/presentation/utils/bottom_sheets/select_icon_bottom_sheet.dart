@@ -1,21 +1,20 @@
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trakli/gen/assets.gen.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/back_button.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/globals.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class SelectIconBottomSheet extends StatefulWidget {
   const SelectIconBottomSheet({
@@ -34,273 +33,119 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 16.w,
-        right: 16.w,
-        top: 16.h,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          14.lx,
+          8.lx,
+          14.lx,
+          MediaQuery.of(context).viewInsets.bottom + 12.lx,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const LedgerSheetHandle(),
+            SizedBox(height: 10.lx),
+            if (selectedIconType == null)
+              chooseSelector(context)
+            else if (selectedIconType ==
+                SelectIconType.selectFromGalleryOrCamera)
+              selectFromGalleryOrCamera(context)
+            else if (selectedIconType == SelectIconType.selectEmoji)
+              selectEmoji(context)
+            else
+              selectIcon(context),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    );
+  }
+
+  Widget _header(String title, {bool back = true}) {
+    final t = context.tones;
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.lx),
+      child: Row(
         children: [
-          SizedBox(height: 8.h),
-          Align(
-            child: Container(
-              width: 90.w,
-              height: 6.h,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20)),
+          if (back) ...[
+            LedgerIconButton(
+              icon: LucideIcons.chevronLeft,
+              onTap: () => setState(() => selectedIconType = null),
+            ),
+            SizedBox(width: 10.lx),
+          ],
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 17.lx,
+              fontWeight: FontWeight.w700,
+              color: t.textPrimary,
             ),
           ),
-          SizedBox(height: 16.h),
-          if (selectedIconType == null)
-            chooseSelector(context)
-          else if (selectedIconType == SelectIconType.selectFromGalleryOrCamera)
-            selectFromGalleryOrCamera(context)
-          else if (selectedIconType == SelectIconType.selectEmoji)
-            selectEmoji(context)
-          else
-            selectIcon(context),
-          SizedBox(height: 16.h),
         ],
       ),
     );
   }
 
-  Widget chooseSelector(context) {
+  Widget chooseSelector(BuildContext context) {
+    Widget option(IconData icon, String label, SelectIconType type,
+        {bool divider = true}) {
+      return LedgerRow(
+        leading: LedgerCoin(icon: icon),
+        title: label,
+        divider: divider,
+        trailing: Icon(
+          LucideIcons.chevronRight,
+          size: 16.lx,
+          color: context.tones.textMuted,
+        ),
+        onTap: () => setState(() => selectedIconType = type),
+      );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          LocaleKeys.selectIcon.tr(),
-          style: TextStyle(
-            fontSize: 24.sp,
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-        SizedBox(height: 16.h),
-        GridView(
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 8.h,
-            crossAxisSpacing: 8.w,
-          ),
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedIconType = SelectIconType.selectFromGalleryOrCamera;
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF01190E),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8.h,
-                  children: [
-                    SvgPicture.asset(
-                      width: 32.w,
-                      height: 32.h,
-                      Assets.images.camera,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    Text(
-                      LocaleKeys.selectPhoto.tr(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedIconType = SelectIconType.selectEmoji;
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8.h,
-                  children: [
-                    SizedBox(
-                      width: 32.w,
-                      height: 32.h,
-                      child: Center(
-                        child: Text(
-                          "😃",
-                          style: TextStyle(
-                            fontSize: 22.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      LocaleKeys.useEmoji.tr(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedIconType = SelectIconType.selectIcon;
-                });
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8.h,
-                  children: [
-                    Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                      size: 32.r,
-                    ),
-                    Text(
-                      LocaleKeys.selectIcon.tr(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        _header(LocaleKeys.selectIcon.tr(), back: false),
+        option(LucideIcons.shapes, LocaleKeys.selectIcon.tr(),
+            SelectIconType.selectIcon),
+        option(LucideIcons.smile, LocaleKeys.useEmoji.tr(),
+            SelectIconType.selectEmoji),
+        option(LucideIcons.image, LocaleKeys.selectPhoto.tr(),
+            SelectIconType.selectFromGalleryOrCamera,
+            divider: false),
       ],
     );
   }
 
-  Widget selectFromGalleryOrCamera(context) {
+  Widget selectFromGalleryOrCamera(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          spacing: 16.w,
-          children: [
-            CustomBackButton(
-              onTap: () {
-                setState(() {
-                  selectedIconType = null;
-                });
-              },
-              color: Theme.of(context).primaryColor.withAlpha(50),
-            ),
-            Text(
-              LocaleKeys.selectPhoto.tr(),
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ],
+        _header(LocaleKeys.selectPhoto.tr()),
+        LedgerRow(
+          leading: const LedgerCoin(icon: LucideIcons.camera),
+          title: LocaleKeys.camera.tr(),
+          onTap: () async {
+            final pickedFile = await pickImageApp(
+              sourcePick: ImageSource.camera,
+              skipCrop: false,
+            );
+            if (context.mounted) AppNavigator.pop(context, pickedFile);
+          },
         ),
-        SizedBox(height: 24.h),
-        Row(
-          spacing: 0.25.sw,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              spacing: 4.h,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    File? pickedFile = await pickImageApp(
-                      sourcePick: ImageSource.camera,
-                      skipCrop: false,
-                    );
-                    AppNavigator.pop(context, pickedFile);
-                  },
-                  child: Container(
-                    width: 50.w,
-                    height: 50.w,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withAlpha(50),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Icon(
-                      FontAwesomeIcons.camera,
-                      color: Theme.of(context).primaryColor,
-                      size: 20.sp,
-                    ),
-                  ),
-                ),
-                Text(
-                  LocaleKeys.camera.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              spacing: 4.h,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    File? pickedFile = await pickImageApp();
-                    AppNavigator.pop(context, pickedFile);
-                  },
-                  child: Container(
-                    width: 50.w,
-                    height: 50.w,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withAlpha(50),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Icon(
-                      FontAwesomeIcons.photoFilm,
-                      color: Theme.of(context).primaryColor,
-                      size: 20.sp,
-                    ),
-                  ),
-                ),
-                Text(
-                  LocaleKeys.gallery.tr(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                  ),
-                ),
-              ],
-            ),
-          ],
+        LedgerRow(
+          leading: const LedgerCoin(icon: LucideIcons.images),
+          title: LocaleKeys.gallery.tr(),
+          divider: false,
+          onTap: () async {
+            final pickedFile = await pickImageApp();
+            if (context.mounted) AppNavigator.pop(context, pickedFile);
+          },
         ),
-        // SizedBox(height: 16.h),
       ],
     );
   }
@@ -310,28 +155,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          spacing: 16.w,
-          children: [
-            CustomBackButton(
-              onTap: () {
-                setState(() {
-                  selectedIconType = null;
-                });
-              },
-              color: Theme.of(context).primaryColor.withAlpha(50),
-            ),
-            Text(
-              LocaleKeys.selectEmoji.tr(),
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.h),
+        _header(LocaleKeys.selectEmoji.tr()),
         EmojiPicker(
           onEmojiSelected: (Category? category, Emoji emoji) {
             widget.onSelect?.call(MediaType.emoji, emoji.emoji);
@@ -347,7 +171,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                       ? 1.20
                       : 1.0),
               columns: 7,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: context.tones.bgSurface,
               verticalSpacing: 6.h,
               horizontalSpacing: 6.w,
               buttonMode: foundation.defaultTargetPlatform == TargetPlatform.iOS
@@ -362,9 +186,9 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               tabBarHeight: 46.h,
               initCategory: Category.SMILEYS,
               backgroundColor: Theme.of(context).colorScheme.surface,
-              indicatorColor: Theme.of(context).primaryColor,
-              iconColorSelected: Theme.of(context).primaryColor,
-              iconColor: Colors.grey.shade400,
+              indicatorColor: context.tones.brandFill,
+              iconColorSelected: context.tones.brandText,
+              iconColor: context.tones.textMuted,
               categoryIcons: const CategoryIcons(
                 recentIcon: FontAwesomeIcons.clock,
                 smileyIcon: FontAwesomeIcons.faceSmile,
@@ -390,15 +214,10 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                     onChanged: (val) {},
                     decoration: InputDecoration(
                       hintText: LocaleKeys.searchEmoji.tr(),
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgPicture.asset(
-                          Assets.images.searchSpecial,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.grey,
-                            BlendMode.srcIn,
-                          ),
-                        ),
+                      prefixIcon: Icon(
+                        LucideIcons.search,
+                        size: 16.lx,
+                        color: context.tones.textMuted,
                       ),
                     ),
                   ),
@@ -406,7 +225,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               },
             ),
             searchViewConfig: SearchViewConfig(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: context.tones.bgSurface,
               hintText: LocaleKeys.searchEmoji.tr(),
               buttonIconColor: Theme.of(context).colorScheme.onSurface,
             ),
@@ -421,28 +240,7 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          spacing: 16.w,
-          children: [
-            CustomBackButton(
-              onTap: () {
-                setState(() {
-                  selectedIconType = null;
-                });
-              },
-              color: Theme.of(context).primaryColor.withAlpha(50),
-            ),
-            Text(
-              LocaleKeys.selectIcon.tr(),
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.h),
+        _header(LocaleKeys.selectIcon.tr()),
         Container(
           constraints: BoxConstraints(
             maxHeight: 340.h,
@@ -460,8 +258,8 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
               final icon = heroIconsCategories[index];
               return Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  color: Theme.of(context).primaryColor.withAlpha(50),
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  color: context.tones.surface2,
                 ),
                 child: GestureDetector(
                   onTap: () {
@@ -470,9 +268,9 @@ class _SelectIconBottomSheetState extends State<SelectIconBottomSheet> {
                   },
                   child: HeroIcon(
                     icon,
-                    size: 28.sp,
-                    style: HeroIconStyle.solid,
-                    color: Theme.of(context).primaryColor,
+                    size: 22.lx,
+                    style: HeroIconStyle.outline,
+                    color: context.tones.brandText,
                   ),
                 ),
               );

@@ -4,16 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/data/datasources/core/amount_parser.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
-import 'package:trakli/domain/entities/import/duplicate_match_entity.dart';
 import 'package:trakli/domain/entities/import/transaction_suggestion_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
+import 'package:trakli/presentation/imports/import_review_status.dart';
 import 'package:trakli/presentation/imports/widgets/picker_with_hint.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/custom_auto_complete_search.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class SuggestionCard extends StatefulWidget {
@@ -73,46 +77,99 @@ class _SuggestionCardState extends State<SuggestionCard> {
   }
 
   String _primaryText() {
-    final party = widget.suggestion.party;
-    if (party != null && party.isNotEmpty) return party;
     final desc = widget.suggestion.description;
-    if (desc != null && desc.isNotEmpty) return desc;
-    return '—';
+    if (desc != null && desc.trim().isNotEmpty) return desc.trim();
+    final party = widget.suggestion.party;
+    if (party != null && party.trim().isNotEmpty) return party.trim();
+    return '#${widget.position + 1}';
   }
 
   String _amountText() {
-    final amount = widget.suggestion.amount;
-    if (amount == null) return '—';
-    return amount.toStringAsFixed(2);
-  }
-
-  String _metaText() {
-    final typeText = switch (widget.suggestion.type) {
-      TransactionType.income => LocaleKeys.transactionIncome.tr(),
-      TransactionType.expense => LocaleKeys.transactionExpense.tr(),
-      null => '—',
-    };
-    return '#${widget.position + 1} · $typeText';
+    final s = widget.suggestion;
+    final amount = s.amount;
+    if (amount == null) return '';
+    final signed = s.type == TransactionType.income ? amount : -amount;
+    final code = s.currency?.trim().toUpperCase();
+    if (code == null || code.isEmpty) {
+      final n =
+          NumberFormat.decimalPatternDigits(decimalDigits: 2).format(amount);
+      return signed < 0 ? '$ledgerMinus$n' : '+$n';
+    }
+    return LedgerMoney.format(signed, code, sign: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final accent = Theme.of(context).colorScheme.primary;
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 2.w),
+    final tones = context.tones;
+    final status = importRowStatus(widget.suggestion);
+    final category = widget.suggestion.category?.trim() ?? '';
+    final (statusText, statusColor) = switch (status) {
+      ImportRowStatus.duplicate => (
+          LocaleKeys.importReviewPossibleDuplicate.tr(),
+          tones.warmText
+        ),
+      ImportRowStatus.needsCategory => (
+          LocaleKeys.importReviewChooseCategory.tr(),
+          tones.expenseColor
+        ),
+      ImportRowStatus.ready => (category, tones.textMuted),
+    };
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: tones.borderLight)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Header(
-            primary: _primaryText(),
-            amount: _amountText(),
-            meta: _metaText(),
-            accepted: widget.accepted,
-            confidence: widget.suggestion.confidence,
-            duplicate: widget.suggestion.duplicate,
-            expanded: _expanded,
-            onAcceptedChanged: widget.onAcceptedChanged,
+          InkWell(
             onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 7.lx),
+              child: Row(
+                children: [
+                  LedgerCheck(
+                    value: widget.accepted,
+                    onChanged: widget.onAcceptedChanged,
+                  ),
+                  SizedBox(width: 11.lx),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _primaryText(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: LedgerText.money(
+                            size: 11.5.lx,
+                            weight: FontWeight.w400,
+                            color: tones.textPrimary,
+                          ),
+                        ),
+                        if (statusText.isNotEmpty)
+                          Text(
+                            statusText,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12.lx,
+                              color: statusColor,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.lx),
+                  LedgerAmount(
+                    _amountText(),
+                    size: 12.5,
+                    color: widget.suggestion.type == TransactionType.income
+                        ? tones.incomeColor
+                        : null,
+                  ),
+                ],
+              ),
+            ),
           ),
           AnimatedCrossFade(
             duration: _expandDuration,
@@ -121,8 +178,8 @@ class _SuggestionCardState extends State<SuggestionCard> {
                 : CrossFadeState.showFirst,
             firstChild: const SizedBox(width: double.infinity),
             secondChild: Padding(
-              padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
-              child: _editableBody(accent),
+              padding: EdgeInsets.fromLTRB(0, 4.lx, 0, 12.lx),
+              child: _editableBody(tones.brandFill),
             ),
           ),
         ],
@@ -292,128 +349,6 @@ class _SuggestionCardState extends State<SuggestionCard> {
   }
 }
 
-class _Header extends StatelessWidget {
-  final String primary;
-  final String amount;
-  final String meta;
-  final bool accepted;
-  final double? confidence;
-  final DuplicateMatchEntity? duplicate;
-  final bool expanded;
-  final ValueChanged<bool> onAcceptedChanged;
-  final VoidCallback onTap;
-
-  const _Header({
-    required this.primary,
-    required this.amount,
-    required this.meta,
-    required this.accepted,
-    required this.confidence,
-    required this.duplicate,
-    required this.expanded,
-    required this.onAcceptedChanged,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(4.w, 4.h, 12.w, 4.h),
-        child: Row(
-          children: [
-            Checkbox(
-              value: accepted,
-              onChanged: (v) => onAcceptedChanged(v ?? false),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          primary,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        amount,
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 2.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          meta,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                      if (duplicate != null) ...[
-                        Icon(Icons.warning_amber_rounded,
-                            size: 14.sp, color: Colors.orange),
-                        SizedBox(width: 4.w),
-                      ],
-                      if (confidence != null) ...[
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6.w, vertical: 1.h),
-                          decoration: BoxDecoration(
-                            color: _confidenceColor(confidence!)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            '${(confidence! * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              color: _confidenceColor(confidence!),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11.sp,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                      ],
-                      AnimatedRotation(
-                        turns: expanded ? 0.5 : 0,
-                        duration: _SuggestionCardState._expandDuration,
-                        child: Icon(Icons.keyboard_arrow_down, size: 18.sp),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Color _confidenceColor(double c) {
-  if (c >= 0.8) return Colors.green;
-  if (c >= 0.5) return Colors.orange;
-  return Colors.red;
-}
-
 T? _findById<T>(List<T> items, int? id, int? Function(T) idOf) {
   if (id == null) return null;
   for (final item in items) {
@@ -421,4 +356,3 @@ T? _findById<T>(List<T> items, int? id, int? Function(T) idOf) {
   }
   return null;
 }
-

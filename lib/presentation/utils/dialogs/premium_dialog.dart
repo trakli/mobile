@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/subscription_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/subscription_tile.dart';
@@ -27,18 +29,9 @@ class _PremiumDialogState extends State<PremiumDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 16.lx),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 48.h,
-          horizontal: 16.w,
-        ),
+        padding: EdgeInsets.fromLTRB(18.lx, 22.lx, 18.lx, 16.lx),
         child: Column(
           spacing: 16.h,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,16 +40,17 @@ class _PremiumDialogState extends State<PremiumDialog> {
             Text(
               widget.subscription.overview.title,
               style: TextStyle(
-                fontSize: 24.sp,
-                color: neutralN700,
-                fontWeight: FontWeight.bold,
+                fontSize: 19.lx,
+                color: context.tones.textPrimary,
+                fontWeight: FontWeight.w700,
               ),
             ),
             Text(
               widget.subscription.overview.description,
               style: TextStyle(
-                fontSize: 14.sp,
-                color: neutralN900,
+                fontSize: 13.5.lx,
+                height: 1.45,
+                color: context.tones.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -72,33 +66,21 @@ class _PremiumDialogState extends State<PremiumDialog> {
               );
             }),
             Row(
-              spacing: 16.w,
               children: [
                 Expanded(
-                  child: SizedBox(
-                    height: 52.h,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        AppNavigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: neutralN40,
-                        foregroundColor: neutralN900,
-                      ),
-                      child: Text(LocaleKeys.cancel.tr()),
-                    ),
+                  child: LedgerButton(
+                    label: LocaleKeys.cancel.tr(),
+                    style: LedgerButtonStyle.outline,
+                    large: true,
+                    onPressed: () => AppNavigator.pop(context),
                   ),
                 ),
+                SizedBox(width: 8.lx),
                 Expanded(
-                  child: SizedBox(
-                    height: 52.h,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: appPrimaryColor,
-                      ),
-                      onPressed: () {},
-                      child: Text(LocaleKeys.confirm.tr()),
-                    ),
+                  child: LedgerButton(
+                    label: LocaleKeys.confirm.tr(),
+                    large: true,
+                    onPressed: () {},
                   ),
                 ),
               ],

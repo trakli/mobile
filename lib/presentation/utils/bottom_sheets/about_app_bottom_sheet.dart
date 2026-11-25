@@ -1,130 +1,106 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/gen/assets.gen.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/ai_chat/widgets/trakli_mark.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class AboutAppBottomSheet extends StatelessWidget {
   const AboutAppBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            Assets.images.logoGreen,
-            height: 60.h,
-          ),
-          SizedBox(height: 4.h),
-          BlocConsumer<ConfigCubit, ConfigState>(
-            listenWhen: (previous, current) {
-              return previous.showDebug != current.showDebug;
-            },
-            listener: (context, state) {
-              if (state.showDebug == true) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Activated")),
-                );
-              }
-            },
-            builder: (context, state) {
-              final cubit = context.read<ConfigCubit>();
-              return GestureDetector(
-                onTap: cubit.handleDebugTap,
-                child: Text(
-                  "Version ${state.appVersion ?? ""}",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 12.sp,
+    final t = context.tones;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(14.lx, 8.lx, 14.lx, 14.lx),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const LedgerSheetHandle(),
+            SizedBox(height: 14.lx),
+            Row(
+              children: [
+                const TrakliLogo(height: 28),
+                const Spacer(),
+                BlocConsumer<ConfigCubit, ConfigState>(
+                  listenWhen: (previous, current) =>
+                      previous.showDebug != current.showDebug,
+                  listener: (context, state) {
+                    if (state.showDebug == true) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(LocaleKeys.aboutDebugOn.tr())),
+                      );
+                    }
+                  },
+                  builder: (context, state) => GestureDetector(
+                    onTap: context.read<ConfigCubit>().handleDebugTap,
+                    child: LedgerChip(
+                      LocaleKeys.aboutVersion
+                          .tr(args: [state.appVersion ?? '']),
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            LocaleKeys.aboutAppDescription.tr(),
-            style: TextStyle(
-              fontSize: 14.sp,
+              ],
             ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            LocaleKeys.openSourceProject.tr(),
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.grey.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8.h),
-          TextButton.icon(
-            onPressed: () {
-              openUrl(url: "https://github.com/trakli");
-            },
-            icon: Icon(
-              Icons.code,
-              size: 18.sp,
-              color: Theme.of(context).primaryColor,
-            ),
-            label: Text(
-              LocaleKeys.viewOnGithub.tr(),
+            SizedBox(height: 14.lx),
+            Text(
+              LocaleKeys.aboutAppDescription.tr(),
               style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontWeight: FontWeight.w500,
+                fontSize: 13.5.lx,
+                height: 1.5,
+                color: t.textPrimary,
               ),
             ),
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    openUrl(url: "https://trakli.app/privacy");
-                  },
-                  child: Text(
-                    LocaleKeys.privacyPolicy.tr(),
-                    style: const TextStyle(
-                      color: Colors.blue,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+            SizedBox(height: 8.lx),
+            Text(
+              LocaleKeys.openSourceProject.tr(),
+              style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
+            ),
+            SizedBox(height: 12.lx),
+            LedgerSettingsGroup(
+              children: [
+                LedgerSettingsRow(
+                  icon: LucideIcons.codeXml,
+                  title: LocaleKeys.viewOnGithub.tr(),
+                  trailing: Icon(
+                    LucideIcons.externalLink,
+                    size: 14.lx,
+                    color: t.textMuted,
                   ),
+                  onTap: () => openUrl(url: "https://github.com/trakli"),
                 ),
-              ),
-              Icon(
-                Icons.circle,
-                size: 6.r,
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    openUrl(url: "https://trakli.app/terms");
-                  },
-                  child: Text(
-                    LocaleKeys.termsAndConditions.tr(),
-                    style: const TextStyle(
-                      color: Colors.blue,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                LedgerSettingsRow(
+                  icon: LucideIcons.shield,
+                  title: LocaleKeys.privacyPolicy.tr(),
+                  trailing: Icon(
+                    LucideIcons.externalLink,
+                    size: 14.lx,
+                    color: t.textMuted,
                   ),
+                  onTap: () => openUrl(url: "https://trakli.app/privacy"),
                 ),
-              ),
-            ],
-          ),
-        ],
+                LedgerSettingsRow(
+                  icon: LucideIcons.fileText,
+                  title: LocaleKeys.termsAndConditions.tr(),
+                  trailing: Icon(
+                    LucideIcons.externalLink,
+                    size: 14.lx,
+                    color: t.textMuted,
+                  ),
+                  onTap: () => openUrl(url: "https://trakli.app/terms"),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "message": "Invitation sent successfully",
+  "data": {
+    "id": 1,
+    "email": "<REDACTED>",
+    "role": "member",
+    "expires_at": "2026-12-01T11:44:19Z",
+    "url": "<REDACTED>"
+  }
+}

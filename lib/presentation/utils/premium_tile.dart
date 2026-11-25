@@ -2,12 +2,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/error/failures/failures.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/plans/cubit/plans_cubit.dart';
-import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/dialogs/premium_dialog.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/helpers.dart'
     show showCustomDialog, showSnackBar;
 
@@ -40,60 +42,39 @@ class PremiumTile extends StatelessWidget {
         }
 
         if (state.isLoading) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-            ),
-          );
+          return const SizedBox.shrink();
         }
 
-        if (state.subscription != null) {
-          return InkWell(
-            onTap: () {
-              final subscriptionInfo = state.subscription;
-              if (subscriptionInfo != null) {
-                showCustomDialog(
-                  widget: PremiumDialog(
-                    subscription: subscriptionInfo,
-                  ),
-                );
-              }
-            },
-            child: Container(
-              padding: EdgeInsets.all(2.sp), // Border thickness
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFD17E),
-                    Color(0xFFFF9441),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 16.h,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFEDCC), // Inner background
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  spacing: 8.w,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(Assets.images.premiumPng.path),
-                    Text(
-                      LocaleKeys.upgradeToPremium.tr(),
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
+        final subscription = state.subscription;
+        if (subscription != null) {
+          final t = context.tones;
+          return LedgerCard(
+            color: t.accentWarmSoft,
+            borderColor: t.accentWarm.withValues(alpha: 0.45),
+            padding: EdgeInsets.symmetric(horizontal: 12.lx, vertical: 10.lx),
+            onTap: () => showCustomDialog(
+              widget: PremiumDialog(subscription: subscription),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.gem, size: 18.lx, color: t.accentWarm),
+                SizedBox(width: 10.lx),
+                Expanded(
+                  child: Text(
+                    LocaleKeys.upgradeToPremium.tr(),
+                    style: TextStyle(
+                      fontSize: 14.lx,
+                      fontWeight: FontWeight.w600,
+                      color: t.textPrimary,
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 16.lx,
+                  color: t.accentWarm,
+                ),
+              ],
             ),
           );
         }

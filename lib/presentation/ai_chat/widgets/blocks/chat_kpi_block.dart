@@ -30,7 +30,7 @@ class ChatKpiBlock extends StatelessWidget {
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: tones.bgPage,
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(AppRadii.md),
               border: Border.all(color: tones.borderLight),
             ),
             child: Column(

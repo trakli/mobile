@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "message": "Invitation accepted",
+  "data": {
+    "workspace": {
+      "id": 1,
+      "slug": "achu-family",
+      "name": "Achu family"
+    },
+    "role": "member"
+  }
+}

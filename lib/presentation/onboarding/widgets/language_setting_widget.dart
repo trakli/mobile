@@ -1,10 +1,12 @@
 import 'package:country_flags/country_flags.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
@@ -29,22 +31,15 @@ class LanguageSettingWidget extends StatelessWidget {
         bottom: 16.h,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12.r),
+        color: context.tones.bgSurface,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        border: Border.all(color: context.tones.borderLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 0.h),
-          CircleAvatar(
-            radius: 30.sp,
-            backgroundColor: appPrimaryColor.withAlpha(30),
-            child: Icon(
-              Icons.translate,
-              size: 28.sp,
-              color: appPrimaryColor,
-            ),
-          ),
+          const LedgerCoin(icon: LucideIcons.languages, size: 48),
           SizedBox(height: 16.h),
           Text(
             LocaleKeys.selectLanguage.tr(),
@@ -76,7 +71,7 @@ class LanguageSettingWidget extends StatelessWidget {
                     border: Border.all(
                       color: (lang.languageCode == context.locale.languageCode)
                           ? Theme.of(context).primaryColor
-                          : Colors.grey,
+                          : context.tones.borderMedium,
                     ),
                   ),
                   child: ListTile(

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
 
 const emptyPartyData = EmptyStateModel(
-  icon: Icons.people_outline,
+  icon: LucideIcons.usersRound,
   title: LocaleKeys.emptyPartyTitle,
   title1: LocaleKeys.emptyPartyTitleOne,
   description: LocaleKeys.emptyPartyDescription,
@@ -20,11 +20,11 @@ const emptyPartyData = EmptyStateModel(
       description: LocaleKeys.emptyPartyInfo1,
     ),
     Steps(
-      icon: Icons.people,
+      icon: LucideIcons.usersRound,
       description: LocaleKeys.emptyPartyInfo2,
     ),
     Steps(
-      icon: Icons.bar_chart,
+      icon: LucideIcons.chartColumn,
       description: LocaleKeys.emptyPartyInfo3,
     ),
   ],
@@ -34,7 +34,7 @@ const emptyPartyData = EmptyStateModel(
 );
 
 const emptyCategoryData = EmptyStateModel(
-  icon: Icons.label_outline,
+  icon: LucideIcons.tag,
   title: LocaleKeys.emptyCategoryTitle,
   title1: LocaleKeys.emptyCategoryTitleOne,
   description: LocaleKeys.emptyCategoryDescription,
@@ -46,15 +46,15 @@ const emptyCategoryData = EmptyStateModel(
   ],
   quickSteps: [
     Steps(
-      icon: Icons.local_offer,
+      icon: LucideIcons.tag,
       description: LocaleKeys.emptyCategoryInfo1,
     ),
     Steps(
-      icon: Icons.assignment,
+      icon: LucideIcons.clipboardList,
       description: LocaleKeys.emptyCategoryInfo2,
     ),
     Steps(
-      icon: Icons.search,
+      icon: LucideIcons.search,
       description: LocaleKeys.emptyCategoryInfo3,
     ),
   ],
@@ -64,7 +64,7 @@ const emptyCategoryData = EmptyStateModel(
 );
 
 const emptyWalletData = EmptyStateModel(
-  icon: Icons.account_balance_wallet_outlined,
+  icon: LucideIcons.wallet,
   title: LocaleKeys.emptyWalletTitle,
   title1: LocaleKeys.emptyWalletTitleOne,
   description: LocaleKeys.emptyWalletDescription,
@@ -76,15 +76,15 @@ const emptyWalletData = EmptyStateModel(
   ],
   quickSteps: [
     Steps(
-      icon: Icons.account_balance,
+      icon: LucideIcons.landmark,
       description: LocaleKeys.emptyWalletInfo1,
     ),
     Steps(
-      icon: Icons.credit_card,
+      icon: LucideIcons.creditCard,
       description: LocaleKeys.emptyWalletInfo2,
     ),
     Steps(
-      icon: Icons.trending_up,
+      icon: LucideIcons.trendingUp,
       description: LocaleKeys.emptyWalletInfo3,
     ),
   ],
@@ -94,7 +94,7 @@ const emptyWalletData = EmptyStateModel(
 );
 
 const emptyTransactionData = EmptyStateModel(
-  icon: Icons.compare_arrows_outlined,
+  icon: LucideIcons.arrowLeftRight,
   title: LocaleKeys.emptyTransactionTitle,
   title1: LocaleKeys.emptyTransactionTitleOne,
   description: LocaleKeys.emptyTransactionDescription,
@@ -107,15 +107,15 @@ const emptyTransactionData = EmptyStateModel(
   ],
   quickSteps: [
     Steps(
-      icon: Icons.monetization_on,
+      icon: LucideIcons.circleDollarSign,
       description: LocaleKeys.emptyTransactionInfo1,
     ),
     Steps(
-      icon: Icons.bar_chart,
+      icon: LucideIcons.chartColumn,
       description: LocaleKeys.emptyTransactionInfo2,
     ),
     Steps(
-      icon: Icons.my_location,
+      icon: LucideIcons.locateFixed,
       description: LocaleKeys.emptyTransactionInfo3,
     ),
   ],
@@ -125,21 +125,21 @@ const emptyTransactionData = EmptyStateModel(
 );
 
 const youAllSetData = EmptyStateModel(
-  icon: Icons.compare_arrows_outlined,
+  icon: LucideIcons.arrowLeftRight,
   title: LocaleKeys.youAllSetTitleOne,
   description: LocaleKeys.youAllSetDescriptionOne,
   quickStartSteps: [],
   quickSteps: [
     Steps(
-      icon: Icons.emoji_events, // Represents a reward/achievement
+      icon: LucideIcons.trophy, // Represents a reward/achievement
       description: LocaleKeys.youAllSetInfo1,
     ),
     Steps(
-      icon: Icons.smartphone,
+      icon: LucideIcons.smartphone,
       description: LocaleKeys.youAllSetInfo2,
     ),
     Steps(
-      icon: Icons.lightbulb_outline,
+      icon: LucideIcons.lightbulb,
       description: LocaleKeys.youAllSetInfo3,
     ),
   ],

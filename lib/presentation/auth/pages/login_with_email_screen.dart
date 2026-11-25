@@ -85,7 +85,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
       },
       child: Scaffold(
         backgroundColor: tones.bgPage,
-        appBar: const PageAppBar(title: 'Sign in'),
+        appBar: PageAppBar(title: LocaleKeys.authSignIn.tr()),
         body: SafeArea(
           top: false,
           child: SingleChildScrollView(
@@ -180,8 +180,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   ),
                   SizedBox(height: 18.h),
                   Center(
-                    child: RichText(
-                      text: TextSpan(
+                    child: Text.rich(
+                      TextSpan(
                         text: LocaleKeys.dontHaveAccount.tr(),
                         style: TextStyle(
                           fontSize: 13.sp,

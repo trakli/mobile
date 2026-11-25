@@ -48,8 +48,12 @@ void main() {
       expect(AppRadii.sm, lessThan(AppRadii.md));
       expect(AppRadii.md, lessThan(AppRadii.lg));
       expect(AppRadii.lg, lessThan(AppRadii.xl));
-      expect(AppRadii.xl, lessThan(AppRadii.xxl));
-      expect(AppRadii.xxl, lessThan(AppRadii.pill));
+      expect(AppRadii.xl, lessThanOrEqualTo(AppRadii.xxl));
+      expect(AppRadii.xxl, lessThanOrEqualTo(AppRadii.pill));
+    });
+
+    test('no corner exceeds 8 logical pixels', () {
+      expect(AppRadii.pill, lessThanOrEqualTo(8));
     });
   });
 }

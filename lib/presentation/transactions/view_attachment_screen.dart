@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -159,7 +160,7 @@ class _ViewAttachmentScreenState extends State<ViewAttachmentScreen> {
         headerTextColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
+            icon: const Icon(LucideIcons.share2),
             color: Colors.white,
             onPressed: _share,
             tooltip: LocaleKeys.share.tr(),
@@ -255,7 +256,7 @@ class _ViewAttachmentScreenState extends State<ViewAttachmentScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.insert_drive_file, size: 64.sp, color: Colors.white54),
+          Icon(LucideIcons.file, size: 64.sp, color: Colors.white54),
           SizedBox(height: 16.h),
           Text(
             LocaleKeys.previewNotAvailable.tr(),

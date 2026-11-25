@@ -64,13 +64,13 @@ class ReportStatsCubit extends Cubit<ReportStatsState> {
     ));
 
     if (!await _authService.isAuthenticated()) {
-      if (id != _loadId) return;
+      if (id != _loadId || isClosed) return;
       emit(ReportStatsState(periodDays: periodDays, isLocalOnly: true));
       return;
     }
 
     if (await _db.hasPendingTransactionChanges()) {
-      if (id != _loadId) return;
+      if (id != _loadId || isClosed) return;
       emit(ReportStatsState(
           periodDays: periodDays, deferredForPendingSync: true));
       return;
@@ -83,10 +83,10 @@ class ReportStatsCubit extends Cubit<ReportStatsState> {
         start: today.subtract(Duration(days: periodDays - 1)),
         end: today,
       );
-      if (id != _loadId) return;
+      if (id != _loadId || isClosed) return;
       emit(ReportStatsState(stats: stats, periodDays: periodDays));
     } catch (_) {
-      if (id != _loadId) return;
+      if (id != _loadId || isClosed) return;
       emit(ReportStatsState(periodDays: periodDays));
     }
   }

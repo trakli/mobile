@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/domain/entities/media_file_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/presentation/transactions/transaction_extras_section.dart';
@@ -17,6 +18,7 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
+import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -74,6 +76,7 @@ class _AddTransactionFormState extends State<AddTransactionForm>
   WalletEntity? selectedWallet;
   CategoryEntity? selectedCategory;
   PartyEntity? selectedParty;
+  GroupEntity? selectedGroup;
   List<String> attachedFilePaths = [];
   List<MediaFileEntity> existingMedia = [];
   final pieData = StatisticsProvider().getPieData;
@@ -159,6 +162,8 @@ class _AddTransactionFormState extends State<AddTransactionForm>
         selectedParty = widget.transactionCompleteEntity!.party;
       }
 
+      selectedGroup = widget.transactionCompleteEntity!.group;
+
       if (widget.transactionCompleteEntity!.categories.isNotEmpty) {
         selectedCategory = widget.transactionCompleteEntity!.categories.first;
       }
@@ -166,6 +171,7 @@ class _AddTransactionFormState extends State<AddTransactionForm>
       date = DateTime.now();
       dateController.text = dateFormat.format(date);
       timeController.text = timeFormat.format(date);
+      selectedGroup = context.read<TransactionCubit>().state.selectedGroup;
 
       // Always use default wallet from config
       final configState = context.read<ConfigCubit>().state;
@@ -584,6 +590,42 @@ class _AddTransactionFormState extends State<AddTransactionForm>
                 ],
               ),
             ),
+            BlocBuilder<GroupCubit, GroupState>(
+              buildWhen: (a, b) => a.groups != b.groups,
+              builder: (context, state) {
+                if (state.groups.isEmpty) return const SizedBox.shrink();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.h),
+                    Text(
+                      LocaleKeys.group.tr(),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: tones.textPrimary,
+                          ),
+                    ),
+                    SizedBox(height: 8.h),
+                    CustomDropdownSearch<GroupEntity>(
+                      key: const ValueKey('transaction-group-picker'),
+                      label: "",
+                      accentColor: widget.accentColor,
+                      selectedItem: selectedGroup,
+                      items: (filter, infiniteScrollProps) => state.groups,
+                      itemAsString: (item) => item.name,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedGroup = value;
+                        });
+                      },
+                      compareFn: (i1, i2) => i1.clientId == i2.clientId,
+                      filterFn: (el, filter) =>
+                          el.name.toLowerCase().contains(filter.toLowerCase()),
+                    ),
+                  ],
+                );
+              },
+            ),
             SizedBox(height: 16.h),
             Text(
               LocaleKeys.transactionCategory.tr(),
@@ -780,6 +822,7 @@ class _AddTransactionFormState extends State<AddTransactionForm>
                                       : null,
                                   walletClientId: selectedWallet?.clientId,
                                   partyClientId: selectedParty?.clientId,
+                                  groupClientId: selectedGroup?.clientId,
                                   attachedFilePaths: attachedFilePaths,
                                   recurrence: _extras.recurrence,
                                   clearRecurrence: _extras.clearRecurrence,
@@ -808,6 +851,7 @@ class _AddTransactionFormState extends State<AddTransactionForm>
                                       ? [selectedCategory!.clientId]
                                       : [],
                                   partyClientId: selectedParty?.clientId,
+                                  groupClientId: selectedGroup?.clientId,
                                   attachedFilePaths: attachedFilePaths,
                                   recurrence: _extras.recurrence,
                                   isRefund: _extras.isRefund,

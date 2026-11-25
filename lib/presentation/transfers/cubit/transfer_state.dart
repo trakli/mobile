@@ -12,4 +12,3 @@ class TransferState with _$TransferState {
 
   factory TransferState.initial() => const TransferState();
 }
-

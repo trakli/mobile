@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/budget_entity.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
@@ -18,6 +19,10 @@ import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AddBudgetScreen extends StatefulWidget {
@@ -167,196 +172,208 @@ class _AddBudgetScreenState extends State<AddBudgetScreen> {
     final tones = context.tones;
     return Scaffold(
       backgroundColor: tones.bgPage,
-      appBar: AppBar(
-        title: Text(_isEdit ? LocaleKeys.editBudget.tr() : LocaleKeys.newBudget.tr()),
+      appBar: PageAppBar(
+        title: _isEdit ? LocaleKeys.editBudget.tr() : LocaleKeys.newBudget.tr(),
       ),
       body: SafeArea(
         child: BlocBuilder<BudgetCubit, BudgetState>(
-        builder: (context, state) {
-          return Stack(
-            children: [
-              SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 96.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SectionLabel(text: LocaleKeys.name.tr()),
-                    TextField(
-                      controller: _name,
-                      decoration: InputDecoration(
-                        hintText: LocaleKeys.nameHint.tr(),
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 14.h),
-                    _SectionLabel(text: LocaleKeys.amount.tr()),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: TextField(
-                            controller: _amount,
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9.]'),
-                              ),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: LocaleKeys.amountHint.tr(),
-                              border: const OutlineInputBorder(),
-                            ),
-                          ),
+          builder: (context, state) {
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 96.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SectionLabel(text: LocaleKeys.name.tr()),
+                      TextField(
+                        controller: _name,
+                        decoration: InputDecoration(
+                          hintText: LocaleKeys.nameHint.tr(),
                         ),
-                        SizedBox(width: 10.w),
-                        Expanded(
-                          child: _CurrencyPickerField(
-                            controller: _currency,
-                            onChanged: () => setState(() {}),
+                      ),
+                      SizedBox(height: 14.h),
+                      _SectionLabel(text: LocaleKeys.amount.tr()),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: TextField(
+                              controller: _amount,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: true,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9.]'),
+                                ),
+                              ],
+                              decoration: InputDecoration(
+                                hintText: LocaleKeys.amountHint.tr(),
+                              ),
+                            ),
                           ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: _CurrencyPickerField(
+                              controller: _currency,
+                              onChanged: () => setState(() {}),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 14.h),
+                      _SectionLabel(text: LocaleKeys.period.tr()),
+                      _PeriodChips(
+                        selected: _periodType,
+                        onChange: (p) => setState(() => _periodType = p),
+                      ),
+                      SizedBox(height: 14.h),
+                      _SectionLabel(text: LocaleKeys.startDate.tr()),
+                      _DateRow(
+                        date: _startDate,
+                        onTap: () => _pickDate(isStart: true),
+                      ),
+                      if (_periodType == BudgetPeriodType.custom) ...[
+                        SizedBox(height: 14.h),
+                        _SectionLabel(text: LocaleKeys.endDate.tr()),
+                        _DateRow(
+                          date: _endDate,
+                          onTap: () => _pickDate(isStart: false),
+                          placeholder: LocaleKeys.selectEndDate.tr(),
                         ),
                       ],
-                    ),
-                    SizedBox(height: 14.h),
-                    _SectionLabel(text: LocaleKeys.period.tr()),
-                    _PeriodChips(
-                      selected: _periodType,
-                      onChange: (p) => setState(() => _periodType = p),
-                    ),
-                    SizedBox(height: 14.h),
-                    _SectionLabel(text: LocaleKeys.startDate.tr()),
-                    _DateRow(
-                      date: _startDate,
-                      onTap: () => _pickDate(isStart: true),
-                    ),
-                    if (_periodType == BudgetPeriodType.custom) ...[
                       SizedBox(height: 14.h),
-                      _SectionLabel(text: LocaleKeys.endDate.tr()),
-                      _DateRow(
-                        date: _endDate,
-                        onTap: () => _pickDate(isStart: false),
-                        placeholder: LocaleKeys.selectEndDate.tr(),
-                      ),
-                    ],
-                    SizedBox(height: 14.h),
-                    _SectionLabel(text: LocaleKeys.targets.tr()),
-                    InkWell(
-                      onTap: _pickTargets,
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 12.h,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: tones.borderLight),
-                          borderRadius: BorderRadius.circular(AppRadii.md),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _targets.isEmpty
-                                    ? LocaleKeys.budgetTargetsApplyAll.tr()
-                                    : '${_targets.length} ${_targets.length == 1 ? LocaleKeys.target.tr() : LocaleKeys.targets.tr()} ${LocaleKeys.selected.tr()}',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: _targets.isEmpty
-                                      ? tones.textMuted
-                                      : tones.textPrimary,
+                      _SectionLabel(text: LocaleKeys.targets.tr()),
+                      InkWell(
+                        onTap: _pickTargets,
+                        borderRadius: BorderRadius.circular(AppRadii.md),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: tones.borderLight),
+                            borderRadius: BorderRadius.circular(AppRadii.md),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _targets.isEmpty
+                                      ? LocaleKeys.budgetTargetsApplyAll.tr()
+                                      : '${_targets.length} ${_targets.length == 1 ? LocaleKeys.target.tr() : LocaleKeys.targets.tr()} ${LocaleKeys.selected.tr()}',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: _targets.isEmpty
+                                        ? tones.textMuted
+                                        : tones.textPrimary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 20.sp,
-                              color: tones.textMuted,
-                            ),
-                          ],
+                              Icon(
+                                LucideIcons.chevronRight,
+                                size: 20.sp,
+                                color: tones.textMuted,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 14.h),
-                    _SectionLabel(
-                      text: LocaleKeys.alertAtThreshold.tr().replaceFirst('{0}', '$_threshold'),
-                    ),
-                    Slider(
-                      value: _threshold.toDouble(),
-                      min: 50,
-                      max: 100,
-                      divisions: 10,
-                      label: '$_threshold%',
-                      onChanged: (v) => setState(() => _threshold = v.toInt()),
-                    ),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(LocaleKeys.budgetRollover.tr()),
-                      subtitle: Text(LocaleKeys.budgetRolloverDescription.tr()),
-                      value: _rolloverEnabled,
-                      onChanged: (v) => setState(() => _rolloverEnabled = v),
-                    ),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(LocaleKeys.budgetForecastAlerts.tr()),
-                      subtitle: Text(LocaleKeys.budgetForecastAlertsDescription.tr()),
-                      value: _forecastAlertsEnabled,
-                      onChanged: (v) =>
-                          setState(() => _forecastAlertsEnabled = v),
-                    ),
-                    if (_isEdit)
-                      SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(LocaleKeys.active.tr()),
-                        value: _isActive,
-                        onChanged: (v) => setState(() => _isActive = v),
+                      SizedBox(height: 14.h),
+                      _SectionLabel(
+                        text: LocaleKeys.alertAtThreshold
+                            .tr()
+                            .replaceFirst('{0}', '$_threshold'),
                       ),
-                    SizedBox(height: 14.h),
-                    _SectionLabel(text: LocaleKeys.description.tr()),
-                    TextField(
-                      controller: _description,
-                      maxLines: 3,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      Slider(
+                        value: _threshold.toDouble(),
+                        min: 50,
+                        max: 100,
+                        divisions: 10,
+                        label: '$_threshold%',
+                        onChanged: (v) =>
+                            setState(() => _threshold = v.toInt()),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 18.h),
-                  decoration: BoxDecoration(
-                    color: tones.bgPage,
-                    border: Border(
-                      top: BorderSide(color: tones.borderLight),
-                    ),
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: FilledButton(
-                      onPressed: state.isSaving ? null : _submit,
-                      style: FilledButton.styleFrom(
-                        minimumSize: Size(double.infinity, 48.h),
+                      SizedBox(height: 6.h),
+                      LedgerSettingsGroup(
+                        children: [
+                          LedgerSettingsToggle(
+                            icon: LucideIcons.redo2,
+                            title: LocaleKeys.budgetRollover.tr(),
+                            subtitle: LocaleKeys.budgetRolloverDescription.tr(),
+                            value: _rolloverEnabled,
+                            onChanged: (v) =>
+                                setState(() => _rolloverEnabled = v),
+                          ),
+                          LedgerSettingsToggle(
+                            icon: LucideIcons.trendingUp,
+                            title: LocaleKeys.budgetForecastAlerts.tr(),
+                            subtitle:
+                                LocaleKeys.budgetForecastAlertsDescription.tr(),
+                            value: _forecastAlertsEnabled,
+                            onChanged: (v) =>
+                                setState(() => _forecastAlertsEnabled = v),
+                          ),
+                          if (_isEdit)
+                            LedgerSettingsToggle(
+                              icon: LucideIcons.power,
+                              title: LocaleKeys.active.tr(),
+                              value: _isActive,
+                              onChanged: (v) => setState(() => _isActive = v),
+                            ),
+                        ],
                       ),
-                      child: state.isSaving
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(_isEdit ? LocaleKeys.saveChanges.tr() : LocaleKeys.createBudget.tr()),
-                    ),
+                      SizedBox(height: 14.h),
+                      _SectionLabel(text: LocaleKeys.formDescription.tr()),
+                      TextField(
+                        controller: _description,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: LocaleKeys.typeHere.tr(),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 18.h),
+                    decoration: BoxDecoration(
+                      color: tones.bgPage,
+                      border: Border(
+                        top: BorderSide(color: tones.borderLight),
+                      ),
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      child: FilledButton(
+                        onPressed: state.isSaving ? null : _submit,
+                        style: FilledButton.styleFrom(
+                          minimumSize: Size(double.infinity, 48.h),
+                        ),
+                        child: state.isSaving
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text(_isEdit
+                                ? LocaleKeys.saveChanges.tr()
+                                : LocaleKeys.createBudget.tr()),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -370,16 +387,8 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 6.h),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.4,
-          color: context.tones.textSecondary,
-        ),
-      ),
+      padding: EdgeInsets.only(bottom: 6.lx, left: 2.lx),
+      child: LedgerH6(text),
     );
   }
 }
@@ -445,9 +454,8 @@ class _DateRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
-    final displayPlaceholder = placeholder == 'Select date'
-        ? LocaleKeys.selectDate.tr()
-        : placeholder;
+    final displayPlaceholder =
+        placeholder == 'Select date' ? LocaleKeys.selectDate.tr() : placeholder;
     final label = date == null
         ? displayPlaceholder
         : '${date!.year}-${date!.month.toString().padLeft(2, '0')}-${date!.day.toString().padLeft(2, '0')}';
@@ -463,7 +471,7 @@ class _DateRow extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              Icons.calendar_today_outlined,
+              LucideIcons.calendar,
               size: 18.sp,
               color: tones.textMuted,
             ),
@@ -555,7 +563,8 @@ class _TargetPickerSheetState extends State<_TargetPickerSheet>
                       ),
                     ),
                   ),
-                  TextButton(onPressed: _confirm, child: Text(LocaleKeys.done.tr())),
+                  TextButton(
+                      onPressed: _confirm, child: Text(LocaleKeys.done.tr())),
                 ],
               ),
             ),
@@ -765,11 +774,10 @@ class _CurrencyPickerField extends StatelessWidget {
               code.isEmpty ? '—' : code,
               style: TextStyle(fontSize: 14.sp),
             ),
-            Icon(Icons.arrow_drop_down, size: 20.sp),
+            Icon(LucideIcons.chevronDown, size: 16.lx),
           ],
         ),
       ),
     );
   }
 }
-

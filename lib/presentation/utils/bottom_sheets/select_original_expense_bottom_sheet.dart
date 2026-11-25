@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/core/utils/currency_formater.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
@@ -93,7 +94,7 @@ class _SelectOriginalExpenseSheetState
                   fontWeight: FontWeight.w400,
                 ),
                 prefixIcon: Icon(
-                  Icons.search,
+                  LucideIcons.search,
                   color: context.tones.textMuted,
                   size: 20.sp,
                 ),
@@ -101,7 +102,7 @@ class _SelectOriginalExpenseSheetState
                     ? null
                     : IconButton(
                         icon: Icon(
-                          Icons.clear,
+                          LucideIcons.x,
                           color: context.tones.textMuted,
                           size: 20.sp,
                         ),

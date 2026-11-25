@@ -2,6 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,7 +18,6 @@ import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/onboarding/onboard_settings_screen.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/wallet_type_popover.dart';
@@ -132,22 +134,15 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
             bottom: 16.h,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12.r),
+            color: context.tones.bgSurface,
+            borderRadius: BorderRadius.circular(AppRadii.md),
+            border: Border.all(color: context.tones.borderLight),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 0.h),
-              CircleAvatar(
-                radius: 30.sp,
-                backgroundColor: appPrimaryColor.withAlpha(30),
-                child: Icon(
-                  Icons.wallet,
-                  size: 28.sp,
-                  color: appPrimaryColor,
-                ),
-              ),
+              const LedgerCoin(icon: LucideIcons.wallet, size: 48),
               SizedBox(height: 16.h),
               Text(
                 LocaleKeys.setupWalletTitle.tr(),
@@ -161,7 +156,8 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
               Text(
                 LocaleKeys.setupWalletDesc.tr(),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+                style: TextStyle(
+                    fontSize: 14.sp, color: context.tones.textSecondary),
               ),
               SizedBox(height: 16.h),
               Expanded(
@@ -203,8 +199,8 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                             padding: EdgeInsets.all(10.sp),
                             child: SvgPicture.asset(
                               Assets.images.arrowDown,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.grey,
+                              colorFilter: ColorFilter.mode(
+                                context.tones.textMuted,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -296,7 +292,7 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                             wallet.currencyCode,
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: appPrimaryColor,
+                              color: context.tones.brandFill,
                             ),
                           ),
                         ],
@@ -319,7 +315,8 @@ class _WalletSetupWidgetState extends State<WalletSetupWidget> {
                           context: context,
                           theme: CurrencyPickerThemeData(
                               bottomSheetHeight: 0.7.sh,
-                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.surface,
                               flagSize: 24.sp,
                               subtitleTextStyle: TextStyle(
                                 fontSize: 12.sp,

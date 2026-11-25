@@ -1,21 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/info_interfaces/data.dart';
 import 'package:trakli/presentation/info_interfaces/info_interface.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/presentation/parties/widgets/parties_summary.dart';
 import 'package:trakli/presentation/parties/widgets/party_list_tile.dart';
+import 'package:trakli/presentation/statistics/statistics_money.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/icon_background_decor.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class PartyScreen extends StatefulWidget {
@@ -32,149 +33,172 @@ class _PartyScreenState extends State<PartyScreen> {
   Map<String, _PartyTotals> _computeStats(
     List<PartyEntity> parties,
     TransactionState transactionState,
+    StatsMoney money,
   ) {
-    final stats = <String, _PartyTotals>{};
-    for (final party in parties) {
-      double received = 0;
-      double spent = 0;
-      for (final txn in transactionState.transactions) {
-        if (txn.party?.clientId == party.clientId) {
-          final amount = txn.transaction.amount;
-          if (txn.transaction.type == TransactionType.income) {
-            received += amount;
-          } else {
-            spent += amount;
-          }
-        }
+    final received = <String, double>{};
+    final spent = <String, double>{};
+    for (final txn in transactionState.transactions) {
+      final id = txn.party?.clientId;
+      if (id == null || txn.transaction.isTransferLeg) continue;
+      final amount = money.convert(txn);
+      if (txn.transaction.type == TransactionType.income) {
+        received[id] = (received[id] ?? 0) + amount;
+      } else {
+        spent[id] = (spent[id] ?? 0) + amount;
       }
-      stats[party.clientId] =
-          _PartyTotals(received: received, spent: spent);
     }
-    return stats;
+    return {
+      for (final p in parties)
+        p.clientId: _PartyTotals(
+          received: received[p.clientId] ?? 0,
+          spent: spent[p.clientId] ?? 0,
+        ),
+    };
   }
 
-  void _add() {
-    AppNavigator.push(context, const AddPartyScreen());
-  }
+  void _add() => AppNavigator.push(context, const AddPartyScreen());
+
+  String _label(_PartyFilter f) => switch (f) {
+        _PartyFilter.all => LocaleKeys.walletsFilterAll.tr(),
+        _PartyFilter.earner => LocaleKeys.partiesFilterEarners.tr(),
+        _PartyFilter.spender => LocaleKeys.partiesFilterSpenders.tr(),
+        _PartyFilter.idle => LocaleKeys.walletsFilterIdle.tr(),
+      };
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
+    final money = StatsMoney.of(context);
     return BlocBuilder<PartyCubit, PartyState>(
       builder: (context, partyState) {
         return BlocBuilder<TransactionCubit, TransactionState>(
           builder: (context, transactionState) {
-            final stats = _computeStats(partyState.parties, transactionState);
-            final tones = context.tones;
-
-            final filtered = _applyFilters(partyState.parties, stats);
-            final totals = _aggregateTotals(partyState.parties, stats);
-            final isEmpty = partyState.parties.isEmpty;
+            final parties = partyState.parties;
+            final stats = _computeStats(parties, transactionState, money);
+            final filtered = _applyFilters(parties, stats);
+            final totals = _aggregateTotals(parties, stats);
+            final net = totals.received - totals.spent;
+            final counts = {
+              _PartyFilter.all: parties.length,
+              _PartyFilter.earner: totals.earnerCount,
+              _PartyFilter.spender: totals.spenderCount,
+              _PartyFilter.idle: totals.idleCount,
+            };
 
             return Scaffold(
-              backgroundColor: tones.bgPage,
+              backgroundColor: t.bgPage,
               appBar: PageAppBar(
                 title: LocaleKeys.parties.tr(),
-                onSearchChanged: isEmpty
-                    ? null
-                    : (v) => setState(() => _query = v),
-                searchHint: 'Search parties',
+                onSearchChanged:
+                    parties.isEmpty ? null : (v) => setState(() => _query = v),
+                searchHint: LocaleKeys.partiesSearchHint.tr(),
                 actions: [
                   PageAppBarAction(
-                    icon: Icons.add,
+                    icon: LucideIcons.plus,
                     onTap: _add,
                     primary: true,
                   ),
                 ],
               ),
-              body: Stack(
-                children: [
-                  IconBackgroundDecor(
-                    iconPath: Assets.images.profile2user,
-                  ),
-                  partyState.isLoading
+              body: partyState.isLoading && parties.isEmpty
                   ? const Center(child: CircularProgressIndicator())
-                  : isEmpty
-                      ? InfoInterface(
-                          action: _add,
-                          data: emptyPartyData,
-                        )
-                      : Column(
+                  : parties.isEmpty
+                      ? InfoInterface(action: _add, data: emptyPartyData)
+                      : ListView(
+                          padding:
+                              EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
                           children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                  16.w, 8.h, 16.w, 10.h),
-                              child: PartiesSummary(
-                                partyCount: partyState.parties.length,
-                                activeCount: totals.activeCount,
-                                received: totals.received,
-                                spent: totals.spent,
+                            Text(
+                              LocaleKeys.partiesNet.tr(),
+                              style: TextStyle(
+                                fontSize: 12.5.lx,
+                                color: t.textMuted,
                               ),
                             ),
-                            _FilterChips(
-                              selected: _filter,
-                              onChanged: (f) => setState(() => _filter = f),
-                              counts: {
-                                _PartyFilter.all: partyState.parties.length,
-                                _PartyFilter.earner: totals.earnerCount,
-                                _PartyFilter.spender: totals.spenderCount,
-                                _PartyFilter.idle: totals.idleCount,
-                              },
+                            SizedBox(height: 2.lx),
+                            LedgerBigNumber(
+                              money.full(net, sign: true),
+                              color: net < 0
+                                  ? t.expenseColor
+                                  : (net > 0 ? t.incomeColor : null),
                             ),
-                            Expanded(
-                              child: filtered.isEmpty
-                                  ? _NoMatches(query: _query)
-                                  : ListView(
-                                      padding: EdgeInsets.fromLTRB(
-                                          16.w, 8.h, 16.w, 24.h),
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: tones.bgSurface,
-                                            borderRadius:
-                                                BorderRadius.circular(AppRadii.lg),
-                                            border: Border.all(
-                                                color: tones.borderLight),
-                                            boxShadow:
-                                                context.elevations.level1,
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Column(
-                                            children: [
-                                              for (var i = 0;
-                                                  i < filtered.length;
-                                                  i++) ...[
-                                                PartyListTile(
-                                                  party: filtered[i],
-                                                  receivedAmount: stats[
-                                                              filtered[i]
-                                                                  .clientId]
-                                                          ?.received ??
-                                                      0,
-                                                  spentAmount: stats[filtered[i]
-                                                              .clientId]
-                                                          ?.spent ??
-                                                      0,
-                                                ),
-                                                if (i != filtered.length - 1)
-                                                  Divider(
-                                                    height: 1,
-                                                    thickness: 1,
-                                                    indent: 70.w,
-                                                    color: tones.borderLight
-                                                        .withValues(
-                                                            alpha: 0.6),
-                                                  ),
-                                              ],
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            SizedBox(height: 10.lx),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: LedgerTotalTile(
+                                    label: LocaleKeys.statsFlowIn.tr(),
+                                    value: money.full(totals.received),
+                                    color: t.incomeColor,
+                                  ),
+                                ),
+                                SizedBox(width: 6.lx),
+                                Expanded(
+                                  child: LedgerTotalTile(
+                                    label: LocaleKeys.statsFlowOut.tr(),
+                                    value: money.full(totals.spent),
+                                    color: t.expenseColor,
+                                  ),
+                                ),
+                                SizedBox(width: 6.lx),
+                                Expanded(
+                                  child: LedgerTotalTile(
+                                    label: LocaleKeys.active.tr(),
+                                    value:
+                                        '${totals.activeCount} / ${parties.length}',
+                                    color: t.textPrimary,
+                                  ),
+                                ),
+                              ],
                             ),
+                            SizedBox(height: 14.lx),
+                            LedgerChipRow(
+                              children: [
+                                for (final f in _PartyFilter.values)
+                                  LedgerFilterChip(
+                                    label: '${_label(f)} · ${counts[f] ?? 0}',
+                                    selected: f == _filter,
+                                    onTap: () => setState(() => _filter = f),
+                                  ),
+                              ],
+                            ),
+                            SizedBox(height: 10.lx),
+                            if (filtered.isEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 32.lx),
+                                child: Text(
+                                  _query.trim().isEmpty
+                                      ? LocaleKeys.listNoMatchFilter.tr()
+                                      : LocaleKeys.walletsNoMatchQuery
+                                          .tr(args: [_query.trim()]),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 13.lx,
+                                    color: t.textMuted,
+                                  ),
+                                ),
+                              )
+                            else
+                              LedgerCard(
+                                padding:
+                                    EdgeInsets.symmetric(horizontal: 12.lx),
+                                child: Column(
+                                  children: [
+                                    for (final p in filtered)
+                                      PartyListTile(
+                                        party: p,
+                                        receivedAmount:
+                                            stats[p.clientId]?.received ?? 0,
+                                        spentAmount:
+                                            stats[p.clientId]?.spent ?? 0,
+                                        currency: money.currency,
+                                        divider: p != filtered.last,
+                                      ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
-                ],
-              ),
             );
           },
         );
@@ -282,134 +306,3 @@ class _AggregateTotals {
 }
 
 enum _PartyFilter { all, earner, spender, idle }
-
-class _FilterChips extends StatelessWidget {
-  final _PartyFilter selected;
-  final ValueChanged<_PartyFilter> onChanged;
-  final Map<_PartyFilter, int> counts;
-
-  const _FilterChips({
-    required this.selected,
-    required this.onChanged,
-    required this.counts,
-  });
-
-  String _label(_PartyFilter f) {
-    switch (f) {
-      case _PartyFilter.all:
-        return 'All';
-      case _PartyFilter.earner:
-        return 'Earners';
-      case _PartyFilter.spender:
-        return 'Spenders';
-      case _PartyFilter.idle:
-        return 'No activity';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    return SizedBox(
-      height: 38.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        itemBuilder: (_, i) {
-          final filter = _PartyFilter.values[i];
-          final active = filter == selected;
-          return GestureDetector(
-            onTap: () => onChanged(filter),
-            behavior: HitTestBehavior.opaque,
-            child: AnimatedContainer(
-              duration: AppMotion.base,
-              curve: AppMotion.standard,
-              padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: active ? tones.brand.deep : tones.bgSurface,
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: active ? tones.brand.deep : tones.borderLight,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    _label(filter),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: active ? Colors.white : tones.textPrimary,
-                    ),
-                  ),
-                  SizedBox(width: 6.w),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 6.w, vertical: 2.h),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? Colors.white.withValues(alpha: 0.18)
-                          : tones.brand.background,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      '${counts[filter] ?? 0}',
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w700,
-                        color: active ? Colors.white : tones.brand.deep,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-        separatorBuilder: (_, __) => SizedBox(width: 8.w),
-        itemCount: _PartyFilter.values.length,
-      ),
-    );
-  }
-}
-
-class _NoMatches extends StatelessWidget {
-  final String query;
-  const _NoMatches({required this.query});
-
-  @override
-  Widget build(BuildContext context) {
-    final tones = context.tones;
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search_off, size: 40.sp, color: tones.textMuted),
-            SizedBox(height: 12.h),
-            Text(
-              query.isEmpty
-                  ? 'No parties match this filter.'
-                  : 'No matches for "$query".',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14.sp, color: tones.textSecondary),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Kept for compatibility with widgets that referenced the old PartyStats
-/// type before this screen was rewritten as a list.
-class PartyStats {
-  final double receivedAmount;
-  final double spentAmount;
-  const PartyStats({
-    required this.receivedAmount,
-    required this.spentAmount,
-  });
-}

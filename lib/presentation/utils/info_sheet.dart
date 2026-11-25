@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/presentation/utils/bottom_sheets/draggable_sheet.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 /// One titled paragraph shown inside [showInfoSheet].
 class InfoSection {
@@ -22,6 +24,7 @@ Future<void> showInfoSheet(
 }) {
   return showDraggableBottomSheet<void>(
     context,
+    backgroundColor: context.tones.bgSurface,
     initialChildSize: 0.6,
     minChildSize: 0.4,
     maxChildSize: 0.9,
@@ -46,70 +49,60 @@ class _InfoSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SheetDragHandle(),
-        SizedBox(height: 8.h),
+        SizedBox(height: 8.lx),
+        const LedgerSheetHandle(),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.fromLTRB(14.lx, 10.lx, 8.lx, 4.lx),
           child: Row(
             children: [
-              Icon(Icons.help_outline, size: 20.sp, color: tones.brand.deep),
-              SizedBox(width: 8.w),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w800,
-                    color: tones.textPrimary,
+                    fontSize: 17.lx,
+                    fontWeight: FontWeight.w700,
+                    color: t.textPrimary,
                   ),
                 ),
               ),
-              InkWell(
-                customBorder: const CircleBorder(),
+              LedgerIconButton(
+                icon: LucideIcons.x,
                 onTap: () => Navigator.of(context).maybePop(),
-                child: Padding(
-                  padding: EdgeInsets.all(4.w),
-                  child:
-                      Icon(Icons.close, size: 20.sp, color: tones.textMuted),
-                ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 8.h),
         Expanded(
-          child: SingleChildScrollView(
+          child: ListView(
             controller: controller,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 20.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final section in sections) ...[
-                  Text(
-                    section.heading,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700,
-                      color: tones.brand.deep,
-                    ),
+            padding: EdgeInsets.fromLTRB(14.lx, 8.lx, 14.lx, 24.lx),
+            children: [
+              for (final section in sections) ...[
+                Text(
+                  section.heading,
+                  style: TextStyle(
+                    fontSize: 14.lx,
+                    fontWeight: FontWeight.w600,
+                    color: t.textPrimary,
                   ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    section.body,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      height: 1.5,
-                      color: tones.textSecondary,
-                    ),
+                ),
+                SizedBox(height: 4.lx),
+                Text(
+                  section.body,
+                  style: TextStyle(
+                    fontSize: 13.lx,
+                    height: 1.5,
+                    color: t.textSecondary,
                   ),
-                  SizedBox(height: 16.h),
-                ],
+                ),
+                SizedBox(height: 16.lx),
               ],
-            ),
+            ],
           ),
         ),
       ],

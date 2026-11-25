@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trakli/core/app_update/app_update_result.dart';
@@ -14,7 +15,6 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_update/cubit/app_update_cubit.dart';
 import 'package:trakli/presentation/app_update/cubit/in_app_update_cubit.dart';
 import 'package:trakli/presentation/splash_screen.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -79,32 +79,7 @@ class _AppUpdateGateScreenState extends State<AppUpdateGateScreen> {
             );
         }
       },
-      builder: (context, state) {
-        if (state.isLoading || state.result == null) {
-          return Material(
-            color: appPrimaryColor,
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            ),
-          );
-        }
-        final result = state.result!;
-        if (result case AppUpdateCheckNoUpdate()) {
-          return const SplashScreen();
-        }
-        return Material(
-          color: appPrimaryColor,
-          child: const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2,
-            ),
-          ),
-        );
-      },
+      builder: (context, state) => const SplashScreen(),
     );
   }
 
@@ -139,28 +114,17 @@ class _AppUpdateGateScreenState extends State<AppUpdateGateScreen> {
       builder: (dialogContext) => PopScope(
         // Prevent back button from dismissing force update dialog
         canPop: false,
-        child: AlertDialog(
-          title: Text(
-            LocaleKeys.appUpdateNewVersionAvailable.tr(),
-            textAlign: TextAlign.center,
+        child: PopUpDialog(
+          title: LocaleKeys.appUpdateNewVersionAvailable.tr(),
+          subTitle: text,
+          showSecondary: isSkippable,
+          secondaryActionText: LocaleKeys.appUpdateLater.tr(),
+          secondaryAction: _saveSkipAndContinue,
+          mainActionText: LocaleKeys.appUpdateNow.tr(),
+          mainAction: () => _performUpdate(
+            isSkippable: isSkippable,
+            inAppUpdateInfo: inAppUpdateInfo,
           ),
-          content: SingleChildScrollView(
-            child: Text(text, textAlign: TextAlign.center),
-          ),
-          actions: [
-            if (isSkippable)
-              TextButton(
-                onPressed: _saveSkipAndContinue,
-                child: Text(LocaleKeys.appUpdateLater.tr()),
-              ),
-            TextButton(
-              onPressed: () => _performUpdate(
-                isSkippable: isSkippable,
-                inAppUpdateInfo: inAppUpdateInfo,
-              ),
-              child: Text(LocaleKeys.appUpdateNow.tr()),
-            ),
-          ],
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/data/datasources/ai/dto/chat_blocks_dto.dart';
 import 'package:trakli/domain/entities/category_entity.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
@@ -17,6 +18,9 @@ import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/utils/custom_dropdown_search.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class ProposedActionCard extends StatefulWidget {
@@ -30,6 +34,7 @@ class ProposedActionCard extends StatefulWidget {
 class ProposedActionCardState extends State<ProposedActionCard> {
   final Map<String, dynamic> _edited = {};
   bool _busy = false;
+  bool _editing = false;
 
   @override
   void initState() {
@@ -76,76 +81,170 @@ class ProposedActionCardState extends State<ProposedActionCard> {
     if (mounted) setState(() => _busy = false);
   }
 
+  ActionField? _fieldFor(String key) =>
+      widget.block.fields.firstWhereOrNull((f) => f.key == key);
+
+  String _displayOf(String key) {
+    final f = _fieldFor(key);
+    if (f == null) return '';
+    final d = f.display?.trim() ?? '';
+    if (d.isNotEmpty && !d.startsWith('#')) return d;
+    final v = _edited[key];
+    return v is String ? v.trim() : '';
+  }
+
+  String? _walletCurrency() {
+    final id = _edited['wallet_id'];
+    if (id is! num) return null;
+    return context
+        .watch<WalletCubit>()
+        .state
+        .wallets
+        .firstWhereOrNull((w) => w.id == id.toInt())
+        ?.currencyCode;
+  }
+
+  String _whenLabel() {
+    final raw = _edited['datetime']?.toString();
+    final dt = raw == null ? null : DateTime.tryParse(raw);
+    final now = DateTime.now();
+    final day = dt ?? now;
+    if (day.year == now.year && day.month == now.month && day.day == now.day) {
+      return LocaleKeys.chatActionToday.tr();
+    }
+    return DateFormat.MMMd(context.locale.toLanguageTag()).format(day);
+  }
+
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
     final block = widget.block;
     final pending = block.isPending;
-    final accent = block.risk == 'high' ? tones.accentWarm : tones.brand.deep;
+    final amountField = _fieldFor('amount');
+    final isTransaction = amountField != null;
 
-    return Container(
-      padding: EdgeInsets.all(14.r),
+    final description = _displayOf('description');
+    final title =
+        isTransaction && description.isNotEmpty ? description : block.summary;
+    final subline = isTransaction
+        ? [
+            _displayOf('categories'),
+            _displayOf('wallet_id'),
+            _whenLabel(),
+          ].where((p) => p.isNotEmpty).join(' \u00b7 ')
+        : (description.isNotEmpty && description != title ? description : '');
+
+    String? amountText;
+    if (isTransaction) {
+      final raw = _edited['amount'];
+      final amount = raw is num ? raw.toDouble() : num.tryParse('$raw');
+      if (amount != null) {
+        final income = _edited['type']?.toString() == 'income';
+        final code = _walletCurrency();
+        amountText = code == null
+            ? NumberFormat.decimalPatternDigits(decimalDigits: 2).format(amount)
+            : LedgerMoney.format(amount.toDouble(), code, sign: income);
+      }
+    }
+    final income = _edited['type']?.toString() == 'income';
+    final highRisk = block.risk == 'high';
+
+    final card = Container(
+      padding: EdgeInsets.all(10.lx),
       decoration: BoxDecoration(
-        color: tones.bgCard,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: tones.borderLight),
+        color: pending
+            ? Color.alphaBlend(
+                tones.accentWarm.withValues(alpha: 0.06), tones.bgSurface)
+            : tones.bgSurface,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        border: pending ? null : Border.all(color: tones.borderLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                block.risk == 'high'
-                    ? Icons.warning_amber_rounded
-                    : Icons.shopping_cart_outlined,
-                size: 16.sp,
-                color: accent,
-              ),
-              SizedBox(width: 8.w),
+              if (highRisk) ...[
+                Padding(
+                  padding: EdgeInsets.only(top: 1.lx),
+                  child: Icon(LucideIcons.triangleAlert,
+                      size: 14.lx, color: tones.warmText),
+                ),
+                SizedBox(width: 6.lx),
+              ],
               Expanded(
-                child: Text(
-                  block.summary,
-                  style: TextStyle(
-                    color: tones.textPrimary,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: tones.textPrimary,
+                        fontSize: 13.lx,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (subline.isNotEmpty)
+                      Text(
+                        subline,
+                        style: TextStyle(
+                          color: tones.textMuted,
+                          fontSize: 11.5.lx,
+                        ),
+                      ),
+                  ],
                 ),
               ),
+              if (amountText != null) ...[
+                SizedBox(width: 8.lx),
+                LedgerAmount(
+                  amountText,
+                  size: 13,
+                  weight: FontWeight.w600,
+                  color: income ? tones.incomeColor : null,
+                ),
+              ],
             ],
           ),
-          SizedBox(height: 12.h),
-          if (pending)
+          if (pending && _editing) ...[
+            SizedBox(height: 10.lx),
             for (final f in block.fields)
               Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.only(bottom: 8.lx),
                 child: _field(tones, f),
-              )
-          else
+              ),
+          ],
+          if (!pending && !isTransaction) ...[
+            SizedBox(height: 6.lx),
             for (final f in block.fields) _readonlyField(tones, f),
-          SizedBox(height: 4.h),
+          ],
+          SizedBox(height: 8.lx),
           if (pending)
             Row(
               children: [
                 Expanded(
-                  child: _actionButton(
-                    tones,
-                    label: LocaleKeys.confirm.tr(),
-                    filled: true,
+                  child: LedgerButton(
+                    label: LocaleKeys.save.tr(),
                     busy: _busy,
-                    onTap: _busy ? null : _confirm,
+                    onPressed: _busy ? null : _confirm,
                   ),
                 ),
-                SizedBox(width: 10.w),
+                SizedBox(width: 6.lx),
                 Expanded(
-                  child: _actionButton(
-                    tones,
-                    label: LocaleKeys.dismiss.tr(),
-                    filled: false,
-                    busy: false,
-                    onTap: _busy ? null : _reject,
-                  ),
+                  child: _editing
+                      ? LedgerButton(
+                          label: LocaleKeys.dismiss.tr(),
+                          style: LedgerButtonStyle.outline,
+                          onPressed: _busy ? null : _reject,
+                        )
+                      : LedgerButton(
+                          label: LocaleKeys.edit.tr(),
+                          style: LedgerButtonStyle.outline,
+                          onPressed: _busy
+                              ? null
+                              : () => setState(() => _editing = true),
+                        ),
                 ),
               ],
             )
@@ -154,20 +253,19 @@ class ProposedActionCardState extends State<ProposedActionCard> {
               children: [
                 Icon(
                   block.isExecuted
-                      ? Icons.check_circle_rounded
-                      : Icons.cancel_rounded,
-                  size: 15.sp,
-                  color: block.isExecuted ? tones.income.deep : tones.textMuted,
+                      ? LucideIcons.circleCheck
+                      : LucideIcons.circleX,
+                  size: 14.lx,
+                  color: block.isExecuted ? tones.brandText : tones.textMuted,
                 ),
-                SizedBox(width: 6.w),
+                SizedBox(width: 6.lx),
                 Text(
                   block.isExecuted
                       ? LocaleKeys.done.tr()
                       : LocaleKeys.dismissed.tr(),
                   style: TextStyle(
-                    color:
-                        block.isExecuted ? tones.income.deep : tones.textMuted,
-                    fontSize: 12.sp,
+                    color: block.isExecuted ? tones.brandText : tones.textMuted,
+                    fontSize: 12.lx,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -175,6 +273,12 @@ class ProposedActionCardState extends State<ProposedActionCard> {
             ),
         ],
       ),
+    );
+
+    if (!pending) return card;
+    return CustomPaint(
+      foregroundPainter: _DashedOutline(color: tones.accentWarm),
+      child: card,
     );
   }
 
@@ -216,7 +320,7 @@ class ProposedActionCardState extends State<ProposedActionCard> {
           children: [
             Expanded(
               child: Text(
-                code.isEmpty ? '—' : code,
+                code,
                 style: TextStyle(fontSize: 12.sp, color: tones.textPrimary),
               ),
             ),
@@ -351,8 +455,8 @@ class ProposedActionCardState extends State<ProposedActionCard> {
       showClearButton: true,
       items: (filter, infiniteScrollProps) => categories,
       itemAsString: (c) => c.name,
-      onChanged: (v) => setState(() =>
-          _edited[f.key] = v?.id == null ? const <int>[] : <int>[v!.id!]),
+      onChanged: (v) => setState(
+          () => _edited[f.key] = v?.id == null ? const <int>[] : <int>[v!.id!]),
       compareFn: (i1, i2) => i1.clientId == i2.clientId,
       filterFn: (c, filter) =>
           c.name.toLowerCase().contains(filter.toLowerCase()),
@@ -391,7 +495,7 @@ class ProposedActionCardState extends State<ProposedActionCard> {
           children: [
             Expanded(
               child: Text(
-                dt != null ? _fmt(dt) : '—',
+                dt != null ? _fmt(dt) : '',
                 style: TextStyle(fontSize: 12.sp, color: tones.textPrimary),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -448,44 +552,32 @@ class ProposedActionCardState extends State<ProposedActionCard> {
       ),
     );
   }
+}
 
-  Widget _actionButton(
-    AppTones tones, {
-    required String label,
-    required bool filled,
-    required bool busy,
-    required VoidCallback? onTap,
-  }) {
-    final fg = filled ? Colors.white : tones.textPrimary;
-    return Material(
-      color: filled ? tones.brand.deep : Colors.transparent,
-      borderRadius: BorderRadius.circular(10.r),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10.r),
-        child: Container(
-          height: 38.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            border: filled ? null : Border.all(color: tones.borderLight),
-          ),
-          child: busy
-              ? SizedBox(
-                  width: 16.r,
-                  height: 16.r,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: fg),
-                )
-              : Text(
-                  label,
-                  style: TextStyle(
-                    color: fg,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-        ),
-      ),
-    );
+class _DashedOutline extends CustomPainter {
+  final Color color;
+  _DashedOutline({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        (Offset.zero & size).deflate(0.5),
+        const Radius.circular(AppRadii.md),
+      ));
+    for (final metric in path.computeMetrics()) {
+      var d = 0.0;
+      while (d < metric.length) {
+        canvas.drawPath(metric.extractPath(d, d + 4), paint);
+        d += 7;
+      }
+    }
   }
+
+  @override
+  bool shouldRepaint(covariant _DashedOutline old) => old.color != color;
 }

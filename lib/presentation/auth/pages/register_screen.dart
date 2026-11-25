@@ -3,9 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/auth/cubits/register/register_cubit.dart';
 import 'package:trakli/presentation/auth/pages/login_with_email_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -85,6 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             });
       },
       child: Scaffold(
+        appBar: PageAppBar(title: LocaleKeys.createAccount.tr()),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Form(
@@ -92,29 +92,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 0.08.sh),
-                Container(
-                  width: 48.sp,
-                  height: 32.sp,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: SvgPicture.asset(Assets.images.arrowLeft),
-                  ),
-                ),
-                SizedBox(height: 12.sp),
-                Text(
-                  LocaleKeys.createAccount.tr(),
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
                 SizedBox(height: 28.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -149,8 +126,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (currentStep == 2) _stepThree(),
                 SizedBox(height: 16.h),
                 Align(
-                  child: RichText(
-                    text: TextSpan(
+                  child: Text.rich(
+                    TextSpan(
                       text: LocaleKeys.alreadyHaveAccount.tr(),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontSize: 14.sp,

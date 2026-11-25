@@ -48,6 +48,7 @@ import 'package:trakli/presentation/transfers/cubit/transfer_cubit.dart';
 import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/spaces/cubit/space_cubit.dart';
 import 'package:trakli/presentation/utils/sync_cubit.dart';
 import 'package:trakli/presentation/utils/theme.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
@@ -136,6 +137,7 @@ class AppWidget extends StatelessWidget {
         BlocProvider(
           create: (_) => getIt<ReminderCubit>(),
         ),
+        BlocProvider(create: (_) => getIt<SpaceCubit>()..restore()),
       ],
       child: const AppView(),
     );
