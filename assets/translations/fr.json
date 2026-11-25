@@ -1204,5 +1204,12 @@
   "partiesFilterSpenders": "Vous payez",
   "partiesNet": "Net avec tout le monde",
   "groupsSearchHint": "Rechercher des groupes",
-  "groupsEmptyBody": "Créez un groupe pour organiser les transactions liées."
+  "groupsEmptyBody": "Créez un groupe pour organiser les transactions liées.",
+  "detailLast6Months": "6 derniers mois",
+  "detailNoActivity": "Aucune activité ces 6 derniers mois.",
+  "detailNoTransactions": "Aucune transaction pour l’instant.",
+  "detailAverage": "Moyenne",
+  "detailBiggest": "Le plus élevé",
+  "detailTotal": "Total",
+  "detailNetFlow": "Flux net"
 }

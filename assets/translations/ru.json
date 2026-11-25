@@ -1206,5 +1206,12 @@
   "partiesFilterSpenders": "Платите вы",
   "partiesNet": "Итог по всем",
   "groupsSearchHint": "Поиск групп",
-  "groupsEmptyBody": "Создайте группу, чтобы упорядочить связанные операции."
+  "groupsEmptyBody": "Создайте группу, чтобы упорядочить связанные операции.",
+  "detailLast6Months": "Последние 6 месяцев",
+  "detailNoActivity": "Нет активности за последние 6 месяцев.",
+  "detailNoTransactions": "Пока нет операций.",
+  "detailAverage": "В среднем",
+  "detailBiggest": "Крупнейшая",
+  "detailTotal": "Итого",
+  "detailNetFlow": "Чистый поток"
 }

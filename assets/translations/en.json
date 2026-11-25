@@ -1204,5 +1204,12 @@
   "partiesFilterSpenders": "You pay",
   "partiesNet": "Net with everyone",
   "groupsSearchHint": "Search groups",
-  "groupsEmptyBody": "Create a group to organize related transactions."
+  "groupsEmptyBody": "Create a group to organize related transactions.",
+  "detailLast6Months": "Last 6 months",
+  "detailNoActivity": "No activity in the last 6 months.",
+  "detailNoTransactions": "No transactions yet.",
+  "detailAverage": "Average",
+  "detailBiggest": "Biggest",
+  "detailTotal": "Total",
+  "detailNetFlow": "Net flow"
 }

@@ -129,7 +129,7 @@ class FinancialPositionDrillBottomSheet extends StatelessWidget {
                             LedgerTransactionRow(
                               transaction: r,
                               subtitle: DateFormat.yMMMd(
-                                context.locale.toLanguageTag(),
+                                Localizations.localeOf(context).toString(),
                               ).format(r.transaction.datetime),
                               divider: r != rows.last,
                             ),

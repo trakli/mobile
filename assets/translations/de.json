@@ -1204,5 +1204,12 @@
   "partiesFilterSpenders": "Du zahlst",
   "partiesNet": "Netto mit allen",
   "groupsSearchHint": "Gruppen suchen",
-  "groupsEmptyBody": "Erstelle eine Gruppe, um zusammengehörige Transaktionen zu ordnen."
+  "groupsEmptyBody": "Erstelle eine Gruppe, um zusammengehörige Transaktionen zu ordnen.",
+  "detailLast6Months": "Letzte 6 Monate",
+  "detailNoActivity": "Keine Aktivität in den letzten 6 Monaten.",
+  "detailNoTransactions": "Noch keine Transaktionen.",
+  "detailAverage": "Durchschnitt",
+  "detailBiggest": "Größte",
+  "detailTotal": "Gesamt",
+  "detailNetFlow": "Nettofluss"
 }

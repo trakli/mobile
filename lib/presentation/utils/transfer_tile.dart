@@ -67,7 +67,7 @@ class TransferTile extends StatelessWidget {
                   size: 30,
                 ),
                 Text(
-                  DateFormat.yMMMd(sheet.locale.toLanguageTag())
+                  DateFormat.yMMMd(Localizations.localeOf(sheet).toString())
                       .add_Hm()
                       .format(transfer.datetime),
                   style: LedgerText.money(size: 11.5.lx, color: t.textMuted),
@@ -126,7 +126,7 @@ class TransferTile extends StatelessWidget {
     return LedgerRow(
       leading: const LedgerCoin(icon: LucideIcons.arrowLeftRight),
       title: '$from → $to',
-      subtitle: DateFormat.yMMMd(context.locale.toLanguageTag())
+      subtitle: DateFormat.yMMMd(Localizations.localeOf(context).toString())
           .format(transfer.datetime),
       divider: divider,
       onTap: () => _showDetails(context),

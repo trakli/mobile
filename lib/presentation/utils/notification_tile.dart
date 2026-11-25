@@ -111,7 +111,7 @@ class NotificationTile extends StatelessWidget {
                   SizedBox(height: 4.lx),
                   Text(
                     '${getTypeLabel(notification.type)} · '
-                    '${DateFormat.yMMMd(context.locale.toLanguageTag()).add_Hm().format(notification.createdAt)}',
+                    '${DateFormat.yMMMd(Localizations.localeOf(context).toString()).add_Hm().format(notification.createdAt)}',
                     style: LedgerText.money(size: 10.5.lx, color: t.textMuted),
                   ),
                 ],

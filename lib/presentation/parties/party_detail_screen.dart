@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:trakli/domain/entities/party_entity.dart';
 import 'package:trakli/domain/entities/reminder_entity.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
@@ -13,16 +13,17 @@ import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/parties/party_debt.dart';
 import 'package:trakli/presentation/reminders/cubit/reminder_cubit.dart';
+import 'package:trakli/presentation/statistics/statistics_money.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/dialogs/pop_up_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_detail.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
-import 'package:trakli/presentation/utils/transaction_tile.dart';
 
 enum _PartyAction { edit, delete }
 
@@ -40,12 +41,13 @@ class PartyDetailScreen extends StatelessWidget {
 
   ({double received, double spent, double net}) _totals(
     List<TransactionCompleteEntity> txns,
+    double Function(TransactionCompleteEntity) convert,
   ) {
     double received = 0;
     double spent = 0;
     for (final t in txns) {
-      if (!_isMine(t)) continue;
-      final amt = t.transaction.amount;
+      if (!_isMine(t) || t.transaction.isTransferLeg) continue;
+      final amt = convert(t);
       if (t.transaction.type == TransactionType.income) {
         received += amt;
       } else {
@@ -53,39 +55,6 @@ class PartyDetailScreen extends StatelessWidget {
       }
     }
     return (received: received, spent: spent, net: received - spent);
-  }
-
-  List<TransactionCompleteEntity> _recent(
-    List<TransactionCompleteEntity> txns,
-  ) {
-    final mine = txns.where(_isMine).toList()
-      ..sort(
-        (a, b) => b.transaction.datetime.compareTo(a.transaction.datetime),
-      );
-    return mine.take(10).toList();
-  }
-
-  List<_MonthBucket> _monthly(List<TransactionCompleteEntity> txns) {
-    final now = DateTime.now();
-    final buckets = <DateTime, _MonthBucket>{};
-    for (var i = 5; i >= 0; i--) {
-      final m = DateTime(now.year, now.month - i, 1);
-      buckets[m] = _MonthBucket(month: m);
-    }
-    for (final t in txns) {
-      if (!_isMine(t)) continue;
-      final key = DateTime(
-          t.transaction.datetime.year, t.transaction.datetime.month, 1);
-      final bucket = buckets[key];
-      if (bucket == null) continue;
-      final amt = t.transaction.amount;
-      if (t.transaction.type == TransactionType.income) {
-        bucket.received += amt;
-      } else {
-        bucket.spent += amt;
-      }
-    }
-    return buckets.values.toList();
   }
 
   String get _shortName {
@@ -110,9 +79,8 @@ class PartyDetailScreen extends StatelessWidget {
         final mine = state.transactions.where(_isMine).toList();
         final currency = rates?.baseCode ??
             (mine.isNotEmpty ? mine.first.wallet.currencyCode : 'EUR');
-        final totals = _totals(state.transactions);
-        final recent = _recent(state.transactions);
-        final monthly = _monthly(state.transactions);
+        final money = StatsMoney.of(context);
+        final totals = _totals(state.transactions, money.convert);
 
         return Scaffold(
           backgroundColor: tones.bgPage,
@@ -196,11 +164,16 @@ class PartyDetailScreen extends StatelessWidget {
                   _AboutRow(party: party),
                 ],
                 SizedBox(height: 20.lx),
-                _TotalsRow(totals: totals, currency: currency),
+                _TotalsRow(totals: totals, currency: money.currency),
                 SizedBox(height: 12.lx),
-                _ActivityCard(monthly: monthly),
+                LedgerMonthlyCard(
+                  buckets: ledgerMonthlyBuckets(mine, money.convert),
+                ),
                 SizedBox(height: 20.lx),
-                _RecentSection(transactions: recent),
+                LedgerRecentCard(
+                  transactions: mine,
+                  emptyText: LocaleKeys.partyNoTransactions.tr(),
+                ),
               ],
             ),
           ),
@@ -291,13 +264,6 @@ class PartyDetailScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class _MonthBucket {
-  final DateTime month;
-  double received = 0;
-  double spent = 0;
-  _MonthBucket({required this.month});
 }
 
 class _MenuLabel extends StatelessWidget {
@@ -561,136 +527,6 @@ class _TotalsRow extends StatelessWidget {
           totals.net >= 0 ? t.incomeColor : t.expenseColor,
           sign: true,
         ),
-      ],
-    );
-  }
-}
-
-class _ActivityCard extends StatelessWidget {
-  final List<_MonthBucket> monthly;
-
-  const _ActivityCard({required this.monthly});
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.tones;
-    final hasData = monthly.any((m) => m.received > 0 || m.spent > 0);
-    final axisStyle = TextStyle(fontSize: 10.lx, color: t.textMuted);
-    return LedgerCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          LedgerH6(LocaleKeys.partyActivity.tr()),
-          SizedBox(height: 8.lx),
-          if (!hasData)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.lx),
-              child: Text(
-                LocaleKeys.partyNoActivity.tr(),
-                style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
-              ),
-            )
-          else
-            SizedBox(
-              height: 150.lx,
-              child: SfCartesianChart(
-                margin: EdgeInsets.zero,
-                plotAreaBorderWidth: 0,
-                primaryXAxis: CategoryAxis(
-                  majorGridLines: const MajorGridLines(width: 0),
-                  axisLine: AxisLine(width: 1, color: t.borderLight),
-                  majorTickLines: const MajorTickLines(size: 0),
-                  labelStyle: axisStyle,
-                ),
-                primaryYAxis: NumericAxis(
-                  axisLine: const AxisLine(width: 0),
-                  majorTickLines: const MajorTickLines(size: 0),
-                  majorGridLines: MajorGridLines(
-                    width: 1,
-                    color: t.borderLight,
-                  ),
-                  labelStyle: axisStyle,
-                ),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                legend: Legend(
-                  isVisible: true,
-                  position: LegendPosition.bottom,
-                  iconHeight: 8,
-                  iconWidth: 8,
-                  textStyle: TextStyle(fontSize: 11.lx, color: t.textSecondary),
-                ),
-                series: <CartesianSeries<_MonthBucket, String>>[
-                  ColumnSeries<_MonthBucket, String>(
-                    name: LocaleKeys.partyReceived.tr(),
-                    dataSource: monthly,
-                    xValueMapper: (m, _) => DateFormat.MMM().format(m.month),
-                    yValueMapper: (m, _) => m.received,
-                    color: t.brandFill,
-                    width: 0.6,
-                    spacing: 0.15,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(2),
-                    ),
-                  ),
-                  ColumnSeries<_MonthBucket, String>(
-                    name: LocaleKeys.partySpent.tr(),
-                    dataSource: monthly,
-                    xValueMapper: (m, _) => DateFormat.MMM().format(m.month),
-                    yValueMapper: (m, _) => m.spent,
-                    color: t.accentWarm,
-                    width: 0.6,
-                    spacing: 0.15,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(2),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RecentSection extends StatelessWidget {
-  final List<TransactionCompleteEntity> transactions;
-
-  const _RecentSection({required this.transactions});
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.tones;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        LedgerH6(
-          LocaleKeys.partyRecentTransactions.tr(),
-          trailing: Text(
-            LocaleKeys.partyShownCount
-                .tr(namedArgs: {'count': '${transactions.length}'}),
-            style: TextStyle(fontSize: 11.lx, color: t.textMuted),
-          ),
-        ),
-        SizedBox(height: 8.lx),
-        if (transactions.isEmpty)
-          LedgerCard(
-            child: Text(
-              LocaleKeys.partyNoTransactions.tr(),
-              style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
-            ),
-          )
-        else
-          for (final txn in transactions)
-            Padding(
-              padding: EdgeInsets.only(bottom: 8.lx),
-              child: TransactionTile(
-                transaction: txn,
-                accentColor: txn.transaction.type == TransactionType.income
-                    ? t.incomeColor
-                    : t.expenseColor,
-              ),
-            ),
       ],
     );
   }

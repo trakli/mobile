@@ -1204,5 +1204,12 @@
   "partiesFilterSpenders": "Les pagas",
   "partiesNet": "Neto con todos",
   "groupsSearchHint": "Buscar grupos",
-  "groupsEmptyBody": "Crea un grupo para organizar transacciones relacionadas."
+  "groupsEmptyBody": "Crea un grupo para organizar transacciones relacionadas.",
+  "detailLast6Months": "Últimos 6 meses",
+  "detailNoActivity": "Sin actividad en los últimos 6 meses.",
+  "detailNoTransactions": "Aún no hay transacciones.",
+  "detailAverage": "Promedio",
+  "detailBiggest": "Mayor",
+  "detailTotal": "Total",
+  "detailNetFlow": "Flujo neto"
 }

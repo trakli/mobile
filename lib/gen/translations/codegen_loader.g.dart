@@ -1206,5 +1206,12 @@ abstract class  LocaleKeys {
   static const partiesNet = 'partiesNet';
   static const groupsSearchHint = 'groupsSearchHint';
   static const groupsEmptyBody = 'groupsEmptyBody';
+  static const detailLast6Months = 'detailLast6Months';
+  static const detailNoActivity = 'detailNoActivity';
+  static const detailNoTransactions = 'detailNoTransactions';
+  static const detailAverage = 'detailAverage';
+  static const detailBiggest = 'detailBiggest';
+  static const detailTotal = 'detailTotal';
+  static const detailNetFlow = 'detailNetFlow';
 
 }
