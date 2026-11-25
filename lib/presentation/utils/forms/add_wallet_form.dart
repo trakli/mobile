@@ -136,7 +136,6 @@ class _AddWalletFormState extends State<AddWalletForm> {
   void _pickIcon() {
     showCustomBottomSheet(
       context,
-      color: Theme.of(context).scaffoldBackgroundColor,
       widget: SelectIconBottomSheet(
         onSelect: (mediaType, image) {
           setState(() {

@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
-import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
@@ -71,8 +72,10 @@ class GroupTypePopover extends StatelessWidget {
                     option.customName.tr(),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  trailing: SvgPicture.asset(
-                    Assets.images.arrowRight,
+                  trailing: Icon(
+                    LucideIcons.chevronRight,
+                    size: 16.lx,
+                    color: context.tones.textMuted,
                   ),
                 );
               });
@@ -86,4 +89,3 @@ class GroupTypePopover extends StatelessWidget {
     );
   }
 }
-

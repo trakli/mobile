@@ -1,13 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/subscription_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/utils/colors.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class SubscriptionTile extends StatefulWidget {
   final bool isSelected;
@@ -36,119 +36,82 @@ class _SubscriptionTileState extends State<SubscriptionTile> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
+    final yearly = planType == PlanType.yearly;
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 16.h,
-          horizontal: 16.w,
-        ),
+        padding: EdgeInsets.all(12.lx),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F7),
-          borderRadius: BorderRadius.circular(8.r),
-          border: widget.isSelected
-              ? Border.all(
-                  width: 2.w,
-                  color: appPrimaryColor,
-                )
-              : null,
+          color: widget.isSelected ? t.surface2 : t.bgSurface,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          border: Border.all(
+            width: widget.isSelected ? 1.5 : 1,
+            color: widget.isSelected ? t.brandFill : t.borderLight,
+          ),
         ),
         child: Column(
-          spacing: 4.h,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              spacing: 8.w,
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 4.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: planType == PlanType.monthly ? appGrey : appYellow,
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: Text(
-                    widget.plan.name,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: neutralM900,
-                      fontWeight: FontWeight.w700,
-                    ),
+                Text(
+                  widget.plan.name,
+                  style: TextStyle(
+                    fontSize: 14.lx,
+                    fontWeight: FontWeight.w700,
+                    color: t.textPrimary,
                   ),
                 ),
-                if (planType == PlanType.yearly)
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: appOrange,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      LocaleKeys.recommended.tr(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.white,
-                      ),
-                    ),
+                if (yearly) ...[
+                  SizedBox(width: 8.lx),
+                  LedgerChip(
+                    LocaleKeys.recommended.tr(),
+                    tone: LedgerChipTone.warm,
                   ),
+                ],
                 const Spacer(),
                 Icon(
                   widget.isSelected
-                      ? Icons.radio_button_checked_rounded
-                      : Icons.radio_button_off_rounded,
-                  color: widget.isSelected ? appPrimaryColor : Colors.grey,
+                      ? LucideIcons.circleCheck
+                      : LucideIcons.circle,
+                  size: 18.lx,
+                  color: widget.isSelected ? t.brandFill : t.textMuted,
                 ),
               ],
             ),
+            SizedBox(height: 6.lx),
             Text(
               "${widget.plan.priceFormatted}/${widget.plan.interval}",
-              style: TextStyle(
-                fontSize: 18.sp,
-                color: neutralM900,
-                fontWeight: FontWeight.w700,
+              style: LedgerText.money(
+                size: 17.lx,
+                weight: FontWeight.w600,
+                color: t.textPrimary,
               ),
             ),
+            SizedBox(height: 2.lx),
             Text(
               widget.plan.cta.text,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: neutralM700,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(fontSize: 12.5.lx, color: t.textSecondary),
             ),
-            Divider(height: 0, thickness: 1.5.h),
-            ...widget.plan.features.map<Widget>((feature) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 8.w,
-                children: [
-                  SvgPicture.asset(
-                    width: 16.w,
-                    height: 16.h,
-                    Assets.images.arrowCircleRight,
-                    colorFilter: ColorFilter.mode(
-                      appPrimaryColor,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      feature,
-                      style: TextStyle(
-                        color: neutralM700,
-                        fontSize: 12.sp,
+            SizedBox(height: 8.lx),
+            for (final feature in widget.plan.features)
+              Padding(
+                padding: EdgeInsets.only(top: 4.lx),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.check, size: 14.lx, color: t.brandText),
+                    SizedBox(width: 8.lx),
+                    Expanded(
+                      child: Text(
+                        feature,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12.lx, color: t.textPrimary),
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
-              );
-            }),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

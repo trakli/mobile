@@ -113,7 +113,6 @@ class _AddPartyFormState extends State<AddPartyForm> {
               media: mediaEntity,
               onPickIcon: () => showCustomBottomSheet(
                 context,
-                color: Theme.of(context).scaffoldBackgroundColor,
                 widget: SelectIconBottomSheet(
                   onSelect: (mediaType, image) => setState(() {
                     mediaEntity =

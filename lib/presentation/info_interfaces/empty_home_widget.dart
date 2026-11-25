@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/add_transaction_screen.dart';
@@ -14,7 +17,6 @@ import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
 import 'package:trakli/presentation/parties/party_screen.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 
 class EmptyHomeWidget extends StatefulWidget {
   const EmptyHomeWidget({super.key});
@@ -65,61 +67,52 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthCubit>().state.user;
+    final t = context.tones;
     return Column(
       children: [
-        SizedBox(height: 8.h),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          margin: EdgeInsets.symmetric(horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: appPrimaryColor.withAlpha(30),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.waving_hand_outlined,
-                color: appPrimaryColor,
-                size: 28.sp,
-              ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${LocaleKeys.homeWelcome.tr()}, ${user?.firstName ?? ""}",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: appPrimaryColor,
+        Padding(
+          padding: EdgeInsets.fromLTRB(14.lx, 8.lx, 14.lx, 0),
+          child: LedgerCard(
+            child: Row(
+              children: [
+                const LedgerCoin(icon: LucideIcons.hand, size: 40),
+                SizedBox(width: 12.lx),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${LocaleKeys.homeWelcome.tr()}, ${user?.firstName ?? ""}",
+                        style: TextStyle(
+                          fontSize: 16.lx,
+                          fontWeight: FontWeight.w700,
+                          color: t.textPrimary,
+                        ),
                       ),
-                    ),
-                    Text(
-                      LocaleKeys.financeInfo.tr(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelSmall
-                          ?.copyWith(fontSize: 13.sp),
-                    ),
-                  ],
+                      SizedBox(height: 2.lx),
+                      Text(
+                        LocaleKeys.financeInfo.tr(),
+                        style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
+                      ),
+                    ],
+                  ),
                 ),
-              )
-            ],
+              ],
+            ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 16.h),
+          padding: EdgeInsets.only(top: 14.lx),
           child: SmoothPageIndicator(
             controller: _pageController,
             count: _pages.length,
             effect: ExpandingDotsEffect(
-              activeDotColor: appPrimaryColor,
-              dotColor: Colors.green.shade200,
-              dotHeight: 8.h,
-              dotWidth: 8.h,
+              activeDotColor: t.brandFill,
+              dotColor: t.surface3,
+              dotHeight: 6.lx,
+              dotWidth: 6.lx,
               expansionFactor: 3,
-              spacing: 6.w,
+              spacing: 5.lx,
             ),
           ),
         ),
@@ -130,126 +123,91 @@ class _EmptyHomeWidgetState extends State<EmptyHomeWidget> {
               setState(() => _currentIndex = index);
             },
             itemCount: _pages.length,
-            itemBuilder: (context, index) {
-              final data = _pages[index];
-              return _buildPage(data);
-            },
+            itemBuilder: (context, index) => _buildPage(_pages[index]),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildPage(EmptyStateModel data) {
+  void _act() {
     final cubit = context.read<MainNavigationCubit>();
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 30.sp,
-            backgroundColor: appPrimaryColor.withAlpha(30),
-            child: Icon(
-              data.icon,
-              size: 28.sp,
-              color: appPrimaryColor,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            data.title1?.tr() ?? data.title.tr(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 10.h),
-          Text(
-            data.description1?.tr() ?? data.description.tr(),
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(fontSize: 14.sp),
-          ),
-          SizedBox(height: 20.h),
-          Card(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${LocaleKeys.whyThisMatters.tr()}:",
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
-                      color: appPrimaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  if (data.quickSteps != null)
-                    ...data.quickSteps!.map(
-                      (p) => _buildPoint(
-                        icon: p.icon,
-                        text: p.description.tr(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 20.h),
-          if (data.buttonText.isNotEmpty)
-            SizedBox(
-              width: double.infinity,
-              height: 48.h,
-              child: ElevatedButton(
-                onPressed: () {
-                  switch (_currentIndex) {
-                    case 0:
-                      AppNavigator.push(
-                        context,
-                        const AddTransactionScreen(),
-                      );
-                    case 1:
-                      cubit.updateIndex(MainNavigationPageState.wallet);
-                    case 2:
-                      AppNavigator.push(
-                        context,
-                        const CategoryScreen(),
-                      );
-                    case 3:
-                      AppNavigator.push(context, const PartyScreen());
-                  }
-                },
-                child: Text(
-                  data.buttonText1?.tr() ?? "",
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+    switch (_currentIndex) {
+      case 0:
+        AppNavigator.push(context, const AddTransactionScreen());
+      case 1:
+        cubit.updateIndex(MainNavigationPageState.wallet);
+      case 2:
+        AppNavigator.push(context, const CategoryScreen());
+      case 3:
+        AppNavigator.push(context, const PartyScreen());
+    }
   }
 
-  Widget _buildPoint({required IconData icon, required String text}) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, color: appPrimaryColor, size: 20.sp),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodySmall,
+  Widget _buildPage(EmptyStateModel data) {
+    final t = context.tones;
+    return ListView(
+      padding: EdgeInsets.fromLTRB(14.lx, 14.lx, 14.lx, 24.lx),
+      children: [
+        Align(child: LedgerCoin(icon: data.icon, size: 48)),
+        SizedBox(height: 14.lx),
+        Text(
+          data.title1?.tr() ?? data.title.tr(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18.lx,
+            fontWeight: FontWeight.w700,
+            color: t.textPrimary,
+          ),
+        ),
+        SizedBox(height: 6.lx),
+        Text(
+          data.description1?.tr() ?? data.description.tr(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13.lx,
+            height: 1.45,
+            color: t.textSecondary,
+          ),
+        ),
+        SizedBox(height: 16.lx),
+        if (data.quickSteps != null)
+          LedgerCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LedgerH6(LocaleKeys.whyThisMatters.tr()),
+                SizedBox(height: 10.lx),
+                for (final p in data.quickSteps!)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10.lx),
+                    child: Row(
+                      children: [
+                        Icon(p.icon, color: t.brandText, size: 16.lx),
+                        SizedBox(width: 10.lx),
+                        Expanded(
+                          child: Text(
+                            p.description.tr(),
+                            style: TextStyle(
+                              fontSize: 13.lx,
+                              color: t.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
-        ],
-      ),
+        SizedBox(height: 16.lx),
+        if (data.buttonText.isNotEmpty)
+          LedgerButton(
+            label: data.buttonText1?.tr() ?? '',
+            large: true,
+            onPressed: _act,
+          ),
+      ],
     );
   }
 }

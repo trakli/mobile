@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -92,13 +93,10 @@ class _PickGroupBottomSheetState extends State<PickGroupBottomSheet> {
           ),
           SizedBox(height: 16.h),
           SearchBar(
-            leading: SvgPicture.asset(
-              Assets.images.searchSpecial,
-              width: 24.sp,
-              colorFilter: const ColorFilter.mode(
-                Colors.grey,
-                BlendMode.srcIn,
-              ),
+            leading: Icon(
+              LucideIcons.search,
+              size: 16.lx,
+              color: context.tones.textMuted,
             ),
             hintText: LocaleKeys.search.tr(),
             onChanged: (value) {},

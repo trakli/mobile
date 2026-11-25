@@ -18,6 +18,7 @@ class PopUpDialog extends StatelessWidget {
   final String? mainActionText;
   final String? secondaryActionText;
   final ButtonLayout buttonLayout;
+  final bool showSecondary;
 
   const PopUpDialog({
     super.key,
@@ -30,6 +31,7 @@ class PopUpDialog extends StatelessWidget {
     this.mainActionText,
     this.secondaryActionText,
     this.buttonLayout = ButtonLayout.horizontal,
+    this.showSecondary = true,
   });
 
   @override
@@ -83,7 +85,9 @@ class PopUpDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 18.lx),
-            if (buttonLayout == ButtonLayout.vertical) ...[
+            if (!showSecondary)
+              main
+            else if (buttonLayout == ButtonLayout.vertical) ...[
               main,
               SizedBox(height: 8.lx),
               secondary,

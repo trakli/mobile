@@ -79,7 +79,6 @@ class _AddGroupsFormState extends State<AddGroupsForm> {
                   media: mediaEntity,
                   onPickIcon: () => showCustomBottomSheet(
                     context,
-                    color: Theme.of(context).scaffoldBackgroundColor,
                     widget: SelectIconBottomSheet(
                       onSelect: (mediaType, image) => setState(() {
                         mediaEntity =

@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart'
     show PickerDateRange;
@@ -67,7 +69,8 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
               decoration: InputDecoration(
                 labelText: LocaleKeys.fromDate.tr(),
                 fillColor: tones.bgSurface,
-                suffixIcon: Icon(Icons.calendar_today, color: tones.textMuted),
+                suffixIcon: Icon(LucideIcons.calendar,
+                    size: 16.lx, color: tones.textMuted),
               ),
               controller: TextEditingController(
                 text: range?.startDate != null
@@ -96,7 +99,8 @@ class _CustomRangePickerState extends State<CustomRangePicker> {
               decoration: InputDecoration(
                 labelText: LocaleKeys.toDate.tr(),
                 fillColor: tones.bgSurface,
-                suffixIcon: Icon(Icons.calendar_today, color: tones.textMuted),
+                suffixIcon: Icon(LucideIcons.calendar,
+                    size: 16.lx, color: tones.textMuted),
               ),
               controller: TextEditingController(
                 text: range?.endDate != null

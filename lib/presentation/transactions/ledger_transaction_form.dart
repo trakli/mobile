@@ -13,6 +13,7 @@ import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
+import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -25,7 +26,6 @@ import 'package:trakli/presentation/transactions/ledger_picker_sheet.dart';
 import 'package:trakli/presentation/transactions/transaction_extras_section.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
-import 'package:trakli/presentation/utils/dialogs/add_party_dialog.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_icons.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
@@ -278,10 +278,7 @@ class _LedgerTransactionFormState extends State<LedgerTransactionForm>
       label: (p) => p.name,
       leading: (p) => LedgerInitials(p.name),
       isSelected: (p) => p.clientId == _party?.clientId,
-      onAddNew: (ctx) => showDialog(
-        context: ctx,
-        builder: (_) => const AddPartyDialog(),
-      ),
+      onAddNew: (ctx) => AppNavigator.push(ctx, const AddPartyScreen()),
     );
     if (picked == null || !mounted) return;
     setState(() => _party = picked.value);

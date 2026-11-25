@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,9 +14,11 @@ import 'package:trakli/domain/entities/recurrence_input.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
+import 'package:trakli/presentation/parties/add_party_screen.dart';
 import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/transactions/ledger_transaction_form.dart';
@@ -253,6 +256,21 @@ void main() {
       partyClientId: 'p-tomas',
       groupClientId: 'g-biz',
     );
+  });
+
+  testWidgets('adding a new party opens the add party screen',
+      (tester) async {
+    await pump(
+      tester,
+      const LedgerTransactionForm(transactionType: TransactionType.expense),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('ledger-tx-party')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(LocaleKeys.txFormAddNew.tr()));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AddPartyScreen), findsOneWidget);
   });
 
   testWidgets('a new transaction defaults to the active group and wallet',

@@ -85,7 +85,6 @@ class _AddCategoryFormState extends State<AddCategoryForm> {
             accent: widget.accentColor,
             onPickIcon: () => showCustomBottomSheet(
               context,
-              color: Theme.of(context).scaffoldBackgroundColor,
               widget: SelectIconBottomSheet(
                 onSelect: (mediaType, image) => setState(() {
                   mediaEntity =

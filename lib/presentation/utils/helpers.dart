@@ -234,7 +234,7 @@ Future<T?> showCustomPopOver<T>(
 }) async {
   return showPopover<T>(
     context: context,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    backgroundColor: Theme.of(context).colorScheme.surface,
     transitionDuration: const Duration(milliseconds: 150),
     bodyBuilder: (context) => widget,
     direction: direction ?? PopoverDirection.bottom,
@@ -251,12 +251,12 @@ Future<T?> showCustomPopOver<T>(
 Future<T?> showCustomBottomSheet<T>(
   BuildContext context, {
   required Widget widget,
-  Color color = Colors.white,
+  Color? color,
   double maxHeightRatio = 0.95,
 }) async {
   return showModalBottomSheet<T>(
     context: context,
-    backgroundColor: color,
+    backgroundColor: color ?? Theme.of(context).colorScheme.surface,
     isScrollControlled: true,
     useSafeArea: true,
     constraints: BoxConstraints(
@@ -351,7 +351,8 @@ void showSnackBar({
 }) {
   final String messageText =
       message is Failure ? message.customMessage : message.toString();
-  final bgColor = backgroundColor ?? (isSuccess ? appPrimaryColor : appDangerColor);
+  final bgColor =
+      backgroundColor ?? (isSuccess ? appPrimaryColor : appDangerColor);
 
   scaffoldMessengerKey.currentState?.showSnackBar(
     SnackBar(

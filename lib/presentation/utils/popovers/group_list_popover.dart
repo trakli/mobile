@@ -1,14 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_popover.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/group_entity.dart';
-import 'package:trakli/gen/assets.gen.dart' show Assets;
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 
 class GroupListPopover extends StatelessWidget {
@@ -29,75 +29,38 @@ class GroupListPopover extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.failure.customMessage),
-              backgroundColor: Colors.red,
+              backgroundColor: context.tones.expenseColor,
             ),
           );
         }
       },
       builder: (context, state) {
         if (state.isLoading) {
-          return Center(
-            child: CircularProgressIndicator.adaptive(
-              valueColor: AlwaysStoppedAnimation(appPrimaryColor),
-            ),
+          return const Padding(
+            padding: EdgeInsets.all(16),
+            child: Center(child: CircularProgressIndicator.adaptive()),
           );
         }
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            vertical: 8.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 8.h),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16.sp,
+        return LedgerPopoverMenu(
+          title: label,
+          emptyText: LocaleKeys.noGroupsFound.tr(),
+          items: [
+            for (final group in state.groups)
+              LedgerPopoverItem(
+                label: group.name,
+                leading: LedgerCoin(
+                  icon: LucideIcons.usersRound,
+                  media: group.icon,
+                  size: 26,
                 ),
+                onTap: () {
+                  onSelect(group);
+                  AppNavigator.pop(context);
+                },
               ),
-              state.groups.isEmpty
-                  ? Center(
-                      child: Text(
-                        LocaleKeys.noGroupsFound.tr(),
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final group = state.groups[index];
-                        return ListTile(
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12.w),
-                          onTap: () {
-                            onSelect(group);
-                            AppNavigator.pop(context);
-                          },
-                          title: Text(
-                            group.name,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          trailing: SvgPicture.asset(
-                            Assets.images.arrowRight,
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 4.h);
-                      },
-                      itemCount: state.groups.length,
-                    ),
-            ],
-          ),
+          ],
         );
       },
     );
   }
 }
-
