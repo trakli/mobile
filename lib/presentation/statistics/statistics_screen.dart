@@ -1,38 +1,28 @@
 import 'package:collection/collection.dart';
-import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:trakli/core/extensions/string_extension.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
-import 'package:trakli/domain/entities/category_entity.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
+import 'package:trakli/domain/entities/transaction_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
-import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
-import 'package:trakli/presentation/parties/cubit/party_cubit.dart';
-import 'package:trakli/presentation/statistics/cubit/statistics_filter_cubit.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/statistics/calendar/calendar_tab.dart';
+import 'package:trakli/presentation/statistics/cubit/statistics_filter_cubit.dart';
 import 'package:trakli/presentation/statistics/flow/flow_tab.dart';
+import 'package:trakli/presentation/statistics/overview/overview_data.dart';
 import 'package:trakli/presentation/statistics/reports/reports_screen.dart';
-import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
-import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/statistics/statistics_money.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
-import 'package:trakli/presentation/utils/category_tile.dart';
-import 'package:trakli/presentation/utils/dashboard_expenses.dart';
-import 'package:trakli/presentation/utils/dashboard_pie_data.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/graph_widget.dart';
-import 'package:trakli/presentation/utils/wallet_mini_tile.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_chart.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/providers/chart_data_provider.dart';
 
 enum StatisticsTab { overview, calendar, flow, charts }
 
@@ -48,19 +38,10 @@ class StatisticsScreen extends StatefulWidget {
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
-class _StatisticsScreenState extends State<StatisticsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController tabController;
-  late PageController pageController;
+class _StatisticsScreenState extends State<StatisticsScreen> {
   late StatisticsTab _tab = widget.initialTab;
   DateTime _month = DateTime(DateTime.now().year, DateTime.now().month);
-
-  @override
-  void dispose() {
-    tabController.dispose();
-    pageController.dispose();
-    super.dispose();
-  }
+  TransactionType _breakdown = TransactionType.expense;
 
   String _tabLabel(StatisticsTab tab) => switch (tab) {
         StatisticsTab.overview => LocaleKeys.statsTabOverview.tr(),
@@ -149,18 +130,6 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       ),
     );
   }
-  DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-
-  @override
-  void initState() {
-    super.initState();
-    tabController = TabController(length: 2, vsync: this);
-    tabController.addListener(() {
-      setState(() {});
-    });
-    final statCubit = context.read<StatisticsFilterCubit>();
-    pageController = PageController(initialPage: statCubit.state.statViewIndex);
-  }
 
   List<TransactionCompleteEntity> _filterTransactions(
     List<TransactionCompleteEntity> transactions, {
@@ -235,94 +204,43 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
   void _pickWallet(BuildContext context, List<WalletEntity> wallets) {
     final filterCubit = context.read<StatisticsFilterCubit>();
-    showModalBottomSheet(
+    final selected = filterCubit.state.walletClientId;
+    showModalBottomSheet<void>(
       context: context,
+      backgroundColor: context.tones.bgSurface,
+      isScrollControlled: true,
       builder: (sheetContext) {
-        return BlocProvider.value(
-          value: filterCubit,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(
-              left: 16.w,
-              right: 16.w,
-              top: 16.h,
-              bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+        final tones = sheetContext.tones;
+        Widget option(String? id, String name, String? sub) => LedgerRow(
+              leading: LedgerCoin(
+                icon: id == null ? LucideIcons.layers : LucideIcons.wallet,
+              ),
+              title: name,
+              subtitle: sub,
+              trailing: id == selected
+                  ? Icon(LucideIcons.check, size: 16.lx, color: tones.brandText)
+                  : null,
+              onTap: () {
+                filterCubit.setWallet(id);
+                Navigator.pop(sheetContext);
+              },
+            );
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(sheetContext).size.height * 0.7,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.fromLTRB(14.lx, 8.lx, 14.lx, 14.lx),
               children: [
-                SizedBox(height: 8.h),
-                Align(
-                  child: Container(
-                    width: 90.w,
-                    height: 6.h,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD9D9D9),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.pickWallet.tr(),
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  LocaleKeys.selectWalletInfoDesc.tr(),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16.h),
-                BlocBuilder<StatisticsFilterCubit, StatisticsFilterState>(
-                  builder: (context, filterState) {
-                    return RadioGroup<String?>(
-                      groupValue: filterState.walletClientId,
-                      onChanged: (value) {
-                        filterCubit.setWallet(value);
-                        Navigator.pop(sheetContext);
-                      },
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: 0.4.sh,
-                        ),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: wallets.length + 1,
-                          // +1 for "All wallets" option
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              // "All wallets" option
-                              return WalletMiniTile<String?>(
-                                value: null,
-                                isAllWallets: true,
-                                walletNameOverride: LocaleKeys.allWallets.tr(),
-                              );
-                            } else {
-                              // Individual wallet options
-                              final wallet = wallets[index - 1];
-                              return WalletMiniTile<String?>(
-                                value: wallet.clientId,
-                                wallet: wallet,
-                                isAllWallets: false,
-                              );
-                            }
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: 8.h);
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 20.h),
+                const LedgerSheetHandle(),
+                SizedBox(height: 10.lx),
+                LedgerH6(LocaleKeys.pickWallet.tr()),
+                SizedBox(height: 4.lx),
+                option(null, LocaleKeys.allWallets.tr(), null),
+                for (final w in wallets)
+                  option(w.clientId, w.name, w.currencyCode),
               ],
             ),
           ),
@@ -331,543 +249,208 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     );
   }
 
+  String _rangeLabel(BuildContext context, StatisticsFilterState f) {
+    final locale = Localizations.localeOf(context).toString();
+    if (f.startDate == null || f.endDate == null) {
+      return LocaleKeys.statsAllTime.tr();
+    }
+    final sameYear = f.startDate!.year == f.endDate!.year &&
+        f.endDate!.year == DateTime.now().year;
+    final fmt = sameYear ? DateFormat.MMMd(locale) : DateFormat.yMMMd(locale);
+    return '${fmt.format(f.startDate!)} – ${fmt.format(f.endDate!)}';
+  }
+
   Widget _buildOverview(BuildContext context) {
     return BlocBuilder<StatisticsFilterCubit, StatisticsFilterState>(
       builder: (context, filterState) {
         return BlocBuilder<TransactionCubit, TransactionState>(
           builder: (context, state) {
             final tones = context.tones;
-            // Aggregate transactions
-            final allTransactions = state.transactions;
             final wallets = context.watch<WalletCubit>().state.wallets;
-            final exchangeRateEntity =
-                context.watch<ExchangeRateCubit>().state.entity;
+            final stats = StatsMoney.of(context);
             final selectedWallet = filterState.walletClientId == null
                 ? null
                 : wallets.firstWhereOrNull(
                     (w) => w.clientId == filterState.walletClientId,
                   );
+            final currency = selectedWallet?.currencyCode ?? stats.currency;
+            double convert(TransactionCompleteEntity t) =>
+                selectedWallet == null
+                    ? stats.convert(t)
+                    : t.transaction.amount;
+            String money(double v, {bool sign = false}) =>
+                LedgerMoney.format(v, currency, sign: sign);
 
             final transactions = _filterTransactions(
-              allTransactions,
+              state.transactions,
               walletClientId: filterState.walletClientId,
               startDate: filterState.startDate,
               endDate: filterState.endDate,
-            );
+            ).where((t) => !t.transaction.isTransferLeg).toList();
+            final overview = buildStatsOverview(transactions, convert);
 
-            if (filterState.walletClientId == null &&
-                exchangeRateEntity == null) {
-              return const SizedBox.shrink();
-            }
+            final rows = _breakdown == TransactionType.income
+                ? overview.incomeCategories
+                : overview.expenseCategories;
+            final rowColor = _breakdown == TransactionType.income
+                ? tones.incomeColor
+                : tones.expenseColor;
 
-            final Map<String, double> incomeByCategory = {};
-            final Map<String, double> expenseByCategory = {};
-            final Map<String, CategoryEntity> categoryMap = {};
-
-            for (final tx in transactions) {
-              double convertedAmount = 0;
-              if (filterState.walletClientId == null) {
-                convertedAmount = calculateSingleTransactionTotal(
-                  tx,
-                  exchangeRateEntity!,
-                );
-              } else {
-                convertedAmount = tx.transaction.amount;
-              }
-
-              for (final cat in tx.categories) {
-                categoryMap[cat.clientId] = cat;
-                if (tx.transaction.type == TransactionType.income) {
-                  incomeByCategory[cat.clientId] =
-                      (incomeByCategory[cat.clientId] ?? 0) + convertedAmount;
-                } else if (tx.transaction.type == TransactionType.expense) {
-                  expenseByCategory[cat.clientId] =
-                      (expenseByCategory[cat.clientId] ?? 0) + convertedAmount;
-                }
-              }
-            }
-            // Build category lists
-            final incomeListData = incomeByCategory.entries
-                .map((e) => MapEntry(categoryMap[e.key]!, e.value))
-                .toList();
-            final expenseListData = expenseByCategory.entries
-                .map((e) => MapEntry(categoryMap[e.key]!, e.value))
-                .toList();
-            return Stack(
-                children: [
-                  SingleChildScrollView(
+            return ListView(
+              padding: EdgeInsets.fromLTRB(14.lx, 0, 14.lx, 120.lx),
+              children: [
+                LedgerChipRow(
+                  children: [
+                    LedgerFilterChip(
+                      icon: LucideIcons.wallet,
+                      label: selectedWallet?.name ?? LocaleKeys.allWallets.tr(),
+                      onTap: () => _pickWallet(context, wallets),
+                    ),
+                    LedgerFilterChip(
+                      icon: LucideIcons.calendar,
+                      label: _rangeLabel(context, filterState),
+                      onTap: () => _pickDateRange(context),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 14.lx),
+                Text(
+                  LocaleKeys.statsFlowKept.tr(),
+                  style: TextStyle(fontSize: 12.5.lx, color: tones.textMuted),
+                ),
+                LedgerBigNumber(
+                  money(overview.net, sign: true),
+                  color: overview.net >= 0
+                      ? tones.incomeColor
+                      : tones.expenseColor,
+                ),
+                SizedBox(height: 10.lx),
+                Row(
+                  children: [
+                    Expanded(
+                      child: LedgerTotalTile(
+                        label: LocaleKeys.statsFlowIn.tr(),
+                        value: money(overview.income),
+                        color: tones.incomeColor,
+                      ),
+                    ),
+                    SizedBox(width: 6.lx),
+                    Expanded(
+                      child: LedgerTotalTile(
+                        label: LocaleKeys.statsFlowOut.tr(),
+                        value: money(overview.expense),
+                        color: tones.expenseColor,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12.lx),
+                LedgerCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      LedgerH6(
+                        LocaleKeys.daily.tr(),
+                        trailing: LedgerChartLegend(items: [
+                          (LocaleKeys.statsFlowIn.tr(), tones.incomeColor),
+                          (LocaleKeys.statsFlowOut.tr(), tones.expenseColor),
+                        ]),
+                      ),
+                      SizedBox(height: 12.lx),
+                      GraphWidget(chartData: overview.days),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12.lx),
+                LedgerCard(
+                  padding: EdgeInsets.fromLTRB(12.lx, 12.lx, 12.lx, 4.lx),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: LedgerH6(LocaleKeys.categories.tr())),
+                          LedgerSeg<TransactionType>(
+                            options: [
+                              LedgerSegOption(
+                                TransactionType.expense,
+                                LocaleKeys.statsFlowOut.tr(),
+                              ),
+                              LedgerSegOption(
+                                TransactionType.income,
+                                LocaleKeys.statsFlowIn.tr(),
+                              ),
+                            ],
+                            selected: _breakdown,
+                            onChanged: (v) => setState(() => _breakdown = v),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4.lx),
+                      if (rows.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.lx),
+                          child: Text(
+                            LocaleKeys.statsNoCategories.tr(),
+                            style: TextStyle(
+                              fontSize: 12.5.lx,
+                              color: tones.textMuted,
+                            ),
+                          ),
+                        ),
+                      for (final c in rows)
+                        LedgerRow(
+                          leading: LedgerCoin(
+                            media: c.category?.icon,
+                            icon: LucideIcons.tag,
+                          ),
+                          title: c.category?.name ??
+                              LocaleKeys.statsFlowUncategorized.tr(),
+                          subtitle: LocaleKeys.statsEntries.plural(c.count),
+                          trailing: LedgerAmount(
+                            money(c.amount),
+                            size: 13,
+                            weight: FontWeight.w600,
+                            color: rowColor,
+                          ),
+                          divider: c != rows.last,
+                        ),
+                    ],
+                  ),
+                ),
+                if (overview.people.isNotEmpty) ...[
+                  SizedBox(height: 12.lx),
+                  LedgerCard(
+                    padding: EdgeInsets.fromLTRB(12.lx, 12.lx, 12.lx, 4.lx),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(height: 4.h),
-                        Card(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                          ),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 16.h),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        borderRadius:
-                                            BorderRadius.circular(8.r),
-                                      ),
-                                      padding: EdgeInsets.all(8.r),
-                                      child: GestureDetector(
-                                        onTap: () =>
-                                            _pickWallet(context, wallets),
-                                        child: Row(
-                                          spacing: 8.w,
-                                          children: [
-                                            Text(
-                                              (selectedWallet?.name ??
-                                                      LocaleKeys.allWallets
-                                                          .tr())
-                                                  .extractWords(maxSize: 15),
-                                              style: TextStyle(
-                                                fontSize: 10.sp,
-                                              ),
-                                            ),
-                                            SvgPicture.asset(
-                                              Assets.images.arrowDown,
-                                              width: 16.w,
-                                              colorFilter: ColorFilter.mode(
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                        borderRadius:
-                                            BorderRadius.circular(8.r),
-                                      ),
-                                      padding: EdgeInsets.all(8.r),
-                                      child: Row(
-                                        spacing: 8.w,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () =>
-                                                _pickDateRange(context),
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  filterState.startDate !=
-                                                              null &&
-                                                          filterState.endDate !=
-                                                              null
-                                                      ? '${dateFormat.format(filterState.startDate!)} - ${dateFormat.format(filterState.endDate!)}'
-                                                      : dateFormat.format(
-                                                          DateTime.now()),
-                                                  style: TextStyle(
-                                                    fontSize: 10.sp,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 4.w),
-                                                SvgPicture.asset(
-                                                  Assets.images.arrowDown,
-                                                  width: 16.w,
-                                                  colorFilter: ColorFilter.mode(
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurface,
-                                                    BlendMode.srcIn,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                              SizedBox(
-                                height: 0.38.sh,
-                                child: PageView(
-                                  controller: pageController,
-                                  onPageChanged: (index) {
-                                    final statCubit =
-                                        context.read<StatisticsFilterCubit>();
-                                    statCubit.setViewIndex(index);
-                                  },
-                                  children: [
-                                    statOne(
-                                      transactions: transactions,
-                                      walletClientId:
-                                          filterState.walletClientId,
-                                    ),
-                                    statTwo(
-                                      transactions: transactions,
-                                      walletClientId:
-                                          filterState.walletClientId,
-                                    ),
-                                    statThree(
-                                      transactions: transactions,
-                                      startDate: filterState.startDate,
-                                      endDate: filterState.endDate,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        SmoothPageIndicator(
-                          controller: pageController,
-                          count: 3,
-                          effect: ExpandingDotsEffect(
-                            activeDotColor: Theme.of(context).primaryColor,
-                            dotWidth: 8.sp,
-                            dotHeight: 8.sp,
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        Card(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                          ),
-                          child: TabBar(
-                            controller: tabController,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            indicatorColor: Colors.transparent,
-                            dividerHeight: 0,
-                            indicator: BoxDecoration(
-                              color: (tabController.index == 0)
-                                  ? tones.income.accent
-                                  : tones.expense.accent,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadii.xl.r),
+                        LedgerH6(LocaleKeys.parties.tr()),
+                        SizedBox(height: 4.lx),
+                        for (final p in overview.people.take(6))
+                          LedgerRow(
+                            leading: LedgerInitials(p.party.name, size: 32),
+                            title: p.party.name,
+                            subtitle: LocaleKeys.statsEntries.plural(p.count),
+                            trailing: LedgerAmount(
+                              money(p.net, sign: true),
+                              size: 13,
+                              weight: FontWeight.w600,
+                              color: p.net >= 0
+                                  ? tones.incomeColor
+                                  : tones.expenseColor,
                             ),
-                            unselectedLabelStyle: TextStyle(
-                              fontSize: 16.sp,
-                            ),
-                            labelStyle: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                            tabs: [
-                              Tab(
-                                text: LocaleKeys.transactionIncome.tr(),
-                              ),
-                              Tab(
-                                text: LocaleKeys.transactionExpense.tr(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        if (tabController.index == 0)
-                          incomeListWidget(
-                            incomeListData,
-                            selectedWallet,
-                            startDate: filterState.startDate,
-                            endDate: filterState.endDate,
-                          )
-                        else
-                          expenseListWidget(
-                            expenseListData,
-                            selectedWallet,
-                            startDate: filterState.startDate,
-                            endDate: filterState.endDate,
+                            divider: p != overview.people.take(6).last,
                           ),
                       ],
                     ),
                   ),
                 ],
+              ],
             );
           },
         );
       },
     );
   }
-
-  Widget statOne({
-    required List<TransactionCompleteEntity> transactions,
-    required String? walletClientId,
-  }) {
-    final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
-
-    // If no exchange rate entity and all wallets selected, return empty
-    if (walletClientId == null && exchangeRateEntity == null) {
-      return const SizedBox.shrink();
-    }
-
-    final Map<String, double> incomeByDate = {};
-    final Map<String, double> expenseByDate = {};
-
-    for (final tx in transactions) {
-      final dateKey =
-          DateFormat('MM/dd').format(tx.transaction.datetime.toLocal());
-
-      // Convert amount based on wallet selection
-      double convertedAmount;
-      if (walletClientId == null && exchangeRateEntity != null) {
-        // All wallets selected: convert to base/default currency
-        convertedAmount = calculateSingleTransactionTotal(
-          tx,
-          exchangeRateEntity,
-        );
-      } else {
-        // Specific wallet selected: use amount as-is (already in wallet currency)
-        convertedAmount = tx.transaction.amount;
-      }
-
-      if (tx.transaction.type == TransactionType.income) {
-        incomeByDate[dateKey] = (incomeByDate[dateKey] ?? 0) + convertedAmount;
-      } else if (tx.transaction.type == TransactionType.expense) {
-        expenseByDate[dateKey] =
-            (expenseByDate[dateKey] ?? 0) + convertedAmount;
-      }
-    }
-
-    final allDatesSet = <String>{...incomeByDate.keys, ...expenseByDate.keys};
-    final allDates = allDatesSet.toList();
-    allDates.sort((a, b) => a.compareTo(b));
-    final chartData = allDates
-        .map((date) => ChartStatistics(
-              date,
-              incomeByDate[date] ?? 0,
-              expenseByDate[date] ?? 0,
-            ))
-        .toList();
-
-    // Calculate totals using helper function
-    final totals = calculateIncomeExpense(
-      transactions,
-      exchangeRateEntity: walletClientId == null ? exchangeRateEntity : null,
-    );
-    final totalIncome = totals.totalIncome;
-    final totalExpense = totals.totalExpense;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      child: GraphWidget(
-        chartData: chartData,
-        totalIncome: totalIncome,
-        totalExpense: totalExpense,
-      ),
-    );
-  }
-
-  Widget statTwo({
-    required List<TransactionCompleteEntity> transactions,
-    required String? walletClientId,
-  }) {
-    final currencyState = context.watch<CurrencyCubit>().state;
-    final currencySymbol = currencyState.currency?.symbol ?? 'XAF';
-    final exchangeRateEntity = context.watch<ExchangeRateCubit>().state.entity;
-
-    // If no exchange rate entity and all wallets selected, return empty
-    if (walletClientId == null && exchangeRateEntity == null) {
-      return const SizedBox.shrink();
-    }
-
-    // Calculate totals using helper function
-    final totals = calculateIncomeExpense(
-      transactions,
-      exchangeRateEntity: walletClientId == null ? exchangeRateEntity : null,
-    );
-    final totalIncome = totals.totalIncome;
-    final totalExpense = totals.totalExpense;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      child: DashboardExpenses(
-        totalIncome: totalIncome,
-        totalExpense: totalExpense,
-        currencySymbol: currencySymbol,
-      ),
-    );
-  }
-
-  Widget statThree({
-    required List<TransactionCompleteEntity> transactions,
-    required DateTime? startDate,
-    required DateTime? endDate,
-  }) {
-    final partiesState = context.watch<PartyCubit>().state;
-    final parties = partiesState.parties;
-    // Use stable color palette from StatisticsProvider
-    final colorList = StatisticsProvider().pieDataColors;
-    final Map<String, int> partyTransactionCount = {};
-    for (final tx in transactions) {
-      final party = tx.party;
-      if (party != null) {
-        partyTransactionCount[party.clientId] =
-            (partyTransactionCount[party.clientId] ?? 0) + 1;
-      }
-    }
-    final pieData = parties.asMap().entries.map((entry) {
-      final idx = entry.key;
-      final party = entry.value;
-      final count = partyTransactionCount[party.clientId] ?? 0;
-      // Cycle through colorList if there are more parties than colors
-      Color color = colorList[(idx) % colorList.length];
-      return PieCategoryData(
-        party.name,
-        count.toDouble(),
-        color,
-      );
-    }).toList();
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
-      child: DashboardPieData(
-        pieData: pieData.where((data) => data.value > 0).toList(),
-        startDate: startDate,
-        endDate: endDate,
-      ),
-    );
-  }
-
-  /// Gets the currency for a category based on selected wallet, default currency, or transactions
-  Currency? _getCategoryCurrency(
-    WalletEntity? selectedWallet,
-    List<TransactionCompleteEntity> categoryTransactions,
-  ) {
-    if (selectedWallet != null) {
-      return selectedWallet.currency;
-    }
-
-    // Get default currency from config
-    final currencyState = context.watch<CurrencyCubit>().state;
-    final currency = currencyState.currency;
-
-    // If still no currency, use first transaction's wallet currency
-    if (currency == null && categoryTransactions.isNotEmpty) {
-      return categoryTransactions.first.wallet.currency;
-    }
-
-    return currency;
-  }
-
-  Widget incomeListWidget(
-    List<MapEntry<CategoryEntity, double>> incomeListData,
-    WalletEntity? selectedWallet, {
-    DateTime? startDate,
-    DateTime? endDate,
-  }) {
-    final allTransactions = context.read<TransactionCubit>().state.transactions;
-    final transactions = (startDate != null && endDate != null)
-        ? allTransactions.where((tx) {
-            final date = tx.transaction.datetime;
-            return !date.isBefore(startDate) && !date.isAfter(endDate);
-          }).toList()
-        : allTransactions;
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 120.h),
-      shrinkWrap: true,
-      itemCount: incomeListData.length,
-      itemBuilder: (context, index) {
-        final entry = incomeListData[index];
-        final category = entry.key;
-        // Count transactions and unique wallets for this category
-        final categoryTransactions = transactions
-            .where((tx) =>
-                tx.categories.any((cat) => cat.clientId == category.clientId) &&
-                tx.transaction.type == TransactionType.income)
-            .toList();
-        final transactionCount = categoryTransactions.length;
-        final walletCount = categoryTransactions
-            .map((tx) => tx.transaction.walletClientId)
-            .toSet()
-            .length;
-
-        final currency =
-            _getCategoryCurrency(selectedWallet, categoryTransactions);
-        return CategoryTile(
-          accentColor: Theme.of(context).primaryColor,
-          category: category,
-          showStat: true,
-          showValue: true,
-          amount: entry.value,
-          transactionCount: transactionCount,
-          walletCount: walletCount,
-          currency: currency,
-        );
-      },
-      separatorBuilder: (context, index) {
-        return SizedBox(height: 8.h);
-      },
-    );
-  }
-
-  Widget expenseListWidget(
-    List<MapEntry<CategoryEntity, double>> expenseListData,
-    WalletEntity? selectedWallet, {
-    DateTime? startDate,
-    DateTime? endDate,
-  }) {
-    final allTransactions = context.read<TransactionCubit>().state.transactions;
-    final transactions = (startDate != null && endDate != null)
-        ? allTransactions.where((tx) {
-            final date = tx.transaction.datetime;
-            return !date.isBefore(startDate) && !date.isAfter(endDate);
-          }).toList()
-        : allTransactions;
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 120.h),
-      shrinkWrap: true,
-      itemCount: expenseListData.length,
-      itemBuilder: (context, index) {
-        final entry = expenseListData[index];
-        final category = entry.key;
-        // Count transactions and unique wallets for this category
-        final categoryTransactions = transactions
-            .where((tx) =>
-                tx.categories.any((cat) => cat.clientId == category.clientId) &&
-                tx.transaction.type == TransactionType.expense)
-            .toList();
-        final transactionCount = categoryTransactions.length;
-        final walletCount = categoryTransactions
-            .map((tx) => tx.transaction.walletClientId)
-            .toSet()
-            .length;
-
-        final currency =
-            _getCategoryCurrency(selectedWallet, categoryTransactions);
-        return CategoryTile(
-          category: category,
-          showStat: true,
-          showValue: true,
-          amount: entry.value,
-          transactionCount: transactionCount,
-          walletCount: walletCount,
-          currency: currency,
-        );
-      },
-      separatorBuilder: (context, index) {
-        return SizedBox(height: 8.h);
-      },
-    );
-  }
 }
-
-// very_good create flutter_app trakli --desc "Trakli" --org "com.whilesmart.trakli"

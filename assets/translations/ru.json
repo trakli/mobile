@@ -1165,5 +1165,24 @@
   "spaceRolloverManager": "Как {role}, вы можете закрыть его раньше и начать следующий.",
   "spaceClosePeriod": "Закрыть период",
   "spaceBudgetNoSpending": "В этом бюджете пока ничего не учтено.",
-  "txFormAmountLeft": "осталось {amount}"
+  "txFormAmountLeft": "осталось {amount}",
+  "statsCashflow": "Денежный поток",
+  "statsWhereItWent": "Куда ушли деньги",
+  "statsRatios": "Коэффициенты",
+  "statsSavingsRate": "Норма сбережений",
+  "statsExpenseRatio": "Доля расходов",
+  "statsSavingsGoal": "Цель: 20% или больше",
+  "statsExpenseGoal": "Держите ниже 80%",
+  "statsMonthInReview": "Ваш месяц в обзоре",
+  "statsNoCategories": "Пока нет разбивки по категориям.",
+  "statsLocalEstimate": "Локальная оценка",
+  "statsLocalEstimatePending": "Локальная оценка, ожидается синхронизация",
+  "statsExcludesCurrencies": "Итоги без {} (нет курса обмена)",
+  "statsAllTime": "За всё время",
+  "statsEntries": {
+    "one": "{} запись",
+    "few": "{} записи",
+    "many": "{} записей",
+    "other": "{} записи"
+  }
 }

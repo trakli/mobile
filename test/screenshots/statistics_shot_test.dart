@@ -13,6 +13,16 @@ void main() {
     loadEnglishTranslations();
   });
 
+  testWidgets('statistics overview', (tester) async {
+    await captureLedgerShots(
+      tester,
+      'stats-overview',
+      (dark) => withShotProviders(
+        const StatisticsScreen(initialTab: StatisticsTab.overview),
+      ),
+    );
+  }, skip: !ledgerShotsEnabled);
+
   testWidgets('statistics flow', (tester) async {
     await captureLedgerShots(
       tester,

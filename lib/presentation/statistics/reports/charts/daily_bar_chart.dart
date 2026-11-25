@@ -1,11 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/statistics/reports/report_data.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_chart.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 
-/// Income / expense per day (last ~30 days). Side-by-side bar chart that
-/// matches the web's DailyBarChart.
+/// Income and expense per day over the last [trailingDays] days.
 class DailyBarChart extends StatelessWidget {
   final List<DailyBucket> daily;
   final int trailingDays;
@@ -19,58 +21,48 @@ class DailyBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
+    final style = LedgerChartStyle.of(context);
+    final locale = Localizations.localeOf(context).toString();
     final scope = daily.length > trailingDays
         ? daily.sublist(daily.length - trailingDays)
         : daily;
 
     return SizedBox(
-      height: 220.h,
+      height: 170.lx,
       child: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-          axisLine: AxisLine(width: 0.5, color: tones.borderLight),
-          labelStyle: TextStyle(fontSize: 9.sp, color: tones.textMuted),
+        primaryXAxis: style.dateAxis(
           intervalType: DateTimeIntervalType.days,
-          interval: 5,
+          interval: 7,
+          format: DateFormat.MMMd(locale),
         ),
-        primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          majorTickLines: const MajorTickLines(size: 0),
-          majorGridLines: MajorGridLines(
-            width: 0.5,
-            color: tones.borderLight.withValues(alpha: 0.6),
-            dashArray: const [4, 4],
-          ),
-          labelStyle: TextStyle(fontSize: 10.sp, color: tones.textMuted),
-        ),
-        tooltipBehavior: TooltipBehavior(enable: true),
-        legend: Legend(
-          isVisible: true,
-          position: LegendPosition.bottom,
-          textStyle: TextStyle(color: tones.textSecondary, fontSize: 11.sp),
-        ),
+        primaryYAxis: style.valueAxis(),
+        tooltipBehavior: style.tooltip(),
         series: <CartesianSeries<DailyBucket, DateTime>>[
           ColumnSeries<DailyBucket, DateTime>(
-            name: 'Income',
+            name: LocaleKeys.statsFlowIn.tr(),
+            animationDuration: 350,
             dataSource: scope,
             xValueMapper: (b, _) => b.date,
             yValueMapper: (b, _) => b.income,
             color: tones.incomeColor,
-            width: 0.6,
-            spacing: 0.15,
-            borderRadius: BorderRadius.circular(2),
+            width: 0.7,
+            spacing: 0.1,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(1.5)),
           ),
           ColumnSeries<DailyBucket, DateTime>(
-            name: 'Expense',
+            name: LocaleKeys.statsFlowOut.tr(),
+            animationDuration: 350,
             dataSource: scope,
             xValueMapper: (b, _) => b.date,
             yValueMapper: (b, _) => b.expense,
             color: tones.expenseColor,
-            width: 0.6,
-            spacing: 0.15,
-            borderRadius: BorderRadius.circular(2),
+            width: 0.7,
+            spacing: 0.1,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(1.5)),
           ),
         ],
       ),

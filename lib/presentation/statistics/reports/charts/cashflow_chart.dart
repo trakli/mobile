@@ -1,12 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/statistics/reports/report_data.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_chart.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 
-/// Income vs expense over time (line + light area), modelled after the web's
-/// CashflowLineChart. Aggregates daily buckets into weekly points so the
-/// curve is readable on a phone-width canvas.
+/// Income vs expense over time. Daily buckets are summed into weekly points
+/// so the curve stays readable at phone width.
 class CashflowChart extends StatelessWidget {
   final List<DailyBucket> daily;
 
@@ -37,57 +39,40 @@ class CashflowChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tones = context.tones;
+    final style = LedgerChartStyle.of(context);
     final points = _aggregateWeekly();
+    final locale = Localizations.localeOf(context).toString();
 
     return SizedBox(
-      height: 240.h,
+      height: 190.lx,
       child: SfCartesianChart(
         margin: EdgeInsets.zero,
         plotAreaBorderWidth: 0,
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-          axisLine: AxisLine(width: 0.5, color: tones.borderLight),
-          labelStyle: TextStyle(fontSize: 10.sp, color: tones.textMuted),
-          dateFormat: null,
-        ),
-        primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          majorTickLines: const MajorTickLines(size: 0),
-          majorGridLines: MajorGridLines(
-            width: 0.5,
-            color: tones.borderLight.withValues(alpha: 0.6),
-            dashArray: const [4, 4],
-          ),
-          labelStyle: TextStyle(fontSize: 10.sp, color: tones.textMuted),
-        ),
-        tooltipBehavior: TooltipBehavior(
-          enable: true,
-          color: tones.bgCard,
-          textStyle: TextStyle(color: tones.textPrimary, fontSize: 11.sp),
-        ),
-        legend: Legend(
-          isVisible: true,
-          position: LegendPosition.bottom,
-          textStyle: TextStyle(color: tones.textSecondary, fontSize: 11.sp),
-        ),
+        primaryXAxis: style.dateAxis(format: DateFormat.MMMd(locale)),
+        primaryYAxis: style.valueAxis(),
+        tooltipBehavior: style.tooltip(),
         series: <CartesianSeries<_Point, DateTime>>[
           SplineAreaSeries<_Point, DateTime>(
-            name: 'Income',
+            name: LocaleKeys.statsFlowIn.tr(),
+            animationDuration: 350,
             dataSource: points,
             xValueMapper: (p, _) => p.week,
             yValueMapper: (p, _) => p.income,
-            color: tones.incomeColor.withValues(alpha: 0.18),
+            color: tones.incomeColor.withValues(alpha: 0.10),
             borderColor: tones.incomeColor,
-            borderWidth: 2.0,
+            borderWidth: 1.6,
+            splineType: SplineType.monotonic,
           ),
           SplineAreaSeries<_Point, DateTime>(
-            name: 'Expense',
+            name: LocaleKeys.statsFlowOut.tr(),
+            animationDuration: 350,
             dataSource: points,
             xValueMapper: (p, _) => p.week,
             yValueMapper: (p, _) => p.expense,
-            color: tones.expenseColor.withValues(alpha: 0.18),
+            color: tones.expenseColor.withValues(alpha: 0.10),
             borderColor: tones.expenseColor,
-            borderWidth: 2.0,
+            borderWidth: 1.6,
+            splineType: SplineType.monotonic,
           ),
         ],
       ),

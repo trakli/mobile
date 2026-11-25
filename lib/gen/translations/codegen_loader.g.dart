@@ -1170,5 +1170,19 @@ abstract class  LocaleKeys {
   static const spaceClosePeriod = 'spaceClosePeriod';
   static const spaceBudgetNoSpending = 'spaceBudgetNoSpending';
   static const txFormAmountLeft = 'txFormAmountLeft';
+  static const statsCashflow = 'statsCashflow';
+  static const statsWhereItWent = 'statsWhereItWent';
+  static const statsRatios = 'statsRatios';
+  static const statsSavingsRate = 'statsSavingsRate';
+  static const statsExpenseRatio = 'statsExpenseRatio';
+  static const statsSavingsGoal = 'statsSavingsGoal';
+  static const statsExpenseGoal = 'statsExpenseGoal';
+  static const statsMonthInReview = 'statsMonthInReview';
+  static const statsNoCategories = 'statsNoCategories';
+  static const statsLocalEstimate = 'statsLocalEstimate';
+  static const statsLocalEstimatePending = 'statsLocalEstimatePending';
+  static const statsExcludesCurrencies = 'statsExcludesCurrencies';
+  static const statsAllTime = 'statsAllTime';
+  static const statsEntries = 'statsEntries';
 
 }

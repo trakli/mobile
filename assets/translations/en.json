@@ -1165,5 +1165,22 @@
   "spaceRolloverManager": "As {role}, you can close it early and start the next one.",
   "spaceClosePeriod": "Close period",
   "spaceBudgetNoSpending": "Nothing counted toward this budget yet.",
-  "txFormAmountLeft": "{amount} left"
+  "txFormAmountLeft": "{amount} left",
+  "statsCashflow": "Cashflow",
+  "statsWhereItWent": "Where it went",
+  "statsRatios": "Ratios",
+  "statsSavingsRate": "Savings rate",
+  "statsExpenseRatio": "Expense ratio",
+  "statsSavingsGoal": "Aim for 20% or more",
+  "statsExpenseGoal": "Keep under 80%",
+  "statsMonthInReview": "Your month in review",
+  "statsNoCategories": "No category breakdown yet.",
+  "statsLocalEstimate": "Local estimate",
+  "statsLocalEstimatePending": "Local estimate, sync pending",
+  "statsExcludesCurrencies": "Totals exclude {} (no exchange rate)",
+  "statsAllTime": "All time",
+  "statsEntries": {
+    "one": "{} entry",
+    "other": "{} entries"
+  }
 }

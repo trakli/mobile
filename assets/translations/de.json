@@ -1165,5 +1165,22 @@
   "spaceRolloverManager": "Als {role} kannst du ihn früher abschließen und den nächsten beginnen.",
   "spaceClosePeriod": "Zeitraum abschließen",
   "spaceBudgetNoSpending": "Für dieses Budget wurde noch nichts gezählt.",
-  "txFormAmountLeft": "{amount} offen"
+  "txFormAmountLeft": "{amount} offen",
+  "statsCashflow": "Cashflow",
+  "statsWhereItWent": "Wohin es ging",
+  "statsRatios": "Kennzahlen",
+  "statsSavingsRate": "Sparquote",
+  "statsExpenseRatio": "Ausgabenquote",
+  "statsSavingsGoal": "Ziel: 20 % oder mehr",
+  "statsExpenseGoal": "Unter 80 % bleiben",
+  "statsMonthInReview": "Dein Monat im Rückblick",
+  "statsNoCategories": "Noch keine Aufteilung nach Kategorie.",
+  "statsLocalEstimate": "Lokale Schätzung",
+  "statsLocalEstimatePending": "Lokale Schätzung, Synchronisierung ausstehend",
+  "statsExcludesCurrencies": "Summen ohne {} (kein Wechselkurs)",
+  "statsAllTime": "Gesamter Zeitraum",
+  "statsEntries": {
+    "one": "{} Eintrag",
+    "other": "{} Einträge"
+  }
 }
