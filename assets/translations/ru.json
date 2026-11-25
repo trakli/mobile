@@ -1192,5 +1192,11 @@
   "walletsNoMatchFilter": "Нет кошельков по этому фильтру.",
   "walletsNoMatchQuery": "Ничего не найдено по «{}».",
   "walletsDefault": "Основной",
-  "walletsBalanceIn": "Баланс кошельков в {}"
+  "walletsBalanceIn": "Баланс кошельков в {}",
+  "profileAccount": "Аккаунт",
+  "profileNotSignedIn": "Вход не выполнен",
+  "syncViewDetails": "Подробнее",
+  "syncMergeDuplicate": "Объединить дубликат",
+  "aboutVersion": "Версия {}",
+  "aboutDebugOn": "Инструменты отладки включены"
 }

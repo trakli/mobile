@@ -1190,5 +1190,11 @@
   "walletsNoMatchFilter": "Ninguna billetera coincide con este filtro.",
   "walletsNoMatchQuery": "Sin resultados para \"{}\".",
   "walletsDefault": "Predeterminada",
-  "walletsBalanceIn": "Saldo de las billeteras en {}"
+  "walletsBalanceIn": "Saldo de las billeteras en {}",
+  "profileAccount": "Cuenta",
+  "profileNotSignedIn": "Sin sesión iniciada",
+  "syncViewDetails": "Ver detalles",
+  "syncMergeDuplicate": "Fusionar duplicado",
+  "aboutVersion": "Versión {}",
+  "aboutDebugOn": "Herramientas de depuración activadas"
 }

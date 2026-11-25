@@ -1192,5 +1192,11 @@ abstract class  LocaleKeys {
   static const walletsNoMatchQuery = 'walletsNoMatchQuery';
   static const walletsDefault = 'walletsDefault';
   static const walletsBalanceIn = 'walletsBalanceIn';
+  static const profileAccount = 'profileAccount';
+  static const profileNotSignedIn = 'profileNotSignedIn';
+  static const syncViewDetails = 'syncViewDetails';
+  static const syncMergeDuplicate = 'syncMergeDuplicate';
+  static const aboutVersion = 'aboutVersion';
+  static const aboutDebugOn = 'aboutDebugOn';
 
 }

@@ -4,13 +4,15 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:drift_sync_core/drift_sync_core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/data/datasources/core/name_matching.dart';
 import 'package:trakli/core/sync/sync_database.dart';
 import 'package:trakli/data/database/app_database.dart';
 import 'package:trakli/di/injection.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class SyncHistoryScreen extends StatefulWidget {
@@ -242,233 +244,189 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
     return Scaffold(
+      backgroundColor: t.bgPage,
       appBar: PageAppBar(
         title: LocaleKeys.synchronization.tr(),
+        actions: [
+          _isSyncing
+              ? SizedBox(
+                  width: 32.lx,
+                  height: 32.lx,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : PageAppBarAction(
+                  icon: LucideIcons.refreshCw,
+                  tooltip: LocaleKeys.syncNow.tr(),
+                  primary: true,
+                  onTap: _triggerSync,
+                ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SafeArea(
-              child: RefreshIndicator(
-                onRefresh: _loadData,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                    left: 16.w,
-                    right: 16.w,
-                    top: 16.h,
-                    bottom: 32.h,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSyncButton(),
-                      SizedBox(height: 24.h),
-                      _buildSyncStatusSection(),
-                      SizedBox(height: 24.h),
-                      if (_quarantinedChanges.isNotEmpty) ...[
-                        _buildQuarantinedSection(),
-                        SizedBox(height: 24.h),
-                      ],
-                      _buildPendingChangesSection(),
-                      SizedBox(height: 24.h),
-                      _buildFailedChangesSection(),
-                    ],
-                  ),
-                ),
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
+                children: [
+                  if (_quarantinedChanges.isNotEmpty) ...[
+                    _buildQuarantinedSection(),
+                    SizedBox(height: 16.lx),
+                  ],
+                  _buildSyncStatusSection(),
+                  SizedBox(height: 16.lx),
+                  _buildPendingChangesSection(),
+                  SizedBox(height: 16.lx),
+                  _buildFailedChangesSection(),
+                ],
               ),
             ),
     );
   }
 
-  Widget _buildSyncButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: _isSyncing ? null : _triggerSync,
-        icon: _isSyncing
-            ? SizedBox(
-                width: 16.w,
-                height: 16.w,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Icon(Icons.sync),
-        label: Text(
-          _isSyncing ? LocaleKeys.synchronizing.tr() : LocaleKeys.syncNow.tr(),
+  Widget _section({
+    required String title,
+    int? count,
+    LedgerChipTone tone = LedgerChipTone.neutral,
+    String? hint,
+    required String empty,
+    required List<Widget> rows,
+  }) {
+    final t = context.tones;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LedgerH6(
+          title,
+          trailing: count == null || count == 0
+              ? null
+              : LedgerChip('$count', tone: tone),
         ),
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 12.h),
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
+        if (hint != null) ...[
+          SizedBox(height: 4.lx),
+          Text(hint, style: TextStyle(fontSize: 11.5.lx, color: t.textMuted)),
+        ],
+        SizedBox(height: 6.lx),
+        LedgerCard(
+          padding: EdgeInsets.symmetric(horizontal: 12.lx),
+          child: rows.isEmpty
+              ? Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.lx),
+                  child: Text(
+                    empty,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13.lx, color: t.textMuted),
+                  ),
+                )
+              : Column(children: rows),
         ),
-      ),
+      ],
     );
   }
+
+  Widget _changeMenu(
+    LocalChange change, {
+    required VoidCallback onRetry,
+    VoidCallback? onMerge,
+  }) {
+    return PopupMenuButton<String>(
+      padding: EdgeInsets.zero,
+      icon: Icon(
+        LucideIcons.ellipsisVertical,
+        size: 16.lx,
+        color: context.tones.textMuted,
+      ),
+      onSelected: (v) {
+        if (v == 'details') _showChangeDetails(change);
+        if (v == 'merge') onMerge?.call();
+        if (v == 'retry') onRetry();
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: 'details',
+          child: Text(LocaleKeys.syncViewDetails.tr()),
+        ),
+        if (onMerge != null)
+          PopupMenuItem(
+            value: 'merge',
+            child: Text(LocaleKeys.syncMergeDuplicate.tr()),
+          ),
+        PopupMenuItem(value: 'retry', child: Text(LocaleKeys.retry.tr())),
+      ],
+    );
+  }
+
+  Widget _errorText(String text, Color color, {int lines = 2}) => Text(
+        text,
+        maxLines: lines,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 11.5.lx, color: color),
+      );
 
   Widget _buildSyncStatusSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          LocaleKeys.lastSyncStatus.tr(),
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        if (_syncMetadata.isEmpty)
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Center(
-                child: Text(
-                  LocaleKeys.noSyncHistory.tr(),
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14.sp,
-                  ),
+    final t = context.tones;
+    return _section(
+      title: LocaleKeys.lastSyncStatus.tr(),
+      empty: LocaleKeys.noSyncHistory.tr(),
+      rows: [
+        for (final meta in _syncMetadata)
+          LedgerRow(
+            title: _getEntityTypeDisplayName(meta.entityType),
+            subtitleWidget: meta.lastError == null
+                ? null
+                : _errorText(meta.lastError!, t.expenseColor, lines: 1),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _formatDateTime(meta.lastAttemptedAt),
+                  style: LedgerText.money(size: 11.lx, color: t.textMuted),
                 ),
-              ),
-            ),
-          )
-        else
-          Card(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _syncMetadata.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final meta = _syncMetadata[index];
-                final error = meta.lastError;
-                return ListTile(
-                  dense: true,
-                  onTap: error == null
-                      ? null
-                      : () => _showModelSyncError(meta, error),
-                  title: Text(
-                    _getEntityTypeDisplayName(meta.entityType),
-                    style: TextStyle(fontSize: 14.sp),
+                if (meta.lastError != null) ...[
+                  SizedBox(width: 6.lx),
+                  Icon(
+                    LucideIcons.circleAlert,
+                    size: 15.lx,
+                    color: t.expenseColor,
                   ),
-                  subtitle: error == null
-                      ? null
-                      : Text(
-                          error,
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color: context.tones.expense.deep,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Kept alongside the error so a failing model still
-                      // shows when it was last tried.
-                      Text(
-                        _formatDateTime(meta.lastAttemptedAt),
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: context.tones.textMuted,
-                        ),
-                      ),
-                      if (error != null) ...[
-                        SizedBox(width: 6.w),
-                        Icon(
-                          Icons.error,
-                          color: context.tones.expense.deep,
-                          size: 20.sp,
-                        ),
-                      ],
-                    ],
-                  ),
-                );
-              },
+                ],
+              ],
             ),
+            divider: meta != _syncMetadata.last,
+            onTap: meta.lastError == null
+                ? null
+                : () => _showModelSyncError(meta, meta.lastError!),
           ),
       ],
     );
   }
 
   Widget _buildPendingChangesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              LocaleKeys.pendingChanges.tr(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
+    final t = context.tones;
+    return _section(
+      title: LocaleKeys.pendingChanges.tr(),
+      count: _pendingChanges.length,
+      empty: LocaleKeys.noPendingChanges.tr(),
+      rows: [
+        for (final change in _pendingChanges)
+          LedgerRow(
+            leading: Icon(
+              change.deleted ? LucideIcons.trash2 : LucideIcons.upload,
+              size: 16.lx,
+              color: change.deleted ? t.expenseColor : t.textSecondary,
             ),
-            SizedBox(width: 8.w),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                _pendingChanges.length.toString(),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
+            title: _getEntityTypeDisplayName(change.entityType),
+            trailing: Text(
+              _formatDateTime(change.createAt),
+              style: LedgerText.money(size: 11.lx, color: t.textMuted),
             ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        if (_pendingChanges.isEmpty)
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Center(
-                child: Text(
-                  LocaleKeys.noPendingChanges.tr(),
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ),
-          )
-        else
-          Card(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _pendingChanges.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final change = _pendingChanges[index];
-                return ListTile(
-                  dense: true,
-                  leading: Icon(
-                    change.deleted ? Icons.delete : Icons.upload,
-                    size: 20.sp,
-                    color: change.deleted ? Colors.red : Colors.blue,
-                  ),
-                  title: Text(
-                    _getEntityTypeDisplayName(change.entityType),
-                    style: TextStyle(fontSize: 14.sp),
-                  ),
-                  subtitle: Text(
-                    _formatDateTime(change.createAt),
-                    style: TextStyle(fontSize: 11.sp),
-                  ),
-                );
-              },
-            ),
+            divider: change != _pendingChanges.last,
           ),
       ],
     );
@@ -494,24 +452,23 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
                   '${LocaleKeys.lastAttempted.tr()}: '
                   '${_formatDateTime(meta.lastAttemptedAt)}',
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12.lx,
                     color: context.tones.textMuted,
                   ),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 12.lx),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(8.r),
+                  padding: EdgeInsets.all(8.lx),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8.r),
+                    color: context.tones.surface2,
+                    borderRadius: BorderRadius.circular(AppRadii.sm),
                   ),
                   child: SelectableText(
                     error,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontFamily: 'monospace',
-                      color: context.tones.expense.deep,
+                    style: LedgerText.money(
+                      size: 11.lx,
+                      color: context.tones.expenseColor,
                     ),
                   ),
                 ),
@@ -545,20 +502,24 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
                 if (change.error != null) ...[
                   SelectableText(
                     change.error!,
-                    style: TextStyle(fontSize: 12.sp, color: Colors.red[700]),
+                    style: TextStyle(
+                        fontSize: 12.lx, color: context.tones.expenseColor),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 12.lx),
                 ],
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(8.r),
+                  padding: EdgeInsets.all(8.lx),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8.r),
+                    color: context.tones.surface2,
+                    borderRadius: BorderRadius.circular(AppRadii.sm),
                   ),
                   child: SelectableText(
                     payload,
-                    style: TextStyle(fontSize: 11.sp, fontFamily: 'monospace'),
+                    style: LedgerText.money(
+                      size: 11.lx,
+                      color: context.tones.textPrimary,
+                    ),
                   ),
                 ),
               ],
@@ -576,227 +537,58 @@ class _SyncHistoryScreenState extends State<SyncHistoryScreen> {
   }
 
   Widget _buildQuarantinedSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.report_problem, size: 18.sp, color: Colors.orange[800]),
-            SizedBox(width: 6.w),
-            Text(
-              LocaleKeys.needsAttention.tr(),
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+    final t = context.tones;
+    return _section(
+      title: LocaleKeys.needsAttention.tr(),
+      count: _quarantinedChanges.length,
+      tone: LedgerChipTone.warm,
+      hint: LocaleKeys.quarantinedHint.tr(),
+      empty: '',
+      rows: [
+        for (final change in _quarantinedChanges)
+          LedgerRow(
+            leading: Icon(
+              LucideIcons.triangleAlert,
+              size: 16.lx,
+              color: t.accentWarm,
             ),
-            SizedBox(width: 8.w),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-              decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Text(
-                _quarantinedChanges.length.toString(),
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[800],
-                ),
-              ),
+            title: _getEntityTypeDisplayName(change.entityType),
+            subtitleWidget: _errorText(change.error ?? '', t.accentWarm),
+            trailing: _changeMenu(
+              change,
+              onRetry: () => _retryQuarantinedChange(change),
+              onMerge: change.entityType == 'category'
+                  ? () => _mergeDuplicateCategory(change)
+                  : null,
             ),
-          ],
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          LocaleKeys.quarantinedHint.tr(),
-          style: TextStyle(fontSize: 11.sp, color: Colors.grey[600]),
-        ),
-        SizedBox(height: 8.h),
-        Card(
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _quarantinedChanges.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final change = _quarantinedChanges[index];
-              return ListTile(
-                dense: true,
-                leading: Icon(Icons.report_problem,
-                    size: 20.sp, color: Colors.orange[800]),
-                title: Text(
-                  _getEntityTypeDisplayName(change.entityType),
-                  style: TextStyle(fontSize: 14.sp),
-                ),
-                subtitle: Text(
-                  change.error ?? '',
-                  style: TextStyle(fontSize: 11.sp, color: Colors.orange[900]),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, size: 20.sp),
-                  onSelected: (value) {
-                    if (value == 'retry') {
-                      _retryQuarantinedChange(change);
-                    } else if (value == 'merge') {
-                      _mergeDuplicateCategory(change);
-                    } else if (value == 'details') {
-                      _showChangeDetails(change);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'details',
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline, size: 18),
-                          SizedBox(width: 8),
-                          Text('View details'),
-                        ],
-                      ),
-                    ),
-                    // Retrying a name the server already holds just fails
-                    // again; merging is the only way out of this one.
-                    if (change.entityType == 'category')
-                      const PopupMenuItem(
-                        value: 'merge',
-                        child: Row(
-                          children: [
-                            Icon(Icons.merge_type, size: 18),
-                            SizedBox(width: 8),
-                            Text('Merge duplicate'),
-                          ],
-                        ),
-                      ),
-                    PopupMenuItem(
-                      value: 'retry',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.refresh, size: 18),
-                          SizedBox(width: 8.w),
-                          Text(LocaleKeys.retry.tr()),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
+            divider: change != _quarantinedChanges.last,
           ),
-        ),
       ],
     );
   }
 
   Widget _buildFailedChangesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              LocaleKeys.failedChanges.tr(),
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-              ),
+    final t = context.tones;
+    return _section(
+      title: LocaleKeys.failedChanges.tr(),
+      count: _failedChanges.length,
+      tone: LedgerChipTone.bad,
+      empty: LocaleKeys.noFailedChanges.tr(),
+      rows: [
+        for (final change in _failedChanges)
+          LedgerRow(
+            leading: Icon(
+              LucideIcons.circleX,
+              size: 16.lx,
+              color: t.expenseColor,
             ),
-            SizedBox(width: 8.w),
-            if (_failedChanges.isNotEmpty)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  _failedChanges.length.toString(),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        if (_failedChanges.isEmpty)
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Center(
-                child: Text(
-                  LocaleKeys.noFailedChanges.tr(),
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
+            title: _getEntityTypeDisplayName(change.entityType),
+            subtitleWidget: _errorText(change.error ?? '', t.expenseColor),
+            trailing: _changeMenu(
+              change,
+              onRetry: () => _retryFailedChange(change),
             ),
-          )
-        else
-          Card(
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _failedChanges.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final change = _failedChanges[index];
-                return ListTile(
-                  dense: true,
-                  leading: Icon(
-                    Icons.error_outline,
-                    size: 20.sp,
-                    color: Colors.red,
-                  ),
-                  title: Text(
-                    _getEntityTypeDisplayName(change.entityType),
-                    style: TextStyle(fontSize: 14.sp),
-                  ),
-                  subtitle: Text(
-                    change.error ?? '',
-                    style: TextStyle(fontSize: 11.sp, color: Colors.red[700]),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, size: 20.sp),
-                    onSelected: (value) {
-                      if (value == 'retry') {
-                        _retryFailedChange(change);
-                      } else if (value == 'details') {
-                        _showChangeDetails(change);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'details',
-                        child: Row(
-                          children: [
-                            Icon(Icons.info_outline, size: 18),
-                            SizedBox(width: 8),
-                            Text('View details'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'retry',
-                        child: Row(
-                          children: [
-                            const Icon(Icons.refresh, size: 18),
-                            SizedBox(width: 8.w),
-                            Text(LocaleKeys.retry.tr()),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+            divider: change != _failedChanges.last,
           ),
       ],
     );

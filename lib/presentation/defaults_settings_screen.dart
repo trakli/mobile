@@ -4,16 +4,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/domain/entities/config_entity.dart';
-import 'package:trakli/domain/entities/group_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
-import 'package:trakli/presentation/utils/bottom_sheets/pick_group_bottom_sheet.dart';
-import 'package:trakli/presentation/utils/bottom_sheets/select_wallet_bottom_sheet.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
@@ -50,180 +50,80 @@ class DefaultsSettingsScreen extends StatelessWidget {
         );
       },
       child: Scaffold(
-        appBar: PageAppBar(
-          title: LocaleKeys.defaults.tr(),
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 16.h,
-          ),
-          child: Column(
-            children: [
-              // Default Currency
-              BlocBuilder<CurrencyCubit, CurrencyState>(
-                builder: (context, currencyState) {
-                  final currency = currencyState.currency;
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    onTap: () {
-                      showCurrencyPicker(
-                        context: context,
-                        theme: CurrencyPickerThemeData(
-                          bottomSheetHeight: 0.7.sh,
-                          backgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          flagSize: 24.sp,
-                          subtitleTextStyle: TextStyle(
-                            fontSize: 12.sp,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                        onSelect: (Currency currencyValue) {
-                          context
-                              .read<CurrencyCubit>()
-                              .setCurrency(currencyValue);
-                        },
-                      );
-                    },
-                    leading: Container(
-                      width: 40.w,
-                      height: 40.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.r),
-                        color: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 0.2),
-                      ),
-                      child: Icon(
-                        Icons.currency_exchange,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    title: Text(LocaleKeys.defaultCurrency.tr()),
-                    subtitle: currency != null
-                        ? Text(
-                            currency.code,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          )
-                        : null,
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16.sp,
-                    ),
-                  );
-                },
-              ),
-              // Default Group
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color:
-                        Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                  ),
-                  child: Icon(
-                    Icons.folder_outlined,
-                    color: Theme.of(context).primaryColor,
+        backgroundColor: context.tones.bgPage,
+        appBar: PageAppBar(title: LocaleKeys.defaults.tr()),
+        body: LedgerSettingsList(
+          children: [
+            LedgerSettingsGroup(
+              children: [
+                LedgerSettingsRow(
+                  icon: LucideIcons.coins,
+                  title: LocaleKeys.defaultCurrency.tr(),
+                  value: context.watch<CurrencyCubit>().state.currency?.code,
+                  onTap: () => showCurrencyPicker(
+                    context: context,
+                    theme: ledgerCurrencyPickerTheme(context),
+                    onSelect: (c) =>
+                        context.read<CurrencyCubit>().setCurrency(c),
                   ),
                 ),
-                title: Text(LocaleKeys.switchDefaultGroup.tr()),
-                subtitle: Text(
-                  group?.name ?? "",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                onTap: groups.length > 1
-                    ? () async {
-                        final pickedGroup =
-                            await showCustomBottomSheet<GroupEntity>(
-                          context,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          widget: PickGroupBottomSheet(
-                            group: group,
-                          ),
-                        );
-                        if (pickedGroup != null && context.mounted) {
-                          context.read<ConfigCubit>().saveConfig(
-                                key: ConfigConstants.defaultGroup,
-                                type: ConfigType.string,
-                                value: pickedGroup.clientId,
-                              );
+                LedgerSettingsRow(
+                  icon: LucideIcons.folder,
+                  title: LocaleKeys.switchDefaultGroup.tr(),
+                  value: group?.name,
+                  onTap: groups.length > 1
+                      ? () async {
+                          final picked = await showLedgerOptionsSheet<String>(
+                            context,
+                            title: LocaleKeys.switchDefaultGroup.tr(),
+                            selected: group?.clientId,
+                            options: [
+                              for (final g in groups)
+                                LedgerOption(g.clientId, g.name),
+                            ],
+                          );
+                          if (picked != null && context.mounted) {
+                            context.read<ConfigCubit>().saveConfig(
+                                  key: ConfigConstants.defaultGroup,
+                                  type: ConfigType.string,
+                                  value: picked,
+                                );
+                          }
                         }
-                      }
-                    : null,
-                trailing: groups.length > 1
-                    ? Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.sp,
-                      )
-                    : null,
-              ),
-              // Default Wallet
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.r),
-                    color:
-                        Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                  ),
-                  child: Icon(
-                    Icons.account_balance_wallet,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                      : null,
                 ),
-                title: Text(LocaleKeys.defaultWallet.tr()),
-                subtitle: wallet != null
-                    ? Text(
-                        wallet.name,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      )
-                    : null,
-                onTap: wallets.isNotEmpty
-                    ? () async {
-                        await showCustomBottomSheet(
-                          context,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          widget: SelectWalletBottomSheet(
-                            wallets: wallets,
-                            onSelect: (selectedWallet) {
-                              if (context.mounted) {
-                                context.read<ConfigCubit>().saveConfig(
-                                      key: ConfigConstants.defaultWallet,
-                                      type: ConfigType.string,
-                                      value: selectedWallet.clientId,
-                                    );
-                                Navigator.of(context).pop();
-                              }
-                            },
-                          ),
-                        );
-                      }
-                    : null,
-                trailing: wallets.isNotEmpty
-                    ? Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.sp,
-                      )
-                    : null,
-              ),
-              SizedBox(height: 24.h),
-            ],
-          ),
+                LedgerSettingsRow(
+                  icon: LucideIcons.wallet,
+                  title: LocaleKeys.defaultWallet.tr(),
+                  value: wallet?.name,
+                  onTap: wallets.isNotEmpty
+                      ? () async {
+                          final picked = await showLedgerOptionsSheet<String>(
+                            context,
+                            title: LocaleKeys.defaultWallet.tr(),
+                            selected: wallet?.clientId,
+                            options: [
+                              for (final w in wallets)
+                                LedgerOption(
+                                  w.clientId,
+                                  w.name,
+                                  subtitle: w.currencyCode,
+                                ),
+                            ],
+                          );
+                          if (picked != null && context.mounted) {
+                            context.read<ConfigCubit>().saveConfig(
+                                  key: ConfigConstants.defaultWallet,
+                                  type: ConfigType.string,
+                                  value: picked,
+                                );
+                          }
+                        }
+                      : null,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

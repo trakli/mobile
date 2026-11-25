@@ -1190,5 +1190,11 @@
   "walletsNoMatchFilter": "Keine Wallets passen zu diesem Filter.",
   "walletsNoMatchQuery": "Keine Treffer für „{}“.",
   "walletsDefault": "Standard",
-  "walletsBalanceIn": "Saldo der {}-Wallets"
+  "walletsBalanceIn": "Saldo der {}-Wallets",
+  "profileAccount": "Konto",
+  "profileNotSignedIn": "Nicht angemeldet",
+  "syncViewDetails": "Details anzeigen",
+  "syncMergeDuplicate": "Duplikat zusammenführen",
+  "aboutVersion": "Version {}",
+  "aboutDebugOn": "Debug-Werkzeuge aktiviert"
 }

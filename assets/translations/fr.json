@@ -1190,5 +1190,11 @@
   "walletsNoMatchFilter": "Aucun portefeuille ne correspond à ce filtre.",
   "walletsNoMatchQuery": "Aucun résultat pour « {} ».",
   "walletsDefault": "Par défaut",
-  "walletsBalanceIn": "Solde des portefeuilles en {}"
+  "walletsBalanceIn": "Solde des portefeuilles en {}",
+  "profileAccount": "Compte",
+  "profileNotSignedIn": "Non connecté",
+  "syncViewDetails": "Voir les détails",
+  "syncMergeDuplicate": "Fusionner le doublon",
+  "aboutVersion": "Version {}",
+  "aboutDebugOn": "Outils de débogage activés"
 }

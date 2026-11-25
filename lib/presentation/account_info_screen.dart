@@ -1,15 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/gen/assets.gen.dart' show Assets;
-import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
-import 'package:trakli/presentation/utils/colors.dart';
-import 'package:trakli/presentation/utils/forms/profile_form.dart';
-import 'package:trakli/presentation/utils/info_tile.dart';
-import 'package:trakli/presentation/utils/page_app_bar.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/forms/profile_form.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class AccountInfoScreen extends StatefulWidget {
   const AccountInfoScreen({super.key});
@@ -23,83 +22,56 @@ class _AccountInfoScreenState extends State<AccountInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthCubit>().state.user;
+    String orNotSet(String? v) =>
+        (v == null || v.trim().isEmpty) ? LocaleKeys.notSet.tr() : v;
     return Scaffold(
+      backgroundColor: context.tones.bgPage,
       appBar: PageAppBar(
         title: LocaleKeys.accountInfo.tr(),
+        actions: [
+          PageAppBarAction(
+            icon: isEditing ? LucideIcons.x : LucideIcons.pencil,
+            tooltip: isEditing
+                ? LocaleKeys.cancel.tr()
+                : LocaleKeys.editInfos.tr(),
+            onTap: () => setState(() => isEditing = !isEditing),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 16.h,
-        ),
-        child: Column(
-          spacing: 12.h,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    isEditing = !isEditing;
-                  });
-                },
-                label: Text(
-                  isEditing
-                      ? LocaleKeys.cancel.tr()
-                      : LocaleKeys.editInfos.tr(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: isEditing ? Colors.red : appPrimaryColor,
-                  ),
+      body: isEditing
+          ? SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
+              child: const ProfileForm(),
+            )
+          : LedgerSettingsList(
+              children: [
+                LedgerSettingsGroup(
+                  children: [
+                    LedgerSettingsRow(
+                      icon: LucideIcons.user,
+                      title: LocaleKeys.firstName.tr(),
+                      value: orNotSet(user?.firstName),
+                    ),
+                    LedgerSettingsRow(
+                      icon: LucideIcons.user,
+                      title: LocaleKeys.lastName.tr(),
+                      value: orNotSet(user?.lastName),
+                    ),
+                    LedgerSettingsRow(
+                      icon: LucideIcons.mail,
+                      title: LocaleKeys.email.tr(),
+                      value: orNotSet(user?.email),
+                    ),
+                    LedgerSettingsRow(
+                      icon: LucideIcons.phone,
+                      title: LocaleKeys.phoneNumber.tr(),
+                      value: orNotSet(user?.phone),
+                    ),
+                  ],
                 ),
-                icon: SvgPicture.asset(
-                  isEditing ? Assets.images.close : Assets.images.edit2,
-                  colorFilter: ColorFilter.mode(
-                    isEditing ? Colors.red : appPrimaryColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                iconAlignment: IconAlignment.end,
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  side: BorderSide(
-                    color: isEditing ? Colors.red : appPrimaryColor,
-                  ),
-                ),
-              ),
+              ],
             ),
-            if (isEditing) const ProfileForm() else _infoWidget,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget get _infoWidget {
-    final user = context.read<AuthCubit>().state.user;
-    return Column(
-      spacing: 12.h,
-      children: [
-        InfoTile(
-          title: LocaleKeys.firstName.tr(),
-          subTitle: user?.firstName ?? "",
-        ),
-        InfoTile(
-          title: LocaleKeys.lastName.tr(),
-          subTitle: user?.lastName ?? "",
-        ),
-        InfoTile(
-          title: LocaleKeys.country.tr(),
-          subTitle: LocaleKeys.cameroon.tr(),
-          countryCode: "cm",
-        ),
-        InfoTile(
-          title: LocaleKeys.phoneNumber.tr(),
-          subTitle: user?.phone ?? LocaleKeys.notSet.tr(),
-        ),
-      ],
     );
   }
 }

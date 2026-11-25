@@ -1190,5 +1190,11 @@
   "walletsNoMatchFilter": "Nessun portafoglio corrisponde a questo filtro.",
   "walletsNoMatchQuery": "Nessun risultato per \"{}\".",
   "walletsDefault": "Predefinito",
-  "walletsBalanceIn": "Saldo dei portafogli in {}"
+  "walletsBalanceIn": "Saldo dei portafogli in {}",
+  "profileAccount": "Account",
+  "profileNotSignedIn": "Accesso non effettuato",
+  "syncViewDetails": "Vedi dettagli",
+  "syncMergeDuplicate": "Unisci duplicato",
+  "aboutVersion": "Versione {}",
+  "aboutDebugOn": "Strumenti di debug attivi"
 }
