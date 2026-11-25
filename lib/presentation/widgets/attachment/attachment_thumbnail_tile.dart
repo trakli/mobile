@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/presentation/utils/path_helper.dart';
 
@@ -69,9 +71,9 @@ class AttachmentThumbnailTile extends StatelessWidget {
         width: w,
         height: h,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: Colors.grey.shade300),
+          color: context.tones.bgSurface,
+          borderRadius: BorderRadius.circular(AppRadii.sm),
+          border: Border.all(color: context.tones.borderLight),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.r),
@@ -97,7 +99,7 @@ class AttachmentThumbnailTile extends StatelessWidget {
                         height: 24.h,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.grey.shade600,
+                          color: context.tones.textMuted,
                         ),
                       ),
                     )
@@ -108,14 +110,14 @@ class AttachmentThumbnailTile extends StatelessWidget {
                           Icon(
                             iconForAttachmentPath(path),
                             size: 28.sp,
-                            color: Colors.grey.shade600,
+                            color: context.tones.textMuted,
                           ),
                           SizedBox(height: 4.h),
                           Text(
                             displayNameForAttachmentPath(path, maxLength: 10),
                             style: TextStyle(
                               fontSize: 10.sp,
-                              color: Colors.grey.shade600,
+                              color: context.tones.textMuted,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -142,7 +144,7 @@ class AttachmentThumbnailTile extends StatelessWidget {
                 minHeight: 24.h,
               ),
               icon: Icon(
-                Icons.cancel,
+                LucideIcons.circleX,
                 size: 24.sp,
                 color: accentColor,
               ),

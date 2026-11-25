@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/domain/entities/recurrence_input.dart';
@@ -184,7 +186,7 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
               triggerMode: TooltipTriggerMode.tap,
               showDuration: const Duration(seconds: 5),
               child: Icon(
-                Icons.help_outline,
+                LucideIcons.circleQuestionMark,
                 size: 16.sp,
                 color: tones.textMuted,
               ),
@@ -264,10 +266,10 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
                       labelText: LocaleKeys.refundOf.tr(),
                       fillColor: tones.bgSurface,
                       suffixIcon: c.refundOfLabel == null
-                          ? Icon(Icons.keyboard_arrow_down,
+                          ? Icon(LucideIcons.chevronDown,
                               color: tones.textMuted)
                           : IconButton(
-                              icon: Icon(Icons.clear,
+                              icon: Icon(LucideIcons.x,
                                   size: 20.sp, color: tones.textMuted),
                               onPressed: () => setState(() {
                                 c.refundOfClientId = null;
@@ -378,13 +380,13 @@ class _TransactionExtrasSectionState extends State<TransactionExtrasSection> {
                     children: [
                       if (c.recurrenceEndsAt != null)
                         IconButton(
-                          icon: Icon(Icons.clear, color: tones.textMuted),
+                          icon: Icon(LucideIcons.x, color: tones.textMuted),
                           onPressed: () =>
                               setState(() => c.recurrenceEndsAt = null),
                         ),
                       IconButton(
-                        icon:
-                            Icon(Icons.calendar_today, color: tones.textMuted),
+                        icon: Icon(LucideIcons.calendar,
+                            size: 16.lx, color: tones.textMuted),
                         onPressed: () async {
                           final now = DateTime.now();
                           final picked = await showDatePicker(

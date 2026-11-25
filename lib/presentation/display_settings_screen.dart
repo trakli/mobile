@@ -31,7 +31,7 @@ class _DisplaySettingsScreenState extends State<DisplaySettingsScreen> {
   void getFormDisplay() async {
     await LocalStorage().getTransactionFormDisplay().then((val) {
       setState(() {
-        formDisplay = val;
+        formDisplay = val ?? 'full';
       });
     });
   }

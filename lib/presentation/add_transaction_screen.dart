@@ -53,7 +53,7 @@ class AddTransactionScreen extends StatefulWidget {
 enum _TxTab { expense, income, transfer }
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
-  String? formDisplay = LocaleKeys.full.tr();
+  String formDisplay = 'full';
   late _TxTab _tab;
 
   bool get _isEdit => widget.transaction != null;
@@ -62,7 +62,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void initState() {
     super.initState();
     LocalStorage().getTransactionFormDisplay().then((val) {
-      if (mounted) setState(() => formDisplay = val);
+      if (mounted) setState(() => formDisplay = val ?? 'full');
     });
     final type = widget.transaction?.transaction.type ?? widget.transactionType;
     _tab = type == TransactionType.income ? _TxTab.income : _TxTab.expense;
@@ -78,7 +78,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 
   Widget _form(TransactionType type) {
-    if (formDisplay == 'full') {
+    if (formDisplay != 'compact') {
       return LedgerTransactionForm(
         transactionType: type,
         transactionCompleteEntity: widget.transaction,
