@@ -1,11 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/reminder_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/reminders/cubit/reminder_cubit.dart';
 import 'package:trakli/presentation/reminders/reminder_labels.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_form.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 ///  RRULE values.
 const _repeatRules = <String, String?>{
@@ -177,129 +183,149 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         if (!state.failure.hasError) Navigator.of(context).pop();
       },
       builder: (context, state) {
+        final t = context.tones;
+        Future<void> pick<T>(
+          String title,
+          List<LedgerOption<T>> options,
+          T selected,
+          void Function(T) apply,
+        ) async {
+          final v = await showLedgerOptionsSheet<T>(
+            context,
+            title: title,
+            options: options,
+            selected: selected,
+          );
+          if (v != null) setState(() => apply(v));
+        }
+
         return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              _isEdit
-                  ? LocaleKeys.editReminder.tr()
-                  : LocaleKeys.addReminder.tr(),
-            ),
+          backgroundColor: t.bgPage,
+          appBar: PageAppBar(
+            title: _isEdit
+                ? LocaleKeys.editReminder.tr()
+                : LocaleKeys.addReminder.tr(),
           ),
           body: Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.all(16.r),
+              padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
               children: [
-                TextFormField(
+                LedgerNameCard(
                   controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderTitle.tr(),
-                  ),
+                  hint: LocaleKeys.reminderTitle.tr(),
                   validator: (v) => (v == null || v.trim().isEmpty)
                       ? LocaleKeys.reminderTitleRequired.tr()
                       : null,
                 ),
-                SizedBox(height: 12.h),
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderDescription.tr(),
-                  ),
-                  maxLines: 2,
-                ),
-                SizedBox(height: 12.h),
-                DropdownButtonFormField<String>(
-                  initialValue: _type,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderType.tr(),
-                  ),
-                  items: ReminderType.all
-                      .map((t) => DropdownMenuItem(
-                            value: t,
-                            child: Text(reminderTypeLabel(t)),
-                          ))
-                      .toList(),
-                  onChanged: (v) =>
-                      setState(() => _type = v ?? ReminderType.custom),
-                ),
-                SizedBox(height: 12.h),
-                DropdownButtonFormField<int>(
-                  initialValue: _priority,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderPriority.tr(),
-                  ),
-                  items: [0, 1, 2]
-                      .map((p) => DropdownMenuItem(
-                            value: p,
-                            child: Text(_priorityLabel(p)),
-                          ))
-                      .toList(),
-                  onChanged: (v) => setState(() => _priority = v ?? 0),
-                ),
-                SizedBox(height: 12.h),
-                FormField<DateTime>(
-                  initialValue: _triggerAt,
-                  validator: (_) => _triggerAt == null
-                      ? LocaleKeys.reminderDateTimeRequired.tr()
-                      : null,
-                  builder: (field) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(LocaleKeys.reminderWhen.tr()),
-                    subtitle: Text(
-                      _triggerAt != null
-                          ? DateFormat('dd/MM/yyyy HH:mm').format(_triggerAt!)
-                          : LocaleKeys.reminderNoTime.tr(),
-                      style: field.hasError
-                          ? TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            )
+                SizedBox(height: 12.lx),
+                LedgerFieldsCard(
+                  children: [
+                    FormField<DateTime>(
+                      initialValue: _triggerAt,
+                      validator: (_) => _triggerAt == null
+                          ? LocaleKeys.reminderDateTimeRequired.tr()
                           : null,
+                      builder: (field) => LedgerFieldRow(
+                        icon: LucideIcons.calendarClock,
+                        label: LocaleKeys.reminderWhen.tr(),
+                        valueWidget: Text(
+                          _triggerAt != null
+                              ? DateFormat('dd/MM/yyyy HH:mm')
+                                  .format(_triggerAt!)
+                              : field.errorText ??
+                                  LocaleKeys.reminderNoTime.tr(),
+                          style: TextStyle(
+                            fontSize: 12.5.lx,
+                            color: field.hasError
+                                ? t.expenseColor
+                                : _triggerAt == null
+                                    ? t.textMuted
+                                    : t.textPrimary,
+                          ),
+                        ),
+                        chevron: true,
+                        onTap: () => _pickTrigger(field),
+                      ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () => _pickTrigger(field),
+                    LedgerFieldRow(
+                      icon: LucideIcons.repeat,
+                      label: LocaleKeys.reminderRepeat.tr(),
+                      value: _repeatLabel(_repeat),
+                      chevron: true,
+                      onTap: () => pick<String>(
+                        LocaleKeys.reminderRepeat.tr(),
+                        [
+                          for (final o in _repeatRules.keys)
+                            LedgerOption(o, _repeatLabel(o)),
+                        ],
+                        _repeat,
+                        (v) => _repeat = v,
+                      ),
                     ),
-                  ),
+                    LedgerFieldRow(
+                      icon: LucideIcons.globe,
+                      label: LocaleKeys.reminderTimezone.tr(),
+                      value: timezones[_timezone] ?? _timezone,
+                      chevron: true,
+                      onTap: () => pick<String>(
+                        LocaleKeys.reminderTimezone.tr(),
+                        [
+                          for (final e in timezones.entries)
+                            LedgerOption(e.key, e.value),
+                        ],
+                        _timezone,
+                        (v) => _timezone = v,
+                      ),
+                    ),
+                    LedgerFieldRow(
+                      icon: LucideIcons.tag,
+                      label: LocaleKeys.reminderType.tr(),
+                      value: reminderTypeLabel(_type),
+                      chevron: true,
+                      onTap: () => pick<String>(
+                        LocaleKeys.reminderType.tr(),
+                        [
+                          for (final r in ReminderType.all)
+                            LedgerOption(r, reminderTypeLabel(r)),
+                        ],
+                        _type,
+                        (v) => _type = v,
+                      ),
+                    ),
+                    LedgerFieldRow(
+                      icon: LucideIcons.flag,
+                      label: LocaleKeys.reminderPriority.tr(),
+                      value: _priorityLabel(_priority),
+                      chevron: true,
+                      onTap: () => pick<int>(
+                        LocaleKeys.reminderPriority.tr(),
+                        [
+                          for (final p in [0, 1, 2])
+                            LedgerOption(p, _priorityLabel(p)),
+                        ],
+                        _priority,
+                        (v) => _priority = v,
+                      ),
+                    ),
+                    LedgerFieldRow(
+                      icon: LucideIcons.textAlignStart,
+                      label: LocaleKeys.formDescription.tr(),
+                      divider: false,
+                      valueWidget: LedgerInlineField(
+                        controller: _descriptionController,
+                        hint: LocaleKeys.typeHere.tr(),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 12.h),
-                DropdownButtonFormField<String>(
-                  initialValue: _timezone,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderTimezone.tr(),
-                  ),
-                  items: timezones.entries
-                      .map((e) => DropdownMenuItem(
-                            value: e.key,
-                            child: Text(e.value),
-                          ))
-                      .toList(),
-                  onChanged: (v) => setState(() => _timezone = v ?? 'UTC'),
-                ),
-                SizedBox(height: 12.h),
-                DropdownButtonFormField<String>(
-                  initialValue: _repeat,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.reminderRepeat.tr(),
-                  ),
-                  items: _repeatRules.keys
-                      .map((o) => DropdownMenuItem(
-                            value: o,
-                            child: Text(_repeatLabel(o)),
-                          ))
-                      .toList(),
-                  onChanged: (v) => setState(() => _repeat = v ?? 'none'),
-                ),
-                SizedBox(height: 24.h),
-                ElevatedButton(
-                  onPressed: state.isSaving ? null : _save,
-                  child: state.isSaving
-                      ? SizedBox(
-                          height: 20.r,
-                          width: 20.r,
-                          child:
-                              const CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(LocaleKeys.saveReminder.tr()),
+                SizedBox(height: 18.lx),
+                LedgerButton(
+                  label: LocaleKeys.saveReminder.tr(),
+                  icon: LucideIcons.check,
+                  large: true,
+                  busy: state.isSaving,
+                  onPressed: _save,
                 ),
               ],
             ),

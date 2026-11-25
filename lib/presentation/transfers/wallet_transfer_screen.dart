@@ -1,26 +1,25 @@
-import 'dart:ui' as ui;
-
 import 'package:currency_picker/currency_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trakli/core/utils/currency_formater.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/utils/date_util.dart';
 import 'package:trakli/core/utils/exchange_rate_formatter.dart';
 import 'package:trakli/data/datasources/core/amount_parser.dart';
 import 'package:trakli/domain/entities/transfer_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/locale_keys.g.dart';
 import 'package:trakli/presentation/exchange_rate/cubit/exchange_rate_cubit.dart';
 import 'package:trakli/presentation/remote_config/cubit/remote_config_cubit.dart';
 import 'package:trakli/presentation/transfers/cubit/transfer_cubit.dart';
-import 'package:trakli/presentation/utils/back_button.dart';
-import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/custom_appbar.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_form.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_settings.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class WalletTransferScreen extends StatefulWidget {
@@ -136,101 +135,37 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
         rate == null ? '' : formatExchangeRateForDisplay(rate);
   }
 
-  void _showWalletSelector({
+  Future<void> _showWalletSelector({
     required bool isFromWallet,
     required List<WalletEntity> availableWallets,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 16.r,
-              right: 16.r,
-              top: 16.r,
-              bottom: MediaQuery.of(context).padding.bottom + 16.h,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isFromWallet
-                      ? LocaleKeys.selectSourceWallet.tr()
-                      : LocaleKeys.selectDestinationWallet.tr(),
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                ...availableWallets.map((wallet) {
-                  final isSelected = isFromWallet
-                      ? wallet.clientId == selectedFromWallet?.clientId
-                      : wallet.clientId == selectedToWallet?.clientId;
-
-                  return ListTile(
-                    leading: Container(
-                      padding: EdgeInsets.all(8.r),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withAlpha(51),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Icon(
-                        Icons.account_balance_wallet,
-                        color: Theme.of(context).primaryColor,
-                        size: 20.sp,
-                      ),
-                    ),
-                    title: Text(
-                      wallet.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
-                      ),
-                    ),
-                    subtitle: Text(
-                      '${wallet.balance.toStringAsFixed(2)} ${wallet.currencyCode}',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withAlpha(153),
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? Icon(
-                            Icons.check_circle,
-                            color: Theme.of(context).primaryColor,
-                          )
-                        : null,
-                    onTap: () {
-                      setState(() {
-                        if (isFromWallet) {
-                          selectedFromWallet = wallet;
-                        } else {
-                          selectedToWallet = wallet;
-                        }
-
-                        // Recompute default exchange rate when wallets change
-                        _prefillExchangeRate();
-                      });
-                      Navigator.pop(context);
-                    },
-                  );
-                }),
-              ],
-            ),
+  }) async {
+    final current = isFromWallet ? selectedFromWallet : selectedToWallet;
+    final picked = await showLedgerOptionsSheet<String>(
+      context,
+      title: isFromWallet
+          ? LocaleKeys.selectSourceWallet.tr()
+          : LocaleKeys.selectDestinationWallet.tr(),
+      selected: current?.clientId,
+      options: [
+        for (final w in availableWallets)
+          LedgerOption(
+            w.clientId,
+            w.name,
+            subtitle: LedgerMoney.format(w.balance, w.currencyCode),
+            leading: LedgerCoin(icon: LucideIcons.wallet, media: w.icon),
           ),
-        ),
-      ),
+      ],
     );
+    if (picked == null || !mounted) return;
+    final wallet = availableWallets.firstWhere((w) => w.clientId == picked);
+    setState(() {
+      if (isFromWallet) {
+        selectedFromWallet = wallet;
+      } else {
+        selectedToWallet = wallet;
+      }
+      _prefillExchangeRate();
+    });
   }
 
   String? _validateForm() {
@@ -381,439 +316,271 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
     }
   }
 
-  Widget _buildDestinationReceives(BuildContext context) {
-    if (selectedFromWallet == null ||
-        selectedToWallet == null ||
-        selectedFromWallet!.currencyCode == selectedToWallet!.currencyCode) {
-      return const SizedBox.shrink();
-    }
+  bool get _crossCurrency =>
+      selectedFromWallet != null &&
+      selectedToWallet != null &&
+      selectedFromWallet!.currencyCode != selectedToWallet!.currencyCode;
 
+  String _receivesText() {
     final amount = parseAmount(_amountController.text.trim());
-
-    final parsedRate = parseAmount(_exchangeRateController.text.trim());
-    final formatted = parsedRate > 0
-        ? CurrencyFormater.formatAmountWithSymbol(
-            context,
-            amount * parsedRate,
-            currency: selectedToWallet!.currency,
-          )
-        : '—';
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.r, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .surfaceContainerHighest
-            .withAlpha(102),
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withAlpha(51),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.arrow_forward,
-            size: 18.sp,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              LocaleKeys.destinationWalletWillReceive
-                  .tr(namedArgs: {'amount': formatted}),
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    final rate = parseAmount(_exchangeRateController.text.trim());
+    final formatted = rate > 0
+        ? LedgerMoney.format(amount * rate, selectedToWallet!.currencyCode)
+        : '…';
+    return LocaleKeys.destinationWalletWillReceive
+        .tr(namedArgs: {'amount': formatted});
   }
 
-  Widget _buildWalletSelector({
-    required String title,
-    required WalletEntity? selectedWallet,
+  Widget _walletRow({
+    required String label,
+    required WalletEntity? wallet,
     required bool isFromWallet,
+    required bool divider,
   }) {
+    final t = context.tones;
     final wallets = context.watch<WalletCubit>().state.wallets;
-    final availableWallets = isFromWallet
+    final available = isFromWallet
         ? wallets
         : wallets
             .where((w) => w.clientId != selectedFromWallet?.clientId)
             .toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
+    return LedgerRow(
+      leading: LedgerCoin(icon: LucideIcons.wallet, media: wallet?.icon),
+      title: wallet?.name ?? LocaleKeys.selectWallet.tr(),
+      subtitle: label,
+      divider: divider,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (wallet != null)
+            Text(
+              LedgerMoney.format(wallet.balance, wallet.currencyCode),
+              style: LedgerText.money(size: 13.lx, color: t.textSecondary),
+            ),
+          SizedBox(width: 6.lx),
+          Icon(LucideIcons.chevronDown, size: 16.lx, color: t.textMuted),
+        ],
+      ),
+      onTap: available.isEmpty
+          ? null
+          : () => _showWalletSelector(
+                isFromWallet: isFromWallet,
+                availableWallets: available,
               ),
-        ),
-        SizedBox(height: 8.h),
-        GestureDetector(
-          onTap: availableWallets.isNotEmpty
-              ? () => _showWalletSelector(
-                    isFromWallet: isFromWallet,
-                    availableWallets: availableWallets,
-                  )
-              : null,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16.r),
-              border: selectedWallet == null
-                  ? Border.all(color: Colors.red.withAlpha(102), width: 1)
-                  : null,
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16.r),
-                    ),
-                    child: SvgPicture.asset(
-                      Assets.images.bottomLeftCircle,
-                      colorFilter: ColorFilter.mode(
-                        Theme.of(context).colorScheme.onSurface,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
-                  ),
-                  title: Text(
-                    selectedWallet?.name ?? LocaleKeys.selectWallet.tr(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: selectedWallet == null ? Colors.red : null,
-                    ),
-                  ),
-                  subtitle: selectedWallet != null
-                      ? Text(
-                          '${selectedWallet.balance.toStringAsFixed(2)} ${selectedWallet.currencyCode}',
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
-                      : null,
-                  trailing: Container(
-                    padding: EdgeInsets.all(8.sp),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: SvgPicture.asset(
-                      Assets.images.arrowDown,
-                      colorFilter: ColorFilter.mode(
-                        Theme.of(context).primaryColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
+  }
+
+  void _swapWallets() {
+    if (selectedFromWallet == null || selectedToWallet == null) return;
+    setState(() {
+      final temp = selectedFromWallet;
+      selectedFromWallet = selectedToWallet;
+      selectedToWallet = temp;
+      _prefillExchangeRate();
+    });
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedTransferDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 3650)),
+      lastDate: DateTime.now().add(const Duration(days: 3650)),
+    );
+    if (picked == null) return;
+    setState(() {
+      _selectedTransferDate = picked;
+      _syncTransferDateTimeControllers();
+    });
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTransferTime,
+    );
+    if (picked == null) return;
+    setState(() {
+      _selectedTransferTime = picked;
+      _syncTransferDateTimeControllers();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tones;
     final body = BlocBuilder<TransferCubit, TransferState>(
       builder: (context, transferState) {
-        final minTransferAmount = context
-            .read<RemoteConfigCubit>()
-            .state
-            .config
-            .minimumTransferAmount;
-        final minTransferAmountForLocale = minTransferAmount
-            .toStringAsFixed(6)
-            .replaceAll(RegExp(r'0+$'), '')
-            .replaceAll(RegExp(r'\.$'), '');
-        return SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(
-              left: 16.w,
-              right: 16.w,
-              top: 16.h,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 32.h,
+        final minTransferAmount = _minimumTransferAmount(context);
+        final figureStyle = LedgerText.money(
+          size: 30.lx,
+          weight: FontWeight.w600,
+          color: t.textPrimary,
+        );
+        return Form(
+          key: _formKey,
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(
+              14.lx,
+              6.lx,
+              14.lx,
+              MediaQuery.of(context).viewInsets.bottom + 40.lx,
             ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildWalletSelector(
-                            title: LocaleKeys.sourceWallet.tr(),
-                            selectedWallet: selectedFromWallet,
-                            isFromWallet: true,
-                          ),
-                          SizedBox(height: 16.h),
-                          _buildWalletSelector(
-                            title: LocaleKeys.destinationWallet.tr(),
-                            selectedWallet: selectedToWallet,
-                            isFromWallet: false,
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                        right: 0.1.sw,
-                        top: 0.14.sh,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (selectedFromWallet != null &&
-                                selectedToWallet != null) {
-                              setState(() {
-                                final temp = selectedFromWallet;
-                                selectedFromWallet = selectedToWallet;
-                                selectedToWallet = temp;
-                              });
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12.sp),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF9500),
-                              borderRadius: BorderRadius.circular(8.r),
-                            ),
-                            child: Icon(
-                              Icons.swap_vert,
-                              size: 30.sp,
-                              color: Colors.white,
-                            ),
-                          ),
+                  LedgerCard(
+                    padding: EdgeInsets.symmetric(horizontal: 12.lx),
+                    child: Column(
+                      children: [
+                        _walletRow(
+                          label: LocaleKeys.from.tr(),
+                          wallet: selectedFromWallet,
+                          isFromWallet: true,
+                          divider: true,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.h),
-                  Text(
-                    LocaleKeys.amount.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
+                        _walletRow(
+                          label: LocaleKeys.to.tr(),
+                          wallet: selectedToWallet,
+                          isFromWallet: false,
+                          divider: false,
                         ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 8.h),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: _amountController,
-                    decoration: InputDecoration(
-                      hintText: LocaleKeys.amountHint.tr(),
-                      suffixText: selectedFromWallet?.currencyCode,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return LocaleKeys.amountRequired.tr();
-                      }
-                      final number = double.tryParse(value);
-                      if (number == null) {
-                        return LocaleKeys.mustBeNumber.tr();
-                      }
-                      if (number < minTransferAmount) {
-                        return LocaleKeys.amountNotZero.tr(
-                          namedArgs: {
-                            'minAmount': minTransferAmountForLocale,
-                          },
-                        );
-                      }
-                      if (selectedFromWallet != null &&
-                          number > selectedFromWallet!.balance) {
-                        return LocaleKeys.amountMustNotBeZero
-                            .tr(); // fallback until locale keys update
-                      }
-                      return null;
-                    },
-                  ),
-                  if (selectedFromWallet != null &&
-                      selectedToWallet != null &&
-                      selectedFromWallet!.currencyCode !=
-                          selectedToWallet!.currencyCode) ...[
-                    SizedBox(height: 12.h),
-                    Text(
-                      LocaleKeys.exchangeRate.tr(),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                    SizedBox(height: 6.h),
-                    TextFormField(
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
+                  Positioned.fill(
+                    child: Align(
+                      alignment: const Alignment(0.35, 0),
+                      child: LedgerIconButton(
+                        icon: LucideIcons.arrowUpDown,
+                        tooltip: LocaleKeys.walletTransfer.tr(),
+                        onTap: _swapWallets,
                       ),
-                      controller: _exchangeRateController,
-                      decoration: InputDecoration(
-                        hintText: LocaleKeys.exchangeRate.tr(),
-                        suffixText: selectedToWallet?.currencyCode,
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Container(
-                      padding: EdgeInsets.all(12.r),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondaryContainer
-                            .withAlpha(102),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.currency_exchange,
-                            size: 16.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: Text(
-                              '${LocaleKeys.convertingFrom.tr()} ${selectedFromWallet!.currencyCode} ${LocaleKeys.to.tr()} ${selectedToWallet!.currencyCode}',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                  if (selectedFromWallet != null &&
-                      selectedToWallet != null &&
-                      selectedFromWallet!.currencyCode !=
-                          selectedToWallet!.currencyCode) ...[
-                    SizedBox(height: 20.h),
-                    _buildDestinationReceives(context),
-                  ],
-                  SizedBox(height: 24.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              LocaleKeys.transactionDate.tr(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                            SizedBox(height: 8.h),
-                            TextFormField(
-                              readOnly: true,
-                              controller: _transferDateController,
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.calendar_today_outlined,
-                                  size: 20.sp,
-                                ),
-                              ),
-                              onTap: () async {
-                                final selectedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: _selectedTransferDate,
-                                  firstDate: DateTime.now().subtract(
-                                    const Duration(days: 3650),
-                                  ),
-                                  lastDate: DateTime.now().add(
-                                    const Duration(days: 3650),
-                                  ),
-                                );
-                                if (selectedDate != null) {
-                                  setState(() {
-                                    _selectedTransferDate = selectedDate;
-                                    _syncTransferDateTimeControllers();
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              LocaleKeys.transactionTime.tr(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                            SizedBox(height: 8.h),
-                            TextFormField(
-                              readOnly: true,
-                              controller: _transferTimeController,
-                              decoration: InputDecoration(
-                                suffixIcon: Icon(
-                                  Icons.access_time_outlined,
-                                  size: 20.sp,
-                                ),
-                              ),
-                              onTap: () async {
-                                final selectedTime = await showTimePicker(
-                                  context: context,
-                                  initialTime: _selectedTransferTime,
-                                );
-                                if (selectedTime != null) {
-                                  setState(() {
-                                    _selectedTransferTime = selectedTime;
-                                    _syncTransferDateTimeControllers();
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 24.h),
-                  SizedBox(
-                    height: 54.h,
-                    width: double.infinity,
-                    child: PrimaryButton(
-                      onPress: transferState.isSaving ? null : _performTransfer,
-                      buttonText: transferState.isSaving
-                          ? LocaleKeys.processing.tr()
-                          : LocaleKeys.transferMoney.tr(),
-                      backgroundColor: Theme.of(context).primaryColor,
-                      iconColor: Colors.white,
-                      textDirection: ui.TextDirection.rtl,
                     ),
                   ),
                 ],
               ),
-            ),
+              SizedBox(height: 12.lx),
+              LedgerCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LedgerH6(LocaleKeys.amount.tr()),
+                    SizedBox(height: 6.lx),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _amountController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            style: figureStyle,
+                            onChanged: (_) => setState(() {}),
+                            decoration: ledgerBareInput(
+                              LocaleKeys.amountHint.tr(),
+                              figureStyle.copyWith(color: t.textMuted),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return LocaleKeys.amountRequired.tr();
+                              }
+                              final number = double.tryParse(value);
+                              if (number == null) {
+                                return LocaleKeys.mustBeNumber.tr();
+                              }
+                              if (number < minTransferAmount) {
+                                return LocaleKeys.amountNotZero.tr(
+                                  namedArgs: {
+                                    'minAmount':
+                                        _minimumTransferAmountForLocale(
+                                            context),
+                                  },
+                                );
+                              }
+                              if (selectedFromWallet != null &&
+                                  number > selectedFromWallet!.balance) {
+                                return LocaleKeys.insufficientBalance.tr();
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        if (selectedFromWallet != null)
+                          Text(
+                            selectedFromWallet!.currencyCode,
+                            style: LedgerText.money(
+                              size: 14.lx,
+                              color: t.textMuted,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (_crossCurrency) ...[
+                SizedBox(height: 12.lx),
+                LedgerFieldsCard(
+                  children: [
+                    LedgerFieldRow(
+                      icon: LucideIcons.arrowRightLeft,
+                      label: LocaleKeys.exchangeRate.tr(),
+                      divider: false,
+                      valueWidget: LedgerInlineField(
+                        controller: _exchangeRateController,
+                        hint: LocaleKeys.exchangeRate.tr(),
+                        maxLines: 1,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      trailing: Text(
+                        '${selectedFromWallet!.currencyCode} → ${selectedToWallet!.currencyCode}',
+                        style: LedgerText.money(
+                          size: 12.lx,
+                          color: t.textMuted,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.lx),
+                LedgerNote(icon: LucideIcons.info, text: _receivesText()),
+              ],
+              SizedBox(height: 12.lx),
+              LedgerFieldsCard(
+                children: [
+                  LedgerFieldRow(
+                    icon: LucideIcons.calendar,
+                    label: LocaleKeys.date.tr(),
+                    value: _transferDateController.text,
+                    chevron: true,
+                    onTap: _pickDate,
+                  ),
+                  LedgerFieldRow(
+                    icon: LucideIcons.clock,
+                    label: LocaleKeys.time.tr(),
+                    value: _transferTimeController.text,
+                    chevron: true,
+                    divider: false,
+                    onTap: _pickTime,
+                  ),
+                ],
+              ),
+              SizedBox(height: 18.lx),
+              LedgerButton(
+                label: LocaleKeys.transferMoney.tr(),
+                icon: LucideIcons.arrowRightLeft,
+                large: true,
+                busy: transferState.isSaving,
+                onPressed: _performTransfer,
+              ),
+            ],
           ),
         );
       },
@@ -851,13 +618,8 @@ class _WalletTransferScreenState extends State<WalletTransferScreen> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        leading: const CustomBackButton(),
-        titleText: LocaleKeys.walletTransfer.tr(),
-        headerTextColor: const Color(0xFFEBEDEC),
-        actions: [SizedBox(width: 16.w)],
-      ),
+      backgroundColor: t.bgPage,
+      appBar: PageAppBar(title: LocaleKeys.walletTransfer.tr()),
       body: listener,
     );
   }

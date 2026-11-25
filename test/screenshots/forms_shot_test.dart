@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:trakli/presentation/budget/add_budget_screen.dart';
 import 'package:trakli/presentation/category/add_category_screen.dart';
 import 'package:trakli/presentation/groups/add_group_screen.dart';
 import 'package:trakli/presentation/parties/add_party_screen.dart';
@@ -50,14 +49,6 @@ void main() {
       (dark) => withShotProviders(
         const AddCategoryScreen(type: TransactionType.expense),
       ),
-    );
-  }, skip: !ledgerShotsEnabled);
-
-  testWidgets('add budget', (tester) async {
-    await captureLedgerShots(
-      tester,
-      'add-budget',
-      (dark) => withShotProviders(const AddBudgetScreen()),
     );
   }, skip: !ledgerShotsEnabled);
 

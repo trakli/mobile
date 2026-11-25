@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/holding_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/holdings/cubit/holding_cubit.dart';
@@ -12,6 +13,8 @@ import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/info_sheet.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
 class AddHoldingScreen extends StatefulWidget {
@@ -81,14 +84,16 @@ class _AddHoldingScreenState extends State<AddHoldingScreen> {
       _symbolController.text = coin.symbol;
       _externalRef = coin.id;
       _provider = 'coingecko';
-      _coinSearchController.text = '${coin.name} (${coin.symbol.toUpperCase()})';
+      _coinSearchController.text =
+          '${coin.name} (${coin.symbol.toUpperCase()})';
     });
     context.read<HoldingCubit>().clearCoinResults();
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_priceSource.isAuto && (_externalRef == null || _externalRef!.isEmpty)) {
+    if (_priceSource.isAuto &&
+        (_externalRef == null || _externalRef!.isEmpty)) {
       showSnackBar(message: LocaleKeys.holdingSelectCoinRequired.tr());
       return;
     }
@@ -168,18 +173,18 @@ class _AddHoldingScreenState extends State<AddHoldingScreen> {
             : LocaleKeys.holdingsAdd.tr(),
         actions: [
           PageAppBarAction(
-            icon: Icons.help_outline,
+            icon: LucideIcons.circleQuestionMark,
             tooltip: LocaleKeys.holdingHelpTitle.tr(),
             onTap: _showHelp,
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+        padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 40.lx),
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _PriceSourceToggle(
                 value: _priceSource,
@@ -243,34 +248,37 @@ class _AddHoldingScreenState extends State<AddHoldingScreen> {
                     ),
                   ),
                   SizedBox(width: 12.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Label(LocaleKeys.holdingCurrency.tr()),
-                      SizedBox(height: 8.h),
-                      InkWell(
-                        onTap: _pickCurrency,
-                        borderRadius: BorderRadius.circular(8.r),
-                        child: Container(
-                          height: 56.h,
-                          width: 90.w,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: tones.bgSurface,
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(color: tones.borderMedium),
-                          ),
-                          child: Text(
-                            _currencyCode,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                              color: tones.textPrimary,
+                  SizedBox(
+                    width: 80.lx,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Label(LocaleKeys.holdingCurrency.tr()),
+                        SizedBox(height: 8.h),
+                        InkWell(
+                          onTap: _pickCurrency,
+                          borderRadius: BorderRadius.circular(AppRadii.sm),
+                          child: Container(
+                            height: 44.lx,
+                            width: 80.lx,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: tones.bgSurface,
+                              borderRadius: BorderRadius.circular(AppRadii.sm),
+                              border: Border.all(color: tones.borderLight),
+                            ),
+                            child: Text(
+                              _currencyCode,
+                              style: LedgerText.money(
+                                size: 14.lx,
+                                weight: FontWeight.w600,
+                                color: tones.textPrimary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -295,19 +303,12 @@ class _AddHoldingScreenState extends State<AddHoldingScreen> {
               SizedBox(height: 28.h),
               BlocBuilder<HoldingCubit, HoldingState>(
                 buildWhen: (a, b) => a.isSaving != b.isSaving,
-                builder: (context, state) => SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: state.isSaving ? null : _save,
-                    child: state.isSaving
-                        ? SizedBox(
-                            height: 20.h,
-                            width: 20.h,
-                            child: const CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text(LocaleKeys.holdingSave.tr()),
-                  ),
+                builder: (context, state) => LedgerButton(
+                  label: LocaleKeys.holdingSave.tr(),
+                  icon: LucideIcons.check,
+                  large: true,
+                  busy: state.isSaving,
+                  onPressed: _save,
                 ),
               ),
             ],
@@ -323,15 +324,7 @@ class _Label extends StatelessWidget {
   const _Label(this.text);
 
   @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: Theme.of(context)
-          .textTheme
-          .bodyMedium
-          ?.copyWith(fontWeight: FontWeight.w500),
-    );
-  }
+  Widget build(BuildContext context) => LedgerH6(text);
 }
 
 class _PriceSourceToggle extends StatelessWidget {
@@ -342,47 +335,19 @@ class _PriceSourceToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
-    Widget option(HoldingPriceSource source, String label) {
-      final selected = value == source;
-      return Expanded(
-        child: GestureDetector(
-          onTap: () => onChanged(source),
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: selected ? tones.brand.deep : Colors.transparent,
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : tones.textMuted,
-              ),
-            ),
-          ),
+    return LedgerSeg<HoldingPriceSource>(
+      options: [
+        LedgerSegOption(
+          HoldingPriceSource.auto,
+          LocaleKeys.holdingPriceSourceAuto.tr(),
         ),
-      );
-    }
-
-    return Container(
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: tones.bgSurface,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: tones.borderLight),
-      ),
-      child: Row(
-        children: [
-          option(HoldingPriceSource.auto,
-              LocaleKeys.holdingPriceSourceAuto.tr()),
-          option(HoldingPriceSource.manual,
-              LocaleKeys.holdingPriceSourceManual.tr()),
-        ],
-      ),
+        LedgerSegOption(
+          HoldingPriceSource.manual,
+          LocaleKeys.holdingPriceSourceManual.tr(),
+        ),
+      ],
+      selected: value,
+      onChanged: onChanged,
     );
   }
 }
@@ -409,7 +374,7 @@ class _CoinSearchField extends StatelessWidget {
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: LocaleKeys.holdingSearchCoinHint.tr(),
-            prefixIcon: const Icon(Icons.search),
+            prefixIcon: Icon(LucideIcons.search, size: 16.lx),
           ),
         ),
         BlocBuilder<HoldingCubit, HoldingState>(

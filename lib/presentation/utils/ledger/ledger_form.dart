@@ -89,6 +89,7 @@ class LedgerInlineField extends StatelessWidget {
   final String hint;
   final int maxLines;
   final TextInputType? keyboardType;
+  final ValueChanged<String>? onChanged;
 
   const LedgerInlineField({
     super.key,
@@ -96,6 +97,7 @@ class LedgerInlineField extends StatelessWidget {
     required this.hint,
     this.maxLines = 4,
     this.keyboardType,
+    this.onChanged,
   });
 
   @override
@@ -106,6 +108,7 @@ class LedgerInlineField extends StatelessWidget {
       minLines: 1,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       style: TextStyle(fontSize: 12.5.lx, color: t.textPrimary),
       decoration: ledgerBareInput(
         hint,
