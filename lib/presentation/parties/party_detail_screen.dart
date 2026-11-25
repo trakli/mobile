@@ -403,9 +403,9 @@ class _HistoryCard extends StatelessWidget {
     final loans = transactions
         .where((t) => isLoanOrDebtIntent(t.transaction.intent))
         .toList()
-      ..sort((a, b) => a.transaction.datetime.compareTo(b.transaction.datetime));
-    final youLent =
-        loans.isEmpty || _isOutflow(loans.first.transaction.intent);
+      ..sort(
+          (a, b) => a.transaction.datetime.compareTo(b.transaction.datetime));
+    final youLent = loans.isEmpty || _isOutflow(loans.first.transaction.intent);
     final dates = DateFormat.MMMd();
     final events = <_HistoryEvent>[
       for (final t in loans)
@@ -531,7 +531,8 @@ class _TotalsRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 11.lx, color: t.textMuted)),
+              Text(label,
+                  style: TextStyle(fontSize: 11.lx, color: t.textMuted)),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,

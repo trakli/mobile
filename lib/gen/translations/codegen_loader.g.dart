@@ -1198,5 +1198,13 @@ abstract class  LocaleKeys {
   static const syncMergeDuplicate = 'syncMergeDuplicate';
   static const aboutVersion = 'aboutVersion';
   static const aboutDebugOn = 'aboutDebugOn';
+  static const categoriesSearchHint = 'categoriesSearchHint';
+  static const listNoMatchFilter = 'listNoMatchFilter';
+  static const partiesSearchHint = 'partiesSearchHint';
+  static const partiesFilterEarners = 'partiesFilterEarners';
+  static const partiesFilterSpenders = 'partiesFilterSpenders';
+  static const partiesNet = 'partiesNet';
+  static const groupsSearchHint = 'groupsSearchHint';
+  static const groupsEmptyBody = 'groupsEmptyBody';
 
 }

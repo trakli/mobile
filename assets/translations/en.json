@@ -1196,5 +1196,13 @@
   "syncViewDetails": "View details",
   "syncMergeDuplicate": "Merge duplicate",
   "aboutVersion": "Version {}",
-  "aboutDebugOn": "Debug tools on"
+  "aboutDebugOn": "Debug tools on",
+  "categoriesSearchHint": "Search categories",
+  "listNoMatchFilter": "Nothing matches this filter.",
+  "partiesSearchHint": "Search parties",
+  "partiesFilterEarners": "Pay you",
+  "partiesFilterSpenders": "You pay",
+  "partiesNet": "Net with everyone",
+  "groupsSearchHint": "Search groups",
+  "groupsEmptyBody": "Create a group to organize related transactions."
 }

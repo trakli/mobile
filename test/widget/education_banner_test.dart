@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/presentation/utils/education_banner.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -77,7 +79,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.close), findsOneWidget);
+      expect(find.byIcon(LucideIcons.x), findsOneWidget);
     });
 
     testWidgets('should not show dismiss button when onDismiss is null',
@@ -94,7 +96,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.close), findsNothing);
+      expect(find.byIcon(LucideIcons.x), findsNothing);
     });
 
     testWidgets('should call onDismiss when dismiss button is tapped',
@@ -115,7 +117,7 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.close));
+      await tester.tap(find.byIcon(LucideIcons.x));
       await tester.pumpAndSettle();
 
       expect(wasDismissed, isTrue);
@@ -136,7 +138,7 @@ void main() {
       expect(find.byType(EducationBanner), findsOneWidget);
     });
 
-    testWidgets('should have container with proper styling', (tester) async {
+    testWidgets('renders inside a Ledger card', (tester) async {
       tester.view.physicalSize = const Size(375, 812);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -148,14 +150,13 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      final container = tester.widget<Container>(
+      expect(
         find.descendant(
           of: find.byType(EducationBanner),
-          matching: find.byType(Container).first,
+          matching: find.byType(LedgerCard),
         ),
+        findsOneWidget,
       );
-
-      expect(container.decoration, isA<BoxDecoration>());
     });
   });
 }

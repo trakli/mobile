@@ -27,11 +27,9 @@ class GroupDetailScreen extends StatelessWidget {
   List<TransactionCompleteEntity> _matching(
     List<TransactionCompleteEntity> txns,
   ) {
-    return txns
-        .where((t) => t.group?.clientId == group.clientId)
-        .toList()
-      ..sort((a, b) =>
-          b.transaction.datetime.compareTo(a.transaction.datetime));
+    return txns.where((t) => t.group?.clientId == group.clientId).toList()
+      ..sort(
+          (a, b) => b.transaction.datetime.compareTo(a.transaction.datetime));
   }
 
   ({double received, double spent, double net}) _totals(
@@ -77,8 +75,8 @@ class GroupDetailScreen extends StatelessWidget {
       widget: PopUpDialog(
         dialogType: DialogType.negative,
         title: LocaleKeys.deleteGroup.tr(),
-        subTitle: LocaleKeys.deleteGroupConfirm
-            .tr(namedArgs: {'name': group.name}),
+        subTitle:
+            LocaleKeys.deleteGroupConfirm.tr(namedArgs: {'name': group.name}),
         mainAction: () {
           context.read<GroupCubit>().deleteGroup(group.clientId);
           AppNavigator.pop(context);
@@ -121,8 +119,7 @@ class GroupDetailScreen extends StatelessWidget {
             ],
           ),
           body: ListView(
-            padding:
-                EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             children: [
               _HeaderRow(group: group, tone: tone),
               SizedBox(height: 14.h),
@@ -358,8 +355,7 @@ class _ActivityCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   'No activity in the last 6 months.',
-                  style:
-                      TextStyle(fontSize: 13.sp, color: tones.textMuted),
+                  style: TextStyle(fontSize: 13.sp, color: tones.textMuted),
                 ),
               ),
             )
@@ -430,8 +426,18 @@ class _ActivityCard extends StatelessWidget {
 
   static String _monthLabel(DateTime d) {
     const labels = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return labels[d.month - 1];
   }

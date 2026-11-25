@@ -1196,5 +1196,13 @@
   "syncViewDetails": "Vedi dettagli",
   "syncMergeDuplicate": "Unisci duplicato",
   "aboutVersion": "Versione {}",
-  "aboutDebugOn": "Strumenti di debug attivi"
+  "aboutDebugOn": "Strumenti di debug attivi",
+  "categoriesSearchHint": "Cerca categorie",
+  "listNoMatchFilter": "Nessun risultato per questo filtro.",
+  "partiesSearchHint": "Cerca contatti",
+  "partiesFilterEarners": "Ti pagano",
+  "partiesFilterSpenders": "Paghi tu",
+  "partiesNet": "Netto con tutti",
+  "groupsSearchHint": "Cerca gruppi",
+  "groupsEmptyBody": "Crea un gruppo per organizzare le transazioni collegate."
 }

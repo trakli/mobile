@@ -1196,5 +1196,13 @@
   "syncViewDetails": "Voir les détails",
   "syncMergeDuplicate": "Fusionner le doublon",
   "aboutVersion": "Version {}",
-  "aboutDebugOn": "Outils de débogage activés"
+  "aboutDebugOn": "Outils de débogage activés",
+  "categoriesSearchHint": "Rechercher des catégories",
+  "listNoMatchFilter": "Rien ne correspond à ce filtre.",
+  "partiesSearchHint": "Rechercher des tiers",
+  "partiesFilterEarners": "Vous paient",
+  "partiesFilterSpenders": "Vous payez",
+  "partiesNet": "Net avec tout le monde",
+  "groupsSearchHint": "Rechercher des groupes",
+  "groupsEmptyBody": "Créez un groupe pour organiser les transactions liées."
 }

@@ -1,12 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/domain/entities/notification_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/notifications/cubit/notification_cubit.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 
 class NotificationTile extends StatelessWidget {
   final NotificationEntity notification;
@@ -19,9 +21,9 @@ class NotificationTile extends StatelessWidget {
   static Color getTypeColor(NotificationType type, AppTones tones) {
     return switch (type) {
       NotificationType.reminder => tones.accentWarm,
-      NotificationType.alert => tones.expense.accent,
+      NotificationType.alert => tones.expenseColor,
       NotificationType.achievement => tones.accentWarm,
-      NotificationType.system => tones.brand.deep,
+      NotificationType.system => tones.brandText,
     };
   }
 
@@ -37,10 +39,10 @@ class NotificationTile extends StatelessWidget {
 
   static IconData getTypeIcon(NotificationType type) {
     return switch (type) {
-      NotificationType.reminder => Icons.schedule_outlined,
-      NotificationType.alert => Icons.warning_amber_rounded,
-      NotificationType.achievement => Icons.stars_rounded,
-      NotificationType.system => Icons.info_outline,
+      NotificationType.reminder => LucideIcons.alarmClock,
+      NotificationType.alert => LucideIcons.triangleAlert,
+      NotificationType.achievement => LucideIcons.award,
+      NotificationType.system => LucideIcons.info,
     };
   }
 
@@ -53,112 +55,64 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     final isRead = notification.readAt != null;
-    final typeColor = getTypeColor(notification.type, tones);
-    final typeLabel = getTypeLabel(notification.type);
-    final iconData = getTypeIcon(notification.type);
-
+    final typeColor = getTypeColor(notification.type, t);
     return InkWell(
       onTap: () => _handleTap(context),
-      borderRadius: BorderRadius.circular(AppRadii.md.r),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.all(16.r),
-        decoration: BoxDecoration(
-          color: isRead ? tones.bgCard : tones.bgSurface,
-          borderRadius: BorderRadius.circular(AppRadii.md.r),
-          border: Border.all(
-            color: tones.borderLight,
-            width: 1,
-          ),
-          boxShadow: isRead ? null : context.elevations.level1,
-        ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 11.lx),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon container
-            Container(
-              width: 40.r,
-              height: 40.r,
-              padding: EdgeInsets.all(8.r),
-              decoration: BoxDecoration(
-                color: typeColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(AppRadii.sm.r),
-              ),
-              child: Icon(
-                iconData,
-                size: 24.r,
-                color: typeColor,
-              ),
+            LedgerCoin(
+              icon: getTypeIcon(notification.type),
+              foreground: typeColor,
             ),
-            SizedBox(width: 12.w),
-            // Content
+            SizedBox(width: 10.lx),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: typeColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(AppRadii.xs.r),
-                        ),
+                      Expanded(
                         child: Text(
-                          typeLabel,
+                          notification.title,
                           style: TextStyle(
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
-                            color: typeColor,
-                            letterSpacing: 0.5,
+                            fontSize: 14.lx,
+                            fontWeight:
+                                isRead ? FontWeight.w500 : FontWeight.w600,
+                            color: isRead ? t.textSecondary : t.textPrimary,
                           ),
                         ),
                       ),
-                      const Spacer(),
                       if (!isRead)
                         Container(
-                          width: 8.r,
-                          height: 8.r,
+                          width: 7.lx,
+                          height: 7.lx,
+                          margin: EdgeInsets.only(left: 6.lx),
                           decoration: BoxDecoration(
-                            color: tones.brand.deep,
+                            color: t.brandFill,
                             shape: BoxShape.circle,
                           ),
                         ),
                     ],
                   ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    notification.title,
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
-                      color: isRead ? tones.textSecondary : tones.textPrimary,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: 2.lx),
                   Text(
                     notification.body,
                     style: TextStyle(
-                      fontSize: 14.sp,
-                      color: isRead ? tones.textMuted : tones.textSecondary,
-                      height: 1.3,
+                      fontSize: 12.5.lx,
+                      height: 1.4,
+                      color: isRead ? t.textMuted : t.textSecondary,
                     ),
                   ),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 4.lx),
                   Text(
-                    DateFormat('MMM dd, yyyy • HH:mm')
-                        .format(notification.createdAt),
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: tones.textMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    '${getTypeLabel(notification.type)} · '
+                    '${DateFormat.yMMMd(context.locale.toLanguageTag()).add_Hm().format(notification.createdAt)}',
+                    style: LedgerText.money(size: 10.5.lx, color: t.textMuted),
                   ),
                 ],
               ),

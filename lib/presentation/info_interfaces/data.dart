@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/info_interfaces/empty_data_model.dart';
 
 const emptyPartyData = EmptyStateModel(
-  icon: Icons.people_outline,
+  icon: LucideIcons.usersRound,
   title: LocaleKeys.emptyPartyTitle,
   title1: LocaleKeys.emptyPartyTitleOne,
   description: LocaleKeys.emptyPartyDescription,
@@ -34,7 +35,7 @@ const emptyPartyData = EmptyStateModel(
 );
 
 const emptyCategoryData = EmptyStateModel(
-  icon: Icons.label_outline,
+  icon: LucideIcons.tag,
   title: LocaleKeys.emptyCategoryTitle,
   title1: LocaleKeys.emptyCategoryTitleOne,
   description: LocaleKeys.emptyCategoryDescription,
@@ -64,7 +65,7 @@ const emptyCategoryData = EmptyStateModel(
 );
 
 const emptyWalletData = EmptyStateModel(
-  icon: Icons.account_balance_wallet_outlined,
+  icon: LucideIcons.wallet,
   title: LocaleKeys.emptyWalletTitle,
   title1: LocaleKeys.emptyWalletTitleOne,
   description: LocaleKeys.emptyWalletDescription,
@@ -94,7 +95,7 @@ const emptyWalletData = EmptyStateModel(
 );
 
 const emptyTransactionData = EmptyStateModel(
-  icon: Icons.compare_arrows_outlined,
+  icon: LucideIcons.arrowLeftRight,
   title: LocaleKeys.emptyTransactionTitle,
   title1: LocaleKeys.emptyTransactionTitleOne,
   description: LocaleKeys.emptyTransactionDescription,
@@ -125,7 +126,7 @@ const emptyTransactionData = EmptyStateModel(
 );
 
 const youAllSetData = EmptyStateModel(
-  icon: Icons.compare_arrows_outlined,
+  icon: LucideIcons.arrowLeftRight,
   title: LocaleKeys.youAllSetTitleOne,
   description: LocaleKeys.youAllSetDescriptionOne,
   quickStartSteps: [],

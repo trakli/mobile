@@ -1198,5 +1198,13 @@
   "syncViewDetails": "Подробнее",
   "syncMergeDuplicate": "Объединить дубликат",
   "aboutVersion": "Версия {}",
-  "aboutDebugOn": "Инструменты отладки включены"
+  "aboutDebugOn": "Инструменты отладки включены",
+  "categoriesSearchHint": "Поиск категорий",
+  "listNoMatchFilter": "Ничего не подходит под этот фильтр.",
+  "partiesSearchHint": "Поиск контрагентов",
+  "partiesFilterEarners": "Платят вам",
+  "partiesFilterSpenders": "Платите вы",
+  "partiesNet": "Итог по всем",
+  "groupsSearchHint": "Поиск групп",
+  "groupsEmptyBody": "Создайте группу, чтобы упорядочить связанные операции."
 }
