@@ -114,7 +114,9 @@ class LedgerTransactionRow extends StatelessWidget {
       onTap: () => openTransactionDetails(context, transaction),
       trailing: LedgerAmount(
         ledgerSignedAmount(transaction),
-        color: income ? t.incomeColor : t.textPrimary,
+        color: tx.isTransferLeg
+            ? t.textPrimary
+            : (income ? t.incomeColor : t.expenseColor),
       ),
     );
   }

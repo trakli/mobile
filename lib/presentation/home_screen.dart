@@ -8,8 +8,7 @@ import 'package:trakli/domain/entities/wallet_entity.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/activity/activity_screen.dart';
 import 'package:trakli/presentation/ai_chat/ai_chat_screen.dart';
-import 'package:trakli/presentation/ai_chat/widgets/trakli_mark.dart';
-import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
+import 'package:trakli/presentation/ai_chat/widgets/trakli_menu_glyph.dart';
 import 'package:trakli/presentation/budget/cubit/budget_cubit.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
@@ -49,9 +48,9 @@ class HomeScreen extends StatelessWidget {
     final t = context.tones;
     final groups = context.watch<GroupCubit>().state.groups;
     final configState = context.watch<ConfigCubit>().state;
-    final defaultGroupId =
-        configState.getConfigByKey(ConfigConstants.defaultGroup)?.value
-            as String?;
+    final defaultGroupId = configState
+        .getConfigByKey(ConfigConstants.defaultGroup)
+        ?.value as String?;
     final defaultGroup =
         groups.firstWhereOrNull((g) => g.clientId == defaultGroupId);
     final txCubit = context.read<TransactionCubit>();
@@ -109,31 +108,9 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LedgerScreenBar(
-      leadingIcon: LucideIcons.menu,
-      onLeading: () => scaffoldKey.currentState?.openDrawer(),
-      titleWidget: Align(
+      titleWidget: const Align(
         alignment: Alignment.centerLeft,
-        child: Semantics(
-          button: true,
-          label: LocaleKeys.homeSwitchSpace.tr(),
-          child: GestureDetector(
-            key: const ValueKey('home-space-switcher'),
-            behavior: HitTestBehavior.opaque,
-            onTap: () => showSpaceSwitcherSheet(context),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const TrakliMark(height: 18),
-                SizedBox(width: 4.lx),
-                Icon(
-                  LucideIcons.chevronDown,
-                  size: 14.lx,
-                  color: context.tones.textMuted,
-                ),
-              ],
-            ),
-          ),
-        ),
+        child: _DrawerMark(),
       ),
       actions: [
         LedgerIconButton(
@@ -141,30 +118,141 @@ class _HomeHeader extends StatelessWidget {
           tooltip: LocaleKeys.notifications.tr(),
           onTap: () => AppNavigator.push(context, const NotificationsScreen()),
         ),
-        const _ProfileSquare(),
+        const _AccountMenu(),
       ],
     );
   }
 }
 
-class _ProfileSquare extends StatelessWidget {
-  const _ProfileSquare();
+class _DrawerMark extends StatelessWidget {
+  const _DrawerMark();
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().state.user;
-    final name = [user?.firstName, user?.lastName]
-        .whereType<String>()
-        .where((s) => s.trim().isNotEmpty)
-        .join(' ');
-    return Tooltip(
-      message: LocaleKeys.profile.tr(),
-      child: GestureDetector(
-        onTap: () => AppNavigator.push(context, const ProfileScreen()),
-        child: LedgerInitials(
-          name.isNotEmpty ? name : (user?.email ?? '?'),
-          size: 32,
+    final t = context.tones;
+    return Semantics(
+      button: true,
+      label: LocaleKeys.homeMenu.tr(),
+      child: Tooltip(
+        message: LocaleKeys.homeMenu.tr(),
+        child: Material(
+          key: const ValueKey('home-drawer-mark'),
+          color: t.bgSurface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadii.sm),
+            side: BorderSide(color: t.borderLight),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => scaffoldKey.currentState?.openDrawer(),
+            child: SizedBox(
+              width: 32.lx,
+              height: 32.lx,
+              child: const Center(child: TrakliMenuGlyph()),
+            ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _AccountMenu extends StatelessWidget {
+  const _AccountMenu();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    final spaceCubit = context.watch<SpaceCubit?>();
+    final spaceState = spaceCubit?.state;
+
+    Widget spaceItem({
+      required IconData icon,
+      required String label,
+      required bool active,
+      required VoidCallback onPressed,
+    }) =>
+        MenuItemButton(
+          leadingIcon: Icon(icon, size: 16.lx, color: t.textSecondary),
+          trailingIcon: active
+              ? Icon(LucideIcons.check, size: 16.lx, color: t.brandText)
+              : null,
+          onPressed: onPressed,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13.5.lx,
+              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        );
+
+    return MenuAnchor(
+      alignmentOffset: Offset(0, 4.lx),
+      onOpen: () => spaceCubit?.loadSpaces(),
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(t.bgSurface),
+        side: WidgetStatePropertyAll(BorderSide(color: t.borderLight)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadii.md),
+          ),
+        ),
+      ),
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon:
+              Icon(LucideIcons.user, size: 16.lx, color: t.textSecondary),
+          onPressed: () => AppNavigator.push(context, const ProfileScreen()),
+          child: Text(
+            LocaleKeys.profile.tr(),
+            style: TextStyle(fontSize: 13.5.lx),
+          ),
+        ),
+        if (spaceCubit != null && spaceState != null) ...[
+          const Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.fromLTRB(12.lx, 10.lx, 12.lx, 4.lx),
+            child: LedgerH6(LocaleKeys.homeSwitchSpace.tr()),
+          ),
+          spaceItem(
+            icon: LucideIcons.user,
+            label: LocaleKeys.spacePersonal.tr(),
+            active: spaceState.isPersonal,
+            onPressed: () {
+              if (!spaceState.isPersonal) spaceCubit.switchTo(null);
+            },
+          ),
+          for (final space in spaceState.spaces)
+            spaceItem(
+              icon: LucideIcons.users,
+              label: space.name,
+              active: spaceState.activeSlug == space.slug,
+              onPressed: () {
+                if (spaceState.activeSlug != space.slug) {
+                  spaceCubit.switchTo(space.slug);
+                }
+              },
+            ),
+          MenuItemButton(
+            leadingIcon: Icon(
+              LucideIcons.settings2,
+              size: 16.lx,
+              color: t.textSecondary,
+            ),
+            onPressed: () => showSpaceSwitcherSheet(context),
+            child: Text(
+              LocaleKeys.homeManageSpaces.tr(),
+              style: TextStyle(fontSize: 13.5.lx),
+            ),
+          ),
+        ],
+      ],
+      builder: (context, controller, _) => LedgerIconButton(
+        key: const ValueKey('home-account-menu'),
+        icon: LucideIcons.userRound,
+        tooltip: LocaleKeys.profile.tr(),
+        onTap: () => controller.isOpen ? controller.close() : controller.open(),
       ),
     );
   }
@@ -209,7 +297,11 @@ class _HomeBody extends StatelessWidget {
         LocaleKeys.homeBudgetOver.tr(namedArgs: {'name': overBudget.name}),
     ];
 
-    final today = transactionsOnDay(transactions, now);
+    final months = transactionsByMonth(
+      transactions,
+      currency: currency.code,
+      rates: currency.rates,
+    );
     final bills = upcomingBills(reminders, transactions, now: now);
 
     return ListView(
@@ -255,9 +347,10 @@ class _HomeBody extends StatelessWidget {
                       month: DateFormat.MMM(locale).format(b.due),
                     ),
                     title: b.reminder.title,
-                    subtitle: (b.reminder.description?.trim().isNotEmpty ?? false)
-                        ? b.reminder.description
-                        : b.walletName,
+                    subtitle:
+                        (b.reminder.description?.trim().isNotEmpty ?? false)
+                            ? b.reminder.description
+                            : b.walletName,
                     divider: b != bills.last,
                     onTap: () =>
                         AppNavigator.push(context, const ReminderScreen()),
@@ -271,35 +364,22 @@ class _HomeBody extends StatelessWidget {
             ),
           ),
         ],
-        SizedBox(height: 12.lx),
-        LedgerCard(
-          padding: EdgeInsets.fromLTRB(12.lx, 10.lx, 12.lx, 2.lx),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              LedgerH6(
-                LocaleKeys.homeToday.tr(),
-                actionLabel: LocaleKeys.seeAll.tr(),
-                onAction: () =>
-                    AppNavigator.push(context, const ActivityScreen()),
-              ),
-              if (today.isEmpty)
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12.lx),
-                  child: Text(
-                    LocaleKeys.homeNothingToday.tr(),
-                    style: TextStyle(fontSize: 12.5.lx, color: t.textMuted),
-                  ),
-                )
-              else
-                for (final tx in today)
-                  LedgerTransactionRow(
-                    transaction: tx,
-                    divider: tx != today.last,
-                  ),
-            ],
-          ),
+        SizedBox(height: 16.lx),
+        LedgerH6(
+          LocaleKeys.homeRecent.tr(),
+          actionLabel: LocaleKeys.seeAll.tr(),
+          onAction: () => AppNavigator.push(context, const ActivityScreen()),
         ),
+        for (final (i, m) in months.indexed) ...[
+          SizedBox(height: 8.lx),
+          _MonthCard(
+            key: ValueKey(m.month),
+            month: m,
+            label: DateFormat.yMMMM(locale).format(m.month),
+            currency: currency.code,
+            initiallyExpanded: i == 0,
+          ),
+        ],
       ],
     );
   }
@@ -361,9 +441,8 @@ class _WalletStrip extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 11.lx,
-                            color: main
-                                ? t.onBrand.withValues(alpha: 0.88)
-                                : fg,
+                            color:
+                                main ? t.onBrand.withValues(alpha: 0.88) : fg,
                           ),
                         ),
                       ),
@@ -386,6 +465,86 @@ class _WalletStrip extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _MonthCard extends StatefulWidget {
+  final HomeMonth month;
+  final String label;
+  final String currency;
+  final bool initiallyExpanded;
+
+  const _MonthCard({
+    super.key,
+    required this.month,
+    required this.label,
+    required this.currency,
+    required this.initiallyExpanded,
+  });
+
+  @override
+  State<_MonthCard> createState() => _MonthCardState();
+}
+
+class _MonthCardState extends State<_MonthCard> {
+  late bool _expanded = widget.initiallyExpanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    final txs = widget.month.transactions;
+    final net = widget.month.net;
+    return LedgerCard(
+      padding: EdgeInsets.fromLTRB(12.lx, 2.lx, 12.lx, 2.lx),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.lx),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontSize: 13.5.lx,
+                        fontWeight: FontWeight.w600,
+                        color: t.textPrimary,
+                      ),
+                    ),
+                  ),
+                  LedgerAmount(
+                    LedgerMoney.format(net, widget.currency, sign: true),
+                    weight: FontWeight.w600,
+                    color: net >= 0 ? t.incomeColor : t.expenseColor,
+                  ),
+                  SizedBox(width: 6.lx),
+                  Icon(
+                    _expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                    size: 16.lx,
+                    color: t.textMuted,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_expanded)
+            for (final tx in txs)
+              LedgerTransactionRow(
+                transaction: tx,
+                subtitle: [
+                  DateFormat.MMMd(
+                          Localizations.localeOf(context).toLanguageTag())
+                      .format(tx.transaction.datetime),
+                  tx.wallet.name,
+                ].join(' · '),
+                divider: tx != txs.last,
+              ),
+        ],
       ),
     );
   }

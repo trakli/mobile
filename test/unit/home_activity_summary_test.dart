@@ -118,6 +118,52 @@ void main() {
     });
   });
 
+  group('home recent by month', () {
+    test('groups newest month first with entries newest first', () {
+      final months = transactionsByMonth([
+        tx(DateTime(2025, 10, 3), 20, exp),
+        tx(DateTime(2025, 11, 2), 5, exp),
+        tx(DateTime(2025, 11, 20), 7, exp),
+        tx(DateTime(2024, 12, 31), 1, exp),
+      ], currency: 'EUR', rates: rates);
+
+      expect(months.map((m) => m.month), [
+        DateTime(2025, 11),
+        DateTime(2025, 10),
+        DateTime(2024, 12),
+      ]);
+      expect(
+        months.first.transactions.map((t) => t.transaction.datetime.day),
+        [20, 2],
+      );
+    });
+
+    test('nets income against spending in the display currency', () {
+      final months = transactionsByMonth([
+        tx(DateTime(2025, 11, 1), 100, inc),
+        tx(DateTime(2025, 11, 2), 30, exp),
+        tx(DateTime(2025, 11, 3), 6559.57, exp, w: xaf),
+      ], currency: 'EUR', rates: rates);
+
+      expect(months.single.net, closeTo(60, 1e-6));
+    });
+
+    test('lists transfer legs but leaves them out of the net', () {
+      final months = transactionsByMonth([
+        tx(DateTime(2025, 11, 5), 500, exp, transferId: 'tr'),
+        tx(DateTime(2025, 11, 5), 500, inc, transferId: 'tr'),
+        tx(DateTime(2025, 11, 6), 12, exp),
+      ], currency: 'EUR', rates: rates);
+
+      expect(months.single.transactions, hasLength(3));
+      expect(months.single.net, closeTo(-12, 1e-9));
+    });
+
+    test('returns nothing for no transactions', () {
+      expect(transactionsByMonth([], currency: 'EUR'), isEmpty);
+    });
+  });
+
   group('home summary', () {
     final now = DateTime(2025, 11, 24, 18);
 

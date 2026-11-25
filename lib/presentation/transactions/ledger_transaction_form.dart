@@ -523,7 +523,7 @@ class _LedgerTransactionFormState extends State<LedgerTransactionForm>
   Widget _amountRow(BuildContext context) {
     final t = context.tones;
     final code = _wallet?.currencyCode;
-    final color = _isIncome ? t.incomeColor : t.textPrimary;
+    final color = _isIncome ? t.incomeColor : t.expenseColor;
     final amount = _parsedAmount();
     final error = _submitted ? _amountError() : null;
     final style = LedgerText.money(

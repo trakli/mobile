@@ -93,16 +93,55 @@ HomeSummary buildHomeSummary(
   );
 }
 
-List<TransactionCompleteEntity> transactionsOnDay(
-  List<TransactionCompleteEntity> transactions,
-  DateTime day,
-) {
-  final list = transactions.where((t) {
-    final d = t.transaction.datetime;
-    return d.year == day.year && d.month == day.month && d.day == day.day;
-  }).toList()
+class HomeMonth {
+  final DateTime month;
+  final List<TransactionCompleteEntity> transactions;
+
+  /// Income minus spending in the display currency, transfer legs excluded.
+  final double net;
+
+  const HomeMonth({
+    required this.month,
+    required this.transactions,
+    required this.net,
+  });
+}
+
+/// Transactions grouped by calendar month, newest month and entry first.
+List<HomeMonth> transactionsByMonth(
+  List<TransactionCompleteEntity> transactions, {
+  required String currency,
+  Map<String, double>? rates,
+}) {
+  final sorted = [...transactions]
     ..sort((a, b) => b.transaction.datetime.compareTo(a.transaction.datetime));
-  return list;
+  final months = <HomeMonth>[];
+  DateTime? key;
+  var bucket = <TransactionCompleteEntity>[];
+  var net = 0.0;
+  void flush() {
+    if (key != null) {
+      months.add(HomeMonth(month: key, transactions: bucket, net: net));
+    }
+  }
+
+  for (final t in sorted) {
+    final d = t.transaction.datetime;
+    final m = DateTime(d.year, d.month);
+    if (m != key) {
+      flush();
+      key = m;
+      bucket = [];
+      net = 0;
+    }
+    bucket.add(t);
+    if (!t.transaction.isTransferLeg) {
+      final v = _inDisplay(t, currency, rates);
+      net += t.transaction.type == TransactionType.expense ? -v : v;
+    }
+  }
+  flush();
+  return months;
 }
 
 DateTime? reminderDueDate(ReminderEntity r) {

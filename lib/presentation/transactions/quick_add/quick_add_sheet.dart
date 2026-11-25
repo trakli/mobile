@@ -70,6 +70,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
   PartyEntity? _party;
   GroupEntity? _group;
   DateTime? _date;
+  TimeOfDay? _time;
   bool _partyCleared = false;
   bool _saving = false;
 
@@ -150,10 +151,9 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       _partyCleared ? null : (_party ?? _parse.party);
 
   DateTime get _effectiveDate {
-    final d = _date ?? _parse.date;
-    final n = _now;
-    if (d == null) return n;
-    return DateTime(d.year, d.month, d.day, n.hour, n.minute);
+    final d = _date ?? _parse.date ?? _now;
+    final time = _time ?? TimeOfDay.fromDateTime(_now);
+    return DateTime(d.year, d.month, d.day, time.hour, time.minute);
   }
 
   void _tapKey(String key) {
@@ -188,7 +188,9 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
     if (day == today.subtract(const Duration(days: 1))) {
       return LocaleKeys.quickAddYesterday.tr();
     }
-    return DateFormat('EEE, MMM d', Localizations.localeOf(context).toLanguageTag()).format(d);
+    return DateFormat(
+            'EEE, MMM d', Localizations.localeOf(context).toLanguageTag())
+        .format(d);
   }
 
   Future<(T?,)?> _pick<T>({
@@ -281,7 +283,23 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
       firstDate: DateTime(2000),
       lastDate: DateTime(n.year + 1, 12, 31),
     );
-    if (picked != null) setState(() => _date = picked);
+    if (picked == null || !mounted) return;
+    setState(() => _date = picked);
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_effectiveDate),
+    );
+    if (time != null && mounted) setState(() => _time = time);
+  }
+
+  String _whenLabel(DateTime d) {
+    final day = _dateLabel(d);
+    if (_time == null) return day;
+    final time = MaterialLocalizations.of(context).formatTimeOfDay(
+      _time!,
+      alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context),
+    );
+    return '$day · $time';
   }
 
   void _openFullForm() {
@@ -475,7 +493,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                           onTap: _pickParty,
                         ),
                       LedgerFilterChip(
-                        label: _dateLabel(_effectiveDate),
+                        label: _whenLabel(_effectiveDate),
                         onTap: _pickDate,
                       ),
                     ],

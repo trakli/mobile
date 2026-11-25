@@ -215,7 +215,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                     ),
                                     style: LedgerText.money(
                                       size: 11.lx,
-                                      color: t.textMuted,
+                                      color: day.net >= 0
+                                          ? t.incomeColor
+                                          : t.expenseColor,
                                     ),
                                   ),
                                 ),

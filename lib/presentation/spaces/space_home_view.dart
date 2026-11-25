@@ -408,7 +408,7 @@ class _LatestRow extends StatelessWidget {
       verticalPadding: 9,
       trailing: LedgerAmount(
         spaceSignedAmount(tx),
-        color: tx.isIncome ? t.incomeColor : t.textPrimary,
+        color: tx.isIncome ? t.incomeColor : t.expenseColor,
       ),
     );
   }
