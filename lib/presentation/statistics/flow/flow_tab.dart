@@ -63,7 +63,8 @@ class _StatisticsFlowTabState extends State<StatisticsFlowTab> {
       keptLabel: LocaleKeys.statsFlowKept.tr(),
       shortfallLabel: LocaleKeys.statsFlowShortfall.tr(),
     );
-    final monthName = DateFormat.MMMM(Localizations.localeOf(context).toString());
+    final monthName =
+        DateFormat.MMMM(Localizations.localeOf(context).toString());
     final previous = DateTime(widget.month.year, widget.month.month - 1);
 
     return ListView(
@@ -95,7 +96,7 @@ class _StatisticsFlowTabState extends State<StatisticsFlowTab> {
         Row(
           children: [
             Expanded(
-              child: _Total(
+              child: LedgerTotalTile(
                 label: LocaleKeys.statsFlowIn.tr(),
                 value: money.short(data.totalIn),
                 color: t.incomeColor,
@@ -103,7 +104,7 @@ class _StatisticsFlowTabState extends State<StatisticsFlowTab> {
             ),
             SizedBox(width: 6.lx),
             Expanded(
-              child: _Total(
+              child: LedgerTotalTile(
                 label: LocaleKeys.statsFlowOut.tr(),
                 value: money.short(data.totalOut),
                 color: t.textPrimary,
@@ -111,7 +112,7 @@ class _StatisticsFlowTabState extends State<StatisticsFlowTab> {
             ),
             SizedBox(width: 6.lx),
             Expanded(
-              child: _Total(
+              child: LedgerTotalTile(
                 label: LocaleKeys.statsFlowKept.tr(),
                 value: money.short(data.kept),
                 color: data.kept >= 0 ? t.incomeColor : t.expenseColor,
@@ -141,40 +142,6 @@ class _StatisticsFlowTabState extends State<StatisticsFlowTab> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _Total extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-
-  const _Total({required this.label, required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return LedgerCard(
-      padding: EdgeInsets.all(8.lx),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 11.lx, color: context.tones.textMuted),
-          ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: LedgerAmount(
-              value,
-              size: 14,
-              weight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -379,8 +346,7 @@ class _SankeyPainter extends CustomPainter {
         Paint()
           ..color = on
               ? pick
-              : (_isSourceType(r.node) &&
-                      r.node.type != FlowNodeType.shortfall
+              : (_isSourceType(r.node) && r.node.type != FlowNodeType.shortfall
                   ? brand
                   : sinkNode),
       );
@@ -443,10 +409,8 @@ class _FlowStreamSheet extends StatelessWidget {
         style: TextStyle(fontSize: 13.lx, height: 1.45, color: t.textSecondary),
       );
     } else {
-      final excluded = data.sinks
-          .where((s) => s.key != otherKey)
-          .map((s) => s.key)
-          .toSet();
+      final excluded =
+          data.sinks.where((s) => s.key != otherKey).map((s) => s.key).toSet();
       final detail = flowStreamDetail(
         transactions,
         key: node.key,
@@ -463,10 +427,9 @@ class _FlowStreamSheet extends StatelessWidget {
         compare =
             LocaleKeys.statsFlowSame.tr(namedArgs: {'month': previousName});
       } else {
-        compare = (diff > 0
-                ? LocaleKeys.statsFlowMore
-                : LocaleKeys.statsFlowLess)
-            .tr(namedArgs: {
+        compare =
+            (diff > 0 ? LocaleKeys.statsFlowMore : LocaleKeys.statsFlowLess)
+                .tr(namedArgs: {
           'amount': money.full(diff.abs()),
           'month': previousName,
         });

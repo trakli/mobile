@@ -20,6 +20,26 @@ import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
+String activityDayLabel(BuildContext context, DateTime day, DateTime now) {
+  final today = DateTime(now.year, now.month, now.day);
+  if (day == today) return LocaleKeys.homeToday.tr();
+  if (day == today.subtract(const Duration(days: 1))) {
+    return LocaleKeys.activityYesterday.tr();
+  }
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  final pattern = day.year == now.year ? 'EEE, MMM d' : 'EEE, MMM d, y';
+  return DateFormat(pattern, locale).format(day);
+}
+
+String activitySubtitle(TransactionCompleteEntity t) {
+  final parts = <String>[
+    if (t.categories.isNotEmpty) t.categories.first.name,
+    if (t.party != null && t.categories.isEmpty) t.party!.name,
+    t.wallet.name,
+  ];
+  return parts.join(' · ');
+}
+
 /// Every transaction grouped by day with a net total per day.
 class ActivityScreen extends StatefulWidget {
   final DateTime? now;
@@ -34,17 +54,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
   ActivityFilter _filter = const ActivityFilter();
   bool _searching = false;
 
-  String _dayLabel(DateTime day, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    if (day == today) return LocaleKeys.homeToday.tr();
-    if (day == today.subtract(const Duration(days: 1))) {
-      return LocaleKeys.activityYesterday.tr();
-    }
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    final pattern = day.year == now.year ? 'EEE, MMM d' : 'EEE, MMM d, y';
-    return DateFormat(pattern, locale).format(day);
-  }
-
   Future<void> _pickGroup(GroupEntity? current) async {
     final cubit = context.read<TransactionCubit>();
     final picked = await showCustomBottomSheet<GroupEntity>(
@@ -53,15 +62,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
       widget: PickGroupBottomSheet(group: current),
     );
     if (picked != null) cubit.setCurrentGroup(picked);
-  }
-
-  String _subtitle(TransactionCompleteEntity t) {
-    final parts = <String>[
-      if (t.categories.isNotEmpty) t.categories.first.name,
-      if (t.party != null && t.categories.isEmpty) t.party!.name,
-      t.wallet.name,
-    ];
-    return parts.join(' · ');
   }
 
   @override
@@ -78,8 +78,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
     );
 
     Widget chip(String label, ActivityFilter f, {IconData? icon}) {
-      final on = _filter.type == f.type &&
-          _filter.walletClientId == f.walletClientId;
+      final on =
+          _filter.type == f.type && _filter.walletClientId == f.walletClientId;
       return LedgerFilterChip(
         label: label,
         icon: icon,
@@ -206,7 +206,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                               Padding(
                                 padding: EdgeInsets.only(bottom: 2.lx),
                                 child: LedgerH6(
-                                  _dayLabel(day.day, now),
+                                  activityDayLabel(context, day.day, now),
                                   trailing: Text(
                                     LedgerMoney.format(
                                       day.net,
@@ -225,7 +225,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                               for (final tx in day.transactions)
                                 LedgerTransactionRow(
                                   transaction: tx,
-                                  subtitle: _subtitle(tx),
+                                  subtitle: activitySubtitle(tx),
                                   verticalPadding: 8,
                                   divider: tx != day.transactions.last,
                                 ),

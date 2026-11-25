@@ -18,3 +18,19 @@ class TrakliMark extends StatelessWidget {
     );
   }
 }
+
+/// The Trakli wordmark, mark included: green on light surfaces, white on
+/// dark ones.
+class TrakliLogo extends StatelessWidget {
+  final double height;
+  const TrakliLogo({super.key, this.height = 28});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return SvgPicture.asset(
+      dark ? Assets.images.logo : Assets.images.logoGreen,
+      height: height.lx,
+    );
+  }
+}

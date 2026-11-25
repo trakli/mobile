@@ -3,10 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/di/injection.dart';
-import 'package:trakli/gen/assets.gen.dart';
+import 'package:trakli/presentation/ai_chat/widgets/trakli_mark.dart';
 import 'package:trakli/presentation/auth/cubits/auth/auth_cubit.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/category_screen.dart';
@@ -18,16 +17,18 @@ import 'package:trakli/presentation/holdings/holdings_screen.dart';
 import 'package:trakli/presentation/history_screen.dart';
 import 'package:trakli/presentation/imports/import_hub_screen.dart';
 import 'package:trakli/presentation/parties/party_screen.dart';
+import 'package:trakli/presentation/profile_screen.dart';
 import 'package:trakli/presentation/reminders/reminder_screen.dart';
 import 'package:trakli/presentation/root/bloc/main_navigation_page_cubit.dart';
 import 'package:trakli/presentation/settings_screen.dart';
 import 'package:trakli/presentation/transfers/transfers_screen.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/premium_tile.dart';
 import 'package:trakli/presentation/widgets/database_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// Note: supportEmail is localized, see _launchSupportEmail method
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -72,337 +73,236 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final authState = context.watch<AuthCubit>().state;
-    final user = authState.user;
-    return Padding(
+    final t = context.tones;
+    final user = context.watch<AuthCubit>().state.user;
+    final name = user?.fullName.trim();
+    final displayName =
+        (name == null || name.isEmpty) ? LocaleKeys.defaultUserName.tr() : name;
+
+    void push(Widget screen) => AppNavigator.push(context, screen);
+
+    return Container(
+      color: t.bgPage,
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 14.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.lx, 14.lx, 16.lx, 10.lx),
+            child: const Align(
+              alignment: Alignment.centerLeft,
+              child: TrakliLogo(height: 30),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.lx),
+            child: LedgerCard(
+              padding: EdgeInsets.all(10.lx),
+              onTap: () => push(const ProfileScreen()),
               child: Row(
                 children: [
-                  SvgPicture.asset(
-                    isDark ? Assets.images.appLogo : Assets.images.appLogoGreen,
-                    height: 28.h,
+                  LedgerInitials(
+                    displayName.isNotEmpty ? displayName : (user?.email ?? '?'),
+                    size: 34,
                   ),
-                  SizedBox(width: 10.w),
+                  SizedBox(width: 10.lx),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          user?.fullName ?? LocaleKeys.defaultUserName.tr(),
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w800,
-                            color: Theme.of(context).colorScheme.onSurface,
-                            letterSpacing: -0.2,
-                          ),
+                          displayName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13.5.lx,
+                            fontWeight: FontWeight.w600,
+                            color: t.textPrimary,
+                          ),
                         ),
-                        if (user?.email != null) ...[
-                          SizedBox(height: 2.h),
+                        if (user?.email != null)
                           Text(
                             user!.email,
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              color: Colors.grey.shade500,
-                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12.lx,
+                              color: t.textMuted,
+                            ),
                           ),
-                        ],
                       ],
                     ),
+                  ),
+                  Icon(
+                    LucideIcons.chevronRight,
+                    size: 16.lx,
+                    color: t.textMuted,
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 4.h),
-            Divider(
-              height: 12,
-              thickness: 1,
-              color: Colors.grey.shade300,
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(10.lx, 6.lx, 10.lx, 16.lx),
+                children: [
+                  _DrawerSection(LocaleKeys.drawerEveryday.tr()),
+                  _DrawerItem(
+                    icon: LucideIcons.receiptText,
+                    label: LocaleKeys.transactions.tr(),
+                    onTap: () => push(const HistoryScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.wallet,
+                    label: LocaleKeys.wallets.tr(),
+                    onTap: () {
+                      context
+                          .read<MainNavigationCubit>()
+                          .updateIndex(MainNavigationPageState.wallet);
+                      AppNavigator.pop(context);
+                    },
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.usersRound,
+                    label: LocaleKeys.parties.tr(),
+                    onTap: () => push(const PartyScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.tag,
+                    label: LocaleKeys.categories.tr(),
+                    onTap: () => push(const CategoryScreen()),
+                  ),
+                  _DrawerSection(LocaleKeys.drawerOrganize.tr()),
+                  _DrawerItem(
+                    icon: LucideIcons.arrowLeftRight,
+                    label: LocaleKeys.transfers.tr(),
+                    onTap: () => push(const TransfersScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.folder,
+                    label: LocaleKeys.groups.tr(),
+                    onTap: () => push(const MyGroupsScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.scale,
+                    label: LocaleKeys.fpSectionTitle.tr(),
+                    onTap: () => push(const FinancialPositionScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.coins,
+                    label: LocaleKeys.holdingsTitle.tr(),
+                    onTap: () => push(
+                      BlocProvider(
+                        create: (_) => getIt<HoldingCubit>(),
+                        child: const HoldingsScreen(),
+                      ),
+                    ),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.bellRing,
+                    label: LocaleKeys.reminders.tr(),
+                    onTap: () => push(const ReminderScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.fileUp,
+                    label: LocaleKeys.imports.tr(),
+                    onTap: () => push(const ImportHubScreen()),
+                  ),
+                  _DrawerSection(LocaleKeys.drawerMore.tr()),
+                  _DrawerItem(
+                    icon: LucideIcons.settings,
+                    label: LocaleKeys.settings.tr(),
+                    onTap: () => push(const SettingsScreen()),
+                  ),
+                  _DrawerItem(
+                    icon: LucideIcons.lifeBuoy,
+                    label: LocaleKeys.support.tr(),
+                    onTap: () => _launchSupportEmail(context),
+                  ),
+                  BlocBuilder<ConfigCubit, ConfigState>(
+                    builder: (context, state) {
+                      if (!kDebugMode && state.showDebug != true) {
+                        return const SizedBox.shrink();
+                      }
+                      return _DrawerItem(
+                        icon: LucideIcons.database,
+                        label: LocaleKeys.databaseViewer.tr(),
+                        muted: true,
+                        onTap: () => push(DatabaseViewer(database: getIt())),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 12.lx),
+                  const PremiumTile(),
+                ],
+              ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: SafeArea(
-                  top: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel(context, LocaleKeys.drawerEveryday.tr()),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const HistoryScreen());
-                        },
-                        title: LocaleKeys.transactions.tr(),
-                        iconPath: Assets.images.refresh,
-                        subtitle: LocaleKeys.transactionsDesc.tr(),
-                      ),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          final cubit = context.read<MainNavigationCubit>();
-                          cubit.updateIndex(MainNavigationPageState.wallet);
-                          AppNavigator.pop(context);
-                        },
-                        title: LocaleKeys.wallets.tr(),
-                        iconPath: Assets.images.wallet,
-                        subtitle: LocaleKeys.walletsDesc.tr(),
-                      ),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const PartyScreen());
-                        },
-                        title: LocaleKeys.parties.tr(),
-                        iconPath: Assets.images.people,
-                        subtitle: LocaleKeys.partiesDesc.tr(),
-                      ),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const CategoryScreen());
-                        },
-                        title: LocaleKeys.categories.tr(),
-                        iconPath: Assets.images.tag2,
-                        subtitle: LocaleKeys.categoryDesc.tr(),
-                      ),
-                      SizedBox(height: 8.h),
-                      _sectionLabel(context, LocaleKeys.drawerOrganize.tr()),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const TransfersScreen());
-                        },
-                        title: LocaleKeys.transfers.tr(),
-                        iconPath: Assets.images.arrowUpDown,
-                        subtitle: LocaleKeys.transfersDesc.tr(),
-                      ),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const MyGroupsScreen());
-                        },
-                        title: LocaleKeys.groups.tr(),
-                        iconPath: Assets.images.people,
-                        subtitle: LocaleKeys.groupsDesc.tr(),
-                      ),
-                      _iconMenuItem(
-                        context,
-                        icon: Icons.balance,
-                        title: LocaleKeys.fpSectionTitle.tr(),
-                        onTap: () => AppNavigator.push(
-                          context,
-                          const FinancialPositionScreen(),
-                        ),
-                      ),
-                      _iconMenuItem(
-                        context,
-                        icon: Icons.paid_outlined,
-                        title: LocaleKeys.holdingsTitle.tr(),
-                        onTap: () => AppNavigator.push(
-                          context,
-                          BlocProvider(
-                            create: (_) => getIt<HoldingCubit>(),
-                            child: const HoldingsScreen(),
-                          ),
-                        ),
-                      ),
-                      _iconMenuItem(
-                        context,
-                        icon: Icons.notifications_active_outlined,
-                        title: LocaleKeys.reminders.tr(),
-                        onTap: () => AppNavigator.push(
-                          context,
-                          const ReminderScreen(),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => AppNavigator.push(
-                          context,
-                          const ImportHubScreen(),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 8.h,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.file_upload_outlined,
-                                size: 20.sp,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              SizedBox(width: 14.w),
-                              Expanded(
-                                child: Text(
-                                  LocaleKeys.imports.tr(),
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      _sectionLabel(context, LocaleKeys.drawerMore.tr()),
-                      _listItem(
-                        context,
-                        onTap: () {
-                          AppNavigator.push(context, const SettingsScreen());
-                        },
-                        title: LocaleKeys.settings.tr(),
-                        iconPath: Assets.images.setting,
-                      ),
-                      _listItem(
-                        context,
-                        onTap: () => _launchSupportEmail(context),
-                        title: LocaleKeys.support.tr(),
-                        iconPath: Assets.images.support,
-                      ),
-                      BlocBuilder<ConfigCubit, ConfigState>(
-                        builder: (context, state) {
-                          if (kDebugMode || state.showDebug == true) {
-                            return Column(
-                              children: [
-                                const Divider(),
-                                ListTile(
-                                  onTap: () {
-                                    AppNavigator.push(
-                                      context,
-                                      DatabaseViewer(database: getIt()),
-                                    );
-                                  },
-                                  leading: const Icon(Icons.storage),
-                                  title: Text(LocaleKeys.databaseViewer.tr()),
-                                ),
-                              ],
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: const PremiumTile(),
-                      ),
-                      SizedBox(height: 16.h),
-                    ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerSection extends StatelessWidget {
+  final String text;
+
+  const _DrawerSection(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(8.lx, 16.lx, 8.lx, 4.lx),
+      child: LedgerH6(text),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool muted;
+
+  const _DrawerItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.muted = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadii.sm),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.lx, vertical: 9.lx),
+          child: Row(
+            children: [
+              Icon(icon, size: 17.lx, color: t.textSecondary),
+              SizedBox(width: 12.lx),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14.lx,
+                    fontWeight: FontWeight.w500,
+                    color: muted ? t.textMuted : t.textPrimary,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _sectionLabel(BuildContext context, String text) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 4.h),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.6,
-          color: Colors.grey.shade500,
-        ),
-      ),
-    );
-  }
-
-  Widget _iconMenuItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20.sp,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            SizedBox(width: 14.w),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _listItem(
-    BuildContext context, {
-    VoidCallback? onTap,
-    required String title,
-    required String iconPath,
-    String? subtitle,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 22.r,
-              height: 22.r,
-              child: SvgPicture.asset(
-                iconPath,
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            SizedBox(width: 14.w),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

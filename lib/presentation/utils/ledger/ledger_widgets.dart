@@ -210,9 +210,8 @@ class LedgerSeg<T> extends StatelessWidget {
                     o.label,
                     style: TextStyle(
                       fontSize: 12.5.lx,
-                      color: o.value == selected
-                          ? t.textPrimary
-                          : t.textSecondary,
+                      color:
+                          o.value == selected ? t.textPrimary : t.textSecondary,
                       fontWeight: o.value == selected
                           ? FontWeight.w600
                           : FontWeight.w400,
@@ -399,9 +398,8 @@ class LedgerRow extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: verticalPadding.lx),
         decoration: BoxDecoration(
-          border: divider
-              ? Border(bottom: BorderSide(color: t.borderLight))
-              : null,
+          border:
+              divider ? Border(bottom: BorderSide(color: t.borderLight)) : null,
         ),
         child: Row(
           children: [
@@ -640,8 +638,7 @@ class LedgerFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = context.tones;
-    final fg =
-        selected ? t.bgPage : (muted ? t.textMuted : t.textSecondary);
+    final fg = selected ? t.bgPage : (muted ? t.textMuted : t.textSecondary);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1001,9 +998,8 @@ class LedgerFieldRow extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 9.lx),
         decoration: BoxDecoration(
-          border: divider
-              ? Border(bottom: BorderSide(color: t.borderLight))
-              : null,
+          border:
+              divider ? Border(bottom: BorderSide(color: t.borderLight)) : null,
         ),
         child: Row(
           children: [
@@ -1199,12 +1195,12 @@ class LedgerWeekBars extends StatelessWidget {
                         SizedBox(height: 4.lx),
                         Flexible(
                           child: FractionallySizedBox(
-                            heightFactor:
-                                max <= 0 ? 0 : (bars[i].value / max).clamp(0, 1),
+                            heightFactor: max <= 0
+                                ? 0
+                                : (bars[i].value / max).clamp(0, 1),
                             child: Container(
                               decoration: BoxDecoration(
-                                color:
-                                    bars[i].hot ? t.accentWarm : t.brandFill,
+                                color: bars[i].hot ? t.accentWarm : t.brandFill,
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(2),
                                 ),
@@ -1254,6 +1250,46 @@ class LedgerCheck extends StatelessWidget {
         child: value
             ? Icon(LucideIcons.check, size: 12.lx, color: Colors.white)
             : null,
+      ),
+    );
+  }
+}
+
+/// Small labelled total, such as In, Out or Kept for a period.
+class LedgerTotalTile extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const LedgerTotalTile({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LedgerCard(
+      padding: EdgeInsets.all(8.lx),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 11.lx, color: context.tones.textMuted),
+          ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: LedgerAmount(
+              value,
+              size: 14,
+              weight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
