@@ -1,12 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/core/constants/config_constants.dart';
 import 'package:trakli/core/error/failures/failures.dart';
 import 'package:trakli/domain/entities/transaction_complete_entity.dart';
 import 'package:trakli/domain/entities/wallet_entity.dart';
-import 'package:trakli/gen/assets.gen.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
@@ -16,12 +15,13 @@ import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/icon_background_decor.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_money.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 import 'package:trakli/presentation/wallets/add_wallet_screen.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
-import 'package:trakli/presentation/wallets/widgets/wallet_list_tile.dart';
-import 'package:trakli/presentation/wallets/widgets/wallets_summary.dart';
+import 'package:trakli/presentation/wallets/wallet_detail_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -95,12 +95,10 @@ class _WalletScreenState extends State<WalletScreen> {
                 .toList();
         double aggIncome = 0;
         double aggExpense = 0;
-        int activeCount = 0;
         for (final w in scope) {
           final t = perWallet[w.clientId]!;
           aggIncome += t.income;
           aggExpense += t.expense;
-          if (t.income > 0 || t.expense > 0) activeCount++;
         }
 
         final filtered = _applyFilters(
@@ -111,113 +109,119 @@ class _WalletScreenState extends State<WalletScreen> {
 
         final isEmpty = state.wallets.isEmpty;
 
+        final money = defaultCurrencyCode ?? 'USD';
+        final balance = aggIncome - aggExpense;
+        final counts = _filterCounts(
+          state.wallets,
+          perWallet,
+          defaultCurrencyCode,
+        );
+
         return Scaffold(
           backgroundColor: tones.bgPage,
           appBar: PageAppBar(
-            title: LocaleKeys.wallet.tr(),
+            title: LocaleKeys.wallets.tr(),
             showBack: false,
-            onSearchChanged:
-                isEmpty ? null : (v) => setState(() => _query = v),
-            searchHint: 'Search wallets',
+            onSearchChanged: isEmpty ? null : (v) => setState(() => _query = v),
+            searchHint: LocaleKeys.walletsSearchHint.tr(),
             actions: [
               PageAppBarAction(
-                icon: Icons.add,
+                icon: LucideIcons.plus,
                 onTap: _add,
                 primary: true,
               ),
             ],
           ),
-          body: Stack(
-            children: [
-              IconBackgroundDecor(iconPath: Assets.images.wallet),
-              state.isLoading
+          body: state.isLoading
               ? const Center(child: CircularProgressIndicator())
               : isEmpty
-                  ? InfoInterface(
-                      action: _add,
-                      data: emptyWalletData,
-                    )
-                  : Column(
+                  ? InfoInterface(action: _add, data: emptyWalletData)
+                  : ListView(
+                      padding: EdgeInsets.fromLTRB(14.lx, 6.lx, 14.lx, 120.lx),
                       children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 10.h),
-                          child: WalletsSummary(
-                            walletCount: state.wallets.length,
-                            activeCount: activeCount,
-                            income: aggIncome,
-                            expense: aggExpense,
-                            defaultCurrency: defaultCurrencyCode,
+                        Text(
+                          LocaleKeys.walletsBalanceIn.tr(args: [money]),
+                          style: TextStyle(
+                            fontSize: 12.5.lx,
+                            color: tones.textMuted,
                           ),
                         ),
-                        _FilterChips(
-                          selected: _filter,
-                          onChanged: (f) => setState(() => _filter = f),
-                          counts: _filterCounts(
-                            state.wallets,
-                            perWallet,
-                            defaultCurrencyCode,
+                        LedgerBigNumber(
+                          LedgerMoney.format(balance, money),
+                          color: balance < 0 ? tones.expenseColor : null,
+                        ),
+                        SizedBox(height: 10.lx),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LedgerTotalTile(
+                                label: LocaleKeys.statsFlowIn.tr(),
+                                value: LedgerMoney.format(aggIncome, money),
+                                color: tones.incomeColor,
+                              ),
+                            ),
+                            SizedBox(width: 6.lx),
+                            Expanded(
+                              child: LedgerTotalTile(
+                                label: LocaleKeys.statsFlowOut.tr(),
+                                value: LedgerMoney.format(aggExpense, money),
+                                color: tones.expenseColor,
+                              ),
+                            ),
+                            SizedBox(width: 6.lx),
+                            Expanded(
+                              child: LedgerTotalTile(
+                                label: LocaleKeys.active.tr(),
+                                value:
+                                    '${counts[_WalletFilter.active] ?? 0} / ${state.wallets.length}',
+                                color: tones.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 14.lx),
+                        LedgerChipRow(
+                          children: [
+                            for (final f in _WalletFilter.values)
+                              LedgerFilterChip(
+                                label: '${_label(f)} · ${counts[f] ?? 0}',
+                                selected: f == _filter,
+                                onTap: () => setState(() => _filter = f),
+                              ),
+                          ],
+                        ),
+                        SizedBox(height: 10.lx),
+                        if (filtered.isEmpty)
+                          _NoMatches(query: _query)
+                        else
+                          LedgerCard(
+                            padding: EdgeInsets.symmetric(horizontal: 12.lx),
+                            child: Column(
+                              children: [
+                                for (final w in filtered)
+                                  _WalletRow(
+                                    wallet: w,
+                                    totals: perWallet[w.clientId]!,
+                                    isDefault: w.clientId == defaultWalletId,
+                                    divider: w != filtered.last,
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: filtered.isEmpty
-                              ? _NoMatches(query: _query)
-                              : ListView(
-                                  padding: EdgeInsets.fromLTRB(
-                                      16.w, 8.h, 16.w, 24.h),
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: tones.bgSurface,
-                                        borderRadius: BorderRadius.circular(
-                                            AppRadii.lg),
-                                        border: Border.all(
-                                            color: tones.borderLight),
-                                        boxShadow: context.elevations.level1,
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Column(
-                                        children: [
-                                          for (var i = 0;
-                                              i < filtered.length;
-                                              i++) ...[
-                                            WalletListTile(
-                                              wallet: filtered[i],
-                                              income: perWallet[filtered[i]
-                                                          .clientId]
-                                                      ?.income ??
-                                                  0,
-                                              expense: perWallet[filtered[i]
-                                                          .clientId]
-                                                      ?.expense ??
-                                                  0,
-                                              isDefault: filtered[i]
-                                                      .clientId ==
-                                                  defaultWalletId,
-                                            ),
-                                            if (i != filtered.length - 1)
-                                              Divider(
-                                                height: 1,
-                                                thickness: 1,
-                                                indent: 70.w,
-                                                color: tones.borderLight
-                                                    .withValues(alpha: 0.6),
-                                              ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        ),
                       ],
                     ),
-            ],
-          ),
         );
       },
     );
   }
+
+  String _label(_WalletFilter f) => switch (f) {
+        _WalletFilter.all => LocaleKeys.walletsFilterAll.tr(),
+        _WalletFilter.active => LocaleKeys.active.tr(),
+        _WalletFilter.idle => LocaleKeys.walletsFilterIdle.tr(),
+        _WalletFilter.defaultCurrency =>
+          LocaleKeys.walletsFilterDefaultCurrency.tr(),
+      };
 
   Map<_WalletFilter, int> _filterCounts(
     List<WalletEntity> wallets,
@@ -279,8 +283,8 @@ class _WalletScreenState extends State<WalletScreen> {
     }
     if (q.isNotEmpty) {
       scope = scope.where((w) {
-        final hay = '${w.name} ${w.description ?? ''} ${w.currencyCode}'
-            .toLowerCase();
+        final hay =
+            '${w.name} ${w.description ?? ''} ${w.currencyCode}'.toLowerCase();
         return hay.contains(q);
       });
     }
@@ -309,92 +313,54 @@ class _Totals {
 
 enum _WalletFilter { all, active, idle, defaultCurrency }
 
-class _FilterChips extends StatelessWidget {
-  final _WalletFilter selected;
-  final ValueChanged<_WalletFilter> onChanged;
-  final Map<_WalletFilter, int> counts;
+class _WalletRow extends StatelessWidget {
+  final WalletEntity wallet;
+  final _Totals totals;
+  final bool isDefault;
+  final bool divider;
 
-  const _FilterChips({
-    required this.selected,
-    required this.onChanged,
-    required this.counts,
+  const _WalletRow({
+    required this.wallet,
+    required this.totals,
+    required this.isDefault,
+    required this.divider,
   });
-
-  String _label(_WalletFilter f) {
-    switch (f) {
-      case _WalletFilter.all:
-        return 'All';
-      case _WalletFilter.active:
-        return 'Active';
-      case _WalletFilter.idle:
-        return 'No activity';
-      case _WalletFilter.defaultCurrency:
-        return 'Default currency';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
-    return SizedBox(
-      height: 38.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        itemBuilder: (_, i) {
-          final filter = _WalletFilter.values[i];
-          final active = filter == selected;
-          return GestureDetector(
-            onTap: () => onChanged(filter),
-            behavior: HitTestBehavior.opaque,
-            child: AnimatedContainer(
-              duration: AppMotion.base,
-              curve: AppMotion.standard,
-              padding:
-                  EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: active ? tones.brand.deep : tones.bgSurface,
-                borderRadius: BorderRadius.circular(AppRadii.pill),
-                border: Border.all(
-                  color: active ? tones.brand.deep : tones.borderLight,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    _label(filter),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: active ? Colors.white : tones.textPrimary,
-                    ),
-                  ),
-                  SizedBox(width: 6.w),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 6.w, vertical: 2.h),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? Colors.white.withValues(alpha: 0.18)
-                          : tones.brand.background,
-                      borderRadius: BorderRadius.circular(AppRadii.pill),
-                    ),
-                    child: Text(
-                      '${counts[filter] ?? 0}',
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w700,
-                        color: active ? Colors.white : tones.brand.deep,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    final t = context.tones;
+    final balance = totals.income - totals.expense;
+    final code = wallet.currencyCode;
+    return LedgerRow(
+      leading: LedgerCoin(media: wallet.icon, icon: LucideIcons.wallet),
+      title: wallet.name,
+      subtitleWidget: Row(
+        children: [
+          if (isDefault) ...[
+            LedgerChip(LocaleKeys.walletsDefault.tr(),
+                tone: LedgerChipTone.good),
+            SizedBox(width: 6.lx),
+          ],
+          Flexible(
+            child: Text(
+              code,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12.lx, color: t.textMuted),
             ),
-          );
-        },
-        separatorBuilder: (_, __) => SizedBox(width: 8.w),
-        itemCount: _WalletFilter.values.length,
+          ),
+        ],
+      ),
+      trailing: LedgerAmount(
+        LedgerMoney.format(balance, code),
+        size: 13.5,
+        weight: FontWeight.w600,
+        color: balance < 0 ? t.expenseColor : t.textPrimary,
+      ),
+      divider: divider,
+      onTap: () => AppNavigator.push(
+        context,
+        WalletDetailScreen(wallet: wallet),
       ),
     );
   }
@@ -406,24 +372,21 @@ class _NoMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tones = context.tones;
+    final t = context.tones;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search_off, size: 40.sp, color: tones.textMuted),
-            SizedBox(height: 12.h),
-            Text(
-              query.isEmpty
-                  ? 'No wallets match this filter.'
-                  : 'No matches for "$query".',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14.sp, color: tones.textSecondary),
-            ),
-          ],
-        ),
+      padding: EdgeInsets.symmetric(vertical: 40.lx),
+      child: Column(
+        children: [
+          Icon(LucideIcons.searchX, size: 28.lx, color: t.textMuted),
+          SizedBox(height: 10.lx),
+          Text(
+            query.isEmpty
+                ? LocaleKeys.walletsNoMatchFilter.tr()
+                : LocaleKeys.walletsNoMatchQuery.tr(args: [query]),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13.lx, color: t.textSecondary),
+          ),
+        ],
       ),
     );
   }

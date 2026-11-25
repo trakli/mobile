@@ -1182,5 +1182,13 @@
   "statsEntries": {
     "one": "{} opération",
     "other": "{} opérations"
-  }
+  },
+  "walletsSearchHint": "Rechercher des portefeuilles",
+  "walletsFilterAll": "Tous",
+  "walletsFilterIdle": "Sans activité",
+  "walletsFilterDefaultCurrency": "Devise par défaut",
+  "walletsNoMatchFilter": "Aucun portefeuille ne correspond à ce filtre.",
+  "walletsNoMatchQuery": "Aucun résultat pour « {} ».",
+  "walletsDefault": "Par défaut",
+  "walletsBalanceIn": "Solde des portefeuilles en {}"
 }

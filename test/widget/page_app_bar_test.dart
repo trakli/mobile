@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/page_app_bar.dart';
 
@@ -55,7 +56,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+      expect(find.byIcon(LucideIcons.chevronLeft), findsOneWidget);
     });
 
     testWidgets(
@@ -69,7 +70,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.byIcon(Icons.arrow_back), findsNothing,
+        expect(find.byIcon(LucideIcons.chevronLeft), findsNothing,
             reason: 'No back arrow on root pages');
         // The brand mark is an SVG; check at least one SvgPicture renders
         // in the bar via key uniqueness — the brand mark is the only SVG
@@ -97,7 +98,7 @@ void main() {
       expect(find.text('Parties'), findsOneWidget);
       expect(find.byType(TextField), findsNothing);
 
-      await tester.tap(find.byIcon(Icons.search));
+      await tester.tap(find.byIcon(LucideIcons.search));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget,
@@ -124,11 +125,11 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.search));
+      await tester.tap(find.byIcon(LucideIcons.search));
       await tester.pumpAndSettle();
       // While searching there's exactly one back arrow (the search dismisser).
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.arrow_back));
+      expect(find.byIcon(LucideIcons.chevronLeft), findsOneWidget);
+      await tester.tap(find.byIcon(LucideIcons.chevronLeft));
       await tester.pumpAndSettle();
       expect(find.text('Parties'), findsOneWidget);
       expect(find.byType(TextField), findsNothing);

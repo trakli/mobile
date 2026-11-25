@@ -72,6 +72,23 @@ void main() {
     await c.close();
   });
 
+  test('closing while the server request is in flight does not throw',
+      () async {
+    final response = Completer<ReportStatsDto>();
+    when(() => remote.getReportStats(
+          start: any(named: 'start'),
+          end: any(named: 'end'),
+        )).thenAnswer((_) => response.future);
+
+    final c = cubit();
+    final loading = c.load(90);
+    await pumpEventQueue();
+    await c.close();
+    response.complete(_serverStats);
+
+    await expectLater(loading, completes);
+  });
+
   test('signed-out users never fetch: local numbers are the only truth',
       () async {
     when(() => auth.isAuthenticated()).thenAnswer((_) async => false);

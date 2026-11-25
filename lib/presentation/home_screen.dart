@@ -27,7 +27,6 @@ import 'package:trakli/presentation/transactions/quick_add/quick_add_sheet.dart'
 import 'package:trakli/presentation/utils/app_navigator.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:trakli/presentation/utils/enums.dart';
-import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_currency.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_icons.dart';
@@ -110,7 +109,7 @@ class _HomeHeader extends StatelessWidget {
     return LedgerScreenBar(
       titleWidget: const Align(
         alignment: Alignment.centerLeft,
-        child: _DrawerMark(),
+        child: TrakliDrawerButton(),
       ),
       actions: [
         LedgerIconButton(
@@ -120,39 +119,6 @@ class _HomeHeader extends StatelessWidget {
         ),
         const _AccountMenu(),
       ],
-    );
-  }
-}
-
-class _DrawerMark extends StatelessWidget {
-  const _DrawerMark();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.tones;
-    return Semantics(
-      button: true,
-      label: LocaleKeys.homeMenu.tr(),
-      child: Tooltip(
-        message: LocaleKeys.homeMenu.tr(),
-        child: Material(
-          key: const ValueKey('home-drawer-mark'),
-          color: t.bgSurface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.sm),
-            side: BorderSide(color: t.borderLight),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () => scaffoldKey.currentState?.openDrawer(),
-            child: SizedBox(
-              width: 32.lx,
-              height: 32.lx,
-              child: const Center(child: TrakliMenuGlyph()),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

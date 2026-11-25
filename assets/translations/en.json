@@ -1182,5 +1182,13 @@
   "statsEntries": {
     "one": "{} entry",
     "other": "{} entries"
-  }
+  },
+  "walletsSearchHint": "Search wallets",
+  "walletsFilterAll": "All",
+  "walletsFilterIdle": "No activity",
+  "walletsFilterDefaultCurrency": "Default currency",
+  "walletsNoMatchFilter": "No wallets match this filter.",
+  "walletsNoMatchQuery": "No matches for \"{}\".",
+  "walletsDefault": "Default",
+  "walletsBalanceIn": "Balance across {} wallets"
 }

@@ -1182,5 +1182,13 @@
   "statsEntries": {
     "one": "{} movimiento",
     "other": "{} movimientos"
-  }
+  },
+  "walletsSearchHint": "Buscar billeteras",
+  "walletsFilterAll": "Todas",
+  "walletsFilterIdle": "Sin actividad",
+  "walletsFilterDefaultCurrency": "Moneda predeterminada",
+  "walletsNoMatchFilter": "Ninguna billetera coincide con este filtro.",
+  "walletsNoMatchQuery": "Sin resultados para \"{}\".",
+  "walletsDefault": "Predeterminada",
+  "walletsBalanceIn": "Saldo de las billeteras en {}"
 }

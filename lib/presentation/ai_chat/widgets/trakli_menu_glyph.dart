@@ -1,8 +1,44 @@
 import 'dart:math' as math;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/globals.dart';
 import 'package:trakli/presentation/utils/ledger/ledger_type.dart';
+
+/// Header button that opens the app drawer, drawn with [TrakliMenuGlyph].
+class TrakliDrawerButton extends StatelessWidget {
+  const TrakliDrawerButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tones;
+    return Semantics(
+      button: true,
+      label: LocaleKeys.homeMenu.tr(),
+      child: Tooltip(
+        message: LocaleKeys.homeMenu.tr(),
+        child: Material(
+          color: t.bgSurface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadii.sm),
+            side: BorderSide(color: t.borderLight),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => scaffoldKey.currentState?.openDrawer(),
+            child: SizedBox(
+              width: 32.lx,
+              height: 32.lx,
+              child: const Center(child: TrakliMenuGlyph()),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// Menu glyph drawn from the Trakli mark: its three receipt lines become the
 /// menu bars, the top one keeps the mark's arrowhead, and the mark's

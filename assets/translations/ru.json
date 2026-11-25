@@ -1184,5 +1184,13 @@
     "few": "{} записи",
     "many": "{} записей",
     "other": "{} записи"
-  }
+  },
+  "walletsSearchHint": "Поиск кошельков",
+  "walletsFilterAll": "Все",
+  "walletsFilterIdle": "Без активности",
+  "walletsFilterDefaultCurrency": "Основная валюта",
+  "walletsNoMatchFilter": "Нет кошельков по этому фильтру.",
+  "walletsNoMatchQuery": "Ничего не найдено по «{}».",
+  "walletsDefault": "Основной",
+  "walletsBalanceIn": "Баланс кошельков в {}"
 }

@@ -1184,5 +1184,13 @@ abstract class  LocaleKeys {
   static const statsExcludesCurrencies = 'statsExcludesCurrencies';
   static const statsAllTime = 'statsAllTime';
   static const statsEntries = 'statsEntries';
+  static const walletsSearchHint = 'walletsSearchHint';
+  static const walletsFilterAll = 'walletsFilterAll';
+  static const walletsFilterIdle = 'walletsFilterIdle';
+  static const walletsFilterDefaultCurrency = 'walletsFilterDefaultCurrency';
+  static const walletsNoMatchFilter = 'walletsNoMatchFilter';
+  static const walletsNoMatchQuery = 'walletsNoMatchQuery';
+  static const walletsDefault = 'walletsDefault';
+  static const walletsBalanceIn = 'walletsBalanceIn';
 
 }

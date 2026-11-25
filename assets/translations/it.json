@@ -1182,5 +1182,13 @@
   "statsEntries": {
     "one": "{} movimento",
     "other": "{} movimenti"
-  }
+  },
+  "walletsSearchHint": "Cerca portafogli",
+  "walletsFilterAll": "Tutti",
+  "walletsFilterIdle": "Senza attività",
+  "walletsFilterDefaultCurrency": "Valuta predefinita",
+  "walletsNoMatchFilter": "Nessun portafoglio corrisponde a questo filtro.",
+  "walletsNoMatchQuery": "Nessun risultato per \"{}\".",
+  "walletsDefault": "Predefinito",
+  "walletsBalanceIn": "Saldo dei portafogli in {}"
 }
