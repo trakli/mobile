@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,7 +15,6 @@ import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/config/cubit/config_cubit.dart';
 import 'package:trakli/presentation/groups/cubit/group_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 import 'package:trakli/presentation/utils/popovers/group_list_popover.dart';
@@ -99,23 +101,16 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
           bottom: 16.h,
         ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12.r),
+          color: context.tones.bgSurface,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          border: Border.all(color: context.tones.borderLight),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 0.h),
-            CircleAvatar(
-              radius: 30.sp,
-              backgroundColor: appPrimaryColor.withAlpha(30),
-              child: Icon(
-                Icons.group,
-                size: 28.sp,
-                color: appPrimaryColor,
-              ),
-            ),
+            const LedgerCoin(icon: LucideIcons.usersRound, size: 48),
             SizedBox(height: 16.h),
             Text(
               LocaleKeys.setupGroupTitle.tr(),
@@ -172,8 +167,8 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                           padding: EdgeInsets.all(10.sp),
                           child: SvgPicture.asset(
                             Assets.images.arrowDown,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
+                            colorFilter: ColorFilter.mode(
+                              context.tones.textMuted,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -228,8 +223,8 @@ class _GroupSetupWidgetState extends State<GroupSetupWidget> {
                             padding: EdgeInsets.all(10.sp),
                             child: SvgPicture.asset(
                               Assets.images.arrowDown,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.grey,
+                              colorFilter: ColorFilter.mode(
+                                context.tones.textMuted,
                                 BlendMode.srcIn,
                               ),
                             ),

@@ -1213,5 +1213,6 @@
   "detailTotal": "Gesamt",
   "detailNetFlow": "Nettofluss",
   "formCurrency": "Währung",
-  "formDescription": "Beschreibung"
+  "formDescription": "Beschreibung",
+  "authSignIn": "Anmelden"
 }

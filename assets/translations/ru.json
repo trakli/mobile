@@ -1215,5 +1215,6 @@
   "detailTotal": "Итого",
   "detailNetFlow": "Чистый поток",
   "formCurrency": "Валюта",
-  "formDescription": "Описание"
+  "formDescription": "Описание",
+  "authSignIn": "Вход"
 }

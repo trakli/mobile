@@ -2,10 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/app_widget.dart';
 import 'package:trakli/presentation/auth/pages/login_screen.dart';
 import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
 import 'package:trakli/presentation/utils/theme_toggle_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -139,29 +141,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   SizedBox(height: 24.h),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: LedgerButton(
+                      label: isLast ? LocaleKeys.go.tr() : LocaleKeys.next.tr(),
+                      icon: isLast ? LucideIcons.check : LucideIcons.arrowRight,
+                      large: true,
+                      background: activePalette.deep,
                       onPressed: nextSlide,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: activePalette.deep,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(11.r),
-                        ),
-                        elevation: 0,
-                        textStyle: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.1,
-                        ),
-                      ),
-                      child: AnimatedSwitcher(
-                        duration: AppMotion.base,
-                        child: Text(
-                          isLast ? LocaleKeys.go.tr() : LocaleKeys.next.tr(),
-                          key: ValueKey(isLast),
-                        ),
-                      ),
                     ),
                   ),
                 ],
@@ -261,7 +246,8 @@ class _ProgressDots extends StatelessWidget {
             height: 8,
             width: i == index ? 28 : 8,
             decoration: BoxDecoration(
-              color: i == index ? activeColor : idleColor.withValues(alpha: 0.6),
+              color:
+                  i == index ? activeColor : idleColor.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(999),
             ),
           ),

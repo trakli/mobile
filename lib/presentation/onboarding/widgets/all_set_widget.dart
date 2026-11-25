@@ -1,5 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/ledger/ledger_widgets.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
@@ -7,7 +10,6 @@ import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/currency/cubit/currency_cubit.dart';
 import 'package:trakli/presentation/transactions/cubit/transaction_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/wallets/cubit/wallet_cubit.dart';
 
 class AllSetWidget extends StatelessWidget {
@@ -36,22 +38,15 @@ class AllSetWidget extends StatelessWidget {
         bottom: 16.h,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12.r),
+        color: context.tones.bgSurface,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        border: Border.all(color: context.tones.borderLight),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 0.h),
-          CircleAvatar(
-            radius: 30.sp,
-            backgroundColor: appPrimaryColor,
-            child: Icon(
-              Icons.check_circle_outline,
-              size: 28.sp,
-              color: Colors.white,
-            ),
-          ),
+          const LedgerCoin(icon: LucideIcons.check, size: 48),
           SizedBox(height: 16.h),
           Text(
             LocaleKeys.youAllSetTitleOne.tr(),
@@ -80,7 +75,7 @@ class AllSetWidget extends StatelessWidget {
                       ? LocaleKeys.wallet.tr()
                       : LocaleKeys.wallets.tr(),
                   count: walletState.wallets.length,
-                  icon: Icons.wallet,
+                  icon: LucideIcons.wallet,
                 ),
                 infoText(
                   context,
@@ -88,7 +83,7 @@ class AllSetWidget extends StatelessWidget {
                       ? LocaleKeys.category.tr()
                       : LocaleKeys.categories.tr(),
                   count: cartState.categories.length,
-                  icon: Icons.label_outline,
+                  icon: LucideIcons.tag,
                 ),
                 infoText(
                   context,
@@ -96,7 +91,7 @@ class AllSetWidget extends StatelessWidget {
                       ? LocaleKeys.transaction.tr()
                       : LocaleKeys.transactions.tr(),
                   count: transState.transactions.length,
-                  icon: Icons.compare_arrows_outlined,
+                  icon: LucideIcons.arrowRightLeft,
                 ),
               ],
             ),
@@ -117,7 +112,7 @@ class AllSetWidget extends StatelessWidget {
                 return PrimaryButton(
                   onPress: !isCurrencySelected ? null : onTap,
                   backgroundColor:
-                      isCurrencySelected ? null : Colors.grey.shade300,
+                      isCurrencySelected ? null : context.tones.surface2,
                   buttonText: LocaleKeys.goToDashboard.tr(),
                 );
               }),
@@ -140,10 +135,10 @@ class AllSetWidget extends StatelessWidget {
         Icon(
           icon,
           size: 20.sp,
-          color: appPrimaryColor,
+          color: context.tones.brandFill,
         ),
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,

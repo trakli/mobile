@@ -1,11 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:trakli/presentation/utils/design_tokens.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trakli/gen/translations/codegen_loader.g.dart';
 import 'package:trakli/presentation/category/cubit/category_cubit.dart';
 import 'package:trakli/presentation/utils/buttons.dart';
-import 'package:trakli/presentation/utils/colors.dart';
 import 'package:trakli/presentation/utils/enums.dart';
 import 'package:trakli/presentation/utils/helpers.dart';
 
@@ -190,8 +190,9 @@ class _CategorySetupWidgetState extends State<CategorySetupWidget> {
           vertical: 16.h,
         ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12.r),
+          color: context.tones.bgSurface,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          border: Border.all(color: context.tones.borderLight),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,20 +228,20 @@ class _CategorySetupWidgetState extends State<CategorySetupWidget> {
                     subtitle: Text(
                       LocaleKeys.createDefaultCategoriesDesc.tr(),
                       style: TextStyle(
-                          fontSize: 12.sp, color: Colors.grey.shade600),
+                          fontSize: 12.sp, color: context.tones.textMuted),
                     ),
                     value: true,
-                    activeColor: appPrimaryColor,
+                    activeColor: context.tones.brandFill,
                   ),
                   RadioListTile<bool>(
                     title: Text(LocaleKeys.skipCategories.tr()),
                     subtitle: Text(
                       LocaleKeys.skipCategoriesDesc.tr(),
                       style: TextStyle(
-                          fontSize: 12.sp, color: Colors.grey.shade600),
+                          fontSize: 12.sp, color: context.tones.textMuted),
                     ),
                     value: false,
-                    activeColor: appPrimaryColor,
+                    activeColor: context.tones.brandFill,
                   ),
                 ],
               ),

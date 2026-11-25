@@ -1213,5 +1213,6 @@
   "detailTotal": "Total",
   "detailNetFlow": "Flux net",
   "formCurrency": "Devise",
-  "formDescription": "Description"
+  "formDescription": "Description",
+  "authSignIn": "Connexion"
 }

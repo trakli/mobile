@@ -1213,5 +1213,6 @@
   "detailTotal": "Totale",
   "detailNetFlow": "Flusso netto",
   "formCurrency": "Valuta",
-  "formDescription": "Descrizione"
+  "formDescription": "Descrizione",
+  "authSignIn": "Accedi"
 }

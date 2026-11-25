@@ -1213,5 +1213,6 @@
   "detailTotal": "Total",
   "detailNetFlow": "Net flow",
   "formCurrency": "Currency",
-  "formDescription": "Description"
+  "formDescription": "Description",
+  "authSignIn": "Sign in"
 }

@@ -1215,5 +1215,6 @@ abstract class  LocaleKeys {
   static const detailNetFlow = 'detailNetFlow';
   static const formCurrency = 'formCurrency';
   static const formDescription = 'formDescription';
+  static const authSignIn = 'authSignIn';
 
 }
